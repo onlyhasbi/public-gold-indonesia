@@ -119,10 +119,8 @@ function PriceList({ price }: Props) {
       return new RegExp(`(?<![\\d.])${escaped}\\b`, "i").test(label);
     };
 
-    // 1. Try exact match by title with word boundary
     let found = list.find((g) => matchWithBoundary(g.label, item.title));
 
-    // 2. Try match by weight string with word boundary
     if (!found) {
       found = list.find((g) => matchWithBoundary(g.label, item.weight));
     }
