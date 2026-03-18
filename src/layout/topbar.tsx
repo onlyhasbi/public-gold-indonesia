@@ -1,0 +1,271 @@
+import { navigation } from "../constant/navigation";
+import { Menu, X, ChevronDown, Languages } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { cn } from "../lib/utils";
+import { useTranslation } from "react-i18next";
+
+function Topbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("about");
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      // Detect active section
+      const sections = navigation.map((item) => item.href.replace("#", ""));
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 100) {
+            setActiveSection(sections[i]);
+            break;
+          }
+        }
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const lang = i18n.language;
+
+  const dynamicNavigation = navigation.map((item) => ({
+    ...item,
+    label: t(item.translationKey),
+  }));
+
+  const languages = [
+    { id: "id", label: "Indonesia", emoji: "🇮🇩", code: "ID" },
+    { id: "ms", label: "Malaysia", emoji: "🇲🇾", code: "MS" },
+    { id: "zh", label: "Chinese", emoji: "🇨🇳", code: "ZH" },
+    { id: "ta", label: "Tamil", emoji: "🇮🇳", code: "TA" },
+  ];
+
+  const toggleLang = (selected: "id" | "ms" | "zh" | "ta") => {
+    i18n.changeLanguage(selected);
+    setLangMenuOpen(false);
+  };
+
+  const currentLang = languages.find(l => lang.startsWith(l.id));
+  const currentLangEmoji = currentLang?.emoji ?? "🌐";
+  const currentLangLabel = currentLang?.code ?? "EN";
+
+  const scrollToSection = (href: string) => {
+    const id = href.replace("#", "");
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsOpen(false);
+  };
+
+  return (
+    <>
+      <header
+        className={cn(
+          "fixed top-0 z-50 w-full transition-all duration-300",
+          scrolled
+            ? "h-16 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 shadow-sm"
+            : "h-20 bg-transparent"
+        )}
+      >
+        <div className="flex items-center justify-between w-11/12 max-w-7xl mx-auto h-full">
+          {/* Logo */}
+          <a
+            href="#about"
+            onClick={(e) => { e.preventDefault(); scrollToSection("#about"); }}
+            className="group flex items-center gap-2"
+          >
+            <img src={`./logo.svg`} alt="Public Gold" className="h-14 w-auto group-hover:scale-105 transition-transform" />
+          </a>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center">
+            <ul className="flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm">
+              {dynamicNavigation.map((item, index) => {
+                const sectionId = item.href.replace("#", "");
+                const isActive = activeSection === sectionId;
+                return (
+                  <li key={`${index}-${item.translationKey}`}>
+                    <a
+                      href={item.href}
+                      onClick={(e) => { e.preventDefault(); scrollToSection(item.href); }}
+                      className={cn(
+                        "px-4 py-2 rounded-full text-sm font-medium transition-all",
+                        isActive
+                          ? "bg-white text-red-600 shadow-sm"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+                      )}
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="flex items-center gap-4">
+            {/* Language Selector (Desktop) */}
+            <div ref={langMenuRef} className="hidden md:relative md:block">
+              <button
+                onClick={() => setLangMenuOpen(!langMenuOpen)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm font-semibold border",
+                  langMenuOpen
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                )}
+              >
+                <Languages className={cn("w-4 h-4", langMenuOpen ? "text-amber-400" : "text-slate-400")} />
+                <span className="flex items-center gap-1.5">
+                  <span className="text-base leading-none">{currentLangEmoji}</span>
+                  <span>{currentLangLabel}</span>
+                </span>
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", langMenuOpen && "rotate-180")} />
+              </button>
+
+              {/* Dropdown */}
+              {langMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select Language</div>
+                  {languages.map((l) => (
+                    <button
+                      key={l.id}
+                      onClick={() => toggleLang(l.id as any)}
+                      className={cn(
+                        "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
+                        lang.startsWith(l.id)
+                          ? "text-red-600 font-bold bg-red-50/50"
+                          : "text-slate-600 hover:bg-slate-50"
+                      )}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="text-lg">{l.emoji}</span>
+                        {l.label}
+                      </span>
+                      {lang.startsWith(l.id) && <div className="w-1.5 h-1.5 rounded-full bg-red-600" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Desktop CTA */}
+            <button
+              onClick={() => window.open("https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1", "_blank", "noopener,noreferrer")}
+              className="hidden md:flex items-center justify-center bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
+            >
+              {t("nav.register")}
+            </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="lg:hidden p-2.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer */}
+      <div
+        className={cn(
+          "fixed inset-0 z-[60] bg-white transition-all duration-500 ease-in-out lg:hidden flex flex-col",
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none translate-y-4"
+        )}
+      >
+        <div className="flex items-center justify-between h-20 px-6 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <img src={`./logo.svg`} alt="Public Gold" className="h-8 w-auto" />
+          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+          >
+            <X className="w-5 h-5 text-slate-600" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-8">
+          <div className="mb-8">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Menu</h3>
+            <ul className="grid grid-cols-1 gap-2">
+              {dynamicNavigation.map((item, index) => {
+                const sectionId = item.href.replace("#", "");
+                const isActive = activeSection === sectionId;
+                return (
+                  <li key={`${index}-${item.translationKey}`}>
+                    <a
+                      href={item.href}
+                      onClick={(e) => { e.preventDefault(); scrollToSection(item.href); }}
+                      className={cn(
+                        "flex items-center justify-between p-4 rounded-2xl text-lg font-semibold transition-all",
+                        isActive
+                          ? "bg-red-50 text-red-600 shadow-sm shadow-red-100/50"
+                          : "text-slate-700 hover:bg-slate-50"
+                      )}
+                    >
+                      {item.label}
+                      <div className={cn("w-2 h-2 rounded-full bg-current", isActive ? "opacity-100" : "opacity-0")} />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Language</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {languages.map((l) => (
+                <button
+                  key={l.id}
+                  onClick={() => toggleLang(l.id as any)}
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all",
+                    lang.startsWith(l.id)
+                      ? "bg-white border-red-600 text-red-600 shadow-md shadow-red-100"
+                      : "bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100"
+                  )}
+                >
+                  <span className="text-2xl">{l.emoji}</span>
+                  <span className="text-xs font-bold">{l.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-slate-100">
+          <button
+            onClick={() => window.open("https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1", "_blank", "noopener,noreferrer")}
+            className="flex items-center justify-center w-full bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-100 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            {t("nav.register")}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default Topbar;

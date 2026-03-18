@@ -1,0 +1,323 @@
+export const zh = {
+    nav: {
+        about: "关于我们",
+        advantage: "优势",
+        products: "产品",
+        buy: "购买方式",
+        dealer: "经销商",
+        start: "开始",
+        contact: "联系我们",
+        register: "注册账户",
+    },
+    hero: {
+        greeting: "您好，我是",
+        role: "Public Gold 高级经销商",
+        mission: "想让您的财富在未来保持价值吗？我们帮助您建立稳定、安全且随时可变现的黄金资产。",
+        more: "了解更多",
+    },
+    publicGold: {
+        title: "关于 Public Gold",
+        desc: "一个值得信赖的实物黄金买卖平台，系统完善，并拥有国际认证及具有竞争力的回购保障。",
+        stats: {
+            customers: "百万活跃客户",
+            branches: "分行网点",
+            years: "运营年数",
+        },
+        features: [
+            { title: "符合伊斯兰教法", description: "交易安全透明，符合伊斯兰教法，并由 Amanie Advisors 监督。" },
+            { title: "便捷的数字交易", description: "随时随地在线购买黄金，全天候 24 小时 доступ。" },
+            { title: "安全且有保险的配送", description: "黄金直接配送至您的地址，并享有完整保险保障。" },
+            { title: "免费存储", description: "通过 POE 账户享受免费黄金存储服务。" },
+            { title: "具有竞争力的价格", description: "直接从生产商获取透明且具有竞争力的价格。" },
+            { title: "回购保障", description: "黄金可随时轻松卖出，在特定情况下依然可被接受回购。" },
+        ],
+        whyTitle: "为什么选择 Public Gold？",
+        statsLabels: {
+            country: "国家",
+        },
+    },
+    benefit: {
+        badge: "为什么选择黄金？",
+        title: "持有黄金的优势",
+        desc: "黄金是在经济变化中长期保持财富价值的理想选择。",
+        items: [
+            { title: "抗通胀", desc: "帮助保护您的资产免受购买力下降的影响。" },
+            { title: "流动性高", desc: "需要资金时可随时出售。" },
+            { title: "未来规划", desc: "适用于教育、朝觐、养老等长期规划。" },
+            { title: "实物资产", desc: "直接拥有有价值的实物资产。" },
+            { title: "符合伊斯兰教法", desc: "交易透明并遵循教法原则。" },
+            { title: "可传承资产", desc: "易于继承且价值相对稳定。" },
+        ],
+    },
+    products: {
+        badge: "产品目录",
+        title: "纯金系列",
+        subtitle: "提供多种 999.9（24K）纯度并拥有 LBMA 国际认证的金条与金币选择。",
+        seeDetail: "查看详情",
+        types: {
+            dinar: "第纳尔金币",
+            goldbar: "金条",
+        },
+    },
+    buy: {
+        badge: "购买指南",
+        title: "轻松购买黄金",
+        subtitle: "按照简单步骤开始拥有您的黄金资产。",
+        steps: [
+            { title: "1. 注册账户（免费）", desc: "通过 Public Gold 官网使用您的身份证信息注册。" },
+            { title: "2. 选择产品", desc: "选择实物黄金或通过 GAP/POE 账户开始储蓄。" },
+            { title: "3. 完成付款", desc: "可通过虚拟账户或银行转账付款。" },
+            { title: "4. 接收与存储", desc: "黄金可配送至您的地址或通过存储服务保存。" },
+        ],
+    },
+    excellence: {
+        badge: "我们的优势",
+        title: "为什么选择我们投资黄金？",
+        subtitle: "为您提供更安全、便捷的黄金投资管理服务。",
+        items: [
+            {
+                title: "符合伊斯兰教法",
+                text: "Public Gold 符合国际伊斯兰教法标准的实物黄金交易。",
+                points: [
+                    "由具备全球资质的 Amanie Advisors 监管。",
+                    "支付方式符合教法原则。",
+                ],
+                features: ["官方认证", "教法合规", "国际标准"],
+            },
+            {
+                title: "交易便捷",
+                text: "支持印尼主要银行的多种支付方式。",
+                points: [
+                    "快速验证流程。",
+                    "无额外负担费用。",
+                    "交易透明。",
+                ],
+                features: ["快速", "多银行", "无手续费"],
+            },
+            {
+                title: "安全保障",
+                text: "黄金配送全程保险保障，确保安全送达。",
+                points: [
+                    "保险覆盖商品价值。",
+                    "严格操作流程。",
+                ],
+                features: ["有保险", "可靠", "安全"],
+            },
+            {
+                title: "广泛网络",
+                text: "在东南亚拥有多家分行，为客户提供更好服务。",
+                points: [
+                    "线上与线下服务。",
+                    "便捷回购流程。",
+                ],
+                features: ["多国覆盖", "线上服务", "实体分行"],
+            },
+        ],
+    },
+    paymentMethods: {
+        badge: "支付方式",
+        title: "多种黄金购买方式",
+        subtitle: "选择最适合您的方式。",
+        items: [
+            {
+                title: "预购黄金（POE）",
+                subtitle: "数字黄金储蓄",
+                description: "购买黄金并存储于数字账户。\n灵活且可转换为实物黄金。",
+                features: [
+                    "起步仅需 Rp 300.000",
+                    "免费存储",
+                    "可转换为实物黄金",
+                    "灵活便捷",
+                ],
+                cta: "开始储蓄",
+            },
+            {
+                title: "现金支付",
+                subtitle: "直接购买",
+                description: "黄金直接归您所有，并可配送至指定地址。",
+                features: [
+                    "配送到家",
+                    "保险保障",
+                    "产品认证",
+                    "价格随市场变化",
+                ],
+                cta: "立即购买",
+            },
+            {
+                title: "分期付款（EPP）",
+                subtitle: "教法合规分期",
+                description: "按照伊斯兰教法原则进行分期购买黄金。",
+                features: [
+                    "无利息",
+                    "符合教法",
+                    "多种期限",
+                    "安全存储",
+                ],
+                cta: "开始分期",
+            },
+        ],
+        note: "需要帮助？咨询最适合您的方案。",
+    },
+    dealer: {
+        badge: "商业机会",
+        title: "成为 Public Gold 经销商",
+        subtitle: "拓展额外收入来源并提升金融认知。",
+        benefits: [
+            { title: "额外收入", desc: "通过交易活动获得奖励。" },
+            { title: "灵活性", desc: "可随时随地开展。" },
+            { title: "支持指导", desc: "获得成长过程中的指导。" },
+        ],
+        joinTeam: "为什么加入我们的团队？",
+        teamBenefits: [
+            "学习社群",
+            "营销资料",
+            "定期培训",
+            "营销策略",
+        ],
+        quote: "成为经销商是学习与成长黄金资产领域的机会。",
+    },
+    cta: {
+        dealerBadge: "官方经销商",
+        title: "开始保障您的资产价值",
+        desc: "咨询您的需求，开启正确的黄金投资之路。",
+        whatsapp: "通过 WhatsApp 咨询",
+        badges: ["免费咨询", "全程指导", "教法合规"],
+        footer: "Public Gold 印度尼西亚官方经销商",
+    },
+    contact: {
+        badge: "联系我们",
+        title: "有任何问题？",
+        desc: "我们随时为您提供黄金投资相关帮助。",
+        form: {
+            firstName: "名字",
+            lastName: "姓氏",
+            email: "电子邮箱",
+            message: "您的留言",
+            submit: "发送信息",
+            placeholder: "在这里填写您的问题...",
+        },
+    },
+    howToStart: {
+        badge: "开始方式",
+        title: "3 个简单步骤开始黄金储蓄",
+        subtitle: "快速且安全地开启您的首次投资。",
+        steps: [
+            { title: "1. 免费注册", desc: "填写与身份证一致的信息。" },
+            { title: "2. 账户验证", desc: "上传身份信息进行验证。" },
+            { title: "3. 开始储蓄", desc: "通过系统开始购买黄金。" },
+        ],
+        cta: "立即注册",
+        note: "*注册完全免费，无隐藏费用",
+    },
+    startPage: {
+        badge: "新手指南",
+        title: "开启您的黄金储蓄",
+        desc: "通过安全灵活的系统逐步建立您的黄金资产。",
+        ctaPrimary: "立即注册",
+        ctaSecondary: "了解更多",
+        stepsTitle: "开始步骤",
+        stepsDesc: "注册流程简单快捷。",
+        steps: [
+            { title: "在线注册", desc: "填写个人信息。" },
+            { title: "身份验证", desc: "上传身份证件。" },
+            { title: "开始储蓄", desc: "根据需求购买黄金。" },
+        ],
+        guarantee: {
+            title: "教法合规",
+            subtitle: "安全可靠",
+        },
+    },
+    priceList: {
+        badge: "实时价格",
+        title: "今日黄金价格",
+        subtitle: "根据全球市场定期更新",
+        loading: "加载中...",
+        priceLabel: "卖出价格",
+        currency: "Rp ",
+        poe: {
+            title: "预购黄金（POE）",
+            subtitle: "数字存储",
+            desc: "起步 Rp 300.000",
+        },
+        perGram: {
+            title: "每克价格",
+            subtitle: "实物黄金",
+            desc: "24K | 纯度 999.9",
+        },
+    },
+    testimonials: {
+        badge: "客户评价",
+        title: "他们怎么说？",
+        desc: "客户使用 Public Gold 的真实体验。",
+        items: [
+            {
+                quote: "我已经在 Public Gold 储蓄黄金好几年了。整个过程非常透明，让我对资产更有安全感。",
+                name: "Andi Wijaya",
+                title: "自雇人士，雅加达",
+            },
+            {
+                quote: "一开始对线上买黄金有点担心，但过程非常简单，配送也很安全，非常适合新手投资。",
+                name: "Siti Rahayu",
+                title: "家庭主妇，万隆",
+            },
+            {
+                quote: "黄金储蓄功能让我可以一点一点累积资产，长期来看效果非常明显。",
+                name: "Budi Santoso",
+                title: "上班族，泗水",
+            },
+            {
+                quote: "客服服务很及时，也很专业，让我更了解如何正确投资黄金。",
+                name: "Dewi Lestari",
+                title: "教师，日惹",
+            },
+            {
+                quote: "回购流程很方便，让我在资金管理上更灵活。",
+                name: "Ahmad Fauzi",
+                title: "医护人员，棉兰",
+            },
+            {
+                quote: "黄金配送安全且包装良好，让我更放心继续投资。",
+                name: "Rina Kusuma",
+                title: "企业家，三宝垄",
+            },
+        ],
+    },
+
+    faq: {
+        badge: "常见问题",
+        title: "常见问答",
+        desc: "关于黄金投资的基础信息。",
+        items: [
+            {
+                category: "价格与产品",
+                ask: "数字黄金（POE）和实物黄金有什么区别？",
+                answer: "POE 黄金以数字形式存储在您的账户中，并可随时转换为实物黄金；而实物黄金会直接交付给您。",
+            },
+            {
+                category: "投资",
+                ask: "黄金适合长期投资吗？",
+                answer: "黄金通常作为保值资产，在长期内有助于维持购买力。",
+            },
+            {
+                category: "购买",
+                ask: "最低购买金额是多少？",
+                answer: "您可以从较低金额开始，根据所选择的方式逐步购买。",
+            },
+            {
+                category: "安全",
+                ask: "我的黄金安全吗？",
+                answer: "配送黄金均有保险保障，数字存储系统也具备完善的安全机制。",
+            },
+            {
+                category: "出售",
+                ask: "黄金可以轻松卖出吗？",
+                answer: "可以，通过系统可快速完成回购流程。",
+            },
+            {
+                category: "账户",
+                ask: "如何开始？",
+                answer: "注册账户、完成验证，然后即可开始购买或储蓄黄金。",
+            },
+        ],
+    },
+};
