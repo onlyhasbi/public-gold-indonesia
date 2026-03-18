@@ -296,7 +296,7 @@ export const id = {
             {
                 category: "Harga & Produk",
                 ask: "Apa perbedaan emas (POE) dan emas fisik?",
-                answer: "Emas POE disimpan secara digital dalam akun Anda dan dapat dicetak menjadi fisik kapan saja. Sedangkan emas fisik langsung Anda terima dalam bentuk batangan atau dinar.",
+                answer: "Emas POE disimpan dalam akun Anda dan dapat dicetak menjadi fisik kapan saja. Sedangkan emas fisik langsung Anda terima dalam bentuk batangan atau dinar.",
             },
             {
                 category: "Investasi",
