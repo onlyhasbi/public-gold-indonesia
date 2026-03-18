@@ -3,6 +3,8 @@ import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
 
+const DISABLED_INDEXES = [2]; // EPP card (index 2) is temporarily disabled
+
 export default function PaymentMethods() {
     const { t } = useTranslation();
 
@@ -26,6 +28,7 @@ export default function PaymentMethods() {
                 bgGradient: style.bgGradient,
                 borderColor: style.border,
                 iconBg: style.iconBg,
+                disabled: DISABLED_INDEXES.includes(index),
             };
         }
     );
@@ -42,15 +45,16 @@ export default function PaymentMethods() {
             <div className="w-full grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {paymentMethods.map((method, index) => {
                     const Icon = method.icon;
+                    const isDisabled = method.disabled;
                     return (
                         <div
                             key={index}
-                            className={`relative group rounded-2xl bg-gradient-to-br ${method.bgGradient} border ${method.borderColor} p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 flex flex-col`}
+                            className={`relative group rounded-2xl bg-gradient-to-br ${method.bgGradient} border ${method.borderColor} p-6 transition-all duration-300 flex flex-col ${isDisabled ? "opacity-60 grayscale pointer-events-none select-none" : "hover:shadow-xl hover:-translate-y-2"}`}
                         >
                             {/* Header: Icon + Title */}
                             <div className="flex items-start gap-4 mb-4">
                                 <div
-                                    className={`w-12 h-12 rounded-xl ${method.iconBg} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
+                                    className={`w-12 h-12 rounded-xl ${method.iconBg} flex items-center justify-center shadow-lg ${isDisabled ? "" : "group-hover:scale-110"} transition-transform duration-300 flex-shrink-0`}
                                 >
                                     <Icon className="w-6 h-6 text-white" />
                                 </div>
@@ -87,18 +91,24 @@ export default function PaymentMethods() {
                             </ul>
 
                             {/* CTA Button */}
-                            <a
-                                href="https://wa.me/628979901844"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`block w-full text-center py-3 rounded-xl bg-gradient-to-r ${method.gradient} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:opacity-90`}
-                            >
-                                {method.cta}
-                            </a>
+                            {isDisabled ? (
+                                <div className="block w-full text-center py-3 rounded-xl bg-slate-300 text-slate-500 font-semibold cursor-not-allowed">
+                                    {method.cta}
+                                </div>
+                            ) : (
+                                <a
+                                    href="https://wa.me/628979901844"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`block w-full text-center py-3 rounded-xl bg-gradient-to-r ${method.gradient} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:opacity-90`}
+                                >
+                                    {method.cta}
+                                </a>
+                            )}
 
                             {/* Decorative element */}
                             <div
-                                className={`absolute -z-10 top-4 right-4 w-24 h-24 rounded-full bg-gradient-to-r ${method.gradient} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity duration-300`}
+                                className={`absolute -z-10 top-4 right-4 w-24 h-24 rounded-full bg-gradient-to-r ${method.gradient} opacity-10 blur-2xl ${isDisabled ? "" : "group-hover:opacity-20"} transition-opacity duration-300`}
                             />
                         </div>
                     );
