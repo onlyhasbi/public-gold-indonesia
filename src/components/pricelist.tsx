@@ -114,12 +114,19 @@ function PriceList({ price }: Props) {
   const getPrice = (item: { title: string; weight: string; category: string }) => {
     const list = price?.[item.category as PriceListKey] || [];
 
-    // 1. Try exact match by title
-    let found = list.find((g) => g.label.toLowerCase().includes(item.title.toLowerCase()));
+    console.log(price);
 
-    // 2. Try match by weight string
+    const matchWithBoundary = (label: string, search: string) => {
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`(?<![\\d.])${escaped}\\b`, "i").test(label);
+    };
+
+    // 1. Try exact match by title with word boundary
+    let found = list.find((g) => matchWithBoundary(g.label, item.title));
+
+    // 2. Try match by weight string with word boundary
     if (!found) {
-      found = list.find((g) => g.label.toLowerCase().includes(item.weight.toLowerCase()));
+      found = list.find((g) => matchWithBoundary(g.label, item.weight));
     }
 
     if (!found || !found.price) return null;
