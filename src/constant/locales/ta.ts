@@ -24,7 +24,7 @@ export const ta = {
             years: "ஆண்டுகள் செயல்பாடு",
         },
         features: [
-            { title: "ஷரியா இணக்கம்", description: "பாதுகாப்பான மற்றும் வெளிப்படையான பரிவர்த்தனைகள், Amanie Advisors கண்காணிப்பில்." },
+            { title: "ஷரியா இணக்கம்", description: "பாதுகாப்பான மற்றும் வெளிப்படையான பரிவர்த்தனைகள், <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> கண்காணிப்பில்." },
             { title: "எளிய டிஜிட்டல் பரிவர்த்தனை", description: "எப்போது வேண்டுமானாலும், எங்கிருந்தும் ஆன்லைனில் தங்கம் வாங்கலாம்." },
             { title: "பாதுகாப்பான & காப்பீடு செய்யப்பட்ட டெலிவரி", description: "தங்கம் உங்கள் முகவரிக்கு முழு காப்பீட்டுடன் அனுப்பப்படும்." },
             { title: "இலவச சேமிப்பு", description: "POE கணக்கின் மூலம் இலவச தங்க சேமிப்பு வசதி." },
@@ -79,7 +79,7 @@ export const ta = {
                 title: "ஷரியா இணக்கம்",
                 text: "சர்வதேச தரநிலைகளுக்கு ஏற்ப.",
                 points: [
-                    "Amanie Advisors கண்காணிப்பு",
+                    "<a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> கண்காணிப்பு",
                     "நெறிமுறைப்படி கட்டணம்",
                 ],
                 features: ["அங்கீகாரம்", "ஷரியா", "சர்வதேசம்"],
@@ -306,7 +306,7 @@ export const ta = {
             {
                 category: "கணக்கு",
                 ask: "எப்படி தொடங்குவது?",
-                answer: "கணக்கு பதிவு செய்து, சரிபார்த்து, வாங்க ஆரம்பிக்கலாம்.",
+                answer: "<a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>கணக்கு பதிவு</a> செய்து, சரிபார்த்து, வாங்க ஆரம்பிக்கலாம்.",
             },
         ],
     },

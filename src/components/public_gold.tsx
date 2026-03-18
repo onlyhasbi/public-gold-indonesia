@@ -83,9 +83,7 @@ function PublicGold() {
                   <h3 className="font-bold text-slate-800 group-hover:text-red-700 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-slate-500 mt-1">
-                    {item.description}
-                  </p>
+                  <p className="text-sm text-slate-500 mt-1" dangerouslySetInnerHTML={{ __html: item.description }} />
                 </div>
               </div>
             );

@@ -24,7 +24,7 @@ export const zh = {
             years: "运营年数",
         },
         features: [
-            { title: "符合伊斯兰教法", description: "交易安全透明，符合伊斯兰教法，并由 Amanie Advisors 监督。" },
+            { title: "符合伊斯兰教法", description: "交易安全透明，符合伊斯兰教法，并由 <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> 监督。" },
             { title: "便捷的数字交易", description: "随时随地在线购买黄金，全天候 24 小时 доступ。" },
             { title: "安全且有保险的配送", description: "黄金直接配送至您的地址，并享有完整保险保障。" },
             { title: "免费存储", description: "通过 POE 账户享受免费黄金存储服务。" },
@@ -79,7 +79,7 @@ export const zh = {
                 title: "符合伊斯兰教法",
                 text: "Public Gold 符合国际伊斯兰教法标准的实物黄金交易。",
                 points: [
-                    "由具备全球资质的 Amanie Advisors 监管。",
+                    "由具备全球资质的 <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> 监管。",
                     "支付方式符合教法原则。",
                 ],
                 features: ["官方认证", "教法合规", "国际标准"],
@@ -316,7 +316,7 @@ export const zh = {
             {
                 category: "账户",
                 ask: "如何开始？",
-                answer: "注册账户、完成验证，然后即可开始购买或储蓄黄金。",
+                answer: "<a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>注册账户</a>、完成验证，然后即可开始购买或储蓄黄金。",
             },
         ],
     },

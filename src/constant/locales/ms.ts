@@ -24,7 +24,7 @@ export const ms = {
             years: "Tahun Beroperasi",
         },
         features: [
-            { title: "Patuh Syariah", description: "Transaksi selamat, telus, dan mematuhi prinsip syariah di bawah pengawasan Amanie Advisors." },
+            { title: "Patuh Syariah", description: "Transaksi selamat, telus, dan mematuhi prinsip syariah di bawah pengawasan <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>." },
             { title: "Transaksi Digital Mudah", description: "Beli emas bila-bila masa dan di mana sahaja secara dalam talian dengan akses 24 jam." },
             { title: "Penghantaran Selamat & Dilindungi", description: "Emas dihantar terus ke alamat anda dengan perlindungan insurans penuh." },
             { title: "Simpanan Percuma", description: "Nikmati kemudahan simpanan emas tanpa kos melalui akaun POE." },
@@ -79,7 +79,7 @@ export const ms = {
                 title: "Patuh Syariah",
                 text: "Public Gold memenuhi piawaian syariah antarabangsa untuk transaksi emas fizikal.",
                 points: [
-                    "Dipantau oleh Amanie Advisors yang mempunyai lesen global.",
+                    "Dipantau oleh <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> yang mempunyai lesen global.",
                     "Kaedah pembayaran mematuhi syariah.",
                 ],
                 features: ["Pensijilan Rasmi", "Syariah", "Standard Global"],
@@ -199,7 +199,7 @@ export const ms = {
             {
                 category: "Akaun",
                 ask: "Bagaimana untuk mula?",
-                answer: "Daftar akaun, sahkan identiti, dan mula membeli emas.",
+                answer: "<a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Daftar akaun</a>, sahkan identiti, dan mula membeli emas.",
             },
         ],
     },

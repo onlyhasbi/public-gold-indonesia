@@ -24,7 +24,7 @@ const Description = ({ text, points }: { text: string; points: string[] }) => {
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
               <Check className="w-3 h-3 text-green-600" />
             </span>
-            <span className="text-sm">{item}</span>
+            <span className="text-sm" dangerouslySetInnerHTML={{ __html: item }} />
           </li>
         ))}
       </ul>
@@ -76,12 +76,12 @@ const Excellence = () => {
         />
 
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 md:overflow-visible md:pb-0 md:flex-wrap md:justify-center scrollbar-hide">
           {items.map(({ title }, index) => (
             <button
               key={`title-excellence-${index}`}
               onClick={() => setSelected(index)}
-              className={`px-5 py-3 rounded-full font-medium transition-all duration-300 ${selected === index
+              className={`whitespace-nowrap px-4 py-2.5 md:px-5 md:py-3 rounded-full text-sm font-medium transition-all duration-300 ${selected === index
                 ? "bg-red-600 text-white shadow-lg"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}

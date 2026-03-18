@@ -123,7 +123,7 @@ function Topbar() {
 
           <div className="flex items-center gap-4">
             {/* Language Selector (Desktop) */}
-            <div ref={langMenuRef} className="hidden md:relative md:block">
+            <div ref={langMenuRef} className="hidden lg:relative lg:block">
               <button
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
                 className={cn(
@@ -167,10 +167,10 @@ function Topbar() {
               )}
             </div>
 
-            {/* Desktop CTA */}
+            {/* CTA - Always visible */}
             <button
               onClick={() => window.open("https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1", "_blank", "noopener,noreferrer")}
-              className="hidden md:flex items-center justify-center bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
+              className="flex items-center justify-center bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
             >
               {t("nav.register")}
             </button>
@@ -206,32 +206,6 @@ function Topbar() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="mb-8">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Menu</h3>
-            <ul className="grid grid-cols-1 gap-2">
-              {dynamicNavigation.map((item, index) => {
-                const sectionId = item.href.replace("#", "");
-                const isActive = activeSection === sectionId;
-                return (
-                  <li key={`${index}-${item.translationKey}`}>
-                    <a
-                      href={item.href}
-                      onClick={(e) => { e.preventDefault(); scrollToSection(item.href); }}
-                      className={cn(
-                        "flex items-center justify-between p-4 rounded-2xl text-lg font-semibold transition-all",
-                        isActive
-                          ? "bg-red-50 text-red-600 shadow-sm shadow-red-100/50"
-                          : "text-slate-700 hover:bg-slate-50"
-                      )}
-                    >
-                      {item.label}
-                      <div className={cn("w-2 h-2 rounded-full bg-current", isActive ? "opacity-100" : "opacity-0")} />
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
 
           <div className="mb-8">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Language</h3>
@@ -253,15 +227,6 @@ function Topbar() {
               ))}
             </div>
           </div>
-        </div>
-
-        <div className="p-6 border-t border-slate-100">
-          <button
-            onClick={() => window.open("https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1", "_blank", "noopener,noreferrer")}
-            className="flex items-center justify-center w-full bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-100 active:scale-[0.98] transition-all cursor-pointer"
-          >
-            {t("nav.register")}
-          </button>
         </div>
       </div>
     </>

@@ -93,9 +93,7 @@ export default function Questions() {
         onClose={() => setSelectedQuestion(null)}
         title={selectedQuestion?.ask}
       >
-        <div className="text-slate-600 leading-relaxed">
-          {selectedQuestion?.answer}
-        </div>
+        <div className="text-slate-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: selectedQuestion?.answer ?? '' }} />
       </Modal>
     </BaseLayout>
   );

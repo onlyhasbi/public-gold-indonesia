@@ -24,7 +24,7 @@ export const id = {
             years: "Tahun Beroperasi",
         },
         features: [
-            { title: "Sesuai Prinsip Syariah", description: "Transaksi aman, transparan, dan sesuai prinsip syariah dengan pengawasan Amanie Advisors." },
+            { title: "Sesuai Prinsip Syariah", description: "Transaksi aman, transparan, dan sesuai prinsip syariah dengan pengawasan <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>." },
             { title: "Transaksi Digital Mudah", description: "Beli emas kapan saja dan di mana saja secara online dengan akses 24 jam." },
             { title: "Pengiriman Aman & Berasuransi", description: "Emas dikirim langsung ke alamat Anda dengan perlindungan asuransi penuh." },
             { title: "Penyimpanan Gratis", description: "Nikmati fasilitas penyimpanan emas tanpa biaya melalui akun POE." },
@@ -79,7 +79,7 @@ export const id = {
                 title: "Sesuai Prinsip Syariah",
                 text: "Public Gold memenuhi standar syariah internasional untuk transaksi emas fisik.",
                 points: [
-                    "Diawasi oleh Amanie Advisors yang memiliki lisensi global.",
+                    "Diawasi oleh <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> yang memiliki lisensi global.",
                     "Metode pembayaran sesuai prinsip syariah.",
                 ],
                 features: ["Sertifikasi Resmi", "Syariah", "Standar Global"],
@@ -236,7 +236,7 @@ export const id = {
         currency: "Rp ",
         poe: {
             title: "Pre-Order Emas (POE)",
-            subtitle: "Penyimpanan Digital",
+            subtitle: "Menabung Emas",
             desc: "Mulai dari Rp 300.000",
         },
         perGram: {
@@ -321,7 +321,7 @@ export const id = {
             {
                 category: "Akun",
                 ask: "Bagaimana cara memulai?",
-                answer: "Cukup daftar akun, lakukan verifikasi, lalu mulai pembelian atau menabung emas sesuai kebutuhan Anda.",
+                answer: "Cukup <a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>daftar akun</a>, lakukan verifikasi, lalu mulai pembelian atau menabung emas sesuai kebutuhan Anda.",
             },
         ],
     },
