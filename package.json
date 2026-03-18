@@ -3,11 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite --port 3000", 
-    "dev": "bun --bun run start",
-    "build": "vite build && tsc",
-    "serve": "vite preview",
-    "test": "vitest run"
+    "dev": "bunx --bun vite",
+    "build": "bunx --bun vite build",
+    "start": "bunx --bun vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
