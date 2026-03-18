@@ -1,8 +1,17 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import React from "react";
 import Topbar from "../layout/topbar";
 import { useTranslation } from "react-i18next";
+
+const TanStackRouterDevtools =
+  import.meta.env.PROD
+    ? () => null
+    : React.lazy(() =>
+        import("@tanstack/router-devtools").then((res) => ({
+          default: res.TanStackRouterDevtools,
+        }))
+      );
 
 const queryClient = new QueryClient();
 
@@ -19,7 +28,9 @@ function RootComponent() {
       <main key={i18n.language}>
         <Outlet />
       </main>
-      <TanStackRouterDevtools position="bottom-right" />
+      <React.Suspense>
+        <TanStackRouterDevtools position="bottom-right" />
+      </React.Suspense>
     </QueryClientProvider>
   );
 }
