@@ -100,13 +100,6 @@ export const MovingCards = ({
                 "{item.quote}"
               </span>
               <div className="relative z-20 mt-6 flex flex-row items-center gap-4">
-                {item.avatar && (
-                  <img
-                    src={item.avatar}
-                    alt={item.name}
-                    className="h-12 w-12 rounded-full object-cover border-2 border-amber-500 shadow-md"
-                  />
-                )}
                 <span className="flex flex-col gap-1">
                   <span className="text-sm leading-[1.6] font-semibold text-neutral-700">
                     {item.name}

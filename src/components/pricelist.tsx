@@ -114,8 +114,6 @@ function PriceList({ price }: Props) {
   const getPrice = (item: { title: string; weight: string; category: string }) => {
     const list = price?.[item.category as PriceListKey] || [];
 
-    console.log(price);
-
     const matchWithBoundary = (label: string, search: string) => {
       const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(?<![\\d.])${escaped}\\b`, "i").test(label);
