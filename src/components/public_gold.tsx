@@ -5,7 +5,7 @@ import {
   ShieldCheck,
   Smartphone,
   Truck,
-  PiggyBank,
+  Archive,
   TrendingDown,
   RefreshCw,
 } from "lucide-react";
@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 function PublicGold() {
   const { t } = useTranslation();
 
-  const iconMap = [ShieldCheck, Smartphone, Truck, PiggyBank, TrendingDown, RefreshCw];
+  const iconMap = [ShieldCheck, Smartphone, Truck, Archive, TrendingDown, RefreshCw];
 
   const featuresData = t("publicGold.features", { returnObjects: true });
   const features = (Array.isArray(featuresData) ? featuresData : []).map(
