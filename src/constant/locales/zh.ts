@@ -4,7 +4,7 @@ export const zh = {
         advantage: "优势",
         products: "产品",
         buy: "购买方式",
-        dealer: "经销商",
+        testimonials: "评价",
         start: "开始",
         contact: "联系我们",
         register: "注册账户",

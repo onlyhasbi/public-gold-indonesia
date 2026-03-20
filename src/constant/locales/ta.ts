@@ -4,7 +4,7 @@ export const ta = {
         advantage: "சிறப்பம்சங்கள்",
         products: "தயாரிப்புகள்",
         buy: "வாங்கும் முறை",
-        dealer: "டீலர்",
+        testimonials: "சான்றுகள்",
         start: "தொடங்கு",
         contact: "தொடர்பு கொள்ள",
         register: "கணக்கு பதிவு",

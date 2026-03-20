@@ -4,7 +4,7 @@ export const id = {
         advantage: "Keunggulan",
         products: "Produk",
         buy: "Cara Beli",
-        dealer: "Dealer",
+        testimonials: "Testimoni",
         start: "Mulai",
         contact: "Kontak",
         register: "Daftar Akun",

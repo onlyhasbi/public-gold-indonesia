@@ -16,7 +16,7 @@ export const navigation = [
     href: "#excellence",
   },
   {
-    translationKey: "nav.dealer",
+    translationKey: "nav.testimonials",
     href: "#testimonials",
   },
   {

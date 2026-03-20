@@ -4,7 +4,7 @@ export const ms = {
         advantage: "Kelebihan",
         products: "Produk",
         buy: "Cara Beli",
-        dealer: "Dealer",
+        testimonials: "Testimoni",
         start: "Mula",
         contact: "Hubungi",
         register: "Daftar Akaun",
