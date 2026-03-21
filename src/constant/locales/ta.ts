@@ -306,7 +306,7 @@ export const ta = {
             {
                 category: "கணக்கு",
                 ask: "எப்படி தொடங்குவது?",
-                answer: "<a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>கணக்கு பதிவு</a> செய்து, சரிபார்த்து, வாங்க ஆரம்பிக்கலாம்.",
+                answer: "<a href='/register' class='text-red-600 hover:underline font-medium'>கணக்கு பதிவு</a> செய்து, சரிபார்த்து, வாங்க ஆரம்பிக்கலாம்.",
             },
         ],
     },

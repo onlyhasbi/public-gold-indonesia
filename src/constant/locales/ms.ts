@@ -199,7 +199,7 @@ export const ms = {
             {
                 category: "Akaun",
                 ask: "Bagaimana untuk mula?",
-                answer: "<a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Daftar akaun</a>, sahkan identiti, dan mula membeli emas.",
+                answer: "<a href='/register' class='text-red-600 hover:underline font-medium'>Daftar akaun</a>, sahkan identiti, dan mula membeli emas.",
             },
         ],
     },

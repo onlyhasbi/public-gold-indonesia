@@ -1,10 +1,12 @@
 import { navigation } from "../constant/navigation";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, ChevronDown, Languages } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 
 function Topbar() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
@@ -68,9 +70,14 @@ function Topbar() {
 
   const scrollToSection = (href: string) => {
     const id = href.replace("#", "");
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+
+    if (window.location.pathname !== "/") {
+      navigate({ to: "/", hash: id });
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     }
     setIsOpen(false);
   };
@@ -87,13 +94,17 @@ function Topbar() {
       >
         <div className="flex items-center justify-between w-11/12 max-w-7xl mx-auto h-full">
           {/* Logo */}
-          <a
-            href="#about"
-            onClick={(e) => { e.preventDefault(); scrollToSection("#about"); }}
-            className="group flex items-center gap-2"
+          <Link
+            to="/"
+            onClick={() => {
+              if (window.location.pathname === "/") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="group flex items-center gap-2 cursor-pointer"
           >
             <img src={`./logo.svg`} alt="Public Gold" className="h-14 w-auto group-hover:scale-105 transition-transform" />
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center">
@@ -168,12 +179,12 @@ function Topbar() {
             </div>
 
             {/* CTA - Always visible */}
-            <button
-              onClick={() => window.open("https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1", "_blank", "noopener,noreferrer")}
-              className="flex items-center justify-center bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
+            <Link
+              to="/register"
+              className="flex items-center justify-center bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer no-underline"
             >
               {t("nav.register")}
-            </button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <button
@@ -195,7 +206,9 @@ function Topbar() {
       >
         <div className="flex items-center justify-between h-20 px-6 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <img src={`./logo.svg`} alt="Public Gold" className="h-8 w-auto" />
+            <Link to="/" onClick={() => setIsOpen(false)}>
+              <img src={`./logo.svg`} alt="Public Gold" className="h-8 w-auto" />
+            </Link>
           </div>
           <button
             onClick={() => setIsOpen(false)}

@@ -1,4 +1,5 @@
 import { CreditCard, Clock, Wallet, Check } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
@@ -96,14 +97,12 @@ export default function PaymentMethods() {
                                     {method.cta}
                                 </div>
                             ) : (
-                                <a
-                                    href="https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <Link
+                                    to="/register"
                                     className={`block w-full text-center py-3 rounded-xl bg-gradient-to-r ${method.gradient} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:opacity-90`}
                                 >
                                     {method.cta}
-                                </a>
+                                </Link>
                             )}
 
                             {/* Decorative element */}

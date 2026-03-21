@@ -316,7 +316,7 @@ export const zh = {
             {
                 category: "账户",
                 ask: "如何开始？",
-                answer: "<a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>注册账户</a>、完成验证，然后即可开始购买或储蓄黄金。",
+                answer: "<a href='/register' class='text-red-600 hover:underline font-medium'>注册账户</a>、完成验证，然后即可开始购买或储蓄黄金。",
             },
         ],
     },

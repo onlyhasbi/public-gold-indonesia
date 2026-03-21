@@ -321,7 +321,7 @@ export const id = {
             {
                 category: "Akun",
                 ask: "Bagaimana cara memulai?",
-                answer: "Cukup <a href='https://publicgold.co.id/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>daftar akun</a>, lakukan verifikasi, lalu mulai pembelian atau menabung emas sesuai kebutuhan Anda.",
+                answer: "Cukup <a href='/register' class='text-red-600 hover:underline font-medium'>daftar akun</a>, lakukan verifikasi, lalu mulai pembelian atau menabung emas sesuai kebutuhan Anda.",
             },
         ],
     },
