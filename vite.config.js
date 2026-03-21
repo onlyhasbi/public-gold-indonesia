@@ -18,6 +18,17 @@ export default defineConfig({
       }
     }
   },
+  preview: {
+    proxy: {
+      '/api-proxy': {
+        target: 'https://publicgold.co.id',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy/, ''),
+        // Important: match this with your deploy domain to accept cookies
+        cookieDomainRewrite: "mypublicgold.id"
+      }
+    }
+  },
   test: {
     globals: true,
     environment: "jsdom",
