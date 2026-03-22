@@ -307,7 +307,7 @@ function RegisterPage() {
                   type="tel"
                   required
                   placeholder="8123456789"
-                  className="flex-1 px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition-all duration-200"
+                  className="flex-1 min-w-0 w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition-all duration-200"
                 />
               </div>
             </div>
