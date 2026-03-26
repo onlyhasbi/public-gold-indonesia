@@ -5,7 +5,7 @@
       "destination": "https://publicgold.co.id/:match*"
     },
     {
-      "source": "/((?!assets|.*\\..*).*)",
+      "source": "/((?!api-proxy|assets|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]
