@@ -2,7 +2,7 @@ import type { GoldPrice, GoldPricesResult } from "../types";
 
 export const getGoldPrices = async (): Promise<GoldPricesResult | null> => {
     try {
-        const res = await fetch("https://cors-anywhere.com/https://publicgold.co.id/");
+        const res = await fetch("/api-proxy/");
         const htmlString = await res.text();
 
         const parser = new DOMParser();
