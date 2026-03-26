@@ -7,7 +7,7 @@ export const zh = {
         testimonials: "评价",
         start: "开始",
         contact: "联系我们",
-        register: "注册账户",
+        register: "注册",
     },
     hero: {
         greeting: "您好，我是",

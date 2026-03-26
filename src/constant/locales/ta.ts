@@ -7,7 +7,7 @@ export const ta = {
         testimonials: "சான்றுகள்",
         start: "தொடங்கு",
         contact: "தொடர்பு கொள்ள",
-        register: "கணக்கு பதிவு",
+        register: "பதிவு",
     },
     hero: {
         greeting: "வணக்கம், நான்",

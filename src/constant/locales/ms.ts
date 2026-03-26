@@ -7,7 +7,7 @@ export const ms = {
         testimonials: "Testimoni",
         start: "Mula",
         contact: "Hubungi",
-        register: "Daftar Akaun",
+        register: "Daftar",
     },
     hero: {
         greeting: "Hai, saya",

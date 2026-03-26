@@ -2,14 +2,28 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 
+type RegisterSearch = {
+  type?: "dewasa" | "anak";
+};
+
 export const Route = createFileRoute("/register")({
   component: RegisterPage,
+  validateSearch: (search: Record<string, unknown>): RegisterSearch => {
+    return {
+      type: search.type === "anak" ? "anak" : "dewasa",
+    };
+  },
 });
 
-const REGISTER_URL =
-  "/api-proxy/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1";
+const BASE_URL = "/api-proxy/index.php";
+
+const REGISTER_URLS = {
+  dewasa: `${BASE_URL}?route=account/register&intro_pgcode=PG01387609&is_dealer=1`,
+  anak: `${BASE_URL}?route=account/register&form_type=ja&intro_pgcode=PG01387609&is_dealer=1`,
+};
 
 function RegisterPage() {
+  const { type } = Route.useSearch();
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +33,10 @@ function RegisterPage() {
     const fetchRegistrationPage = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(REGISTER_URL);
+        setHtmlContent(null);
+
+        const url = REGISTER_URLS[type ?? "dewasa"];
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Gagal memuat halaman: ${response.status}`);
         }
@@ -49,6 +66,7 @@ function RegisterPage() {
           base.target = "_self";
           doc.head.prepend(base);
         }
+
         // Inject a back button before the "Pendaftaran Pelanggan" heading
         const headings = doc.querySelectorAll("h1, h2, h3, .panel-heading, [class*='heading']");
         headings.forEach((heading) => {
@@ -78,7 +96,7 @@ function RegisterPage() {
     };
 
     fetchRegistrationPage();
-  }, []);
+  }, [type]);
 
   // Show loading state
   if (isLoading) {

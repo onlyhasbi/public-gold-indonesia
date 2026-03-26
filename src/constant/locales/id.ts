@@ -7,7 +7,7 @@ export const id = {
         testimonials: "Testimoni",
         start: "Mulai",
         contact: "Kontak",
-        register: "Daftar Akun",
+        register: "Daftar",
     },
     hero: {
         greeting: "Halo, saya",

@@ -12,6 +12,7 @@ function Topbar() {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
+  const [registerMenuOpen, setRegisterMenuOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ function Topbar() {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
         setLangMenuOpen(false);
       }
+      setRegisterMenuOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -178,13 +180,37 @@ function Topbar() {
               )}
             </div>
 
-            {/* CTA - Always visible */}
-            <Link
-              to="/register"
-              className="flex items-center justify-center bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer no-underline"
-            >
-              {t("nav.register")}
-            </Link>
+            {/* CTA - Register Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setRegisterMenuOpen(!registerMenuOpen)}
+                className="flex items-center justify-center gap-1.5 bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
+              >
+                {t("nav.register")}
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", registerMenuOpen && "rotate-180")} />
+              </button>
+
+              {registerMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 z-50">
+                  <Link
+                    to="/register"
+                    search={{ type: "dewasa" }}
+                    onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
+                  >
+                    👤 Akun Dewasa
+                  </Link>
+                  <Link
+                    to="/register"
+                    search={{ type: "anak" }}
+                    onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
+                  >
+                    👶 Akun Anak
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Mobile Menu Button */}
             <button
