@@ -14,6 +14,7 @@ function Topbar() {
   const [activeSection, setActiveSection] = useState("about");
   const [registerMenuOpen, setRegisterMenuOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
+  const registerMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +42,9 @@ function Topbar() {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
         setLangMenuOpen(false);
       }
-      setRegisterMenuOpen(false);
+      if (registerMenuRef.current && !registerMenuRef.current.contains(event.target as Node)) {
+        setRegisterMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -181,7 +184,7 @@ function Topbar() {
             </div>
 
             {/* CTA - Register Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={registerMenuRef}>
               <button
                 onClick={() => setRegisterMenuOpen(!registerMenuOpen)}
                 className="flex items-center justify-center gap-1.5 bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
@@ -198,7 +201,7 @@ function Topbar() {
                     onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
                   >
-                    👤 Akun Dewasa
+                    <img src="./dewasa.png" alt="Dewasa" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Dewasa
                   </Link>
                   <Link
                     to="/register"
@@ -206,7 +209,7 @@ function Topbar() {
                     onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
                   >
-                    👶 Akun Anak
+                    <img src="./anak.png" alt="Anak" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Anak
                   </Link>
                 </div>
               )}
