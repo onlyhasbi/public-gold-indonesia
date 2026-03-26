@@ -201,7 +201,7 @@ function Topbar() {
                     onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
                   >
-                    <img src="./dewasa.png" alt="Dewasa" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Dewasa
+                    <img src="./dewasa.webp" alt="Dewasa" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Dewasa
                   </Link>
                   <Link
                     to="/register"
@@ -209,7 +209,7 @@ function Topbar() {
                     onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
                   >
-                    <img src="./anak.png" alt="Anak" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Anak
+                    <img src="./anak.webp" alt="Anak" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Anak
                   </Link>
                 </div>
               )}

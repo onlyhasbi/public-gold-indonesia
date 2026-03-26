@@ -30,7 +30,7 @@ export default function CallToAction() {
 
                                 {/* Photo */}
                                 <img
-                                    src="./me.jpg"
+                                    src="./me.webp"
                                     alt="Hasbi - Dealer Public Gold"
                                     className="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-white shadow-2xl"
                                 />

@@ -36,7 +36,7 @@ function PublicGold() {
         <div className="flex flex-col lg:flex-row gap-10 items-center mb-16">
           <div className="lg:w-1/2">
             <img
-              src="./public_gold_hero.png"
+              src="./public_gold_hero.webp"
               alt="Public Gold"
               className="rounded-2xl shadow-xl"
             />

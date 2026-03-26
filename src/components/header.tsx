@@ -25,13 +25,13 @@ function Header() {
       <div className="relative w-60 h-60 md:w-80 md:h-80 z-10 shrink-0">
         <img
           className="overflow-hidden rounded-full w-full h-full object-cover shadow-2xl shadow-slate-200"
-          src="./me.jpg"
+          src="./me.webp"
           alt="me-picture"
         />
         <span className="w-20 h-20 md:w-24 md:h-24 absolute bottom-0 right-0 z-[99]">
           <img
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-lg"
-            src="./5g.png"
+            src="./5g.webp"
             alt="team-picture"
           />
         </span>
