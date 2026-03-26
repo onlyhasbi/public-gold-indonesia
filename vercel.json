@@ -3,6 +3,10 @@
     {
       "source": "/api-proxy/:match*",
       "destination": "https://publicgold.co.id/:match*"
+    },
+    {
+      "source": "/((?!assets|.*\\..*).*)",
+      "destination": "/index.html"
     }
   ]
 }
