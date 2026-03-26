@@ -10,10 +10,10 @@ export const ms = {
         register: "Daftar",
     },
     hero: {
-        greeting: "Hai, saya",
-        role: "Dealer Premium Public Gold",
-        mission: "Ingin nilai wang anda kekal terpelihara pada masa depan? Kami membantu anda membina aset emas yang stabil, selamat, dan mudah dicairkan pada bila-bila masa.",
-        more: "Ketahui Lebih Lanjut",
+        eyebrow: "Dealer Rasmi Public Gold",
+        headline: "👋 Hai, Saya <span class='text-red-600'>Hasbi</span>",
+        mission: "Lindungi nilai wang anda daripada inflasi dengan emas fizikal yang stabil dan mudah dicairkan. Saya sedia membantu anda memulakan pelaburan emas dengan cara yang selamat, telus, dan sesuai keperluan anda di Public Gold.",
+        cta: "Konsultasi Percuma Sekarang",
     },
     publicGold: {
         title: "Tentang Public Gold",

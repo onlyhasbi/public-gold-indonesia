@@ -10,10 +10,10 @@ export const zh = {
         register: "注册",
     },
     hero: {
-        greeting: "您好，我是",
-        role: "Public Gold 高级经销商",
-        mission: "想让您的财富在未来保持价值吗？我们帮助您建立稳定、安全且随时可变现的黄金资产。",
-        more: "了解更多",
+        eyebrow: "Public Gold 官方经销商",
+        headline: "👋 您好，我是 <span class='text-red-600'>Hasbi</span>",
+        mission: "通过稳定且易于变现的实物黄金，保护您的财富免受通胀影响。我随时准备帮助您在 Public Gold 以安全、透明且符合您需求的方式开始黄金投资。",
+        cta: "立即免费咨询",
     },
     publicGold: {
         title: "关于 Public Gold",

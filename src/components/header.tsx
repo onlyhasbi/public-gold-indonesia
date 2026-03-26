@@ -1,14 +1,10 @@
 import { cn } from "../lib/utils";
-import { Button } from "./ui/moving_border";
 import { useTranslation } from "react-i18next";
 
 function Header() {
   const { t } = useTranslation();
 
-  const scrollToSection = (id: string) => {
-    const el = document.querySelector(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0">
@@ -23,8 +19,12 @@ function Header() {
       {/* Radial gradient for the container to give a faded look */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent)]"></div>
       <div className="relative w-60 h-60 md:w-80 md:h-80 z-10 shrink-0">
+        {/* Pulse ripple rings */}
+        <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-40 animate-[ripple_2s_ease-out_infinite]" />
+        <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-30 animate-[ripple_2s_ease-out_0.8s_infinite]" />
+        <style>{`@keyframes ripple { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.15); opacity: 0; } }`}</style>
         <img
-          className="overflow-hidden rounded-full w-full h-full object-cover shadow-2xl shadow-slate-200"
+          className="relative overflow-hidden rounded-full w-full h-full object-cover shadow-2xl shadow-slate-200"
           src="./me.webp"
           alt="me-picture"
         />
@@ -36,22 +36,26 @@ function Header() {
           />
         </span>
       </div>
-      <div className="max-w-[500px] space-y-5 z-10 text-center md:text-left">
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-2">
-          {t('hero.greeting')} <span className="text-red-500">Hasbi</span>
-        </h1>
-        <p className="text-xl md:text-2xl text-slate-600 mb-6">
-          {t('hero.role')}
-        </p>
-        <p className="text-slate-500 mb-8 max-w-lg leading-relaxed mx-auto md:mx-0">
-          {t('hero.mission')}
-        </p>
-        <Button
-          className="bg-white text-black border-neutral-200 shadow-sm"
-          onClick={() => scrollToSection("#advantage")}
+      <div className="max-w-[540px] space-y-5 z-10 text-center md:text-left">
+        <span className="inline-block px-4 py-1.5 bg-red-50 text-red-600 text-sm font-semibold rounded-full border border-red-100">
+          {t('hero.eyebrow')}
+        </span>
+        <h1 
+          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.2] tracking-tight text-slate-900"
+          dangerouslySetInnerHTML={{ __html: t('hero.headline') }}
+        />
+        <p 
+          className="text-base sm:text-lg text-slate-600 max-w-[520px] leading-relaxed mx-auto md:mx-0"
+          dangerouslySetInnerHTML={{ __html: t('hero.mission') }}
+        />
+        <a
+          href="https://wa.me/6283114340955"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-200 hover:shadow-red-300 active:scale-95 no-underline"
         >
-          {t('hero.more')}
-        </Button>
+          {t('hero.cta')}
+        </a>
       </div>
     </div>
   );

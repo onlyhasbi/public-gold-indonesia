@@ -10,10 +10,10 @@ export const id = {
         register: "Daftar",
     },
     hero: {
-        greeting: "Halo, saya",
-        role: "Dealer Resmi Public Gold Indonesia",
-        mission: "Ingin nilai uang Anda tetap terjaga di masa depan? Kami membantu Anda membangun aset emas yang stabil, aman, dan mudah dicairkan kapan saja.",
-        more: "Pelajari Selengkapnya",
+        eyebrow: "Dealer Resmi Public Gold",
+        headline: "👋 Halo, Saya <span class='text-red-600'>Hasbi</span>",
+        mission: "Lindungi nilai uang Anda dari inflasi dengan emas fisik yang stabil dan mudah dicairkan. Saya siap membantu Anda memulai investasi emas dengan cara yang aman, transparan, dan sesuai kebutuhan Anda.",
+        cta: "Konsultasi Sekarang",
     },
     publicGold: {
         title: "Tentang Public Gold",
