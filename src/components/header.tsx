@@ -49,7 +49,7 @@ function Header() {
           dangerouslySetInnerHTML={{ __html: t('hero.mission') }}
         />
         <a
-          href="https://wa.me/6283114340955"
+          href="https://wa.me/628979901844"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-200 hover:shadow-red-300 active:scale-95 no-underline"
