@@ -32,6 +32,7 @@ function useRegisterForm(isAnak: boolean) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmItems, setConfirmItems] = useState<FormSummaryItem[]>([]);
   const [phoneWarning, setPhoneWarning] = useState(false);
+  const [formKey, setFormKey] = useState(0);
 
   const formRef = useRef<HTMLFormElement>(null);
   const pendingFormData = useRef<string | null>(null);
@@ -114,7 +115,19 @@ function useRegisterForm(isAnak: boolean) {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: pendingFormData.current,
+        redirect: "manual",
       });
+
+      // Handle the redirect to success page (which usually throws CORS if followed blindly)
+      if (response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400)) {
+        setMessage("Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.");
+        setStatus("success");
+        setDob("");
+        setIsDobDisabled(false);
+        setPhoneWarning(false);
+        setFormKey(prev => prev + 1);
+        return;
+      }
 
       const htmlText = await response.text();
       const parser = new DOMParser();
@@ -134,9 +147,10 @@ function useRegisterForm(isAnak: boolean) {
 
       setMessage(successMessage);
       setStatus("success");
-      formRef.current?.reset();
       setDob("");
       setIsDobDisabled(false);
+      setPhoneWarning(false);
+      setFormKey(prev => prev + 1);
     } catch (error: any) {
       console.error("Error:", error);
       setMessage(error.message || "Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
@@ -161,6 +175,7 @@ function useRegisterForm(isAnak: boolean) {
     setShowConfirm,
     confirmItems,
     phoneWarning,
+    formKey,
     handleNikBlur,
     handlePhoneInput,
     handleSubmit,
@@ -328,7 +343,7 @@ function RegisterPage() {
               <AlertMessage type={form.status} message={form.message} onClose={() => form.setStatus("idle")} />
             )}
 
-            <form ref={form.formRef} onSubmit={form.handleSubmit} className="space-y-5">
+            <form key={form.formKey} ref={form.formRef} onSubmit={form.handleSubmit} className="space-y-5">
               <input type="hidden" name="newsletter" value="1" />
 
               <InputField
