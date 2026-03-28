@@ -73,7 +73,7 @@ function RegisterPage() {
 
   const activeBranchOptions = isIndonesia ? branchOptionsId : branchOptionsMy;
   const branchOptions = [
-    { value: "", label: "Pilih Cabang", disabled: true },
+    { value: "", label: isIndonesia ? "Pilih Cabang" : "Select Branch", disabled: true },
     ...activeBranchOptions
   ];
 
