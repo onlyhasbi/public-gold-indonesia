@@ -3,6 +3,7 @@ import { createRootRoute, Outlet, useLocation } from "@tanstack/react-router";
 import React from "react";
 import Topbar from "../layout/topbar";
 import { useTranslation } from "react-i18next";
+import { useIPLanguage } from "../hooks/useIPLanguage";
 
 const TanStackRouterDevtools =
   import.meta.env.PROD
@@ -20,6 +21,7 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  useIPLanguage();
   const { i18n } = useTranslation();
   const location = useLocation();
   const isStandalone = location.pathname.startsWith("/register");

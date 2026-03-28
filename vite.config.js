@@ -9,6 +9,12 @@ export default defineConfig({
   plugins: [tanstackRouter({ autoCodeSplitting: true }), viteReact(), tailwindcss()],
   server: {
     proxy: {
+      '/api-proxy-my': {
+        target: 'https://publicgold.com.my',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy-my/, ''),
+        cookieDomainRewrite: "localhost"
+      },
       '/api-proxy': {
         target: 'https://publicgold.co.id',
         changeOrigin: true,
@@ -20,6 +26,12 @@ export default defineConfig({
   },
   preview: {
     proxy: {
+      '/api-proxy-my': {
+        target: 'https://publicgold.com.my',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy-my/, ''),
+        cookieDomainRewrite: "mypublicgold.id"
+      },
       '/api-proxy': {
         target: 'https://publicgold.co.id',
         changeOrigin: true,

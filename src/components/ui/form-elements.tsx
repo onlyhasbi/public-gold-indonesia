@@ -1,0 +1,60 @@
+import { type ReactNode } from "react";
+import { AlertCircle, CheckCircle, X } from "lucide-react";
+import { cn } from "../../lib/utils";
+
+export const inputClass = "w-full px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition-all duration-200";
+export const labelClass = "block text-sm font-semibold text-slate-700 mb-2";
+
+export function InputField({ label, id, required = false, description, error, children, className, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string | ReactNode; description?: ReactNode; error?: string | false; }) {
+  return (
+    <div className="relative pb-0.5">
+      <label htmlFor={id} className={labelClass}>
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      {children || <input id={id} name={id} required={required} className={cn(inputClass, error && "border-red-500 focus:ring-red-500/30 focus:border-red-500", className)} {...props} />}
+      {error ? (
+        <div className="absolute top-full left-1 mt-1 text-[11px] font-medium text-red-500">{error}</div>
+      ) : description ? (
+        <div className="absolute top-full left-1 mt-1 text-[11px] font-medium text-slate-400/90">{description}</div>
+      ) : null}
+    </div>
+  );
+}
+
+export function SelectField({ label, id, required = false, description, error, options, className, ...props }: React.SelectHTMLAttributes<HTMLSelectElement> & { label: string | ReactNode; description?: ReactNode; error?: string | false; options: { value: string; label: string; disabled?: boolean }[] }) {
+  return (
+    <div className="relative pb-0.5">
+      <label htmlFor={id} className={labelClass}>
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <select id={id} name={id} required={required} className={cn(inputClass, "appearance-none cursor-pointer", error && "border-red-500 focus:ring-red-500/30 focus:border-red-500", className)} {...props}>
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value} disabled={opt.disabled}>{opt.label}</option>
+        ))}
+      </select>
+      {error ? (
+        <p className="absolute top-full left-1 mt-1 text-[11px] font-medium text-red-500">{error}</p>
+      ) : description ? (
+        <p className="absolute top-full left-1 mt-1 text-[11px] font-medium text-slate-400/90">{description}</p>
+      ) : null}
+    </div>
+  );
+}
+
+export function AlertMessage({ type, message, onClose }: { type: "success" | "error"; message: string; onClose: () => void }) {
+  const isSuccess = type === "success";
+  const colors = isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-red-50 border-red-200 text-red-700";
+  const Icon = isSuccess ? CheckCircle : AlertCircle;
+
+  return (
+    <div className={`mb-4 flex items-start justify-between gap-3 border rounded-xl px-5 py-4 animate-in fade-in slide-in-from-top-2 ${colors}`}>
+      <div className="flex gap-3 items-start">
+        <Icon className="w-5 h-5 shrink-0 mt-0.5" />
+        <p className="text-sm font-medium leading-relaxed">{message}</p>
+      </div>
+      <button onClick={onClose} className={`p-1 rounded-lg transition-colors shrink-0 ${isSuccess ? "hover:bg-emerald-100" : "hover:bg-red-100"}`} type="button" aria-label="Tutup">
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
