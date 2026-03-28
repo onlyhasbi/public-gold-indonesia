@@ -24,7 +24,7 @@ function RootComponent() {
   useIPLanguage();
   const { i18n } = useTranslation();
   const location = useLocation();
-  const isStandalone = location.pathname.startsWith("/register");
+  const isStandalone = location.pathname.startsWith("/register") || location.pathname.startsWith("/petunjuk");
 
   return (
     <QueryClientProvider client={queryClient}>

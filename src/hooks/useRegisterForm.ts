@@ -21,6 +21,7 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   const [phoneWarning, setPhoneWarning] = useState(false);
   const [formKey, setFormKey] = useState(0);
   const [showAgeSwitch, setShowAgeSwitch] = useState<"anak" | "dewasa" | null>(null);
+  const [showNextStepModal, setShowNextStepModal] = useState(false);
 
   const pendingFormData = useRef<string | null>(null);
   const pendingEndpoint = useRef<string | null>(null);
@@ -203,6 +204,8 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     formKey,
     showAgeSwitch,
     setShowAgeSwitch,
+    showNextStepModal,
+    setShowNextStepModal,
     handleNikBlur,
     handlePhoneInput,
     confirmSubmit,

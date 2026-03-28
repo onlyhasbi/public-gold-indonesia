@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Send, ChevronDown, ChevronUp, AlertCircle, MessageCircle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
@@ -10,6 +10,7 @@ import { labelsID, labelsMY } from "../lib/register-text";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { InputField, SelectField, AlertMessage, inputClass } from "../components/ui/form-elements";
 import { ConfirmationModal, AgeSwitchModal } from "../components/RegisterModals";
+import { NextStepModal } from "../components/NextStepModal";
 
 type RegisterSearch = {
   type?: "dewasa" | "anak";
@@ -61,10 +62,29 @@ function RegisterPage() {
     formKey,
     showAgeSwitch,
     setShowAgeSwitch,
+    showNextStepModal,
+    setShowNextStepModal,
     handleNikBlur,
     handlePhoneInput,
     confirmSubmit,
   } = useRegisterForm(isAnak, countryMode);
+
+  const formContainerRef = useRef<HTMLDivElement>(null);
+
+  // Post-success flow: scroll to top, wait 2s, show modal
+  useEffect(() => {
+    if (status === "success") {
+      // Scroll to top of form container
+      formContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      const timer = setTimeout(() => {
+        setShowNextStepModal(true);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setShowNextStepModal]);
 
   const idTypeOptions = [
     { value: "newic", label: isIndonesia ? "KTP" : "NEW IC" },
@@ -78,7 +98,7 @@ function RegisterPage() {
   ];
 
   return (
-    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-3 sm:p-6 md:p-8">
+    <div ref={formContainerRef} className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-3 sm:p-6 md:p-8">
 
       <div className="w-full max-w-[1320px] bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col lg:flex-row overflow-hidden border border-white/50">
 
@@ -372,27 +392,45 @@ function RegisterPage() {
         </div>
 
         {/* Right Column: Hero Image Banner */}
-        <div className="hidden lg:block lg:w-1/2 relative bg-[#0c0c0e] overflow-hidden border-l border-slate-100">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-red-600/10 blur-[100px] pointer-events-none z-0" />
-          <img src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg" alt="Investasi Emas Public Gold" className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80" />
+        <div className="hidden lg:block lg:w-1/2 relative bg-[#0c0c0e] overflow-hidden border-l border-slate-100 group">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-red-600/10 blur-[100px] pointer-events-none z-0 group-hover:bg-red-600/20 transition-all duration-1000" />
+          <img src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg" alt="Investasi Emas Public Gold" className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80 group-hover:scale-105 group-hover:opacity-70 transition-all duration-1000" />
+
+          {/* Centered Logo */}
+          <div className="absolute top-[15%] inset-x-0 z-[15] flex justify-center pointer-events-none">
+            <img src="./logo.svg" alt="Public Gold Logo" className="w-64 sm:w-80 md:w-96 h-auto drop-shadow-2xl transition-transform duration-1000 group-hover:scale-105" />
+          </div>
 
           {/* Floating Help CTA */}
           <div className="absolute bottom-10 right-10 z-20">
-            <a href="https://wa.me/628979901844" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 p-4 pr-6 rounded-2xl shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-              <div className="w-12 h-12 rounded-full bg-[#25D366]/20 flex items-center justify-center border border-[#25D366]/30 group-hover:bg-[#25D366]/40 group-hover:scale-110 transition-all duration-300">
-                <MessageCircle className="w-6 h-6 text-[#25D366]" />
+            <a href="https://wa.me/628979901844" target="_blank" rel="noopener noreferrer" className="group relative flex items-center gap-4 bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/10 hover:border-white/20 p-4 pr-7 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(37,211,102,0.2)] cursor-pointer overflow-hidden">
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] flex items-center justify-center shadow-lg shadow-[#25D366]/30 group-hover:shadow-[#25D366]/60 group-hover:scale-110 transition-all duration-500 ease-out">
+                  <MessageCircle className="w-6 h-6 text-white" />
+                </div>
+                {/* Online Indicator */}
+                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#25D366] border-2 border-[#121212]"></span>
+                </span>
               </div>
-              <div className="text-left">
-                <p className="text-white/70 text-sm font-medium mb-0.5">Perlu bantuan?</p>
-                <p className="text-white font-bold text-lg leading-none">Hubungi Hasbi</p>
+              
+              <div className="text-left relative z-10 transition-transform duration-300 group-hover:translate-x-1 flex flex-col justify-center">
+                <p className="text-[#25D366] text-xs font-medium mb-0.5 drop-shadow-sm">Perlu bantuan?</p>
+                <p className="text-white font-bold text-base leading-none drop-shadow-md">Konsultasi Sekarang</p>
               </div>
             </a>
           </div>
         </div>
 
         {/* Mobile-only Floating WA Button */}
-        <a href="https://wa.me/628979901844" target="_blank" rel="noopener noreferrer" className="lg:hidden fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-3.5 rounded-full shadow-lg shadow-[#25D366]/30 hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+        <a href="https://wa.me/628979901844" target="_blank" rel="noopener noreferrer" className="lg:hidden group fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] text-white shadow-[0_8px_32px_rgba(37,211,102,0.4)] hover:shadow-[0_16px_48px_rgba(37,211,102,0.6)] hover:-translate-y-1.5 hover:scale-105 transition-all duration-500 active:scale-95">
           <MessageCircle className="w-6 h-6" />
+          {/* Online Indicator */}
+          <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-200 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-green-400 border-2 border-white"></span>
+          </span>
         </a>
 
       </div>
@@ -416,6 +454,10 @@ function RegisterPage() {
           }}
           onCancel={() => setShowAgeSwitch(null)}
         />
+      )}
+
+      {showNextStepModal && (
+        <NextStepModal onClose={() => setShowNextStepModal(false)} />
       )}
     </div>
   );
