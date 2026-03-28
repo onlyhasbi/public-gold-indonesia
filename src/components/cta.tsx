@@ -5,9 +5,7 @@ import { useTranslation } from "react-i18next";
 export default function CallToAction() {
     const { t } = useTranslation();
 
-    // Fallback for badges array in case it's not array or mapped correctly
-    const badgesResult = t('cta.badges', { returnObjects: true });
-    const badges = Array.isArray(badgesResult) ? badgesResult : [];
+
 
     return (
         <BaseLayout className="flex-col py-20">
@@ -23,22 +21,19 @@ export default function CallToAction() {
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
                         {/* Photo Section */}
                         <div className="lg:w-1/3 flex justify-center">
-                            <div className="relative">
-                                {/* Decorative ring */}
-                                <div className="absolute -inset-3 bg-white/20 rounded-full animate-pulse" />
-                                <div className="absolute -inset-6 border-2 border-white/30 rounded-full" />
-
+                            <div className="relative w-40 h-40 md:w-48 md:h-48">
+                                {/* Pulse ripple rings */}
+                                <span className="absolute inset-0 rounded-full border-[3px] border-white/60 opacity-40 animate-[ripple_2s_ease-out_infinite]" />
+                                <span className="absolute inset-0 rounded-full border-[3px] border-white/40 opacity-30 animate-[ripple_2s_ease-out_0.8s_infinite]" />
+                                <style>{`@keyframes ripple { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.25); opacity: 0; } }`}</style>
+                                
                                 {/* Photo */}
                                 <img
                                     src="./me.webp"
                                     alt="Hasbi - Dealer Public Gold"
-                                    className="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-white shadow-2xl"
+                                    className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
                                 />
 
-                                {/* Badge */}
-                                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-red-600 text-xs font-bold px-4 py-1 rounded-full shadow-lg whitespace-nowrap">
-                                    {t('cta.dealerBadge')}
-                                </div>
                             </div>
                         </div>
 
@@ -57,7 +52,7 @@ export default function CallToAction() {
                                     href="https://mypublicgold.com/app/link/hasbi/whatsapp/id"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 bg-white text-red-600 font-bold px-8 py-4 rounded-full hover:bg-red-50 transition-all duration-300 hover:scale-105 shadow-xl"
+                                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 bg-white text-red-600 hover:bg-slate-50"
                                 >
                                     <MessageCircle className="w-5 h-5" />
                                     {t('cta.whatsapp')}
@@ -65,26 +60,13 @@ export default function CallToAction() {
                                 </a>
                             </div>
 
-                            {/* Trust badges */}
-                            <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-6 text-white/80 text-sm">
-                                {badges.map((badge, index) => (
-                                    <div key={index} className="flex items-center gap-2">
-                                        <span className="w-2 h-2 bg-green-400 rounded-full" />
-                                        {badge}
-                                    </div>
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer info */}
                 <div className="mt-12 text-center text-slate-500 text-sm">
-                    <p>© 2024 Public Gold Indonesia. All rights reserved.</p>
-                    <p className="mt-2">
-                        {t('cta.footer')} -{" "}
-                        <span className="font-medium text-slate-700">A. Muh. Hasbi Haerurrijal</span>
-                    </p>
+                    <p>&copy; {new Date().getFullYear()} 5G Associates Indonesia. All rights reserved.</p>
                 </div>
             </div>
         </BaseLayout>

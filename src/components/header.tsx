@@ -1,5 +1,6 @@
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
+import { MessageCircle } from "lucide-react";
 
 function Header() {
   const { t } = useTranslation();
@@ -48,14 +49,17 @@ function Header() {
           className="text-base sm:text-lg text-slate-600 max-w-[520px] leading-relaxed mx-auto md:mx-0"
           dangerouslySetInnerHTML={{ __html: t('hero.mission') }}
         />
-        <a
-          href="https://wa.me/628979901844"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-200 hover:shadow-red-300 active:scale-95 no-underline"
-        >
-          {t('hero.cta')}
-        </a>
+        <div className="pt-2 sm:pt-4">
+          <a
+            href="https://wa.me/628979901844"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-lg shadow-red-200/50 hover:shadow-xl hover:shadow-red-300/50 hover:-translate-y-1 active:scale-95 bg-red-600 text-white hover:bg-red-700 no-underline"
+          >
+            <MessageCircle className="w-5 h-5" />
+            {t('hero.cta')}
+          </a>
+        </div>
       </div>
     </div>
   );
