@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, PiggyBank, ChevronRight, MessageCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, Wallet, ChevronRight, MessageCircle } from "lucide-react";
 import { PhoneMockup } from "../components/ui/PhoneMockup";
 import { useTranslation } from "react-i18next";
 
@@ -182,7 +182,7 @@ function PetunjukPage() {
           ]}
         />
       ),
-      icon: <PiggyBank className="w-5 h-5" />,
+      icon: <Wallet className="w-5 h-5" />,
       color: "text-emerald-600",
       bgColor: "bg-emerald-50",
       borderColor: "border-emerald-200",
@@ -224,16 +224,28 @@ function PetunjukPage() {
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" /> Kembali
-          </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex-1 flex justify-start">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Kembali</span>
+            </Link>
+          </div>
+          <div className="flex-none flex justify-center">
             <img src="./logo.svg" alt={appName} className="h-6 sm:h-7" />
           </div>
-          <div className="w-20" /> {/* Spacer for centering */}
+          <div className="flex-1 flex justify-end">
+            <a
+              href="https://wa.me/628979901844"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="lg:hidden inline-flex items-center justify-center gap-1.5 bg-[#25D366]/10 text-[#1da851] px-3 py-1.5 rounded-full hover:bg-[#25D366]/20 transition-all active:scale-95"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="text-xs font-bold">Bantuan</span>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -509,19 +521,6 @@ function PetunjukPage() {
         </div>
       </div>
 
-      {/* Mobile WhatsApp FAB */}
-      <a
-        href="https://wa.me/628979901844"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="lg:hidden group fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] text-white shadow-[0_8px_32px_rgba(37,211,102,0.4)] hover:shadow-[0_16px_48px_rgba(37,211,102,0.6)] hover:-translate-y-1.5 hover:scale-105 transition-all duration-500 active:scale-95"
-      >
-        <MessageCircle className="w-6 h-6" />
-        <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-200 opacity-75" />
-          <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-green-400 border-2 border-white" />
-        </span>
-      </a>
     </div>
   );
 }
