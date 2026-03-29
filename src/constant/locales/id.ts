@@ -17,12 +17,16 @@ export const id = {
     },
     publicGold: {
         title: "Tentang Public Gold",
-        desc: "Platform jual beli emas fisik terpercaya, terintegrasi, dan bersertifikat internasional dengan jaminan buyback yang kompetitif.",
+        desc: "Dipercaya lebih dari 2,4 juta pelanggan di Asia Tenggara, platform jual beli emas fisik dengan sistem buyback transparan dan harga kompetitif, serta telah mendapatkan sertifikasi patuh syariah dari Amanie Advisors.",
         stats: {
             customers: "Juta Nasabah Aktif",
             branches: "Kantor Cabang",
             years: "Tahun Beroperasi",
         },
+        statsLabels: {
+            country: "Negara",
+        },
+        whyTitle: "Mengapa Memilih Public Gold?",
         features: [
             { title: "Sesuai Prinsip Syariah", description: "Transaksi aman, transparan, dan sesuai prinsip syariah dengan pengawasan <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>." },
             { title: "Transaksi Digital Mudah", description: "Beli emas kapan saja dan di mana saja secara online dengan akses 24 jam." },
@@ -31,22 +35,18 @@ export const id = {
             { title: "Harga Kompetitif", description: "Dapatkan harga langsung dari produsen dengan sistem yang transparan dan kompetitif." },
             { title: "Jaminan Buyback", description: "Jual kembali emas dengan mudah, bahkan dalam kondisi tertentu tetap dapat diterima." },
         ],
-        whyTitle: "Mengapa Memilih Public Gold?",
-        statsLabels: {
-            country: "Negara",
-        },
     },
     benefit: {
         badge: "Kenapa Emas?",
-        title: "Keunggulan Menyimpan Emas",
+        title: "6 Keunggulan Menyimpan Emas",
         desc: "Emas merupakan pilihan untuk menjaga nilai kekayaan dalam jangka panjang, terutama di tengah perubahan ekonomi.",
         items: [
-            { title: "Lindung Nilai dari Inflasi", desc: "Membantu menjaga nilai aset Anda dari penurunan daya beli." },
-            { title: "Likuid & Mudah Dicairkan", desc: "Dapat dijual kapan saja saat Anda membutuhkan dana." },
-            { title: "Perencanaan Masa Depan", desc: "Cocok untuk pendidikan, haji, umrah, hingga dana pensiun." },
-            { title: "Aset Fisik Nyata", desc: "Kepemilikan langsung atas aset berharga dalam bentuk fisik." },
-            { title: "Sesuai Syariah", desc: "Transaksi transparan dan mengikuti prinsip syariah." },
-            { title: "Warisan Bernilai", desc: "Mudah diwariskan dengan nilai yang cenderung terjaga." },
+            { title: "Lindungi Nilai dari Inflasi", desc: "Melindungi nilai uang Anda dari inflasi yang terus menggerus daya beli." },
+            { title: "Likuid & Mudah Dicairkan", desc: "Mudah dijual kapan saja saat Anda membutuhkan dana cepat." },
+            { title: "Perencanaan Masa Depan", desc: "Solusi tepat untuk mempersiapkan pernikahan, pendidikan, haji, umrah, hingga dana pensiun." },
+            { title: "Aset Fisik Nyata", desc: "Anda memiliki emas fisik secara langsung, bukan sekadar angka digital." },
+            { title: "Sesuai Syariah", desc: "Transaksi transparan dan sesuai prinsip syariah." },
+            { title: "Warisan Bernilai", desc: "Mudah diwariskan ke generasi selanjutnya dengan nilai yang tetap terjaga." },
         ],
     },
     products: {
@@ -116,41 +116,41 @@ export const id = {
     },
     paymentMethods: {
         badge: "Metode Pembayaran",
-        title: "Pilihan Cara Membeli Emas",
-        subtitle: "Pilih metode yang sesuai dengan kebutuhan dan kenyamanan Anda.",
+        title: "Pilih Cara Terbaik Memulai Emas Anda",
+        subtitle: "Sesuaikan dengan tujuan dan kemampuan finansial Anda, mulai dari menabung hingga pembelian langsung.",
         items: [
-            {
-                title: "Pre-Order Emas (POE)",
-                subtitle: "Tabungan Emas",
-                description: "Beli emas dan simpan dalam akun POE.\nFleksibel dan dapat dicetak menjadi emas fisik.",
-                features: [
-                    "Mulai dari Rp 300.000",
-                    "Penyimpanan tanpa biaya",
-                    "Dapat dicetak menjadi emas fisik",
-                    "Fleksibel",
-                ],
-                cta: "Mulai Menabung",
-            },
             {
                 title: "Pembayaran Tunai",
                 subtitle: "Pembelian Langsung",
-                description: "Emas langsung menjadi milik Anda dan dapat dikirim ke alamat tujuan.",
+                description: "Miliki emas fisik secara langsung dengan harga mengikuti pasar. Kirim aman ke alamat Anda atau ambil di cabang terdekat.",
                 features: [
-                    "Pengiriman ke alamat",
+                    "Pengiriman atau ambil di cabang",
                     "Perlindungan asuransi",
                     "Produk bersertifikat",
                     "Harga mengikuti pasar",
                 ],
-                cta: "Beli Sekarang",
+                cta: "Beli Emas Sekarang",
+            },
+            {
+                title: "Pre-Order Emas (POE)",
+                subtitle: "Tabungan Emas",
+                description: "Mulai menabung emas secara bertahap, fleksibel sesuai kemampuan, dan dapat dicetak menjadi emas fisik kapan saja.",
+                features: [
+                    "Mulai dari Rp 300.000",
+                    "Tanpa biaya penyimpanan",
+                    "Bisa dicetak menjadi emas fisik",
+                    "Fleksibel sesuai kebutuhan",
+                ],
+                cta: "Mulai Menabung Emas",
             },
             {
                 title: "Pembayaran Bertahap (EPP)",
                 subtitle: "Cicilan Syariah",
-                description: "Pembelian emas dengan pembayaran bertahap sesuai prinsip syariah.",
+                description: "Miliki emas dengan cicilan ringan sesuai prinsip syariah, tanpa bunga dan tetap aman.",
                 features: [
                     "Tanpa bunga",
                     "Sesuai prinsip syariah",
-                    "Pilihan tenor",
+                    "Pilihan tenor fleksibel",
                     "Penyimpanan aman",
                 ],
                 cta: "Mulai Cicilan",

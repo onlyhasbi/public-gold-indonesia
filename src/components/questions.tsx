@@ -57,8 +57,8 @@ export default function Questions() {
   return (
     <BaseLayout className="flex-col justify-between py-16">
       <SectionHeader
-        badge={t("faq.badge")}
         title={t("faq.title")}
+        highlight="Pertanyaan"
         subtitle={t("faq.desc")}
       />
 

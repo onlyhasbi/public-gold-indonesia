@@ -1,23 +1,23 @@
+import React from 'react';
+import GradientHighlight from './gradient_highlight';
+
 type Props = {
-  badge: string;
   title: string;
+  highlight?: string;
   subtitle?: string;
   children?: React.ReactNode;
 };
 
-export default function SectionHeader({ badge, title, subtitle, children }: Props) {
+export default function SectionHeader({ title, highlight, subtitle, children }: Props) {
   return (
     <div className="text-center mb-10">
-      <span className="inline-block px-4 py-2 rounded-full bg-red-100 text-red-700 text-sm font-medium mb-4">
-        {badge}
-      </span>
       {children ?? (
         <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-          {title}
+          <GradientHighlight text={title} highlight={highlight || ''} />
         </h2>
       )}
       {subtitle && (
-        <p className="text-slate-500 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
           {subtitle}
         </p>
       )}

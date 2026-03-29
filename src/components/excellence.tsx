@@ -70,8 +70,8 @@ const Excellence = () => {
     <BaseLayout className="flex-col">
       <div className="w-full">
         <SectionHeader
-          badge={t("excellence.badge")}
           title={t("excellence.title")}
+          highlight="Bersama Kami"
           subtitle={t("excellence.subtitle")}
         />
 

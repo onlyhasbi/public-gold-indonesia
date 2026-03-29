@@ -1,21 +1,26 @@
-import { CreditCard, Clock, Wallet, Check } from "lucide-react";
+import { CreditCard, Clock, Wallet, Check, X, Star, Lock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 const DISABLED_INDEXES = [2]; // EPP card (index 2) is temporarily disabled
 
 export default function PaymentMethods() {
     const { t } = useTranslation();
+    const [isPrintCostModalOpen, setIsPrintCostModalOpen] = useState(false);
 
     const styleConfigs = [
-        { icon: Wallet, color: "red", gradient: "from-red-400 to-rose-500", bgGradient: "from-red-50 to-rose-50", border: "border-red-200", iconBg: "bg-red-500" },
-        { icon: CreditCard, color: "emerald", gradient: "from-emerald-400 to-teal-500", bgGradient: "from-emerald-50 to-teal-50", border: "border-emerald-200", iconBg: "bg-emerald-500" },
-        { icon: Clock, color: "blue", gradient: "from-blue-400 to-indigo-500", bgGradient: "from-blue-50 to-indigo-50", border: "border-blue-200", iconBg: "bg-blue-500" },
+        // 0: Tunai - Normal
+        { icon: CreditCard, textTheme: "light", titleColor: "text-slate-800", descColor: "text-slate-600", bgGradient: "bg-white", border: "border-slate-200" },
+        // 1: POE - Primary Highlight
+        { icon: Wallet, textTheme: "dark", titleColor: "text-white", descColor: "text-red-100", bgGradient: "bg-gradient-to-br from-red-600 to-red-700", border: "border-red-500" },
+        // 2: EPP - Disabled
+        { icon: Clock, textTheme: "light", titleColor: "text-slate-800", descColor: "text-slate-600", bgGradient: "bg-slate-50", border: "border-slate-200" },
     ];
 
-    const defaultStyle = { icon: Wallet, color: "slate", gradient: "from-slate-400 to-slate-500", bgGradient: "from-slate-50 to-slate-100", border: "border-slate-200", iconBg: "bg-slate-500" };
+    const defaultStyle = styleConfigs[0];
 
     const itemsData = t("paymentMethods.items", { returnObjects: true });
     const paymentMethods = (Array.isArray(itemsData) ? itemsData : []).map(
@@ -23,12 +28,7 @@ export default function PaymentMethods() {
             const style = styleConfigs[index] || defaultStyle;
             return {
                 ...method,
-                icon: style.icon,
-                color: style.color,
-                gradient: style.gradient,
-                bgGradient: style.bgGradient,
-                borderColor: style.border,
-                iconBg: style.iconBg,
+                style,
                 disabled: DISABLED_INDEXES.includes(index),
             };
         }
@@ -37,54 +37,68 @@ export default function PaymentMethods() {
     return (
         <BaseLayout className="flex-col pt-4 pb-16">
             <SectionHeader
-                badge={t("paymentMethods.badge")}
                 title={t("paymentMethods.title")}
+                highlight="Cara Membeli"
                 subtitle={t("paymentMethods.subtitle")}
             />
 
             {/* Cards */}
-            <div className="w-full grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="w-full grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch mt-8 md:mt-12">
                 {paymentMethods.map((method, index) => {
-                    const Icon = method.icon;
+                    const style = method.style;
+                    const Icon = style.icon;
                     const isDisabled = method.disabled;
                     return (
-                        <div
-                            key={index}
-                            className={`relative group rounded-2xl bg-gradient-to-br ${method.bgGradient} border ${method.borderColor} p-6 transition-all duration-300 flex flex-col ${isDisabled ? "opacity-60 grayscale pointer-events-none select-none" : "hover:shadow-xl hover:-translate-y-2"}`}
-                        >
-                            {/* Header: Icon + Title */}
-                            <div className="flex items-start gap-4 mb-4">
-                                <div
-                                    className={`w-12 h-12 rounded-xl ${method.iconBg} flex items-center justify-center shadow-lg ${isDisabled ? "" : "group-hover:scale-110"} transition-transform duration-300 flex-shrink-0`}
-                                >
-                                    <Icon className="w-6 h-6 text-white" />
+                        <div key={index} className="flex flex-col h-full relative">
+                            <div
+                                className={`relative group rounded-3xl ${style.bgGradient} border-[1.5px] ${style.border} p-6 md:p-8 transition-all duration-500 flex flex-col flex-1 ${isDisabled ? "opacity-60 grayscale pointer-events-none select-none" : "hover:shadow-xl cursor-default"} ${style.textTheme === 'dark' ? 'lg:-translate-y-4 shadow-xl shadow-red-500/10' : ''}`}
+                            >
+                            {/* Disabled Badge */}
+                            {isDisabled && (
+                                <div className="absolute top-6 right-6 bg-slate-50 text-slate-500 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 border border-dashed border-slate-300 shadow-sm">
+                                    <Lock className="w-3 h-3" />
+                                    Nonaktif
                                 </div>
-                                <div className="text-left">
-                                    <h3 className="text-lg font-bold text-slate-800 leading-tight">
-                                        {method.title}
-                                    </h3>
-                                    <p className={`text-sm font-medium text-${method.color}-600`}>
-                                        {method.subtitle}
-                                    </p>
+                            )}
+
+                            {/* Preferred Badge for Tunai */}
+                            {!isDisabled && style.textTheme === 'dark' && (
+                                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-amber-500 text-yellow-950 text-[10px] lg:text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-yellow-500/30 whitespace-nowrap z-20 flex items-center gap-1.5 border border-yellow-300">
+                                    <Star className="w-3.5 h-3.5 fill-current" />
+                                    Paling Diminati
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Label Kecil (Subtitle) */}
+                            <span className={`inline-flex px-3.5 py-1.5 rounded-[10px] text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit border transition-all duration-300 ${
+                                style.textTheme === 'dark' 
+                                ? "bg-white/15 text-white backdrop-blur-md border-white/20 shadow-inner" 
+                                : "bg-slate-50 text-slate-600 border-slate-200 shadow-sm"
+                            }`}>
+                                {method.subtitle}
+                            </span>
+
+                            {/* Header: Title */}
+                            <h3 className={`text-2xl lg:text-3xl font-black mb-3 tracking-tight leading-tight ${style.titleColor}`}>
+                                {method.title}
+                            </h3>
 
                             {/* Description */}
-                            <p className="text-left text-slate-600 text-sm mb-4 leading-relaxed whitespace-pre-line">
+                            <p className={`text-sm mb-8 leading-relaxed ${style.descColor}`}>
                                 {method.description}
                             </p>
 
                             {/* Features */}
-                            <ul className="space-y-2 mb-6 flex-1">
+                            <ul className="space-y-4 mb-8 flex-1">
                                 {(method.features || []).map((feature: string, i: number) => (
                                     <li
                                         key={i}
-                                        className="flex items-center gap-2 text-sm text-slate-700"
+                                        className={`flex items-start gap-3 text-sm font-medium ${style.textTheme === 'dark' ? "text-red-50" : "text-slate-700"}`}
                                     >
                                         <span
-                                            className={`w-5 h-5 rounded-full bg-gradient-to-r ${method.gradient} flex items-center justify-center flex-shrink-0`}
+                                            className={`mt-0.5 flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full ${style.textTheme === 'dark' ? "bg-red-500" : "bg-slate-200"}`}
                                         >
-                                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                                            <Check className={`w-3 h-3 ${style.textTheme === 'dark' ? "text-white" : "text-slate-600"}`} strokeWidth={3} />
                                         </span>
                                         {feature}
                                     </li>
@@ -92,34 +106,142 @@ export default function PaymentMethods() {
                             </ul>
 
                             {/* CTA Button */}
-                            {isDisabled ? (
-                                <div className="block w-full text-center py-3 rounded-xl bg-slate-300 text-slate-500 font-semibold cursor-not-allowed">
-                                    {method.cta}
-                                </div>
-                            ) : (
-                                <Link
-                                    to="/register"
-                                    className={`block w-full text-center py-3 rounded-xl bg-gradient-to-r ${method.gradient} text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:opacity-90`}
-                                >
-                                    {method.cta}
-                                </Link>
-                            )}
+                            <div className="mt-auto relative z-10 w-full flex flex-col items-center">
+                                {isDisabled ? (
+                                    <div className="block w-full text-center py-3.5 rounded-xl bg-slate-200 text-slate-400 font-bold cursor-not-allowed">
+                                        {method.cta}
+                                    </div>
+                                ) : (
+                                    <Link
+                                        to="/register"
+                                        className={`block w-full text-center py-3.5 rounded-xl font-bold transition-all duration-300 shadow-md ${style.textTheme === 'dark' 
+                                            ? "bg-white text-red-600 hover:shadow-xl hover:bg-red-50" 
+                                            : "bg-slate-800 text-white hover:shadow-xl hover:-translate-y-1 hover:bg-slate-900" 
+                                        }`}
+                                    >
+                                        {method.cta}
+                                    </Link>
+                                )}
+                            </div>
 
-                            {/* Decorative element */}
-                            <div
-                                className={`absolute -z-10 top-4 right-4 w-24 h-24 rounded-full bg-gradient-to-r ${method.gradient} opacity-10 blur-2xl ${isDisabled ? "" : "group-hover:opacity-20"} transition-opacity duration-300`}
-                            />
+                            {/* Decorative Icon Background */}
+                            <div className={`absolute -right-4 -bottom-4 transition-transform duration-700 opacity-5 group-hover:scale-110 group-hover:-rotate-12 pointer-events-none ${isDisabled ? "hidden" : ""}`}>
+                                <Icon className={`w-48 h-48 ${style.textTheme === 'dark' ? "text-white" : "text-slate-400"}`} strokeWidth={1} />
+                            </div>
                         </div>
+
+                        {/* Info Biaya Cetak khusus POE - di luar kartu */}
+                        {index === 1 && (
+                            <button 
+                                onClick={(e) => { e.preventDefault(); setIsPrintCostModalOpen(true); }}
+                                className="w-full text-center mt-6 text-sm font-semibold text-slate-500 hover:text-red-700 underline underline-offset-4 transition-colors duration-300 cursor-pointer lg:-translate-y-4"
+                            >
+                                Lihat Biaya Cetak
+                            </button>
+                        )}
+                    </div>
                     );
                 })}
             </div>
 
-            {/* Bottom note */}
-            <div className="w-full max-w-3xl mx-auto mt-12 text-center">
-                <p className="text-slate-500 text-sm">
-                    💡 {t("paymentMethods.note")}
-                </p>
-            </div>
+            {/* Modal Biaya Cetak */}
+            {isPrintCostModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div 
+                        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
+                        onClick={() => setIsPrintCostModalOpen(false)}
+                    />
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        {/* Header Modal */}
+                        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur z-20">
+                            <h3 className="text-xl font-bold text-slate-800">Biaya Cetak Emas Fisik</h3>
+                            <button 
+                                onClick={() => setIsPrintCostModalOpen(false)}
+                                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Konten Modal */}
+                        <div className="p-6 overflow-y-auto">
+                            <div className="grid md:grid-cols-2 gap-8">
+                                {/* Tabel Logam Mulia */}
+                                <div>
+                                    <h4 className="font-bold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                                        <div className="w-1.5 h-6 bg-red-600 rounded-full"></div>
+                                        Logam Mulia
+                                    </h4>
+                                    <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                        <table className="w-full text-sm text-left">
+                                            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600">
+                                                <tr>
+                                                    <th className="px-4 py-3 font-semibold">Gramasi</th>
+                                                    <th className="px-4 py-3 font-semibold text-right">Biaya Cetak</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {[
+                                                    { weight: "0.5g", cost: "52.500" },
+                                                    { weight: "1g", cost: "52.500" },
+                                                    { weight: "5g", cost: "30.000" },
+                                                    { weight: "10g", cost: "45.000" },
+                                                    { weight: "20g", cost: "70.000" },
+                                                    { weight: "50g", cost: "120.000" },
+                                                    { weight: "100g", cost: "210.000" }
+                                                ].map((item, i) => (
+                                                    <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-4 py-3 font-medium text-slate-700">{item.weight}</td>
+                                                        <td className="px-4 py-3 text-right text-slate-600 font-medium whitespace-nowrap">Rp {item.cost} <span className="text-xs font-normal text-slate-400">/ pcs</span></td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {/* Tabel Dinar */}
+                                <div>
+                                    <h4 className="font-bold text-slate-800 mb-3 text-lg flex items-center gap-2">
+                                        <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+                                        Dinar
+                                    </h4>
+                                    <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                        <table className="w-full text-sm text-left">
+                                            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600">
+                                                <tr>
+                                                    <th className="px-4 py-3 font-semibold">Jenis</th>
+                                                    <th className="px-4 py-3 font-semibold text-right">Biaya Cetak</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {[
+                                                    { weight: "¼ Dinar", cost: "70.000" },
+                                                    { weight: "½ Dinar", cost: "30.000" },
+                                                    { weight: "1 Dinar", cost: "30.000" },
+                                                    { weight: "5 Dinar", cost: "70.000" },
+                                                    { weight: "10 Dinar", cost: "120.000" }
+                                                ].map((item, i) => (
+                                                    <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-4 py-3 font-medium text-slate-700">{item.weight}</td>
+                                                        <td className="px-4 py-3 text-right text-slate-600 font-medium whitespace-nowrap">Rp {item.cost} <span className="text-xs font-normal text-slate-400">/ pcs</span></td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-6 bg-blue-50 text-blue-800 p-4 rounded-xl text-sm leading-relaxed border border-blue-100 flex items-start gap-3">
+                                💡
+                                <p>Biaya cetak di atas dikenakan per keping emas fisik. Pembayaran biaya cetak dilakukan pada saat mengambil fisik emas ke cabang, atau saat meminta pengiriman emas ke alamat Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </BaseLayout>
     );
 }

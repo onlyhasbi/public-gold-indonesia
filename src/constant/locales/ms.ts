@@ -16,25 +16,25 @@ export const ms = {
         cta: "Konsultasi Percuma Sekarang",
     },
     publicGold: {
-        title: "Tentang Public Gold",
-        desc: "Platform jual beli emas fizikal yang dipercayai, bersepadu, dan diperakui antarabangsa dengan jaminan belian semula yang kompetitif.",
+        title: "Mengenai Public Gold",
+        desc: "Dipercayai lebih daripada 2.4 juta pelanggan di Asia Tenggara, platform jual beli emas fizikal dengan sistem belian semula yang telus dan harga kompetitif, serta telah mendapat pensijilan patuh syariah daripada Amanie Advisors.",
         stats: {
             customers: "Juta Pelanggan Aktif",
             branches: "Cawangan",
             years: "Tahun Beroperasi",
         },
-        features: [
-            { title: "Patuh Syariah", description: "Transaksi selamat, telus, dan mematuhi prinsip syariah di bawah pengawasan <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>." },
-            { title: "Transaksi Digital Mudah", description: "Beli emas bila-bila masa dan di mana sahaja secara dalam talian dengan akses 24 jam." },
-            { title: "Penghantaran Selamat & Dilindungi", description: "Emas dihantar terus ke alamat anda dengan perlindungan insurans penuh." },
-            { title: "Simpanan Percuma", description: "Nikmati kemudahan simpanan emas tanpa kos melalui akaun POE." },
-            { title: "Harga Kompetitif", description: "Dapatkan harga terus dari pengeluar dengan sistem yang telus dan kompetitif." },
-            { title: "Jaminan Belian Semula", description: "Jual semula emas dengan mudah, malah dalam keadaan tertentu masih boleh diterima." },
-        ],
-        whyTitle: "Mengapa Memilih Public Gold?",
         statsLabels: {
             country: "Negara",
         },
+        whyTitle: "Mengapa Memilih Public Gold?",
+        features: [
+            { title: "Patuh Syariah", description: "Transaksi selamat, telus, dan patuh syariah dengan pengawasan <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>." },
+            { title: "Transaksi Digital Mudah", description: "Beli emas pada bila-bila masa dan di mana sahaja secara dalam talian dengan akses 24 jam." },
+            { title: "Penghantaran Selamat & Berinsurans", description: "Emas dihantar terus ke alamat anda dengan perlindungan insurans penuh." },
+            { title: "Penyimpanan Percuma", description: "Nikmati kemudahan penyimpanan emas tanpa caj melalui akaun POE." },
+            { title: "Harga Kompetitif", description: "Dapatkan harga terus daripada pengeluar dengan sistem yang telus dan kompetitif." },
+            { title: "Jaminan Belian Semula", description: "Jual semula emas dengan mudah, walaupun dalam keadaan tertentu masih boleh diterima." },
+        ],
     },
     benefit: {
         badge: "Kenapa Emas?",

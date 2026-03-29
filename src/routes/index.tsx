@@ -14,6 +14,7 @@ import { getGoldPrices } from "../services/getGoldPrices";
 import { useTranslation } from "react-i18next";
 
 import Questions from "../components/questions";
+import GradientHighlight from "../components/ui/gradient_highlight";
 
 export const Route = createFileRoute("/")(
   {
@@ -48,13 +49,10 @@ function App() {
         <section id="testimonials" className="scroll-mt-20">
           <div className="w-11/12 max-w-7xl mx-auto py-16">
             <div className="text-center mb-10">
-              <span className="inline-block px-4 py-2 rounded-full bg-red-100 text-red-700 text-sm font-medium mb-4">
-                {t("testimonials.badge")}
-              </span>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-                {t("testimonials.title")}
+                <GradientHighlight text={t("testimonials.title")} highlight="Kata Mereka" />
               </h2>
-              <p className="text-slate-500 max-w-2xl mx-auto">
+              <p className="text-slate-500 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
                 {t("testimonials.desc")}
               </p>
             </div>

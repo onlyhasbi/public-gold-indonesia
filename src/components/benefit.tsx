@@ -22,7 +22,6 @@ function Benefit() {
     <Earth className="w-6 h-6" />,
   ];
 
-  const title = t("benefit.title");
   const itemsResult = t("benefit.items", { returnObjects: true });
   const items = Array.isArray(itemsResult) ? itemsResult : [];
 
@@ -30,14 +29,10 @@ function Benefit() {
     <BaseLayout className="flex-col">
       <div className="w-full">
         <SectionHeader
-          badge={t("benefit.badge")}
-          title={title}
+          title={t("benefit.title")}
+          highlight="6 Keunggulan"
           subtitle={t("benefit.desc")}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-            <span className="text-red-700">6 {title.split(" ")[0]}</span> {title.split(" ").slice(1).join(" ")}
-          </h2>
-        </SectionHeader>
+        />
 
         {/* Benefits Grid */}
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

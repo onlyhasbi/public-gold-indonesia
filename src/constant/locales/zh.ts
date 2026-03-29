@@ -17,24 +17,24 @@ export const zh = {
     },
     publicGold: {
         title: "关于 Public Gold",
-        desc: "一个值得信赖的实物黄金买卖平台，系统完善，并拥有国际认证及具有竞争力的回购保障。",
+        desc: "受到东南亚超过240万客户的信赖，提供透明回购系统和具有竞争力的价格的实物黄金买卖平台，并已获得Amanie Advisors的合规认证。",
         stats: {
             customers: "百万活跃客户",
             branches: "分行网点",
             years: "运营年数",
         },
-        features: [
-            { title: "符合伊斯兰教法", description: "交易安全透明，符合伊斯兰教法，并由 <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a> 监督。" },
-            { title: "便捷的数字交易", description: "随时随地在线购买黄金，全天候 24 小时 доступ。" },
-            { title: "安全且有保险的配送", description: "黄金直接配送至您的地址，并享有完整保险保障。" },
-            { title: "免费存储", description: "通过 POE 账户享受免费黄金存储服务。" },
-            { title: "具有竞争力的价格", description: "直接从生产商获取透明且具有竞争力的价格。" },
-            { title: "回购保障", description: "黄金可随时轻松卖出，在特定情况下依然可被接受回购。" },
-        ],
-        whyTitle: "为什么选择 Public Gold？",
         statsLabels: {
             country: "国家",
         },
+        whyTitle: "为什么选择 Public Gold？",
+        features: [
+            { title: "符合伊斯兰教法", description: "交易安全、透明，并在<a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>的监督下符合伊斯兰教法。" },
+            { title: "轻松数字交易", description: "随时随地24小时在线购买黄金。" },
+            { title: "安全投保配送", description: "黄金直接送到您的地址，享有全额保险保障。" },
+            { title: "免费存储", description: "通过POE账户享受免费黄金存储服务。" },
+            { title: "有竞争力的价格", description: "直接从生产商获得透明且有竞争力的价格。" },
+            { title: "回购保证", description: "轻松转售黄金，即使在某些条件下仍可接受。" },
+        ],
     },
     benefit: {
         badge: "为什么选择黄金？",

@@ -1,5 +1,5 @@
 export const info = {
-    nasabah: 2,
+    nasabah: 2.4,
     cabang: {
         malaysia: 21,
         indonesia: 7,
