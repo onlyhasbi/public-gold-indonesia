@@ -39,12 +39,11 @@ export const MovingCards = ({
         }
       });
 
-      getDirection();
-      getSpeed();
       setStart(true);
     }
   }
-  const getDirection = () => {
+
+  useEffect(() => {
     if (containerRef.current) {
       if (direction === "left") {
         containerRef.current.style.setProperty(
@@ -58,18 +57,19 @@ export const MovingCards = ({
         );
       }
     }
-  };
-  const getSpeed = () => {
+  }, [direction]);
+
+  useEffect(() => {
     if (containerRef.current) {
       if (speed === "fast") {
         containerRef.current.style.setProperty("--animation-duration", "20s");
       } else if (speed === "normal") {
         containerRef.current.style.setProperty("--animation-duration", "40s");
       } else {
-        containerRef.current.style.setProperty("--animation-duration", "80s");
+        containerRef.current.style.setProperty("--animation-duration", "160s");
       }
     }
-  };
+  }, [speed]);
   return (
     <div
       ref={containerRef}
@@ -88,23 +88,31 @@ export const MovingCards = ({
       >
         {items.map((item) => (
           <li
-            className="relative w-[350px] max-w-full shrink-0 rounded-2xl border border-b-0 border-zinc-200 bg-[linear-gradient(180deg,#fafafa,#f5f5f5)] px-8 py-6 md:w-[450px]"
+            className="relative w-[350px] max-w-full shrink-0 rounded-2xl border border-b-0 border-zinc-200 bg-[linear-gradient(180deg,#fafafa,#f5f5f5)] px-8 py-6 md:w-[450px] flex flex-col"
             key={item.name}
           >
-            <blockquote>
+            <blockquote className="flex flex-col h-full">
               <div
                 aria-hidden="true"
                 className="user-select-none pointer-events-none absolute -top-0.5 -left-0.5 -z-1 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
               ></div>
-              <span className="relative z-20 text-sm leading-[1.6] font-normal text-neutral-800">
+              <span className="relative z-20 text-sm leading-[1.6] font-normal text-neutral-800 flex-1">
                 "{item.quote}"
               </span>
-              <div className="relative z-20 mt-6 flex flex-row items-center gap-4">
-                <span className="flex flex-col gap-1">
-                  <span className="text-sm leading-[1.6] font-semibold text-neutral-700">
+              <div className="relative z-20 mt-6 flex flex-row items-center gap-3 pt-4 border-t border-zinc-200/80">
+                {item.avatar && (
+                  <img
+                    src={item.avatar}
+                    alt={item.name}
+                    className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white shadow-sm"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-sm leading-[1.4] font-semibold text-neutral-700">
                     {item.name}
                   </span>
-                  <span className="text-sm leading-[1.6] font-normal text-neutral-500">
+                  <span className="text-xs leading-[1.4] font-normal text-neutral-500">
                     {item.title}
                   </span>
                 </span>

@@ -1,15 +1,26 @@
-import { CreditCard, Clock, Wallet, Check, X, Star, Lock } from "lucide-react";
+import { CreditCard, Clock, Wallet, Check, X, Star } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const DISABLED_INDEXES = [2]; // EPP card (index 2) is temporarily disabled
 
 export default function PaymentMethods() {
     const { t } = useTranslation();
     const [isPrintCostModalOpen, setIsPrintCostModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (isPrintCostModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [isPrintCostModalOpen]);
 
     const styleConfigs = [
         // 0: Tunai - Normal
@@ -38,7 +49,7 @@ export default function PaymentMethods() {
         <BaseLayout className="flex-col pt-4 pb-16">
             <SectionHeader
                 title={t("paymentMethods.title")}
-                highlight="Cara Membeli"
+                highlight="Cara Terbaik"
                 subtitle={t("paymentMethods.subtitle")}
             />
 
@@ -53,15 +64,7 @@ export default function PaymentMethods() {
                             <div
                                 className={`relative group rounded-3xl ${style.bgGradient} border-[1.5px] ${style.border} p-6 md:p-8 transition-all duration-500 flex flex-col flex-1 ${isDisabled ? "opacity-60 grayscale pointer-events-none select-none" : "hover:shadow-xl cursor-default"} ${style.textTheme === 'dark' ? 'lg:-translate-y-4 shadow-xl shadow-red-500/10' : ''}`}
                             >
-                            {/* Disabled Badge */}
-                            {isDisabled && (
-                                <div className="absolute top-6 right-6 bg-slate-50 text-slate-500 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 border border-dashed border-slate-300 shadow-sm">
-                                    <Lock className="w-3 h-3" />
-                                    Nonaktif
-                                </div>
-                            )}
-
-                            {/* Preferred Badge for Tunai */}
+                           {/* Preferred Badge for Tunai */}
                             {!isDisabled && style.textTheme === 'dark' && (
                                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-amber-500 text-yellow-950 text-[10px] lg:text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-yellow-500/30 whitespace-nowrap z-20 flex items-center gap-1.5 border border-yellow-300">
                                     <Star className="w-3.5 h-3.5 fill-current" />
@@ -101,7 +104,7 @@ export default function PaymentMethods() {
                             {/* CTA Button */}
                             <div className="mt-auto relative z-10 w-full flex flex-col items-center">
                                 {isDisabled ? (
-                                    <div className="block w-full text-center py-3.5 rounded-xl bg-slate-200 text-slate-400 font-bold cursor-not-allowed">
+                                    <div className="block w-full text-center py-3.5 rounded-xl bg-slate-200 text-slate-400 font-bold cursor-not-allowed line-through">
                                         {method.cta}
                                     </div>
                                 ) : (
@@ -144,7 +147,7 @@ export default function PaymentMethods() {
                         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
                         onClick={() => setIsPrintCostModalOpen(false)}
                     />
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         {/* Header Modal */}
                         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur z-20">
                             <h3 className="text-xl font-bold text-slate-800">Biaya Cetak</h3>

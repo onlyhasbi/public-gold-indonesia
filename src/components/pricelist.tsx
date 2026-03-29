@@ -153,93 +153,108 @@ function PriceList({ price }: Props) {
         <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
           <GradientHighlight text={t("priceList.title")} highlight="Harga Emas" />
         </h2>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-3">
-          <p className="text-slate-500 text-base md:text-lg max-w-2xl leading-relaxed">
-            {t("priceList.subtitle")}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-3">
+          <p className="text-slate-500 text-base md:text-lg max-w-2xl leading-relaxed text-center">
+            {(() => {
+              const text = t("priceList.subtitle");
+              const parts = text.split("{mbr}");
+              if (parts.length > 1) {
+                return (
+                  <>
+                    <span className="md:inline hidden">{parts[0]}{parts[1]}</span>
+                    <span className="inline md:hidden">{parts[0]}</span>
+                  </>
+                );
+              }
+              return text;
+            })()}
           </p>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs font-bold tracking-wide">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <div className="flex items-center gap-2">
+            <span className="inline md:hidden text-slate-500 text-base">
+              {t("priceList.subtitle").split("{mbr}")[1] || ""}
             </span>
-            {new Intl.DateTimeFormat(i18n.language || "id-ID", {
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            }).format(new Date())}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs font-bold tracking-wide">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              {new Intl.DateTimeFormat(i18n.language || "id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+              }).format(new Date())}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Markets & POE Stats */}
-      <div className="w-full flex flex-col lg:flex-row gap-6 mb-16 relative z-10 items-stretch">
-        
+      {/* POE & Markets Stats */}
+      <div className="w-full flex flex-col-reverse lg:flex-row gap-6 mb-16 relative z-10 items-stretch">
+
         {/* TradingView Widget */}
-        <div className="w-full lg:flex-1 h-[400px] lg:h-auto rounded-3xl overflow-hidden border border-slate-200 shadow-xl shadow-slate-200/50 bg-white">
-          <iframe 
-            src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=60&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=2&timezone=Asia%2FJakarta&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=id"
-            className="w-full h-full border-none pointer-events-auto min-h-[400px] lg:min-h-full"
-            title="TradingView XAUUSD"
-          />
+        <div className="w-full lg:flex-1 h-[400px] lg:h-[420px] rounded-2xl md:rounded-3xl overflow-hidden bg-white">
+          {/* Wrapper peretas batas (Border hack wrapper) - Menyembunyikan 1px border native TradingView dari dalam iframe dengan cara menggesernya keluar dari 'overflow-hidden' */}
+          <div className="w-[calc(100%+4px)] h-[calc(100%+4px)] -ml-[2px] -mt-[2px]">
+            <iframe
+              src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=60&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=2&timezone=Asia%2FJakarta&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=id"
+              className="w-full h-full border-none pointer-events-auto min-h-[400px]"
+              title="TradingView XAUUSD"
+            />
+          </div>
         </div>
 
-        {/* POE & Per Gram Cards */}
-        <div className="w-full lg:w-[35%] xl:w-[30%] grid grid-cols-2 lg:grid-cols-1 gap-3 md:gap-6 shrink-0">
-          {[
-            {
-              title: "Pre-Order Emas (POE)",
-              unit: gramsFor300k ? `Rp / ${gramsFor300k} Gram` : `Rp / ... Gram`,
-              value: price?.poe?.[0]?.price ?? null,
-              icon: <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white/20" />,
-              color: "from-red-600 to-red-700",
-              isDark: true
-            },
-            {
-              title: "Harga Per Gram",
-              unit: "Rp / Gram",
-              value: price?.poe?.[1]?.price ?? null,
-              icon: <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-red-600/10" />,
-              color: "from-white to-slate-50",
-              isDark: false
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className={`group relative overflow-hidden rounded-2xl md:rounded-3xl p-3 sm:p-5 md:p-6 lg:p-8 flex flex-col transition-all duration-500 hover:shadow-xl hover:-translate-y-1 border h-full ${item.isDark
-                ? `bg-gradient-to-r ${item.color} text-white border-transparent`
-                : `bg-gradient-to-br ${item.color} text-slate-900 border-slate-200`
-                }`}
-            >
-              <div className="absolute top-3 right-3 sm:top-5 sm:right-5 md:top-6 md:right-6 lg:top-8 lg:right-8 transition-transform duration-700 group-hover:scale-125 group-hover:rotate-12">
-                {item.icon}
-              </div>
+        {/* Kontainer Utama POE & Harga Per Gram (Unified Side Panel) */}
+        <div className="w-full lg:w-[35%] xl:w-[32%] flex flex-col shrink-0 overflow-hidden rounded-2xl md:rounded-3xl transition-all duration-300 bg-white group/container h-auto lg:h-[420px]">
 
-              <div className="relative z-10 flex flex-col flex-1">
-                {/* Title */}
-                <h3 className="text-[12px] sm:text-[14px] md:text-xl lg:text-2xl font-black mb-1.5 md:mb-2 tracking-tight pr-6 md:pr-10 lg:pr-12 leading-tight">{item.title}</h3>
-
-                {/* Price + Extra Info */}
-                <div className="mt-auto pt-4 md:pt-6 lg:pt-8 w-full">
-                  <div className="flex flex-col">
-                    <span className={`text-[8px] sm:text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 md:mb-1.5 break-words ${item.isDark ? "text-red-200" : "text-slate-400"}`}>
-                      {item.unit}
-                    </span>
-                    <span className="text-[14px] sm:text-base md:text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight leading-none whitespace-nowrap">
-                      {formatPrice(item.value)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Glossy Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          {/* PRIMARY: Pre-Order Emas (POE) - Top Stack */}
+          <div className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group/primary cursor-default">
+            {/* Dekorasi Ikon */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 transition-transform duration-700 group-hover/primary:scale-110 pointer-events-none mix-blend-overlay">
+              <TrendingUp className="w-48 h-48 sm:w-56 sm:h-56" />
             </div>
-          ))}
+
+            <div className="relative z-10 w-full flex flex-col items-center">
+              <h3 className="text-lg md:text-xl font-medium mb-1 tracking-tight text-red-100">
+                Harga per <span className="font-black text-white bg-white/10 px-2 py-0.5 rounded-md mx-0.5">{gramsFor300k ?? "..."}</span> gram
+              </h3>
+
+              <div className="mt-1">
+                <span className="text-3xl lg:text-4xl font-black tracking-tighter leading-none whitespace-nowrap">
+                  {formatPrice(price?.poe?.[0]?.price)}
+                </span>
+              </div>
+            </div>
+
+            {/* Glossy Overlay Tersembunyi */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover/primary:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+          </div>
+
+          {/* Divider Horizontal Universal */}
+          <div className="h-[1px] w-full bg-slate-200" />
+
+          {/* SECONDARY: Harga Per Gram - Bottom Stack */}
+          <div className="flex-1 bg-gradient-to-br from-white to-slate-50 p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group/secondary cursor-default">
+            {/* Dekorasi Ikon */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] transition-transform duration-700 group-hover/secondary:scale-110 pointer-events-none">
+              <ShieldCheck className="w-40 h-40 sm:w-48 sm:h-48 text-slate-900" />
+            </div>
+
+            <div className="relative z-10 w-full flex flex-col items-center gap-1">
+              <h4 className="text-lg md:text-xl font-medium tracking-tight mb-1 text-slate-500 w-full text-center">
+                Harga per gram
+              </h4>
+              <div className="w-full mt-1">
+                <span className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-none whitespace-nowrap">
+                  {formatPrice(price?.poe?.[1]?.price)}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Featured Products List */}
-      <div 
+      <div
         className="w-full relative z-10"
         onMouseMove={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();

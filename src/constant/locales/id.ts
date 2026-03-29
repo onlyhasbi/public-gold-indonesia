@@ -11,8 +11,8 @@ export const id = {
     },
     hero: {
         eyebrow: "Dealer Resmi Public Gold",
-        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> Halo, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>Hasbi</span>",
-        mission: "Emas adalah aset yang terbukti menjaga nilai dari inflasi.<br>Saya siap membantu Anda memulai investasi emas sesuai kebutuhan Anda.",
+        headline: "Halo, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>Hasbi.</span>",
+        mission: "Emas telah terbukti menjaga nilai dari inflasi dan krisis sejak ribuan tahun. Saya siap membantu Anda memulai investasi emas sesuai kebutuhan Anda bersama Public Gold Indonesia.",
         cta: "Konsultasi Sekarang",
     },
     publicGold: {
@@ -38,8 +38,8 @@ export const id = {
     },
     benefit: {
         badge: "Kenapa Emas?",
-        title: "6 Keunggulan Menyimpan Emas",
-        desc: "Emas merupakan pilihan untuk menjaga nilai kekayaan dalam jangka panjang, terutama di tengah perubahan ekonomi.",
+        title: "6 Keunggulan {mbr}Menyimpan Emas",
+        desc: "Emas menjadi pilihan tepat untuk menjaga nilai kekayaan dalam jangka panjang, terutama di tengah ketidakpastian ekonomi.",
         items: [
             { title: "Lindungi Nilai dari Inflasi", desc: "Melindungi nilai uang Anda dari inflasi yang terus menggerus daya beli." },
             { title: "Likuid & Mudah Dicairkan", desc: "Mudah dijual kapan saja saat Anda membutuhkan dana cepat." },
@@ -72,8 +72,8 @@ export const id = {
     },
     excellence: {
         badge: "Keunggulan Kami",
-        title: "Mengapa Berinvestasi Bersama Kami?",
-        subtitle: "Layanan untuk membantu Anda mengelola investasi emas dengan lebih aman dan nyaman.",
+        title: "Mengapa Berinvestasi Emas Bersama Kami?",
+        subtitle: "Kami membantu Anda memiliki dan mengelola emas dengan cara yang aman, mudah, dan nyaman.",
         items: [
             {
                 title: "Sesuai Prinsip Syariah",
@@ -110,13 +110,13 @@ export const id = {
                     "Layanan online dan offline.",
                     "Kemudahan proses buyback.",
                 ],
-                features: ["Beberapa Negara", "Online", "Cabang Fisik"],
+                features: ["Beberapa Negara", "Online", "Kantor Cabang"],
             },
         ],
     },
     paymentMethods: {
         badge: "Metode Pembayaran",
-        title: "Pilih Cara Terbaik Memulai Emas Anda",
+        title: "Pilih Cara Terbaik {mbr}Memulai Emas Anda",
         subtitle: "Sesuaikan dengan tujuan dan kemampuan finansial Anda, mulai dari menabung hingga pembelian langsung.",
         items: [
             {
@@ -230,7 +230,7 @@ export const id = {
     priceList: {
         badge: "Harga Real-Time",
         title: "Harga Emas Hari Ini",
-        subtitle: "Diperbarui secara berkala mengikuti pergerakan pasar global",
+        subtitle: "Diperbarui secara berkala mengikuti pergerakan {mbr}pasar global",
         loading: "Memuat harga...",
         priceLabel: "Harga Jual",
         currency: "Rp ",
@@ -251,40 +251,44 @@ export const id = {
         desc: "Pengalaman nasabah dalam menggunakan layanan Public Gold.",
         items: [
             {
-                quote: "Saya sudah menabung emas di Public Gold selama beberapa tahun. Prosesnya transparan, dan saya merasa lebih tenang karena aset saya jelas.",
-                name: "Andi Wijaya",
-                title: "Wiraswasta, Jakarta",
-                avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                quote: "1 tempat bisa pakai 3 pilihan beli emas. Bisa nabung, beli cash, atau cicil. Tanpa biaya aneh-aneh, cicil juga tidak ada DP, skema flat (bunga 0%), tidak ada juga denda keterlambatan. Alhamdulillah ada yang seperti ini di Makassar.",
+                name: "Andi Muhammad Hasbi",
+                title: "Nasabah, Makassar",
             },
             {
-                quote: "Awalnya ragu beli emas secara online, tapi ternyata prosesnya mudah dan pengirimannya aman. Sangat membantu untuk mulai investasi.",
-                name: "Siti Rahayu",
-                title: "Ibu Rumah Tangga, Bandung",
-                avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                quote: "Nabung emas lewat POE, bisa nabung dikit-dikit minimal 300rb. Kalau udah cukup gramasi yang saya inginkan, langsung saya keluarkan emas fisiknya di kantor cabang Jakarta. Pelayanannya ramah, sangat membantu, pokoknya sat set. Terbaik!",
+                name: "Cici Anggraeni",
+                title: "Nasabah, Jakarta",
             },
             {
-                quote: "Fitur tabungan emas memudahkan saya menyisihkan uang sedikit demi sedikit. Dalam beberapa waktu, hasilnya terasa.",
-                name: "Budi Santoso",
-                title: "Karyawan, Surabaya",
-                avatar: "https://randomuser.me/api/portraits/men/52.jpg",
+                quote: "Kantornya nyaman, stafnya ramah, stok LM & Dinarnya ready stok. Kalau beli gak harus antri, kalau mau buyback cepat, dan yang pasti harganya transparan.",
+                name: "Icha Tarissa",
+                title: "Nasabah, Bandung",
             },
             {
-                quote: "Pelayanannya responsif dan membantu. Saya jadi lebih paham cara mengelola investasi emas dengan benar.",
-                name: "Dewi Lestari",
-                title: "Pengajar, Yogyakarta",
-                avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+                quote: "Alhamdulillah jadi paham tentang menabung emas sejak kenal Public Gold. Sebelumnya beli tapi tidak dengan ilmu jadi tidak ditabung dengan baik. Sekarang, lebih baik menabung emas daripada uang habis tidak jelas.",
+                name: "Andrianingsih Risa",
+                title: "Nasabah, Makassar",
             },
             {
-                quote: "Proses jual kembali juga mudah. Ini membuat saya merasa lebih fleksibel dalam mengelola keuangan.",
-                name: "Ahmad Fauzi",
-                title: "Tenaga Medis, Medan",
-                avatar: "https://randomuser.me/api/portraits/men/75.jpg",
+                quote: "Alhamdulillah, dengan adanya Public Gold tidak perlu war lagi dalam membeli emas, cukup dari rumah dan barangnya bisa dikirim ke alamat. Senang bisa nabung di PG.",
+                name: "Praktik Mandiri Bidan Tenri Ajeng",
+                title: "Nasabah, Makassar",
             },
             {
-                quote: "Pengiriman emas aman dan rapi. Saya merasa lebih percaya untuk melanjutkan investasi di sini.",
-                name: "Rina Kusuma",
-                title: "Pengusaha, Semarang",
-                avatar: "https://randomuser.me/api/portraits/women/26.jpg",
+                quote: "Kantor Gold terpercaya yang pernah ada, dengan harga yang baik juga menguntungkan sekali untuk investasi jangka panjang.",
+                name: "Risma Marisa",
+                title: "Nasabah, Bandung",
+            },
+            {
+                quote: "Proses penukaran emas fisik mudah, dan ketersediaan emasnya tanpa inden-indenan.",
+                name: "Ari Wibowo",
+                title: "Nasabah, Bandung",
+            },
+            {
+                quote: "Public Gold Indonesia Cabang Makassar selalu mantap dalam pelayanan kepada customer. Senang beli emas dan Dinar di sini.",
+                name: "Kasmawati Abdullah",
+                title: "Nasabah, Makassar",
             },
         ],
     },

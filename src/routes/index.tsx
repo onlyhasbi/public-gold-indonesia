@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ArrowUp } from "lucide-react";
 
 import { Suspense } from "react";
 import Benefit from "../components/benefit";
@@ -58,7 +59,7 @@ function App() {
             </div>
             <MovingCards
               items={t("testimonials.items", { returnObjects: true }) as any}
-              direction="right"
+              direction="left"
               speed="slow"
             />
           </div>
@@ -67,15 +68,16 @@ function App() {
         <section id="contact" className="scroll-mt-20">
           <CallToAction />
         </section>
-        <a
-          className="fixed left-6 bottom-6"
-          href="https://wa.me/628979901844"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Whatsapp"
+
+
+        {/* Scroll To Top - Hanya Mobile */}
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="md:hidden fixed right-6 bottom-6 w-12 h-12 bg-slate-800/80 backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-xl z-50 hover:bg-slate-700 transition-all border border-slate-700/50"
+          aria-label="Scroll to top"
         >
-          <img className="w-10" src="./whatsapp.png" alt="whatsapp-logo" />
-        </a>
+          <ArrowUp className="w-6 h-6" />
+        </button>
       </div>
     </Suspense>
   );
