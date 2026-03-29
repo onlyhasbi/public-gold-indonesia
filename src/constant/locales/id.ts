@@ -11,8 +11,8 @@ export const id = {
     },
     hero: {
         eyebrow: "Dealer Resmi Public Gold",
-        headline: "👋 Halo, Saya <span class='text-red-600'>Hasbi</span>",
-        mission: "Lindungi nilai uang Anda dari inflasi dengan emas fisik yang stabil dan mudah dicairkan. Saya siap membantu Anda memulai investasi emas dengan cara yang aman, transparan, dan sesuai kebutuhan Anda.",
+        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> Halo, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>Hasbi</span>",
+        mission: "Emas adalah aset yang terbukti menjaga nilai dari inflasi.<br>Saya siap membantu Anda memulai investasi emas sesuai kebutuhan Anda.",
         cta: "Konsultasi Sekarang",
     },
     publicGold: {
