@@ -54,7 +54,12 @@ function App() {
                 <GradientHighlight text={t("testimonials.title")} highlight="Kata Mereka" />
               </h2>
               <p className="text-slate-500 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-                {t("testimonials.desc")}
+                {t("testimonials.desc").split("{mbr}").map((part, i, arr) => (
+                  <span key={i}>
+                    {part}
+                    {i < arr.length - 1 && <br className="block md:hidden" />}
+                  </span>
+                ))}
               </p>
             </div>
             <MovingCards

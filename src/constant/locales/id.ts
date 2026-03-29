@@ -248,7 +248,7 @@ export const id = {
     testimonials: {
         badge: "Testimoni Nasabah",
         title: "Apa Kata Mereka?",
-        desc: "Pengalaman nasabah dalam menggunakan layanan Public Gold.",
+        desc: "Pengalaman nasabah dalam menggunakan {mbr}layanan Public Gold.",
         items: [
             {
                 quote: "1 tempat bisa pakai 3 pilihan beli emas. Bisa nabung, beli cash, atau cicil. Tanpa biaya aneh-aneh, cicil juga tidak ada DP, skema flat (bunga 0%), tidak ada juga denda keterlambatan. Alhamdulillah ada yang seperti ini di Makassar.",
@@ -294,7 +294,7 @@ export const id = {
     },
     faq: {
         badge: "FAQ",
-        title: "Pertanyaan yang Sering Diajukan",
+        title: "Pertanyaan yang {mbr}Sering Diajukan",
         desc: "Informasi umum seputar investasi emas.",
         items: [
             {
