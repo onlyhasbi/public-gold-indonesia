@@ -49,7 +49,7 @@ export default function PaymentMethods() {
                     const Icon = style.icon;
                     const isDisabled = method.disabled;
                     return (
-                        <div key={index} className="flex flex-col h-full relative">
+                        <div key={index} className={`flex flex-col h-full relative ${index === 1 ? 'order-first lg:order-none' : ''}`}>
                             <div
                                 className={`relative group rounded-3xl ${style.bgGradient} border-[1.5px] ${style.border} p-6 md:p-8 transition-all duration-500 flex flex-col flex-1 ${isDisabled ? "opacity-60 grayscale pointer-events-none select-none" : "hover:shadow-xl cursor-default"} ${style.textTheme === 'dark' ? 'lg:-translate-y-4 shadow-xl shadow-red-500/10' : ''}`}
                             >
@@ -69,14 +69,7 @@ export default function PaymentMethods() {
                                 </div>
                             )}
 
-                            {/* Label Kecil (Subtitle) */}
-                            <span className={`inline-flex px-3.5 py-1.5 rounded-[10px] text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit border transition-all duration-300 ${
-                                style.textTheme === 'dark' 
-                                ? "bg-white/15 text-white backdrop-blur-md border-white/20 shadow-inner" 
-                                : "bg-slate-50 text-slate-600 border-slate-200 shadow-sm"
-                            }`}>
-                                {method.subtitle}
-                            </span>
+
 
                             {/* Header: Title */}
                             <h3 className={`text-2xl lg:text-3xl font-black mb-3 tracking-tight leading-tight ${style.titleColor}`}>
@@ -154,7 +147,7 @@ export default function PaymentMethods() {
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         {/* Header Modal */}
                         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur z-20">
-                            <h3 className="text-xl font-bold text-slate-800">Biaya Cetak Emas Fisik</h3>
+                            <h3 className="text-xl font-bold text-slate-800">Biaya Cetak</h3>
                             <button 
                                 onClick={() => setIsPrintCostModalOpen(false)}
                                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
@@ -170,7 +163,7 @@ export default function PaymentMethods() {
                                 <div>
                                     <h4 className="font-bold text-slate-800 mb-3 text-lg flex items-center gap-2">
                                         <div className="w-1.5 h-6 bg-red-600 rounded-full"></div>
-                                        Logam Mulia
+                                        Emas Batangan
                                     </h4>
                                     <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                                         <table className="w-full text-sm text-left">
@@ -204,7 +197,7 @@ export default function PaymentMethods() {
                                 <div>
                                     <h4 className="font-bold text-slate-800 mb-3 text-lg flex items-center gap-2">
                                         <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div>
-                                        Dinar
+                                        Emas Dinar
                                     </h4>
                                     <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                                         <table className="w-full text-sm text-left">
@@ -216,11 +209,11 @@ export default function PaymentMethods() {
                                             </thead>
                                             <tbody className="divide-y divide-slate-100">
                                                 {[
-                                                    { weight: "¼ Dinar", cost: "70.000" },
-                                                    { weight: "½ Dinar", cost: "30.000" },
-                                                    { weight: "1 Dinar", cost: "30.000" },
-                                                    { weight: "5 Dinar", cost: "70.000" },
-                                                    { weight: "10 Dinar", cost: "120.000" }
+                                                    { weight: "¼ Dinar (1.0625g)", cost: "70.000" },
+                                                    { weight: "½ Dinar (2.125g)", cost: "30.000" },
+                                                    { weight: "1 Dinar (4.25g)", cost: "30.000" },
+                                                    { weight: "5 Dinar (21.25g)", cost: "70.000" },
+                                                    { weight: "10 Dinar (42.5g)", cost: "120.000" }
                                                 ].map((item, i) => (
                                                     <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                                                         <td className="px-4 py-3 font-medium text-slate-700">{item.weight}</td>

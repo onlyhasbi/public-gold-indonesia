@@ -146,12 +146,12 @@ export const id = {
             {
                 title: "Pembayaran Bertahap (EPP)",
                 subtitle: "Cicilan Syariah",
-                description: "Miliki emas dengan cicilan ringan sesuai prinsip syariah, tanpa bunga dan tetap aman.",
+                description: "Miliki emas impian dengan cicilan ringan sesuai prinsip syariah. Bebas bunga dan tanpa uang muka.",
                 features: [
-                    "Tanpa bunga",
+                    "Tanpa bunga (0%)",
+                    "Tanpa uang muka (DP)",
+                    "Pilihan tenor 6 atau 10 bulan",
                     "Sesuai prinsip syariah",
-                    "Pilihan tenor fleksibel",
-                    "Penyimpanan aman",
                 ],
                 cta: "Mulai Cicilan",
             },
