@@ -323,20 +323,7 @@ function PriceList({ price }: Props) {
                     />
                   </div>
 
-                  {/* Global Price Footer */}
-                  <div className="w-full pt-3 md:pt-4 mt-3 md:mt-3 border-t border-slate-100 flex-shrink-0">
-                    <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-0.5 md:mb-1">
-                      {t("priceList.priceLabel")}
-                    </p>
-                    <div className="flex items-center justify-center gap-1">
-                      <span className="text-[10px] md:text-xs font-bold text-slate-400">
-                        {t("priceList.currency")}
-                      </span>
-                      <span className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                        {formatPrice(getPrice(item))}
-                      </span>
-                    </div>
-                  </div>
+
 
                   {/* Hover Action Indicator */}
                   <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-amber-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />

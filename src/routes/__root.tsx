@@ -4,6 +4,7 @@ import React from "react";
 import Topbar from "../layout/topbar";
 import { useTranslation } from "react-i18next";
 import { useIPLanguage } from "../hooks/useIPLanguage";
+import { useResourceReady } from "../hooks/useResourceReady";
 
 const TanStackRouterDevtools =
   import.meta.env.PROD
@@ -22,6 +23,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   useIPLanguage();
+  useResourceReady();
   const { i18n } = useTranslation();
   const location = useLocation();
   const isStandalone = location.pathname.startsWith("/register") || location.pathname.startsWith("/petunjuk");

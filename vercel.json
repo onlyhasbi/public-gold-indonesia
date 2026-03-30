@@ -1,8 +1,20 @@
 {
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.mypublicgold.id" }],
+      "destination": "https://mypublicgold.id/:path",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api-proxy/:match*",
       "destination": "https://publicgold.co.id/:match*"
+    },
+    {
+      "source": "/api-proxy-my/:match*",
+      "destination": "https://publicgold.com.my/:match*"
     },
     {
       "source": "/((?!api-proxy|assets|.*\\..*).*)",
