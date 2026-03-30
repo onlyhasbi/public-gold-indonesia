@@ -5,8 +5,9 @@ import { useState, useEffect, useCallback } from "react";
  * These are above-the-fold / hero images.
  */
 const CRITICAL_IMAGES = [
-  "./me.webp",
-  "./5g.webp",
+  "/logo.svg",
+  "/me.webp",
+  "/5g.webp",
 ];
 
 /**

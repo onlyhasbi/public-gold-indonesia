@@ -43,13 +43,13 @@ function Header() {
         <img
           className="relative overflow-hidden rounded-full w-full h-full object-cover shadow-2xl shadow-slate-200"
           src="./me.webp"
-          alt="me-picture"
+          alt="A. Muh. Hasbi Haerurrijal - Authorized Public Gold Dealer"
         />
         <span className="w-20 h-20 md:w-24 md:h-24 absolute bottom-0 right-0 z-[99] animate-[float_4s_ease-in-out_infinite]">
           <img
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-lg"
             src="./5g.webp"
-            alt="team-picture"
+            alt="Public Gold 5G Associates Team - Success Together"
           />
         </span>
       </div>
