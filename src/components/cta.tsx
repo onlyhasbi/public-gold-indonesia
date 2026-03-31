@@ -5,8 +5,6 @@ import { useTranslation } from "react-i18next";
 export default function CallToAction() {
     const { t } = useTranslation();
 
-
-
     return (
         <BaseLayout className="flex-col py-20">
             <div className="w-full">
@@ -26,7 +24,7 @@ export default function CallToAction() {
                                 <span className="absolute inset-0 rounded-full border-[3px] border-white/60 opacity-40 animate-[ripple_2s_ease-out_infinite]" />
                                 <span className="absolute inset-0 rounded-full border-[3px] border-white/40 opacity-30 animate-[ripple_2s_ease-out_0.8s_infinite]" />
                                 <style>{`@keyframes ripple { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.25); opacity: 0; } }`}</style>
-                                
+
                                 {/* Photo */}
                                 <img
                                     src="./me.webp"
@@ -40,7 +38,12 @@ export default function CallToAction() {
                         {/* Text Content */}
                         <div className="lg:w-2/3 text-center lg:text-left">
                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-                                {t('cta.title')}
+                                {t('cta.title').split('{mbr}').map((part, i, arr) => (
+                                    <span key={i}>
+                                        {part}
+                                        {i < arr.length - 1 && <br className="md:hidden" />}
+                                    </span>
+                                ))}
                             </h2>
                             <p className="text-white/90 text-lg md:text-xl max-w-2xl mb-8">
                                 {t('cta.desc')}

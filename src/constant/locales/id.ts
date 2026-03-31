@@ -178,7 +178,7 @@ export const id = {
     },
     cta: {
         dealerBadge: "Dealer Resmi",
-        title: "Mulai Amankan Aset Anda",
+        title: "Mulai Amankan {mbr}Aset Anda",
         desc: "Konsultasikan kebutuhan Anda untuk memulai investasi emas dengan langkah yang tepat.",
         whatsapp: "Konsultasi Sekarang",
         badges: ["Gratis Konsultasi", "Pendampingan", "Sesuai Syariah"],
