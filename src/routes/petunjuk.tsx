@@ -1,10 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, Wallet, ChevronRight, MessageCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, Wallet, ChevronRight, MessageCircle, Home } from "lucide-react";
 import { PhoneMockup } from "../components/ui/PhoneMockup";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/petunjuk")({
+  validateSearch: (search: Record<string, unknown>): { pgcode?: string } => {
+    return {
+      pgcode: (search.pgcode as string) || undefined,
+    }
+  },
   component: PetunjukPage,
 });
 
@@ -53,9 +58,12 @@ function PetunjukPage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { i18n } = useTranslation();
   const navigate = useNavigate();
+  const { pgcode } = Route.useSearch();
 
   const handleComplete = () => {
-    window.open("https://chat.whatsapp.com/LyFfjXTmuSf57jcZqhnOzz", "_blank", "noopener,noreferrer");
+    if (pgcode) {
+      window.open("https://chat.whatsapp.com/LyFfjXTmuSf57jcZqhnOzz", "_blank", "noopener,noreferrer");
+    }
     navigate({ to: "/" });
   };
 
@@ -232,18 +240,16 @@ function PetunjukPage() {
               <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Kembali</span>
             </Link>
           </div>
-          <div className="flex-none flex justify-center">
-            <img src="./logo.svg" alt={appName} className="h-6 sm:h-7" />
-          </div>
+          <div className="flex-none flex justify-center w-12" />
           <div className="flex-1 flex justify-end">
             <a
               href="https://wa.me/628979901844"
               target="_blank"
               rel="noopener noreferrer"
-              className="lg:hidden inline-flex items-center justify-center gap-1.5 bg-[#25D366]/10 text-[#1da851] px-3 py-1.5 rounded-full hover:bg-[#25D366]/20 transition-all active:scale-95"
+              className="inline-flex items-center justify-center gap-1.5 bg-[#25D366]/10 text-[#1da851] px-3 py-1.5 rounded-full hover:bg-[#25D366]/20 transition-all active:scale-95"
             >
               <MessageCircle className="w-4 h-4" />
-              <span className="text-xs font-bold">Bantuan</span>
+              <span className="text-xs font-bold text-[#1da851]">Bantuan</span>
             </a>
           </div>
         </div>
@@ -502,9 +508,21 @@ function PetunjukPage() {
                   <button
                     type="button"
                     onClick={handleComplete}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#25D366] to-[#1da851] hover:from-[#1da851] hover:to-[#189e46] text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-green-200/40 hover:shadow-green-300/50 active:scale-[0.98] cursor-pointer text-sm"
+                    className={`inline-flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg active:scale-[0.98] cursor-pointer text-sm ${
+                      pgcode 
+                        ? "bg-gradient-to-r from-[#25D366] to-[#1da851] hover:from-[#1da851] hover:to-[#189e46] shadow-green-200/40 hover:shadow-green-300/50" 
+                        : "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-200/40 hover:shadow-red-300/50"
+                    }`}
                   >
-                    <MessageCircle className="w-5 h-5" /> Join Group
+                    {pgcode ? (
+                      <>
+                        <MessageCircle className="w-5 h-5" /> Join Group
+                      </>
+                    ) : (
+                      <>
+                        <Home className="w-5 h-5" /> Halaman Beranda
+                      </>
+                    )}
                   </button>
                 ) : (
                   <button
