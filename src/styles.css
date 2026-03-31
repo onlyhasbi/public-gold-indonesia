@@ -38,14 +38,22 @@ code {
 
 @theme inline {
   --animate-move: move 5s linear infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-shine: shine 1.5s ease-in-out infinite;
 
   @keyframes move {
-    0% {
-      transform: translateX(-200px);
-    }
-    100% {
-      transform: translateX(200px);
-    }
+    0% { transform: translateX(-200px); }
+    100% { transform: translateX(200px); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes shine {
+    0% { left: -100%; transition: left 0s; }
+    100% { left: 100%; transition: left 1.5s; }
   }
 }
 
@@ -57,4 +65,8 @@ code {
       transform: translate(calc(-50% - 0.5rem));
     }
   }
+}
+
+.font-handwritten {
+  font-family: 'Caveat', cursive;
 }

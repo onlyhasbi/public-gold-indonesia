@@ -283,6 +283,7 @@ function PriceList({ price }: Props) {
             autoplay={{
               delay: 4000,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
             navigation={{
               prevEl: ".swiper-prev-btn",
@@ -293,40 +294,45 @@ function PriceList({ price }: Props) {
           >
             {[...dinar, ...goldbar].map((item, index) => (
               <SwiperSlide key={`${item.title}-${index}`}>
-                <Link to="/register" className="group bg-white rounded-xl md:rounded-2xl border border-slate-100 p-4 md:p-5 hover:shadow-lg hover:shadow-red-500/5 transition-all duration-500 h-[290px] md:h-[340px] flex flex-col items-center text-center relative overflow-hidden block cursor-pointer">
-
-                  {/* Background Accent */}
-                  <div className="absolute -top-20 -right-20 md:-top-24 md:-right-24 w-40 h-40 md:w-48 md:h-48 bg-red-50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                  {/* Header Section */}
-                  <div className="mb-4 md:mb-6 w-full px-1 md:px-2 flex-shrink-0">
-                    <h4 className="text-[15px] md:text-lg font-bold text-slate-800 mb-1 lg:mb-1.5 group-hover:text-red-600 transition-colors line-clamp-2 leading-snug">
-                      {item.title}
-                    </h4>
-                    <div className="flex justify-center items-center gap-1.5 md:gap-2">
-                      <span className="px-2 py-0.5 rounded-md md:rounded-lg bg-red-50 text-red-600 text-[9px] md:text-[10px] font-bold uppercase tracking-wider">
-                        {item.weight}
-                      </span>
-                      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        999.9 Gold
-                      </span>
-                    </div>
+                <Link
+                  to="/register"
+                  className="group relative flex h-[320px] w-full flex-col items-center overflow-hidden rounded-[2rem] bg-white/40 p-6 text-center backdrop-blur-xl transition-all duration-500 hover:bg-white/60 hover:shadow-[-20px_0_40px_-20px_rgba(0,0,0,0.1),20px_0_40px_-20px_rgba(0,0,0,0.1)] md:h-[380px]"
+                >
+                  {/* Premium Background Glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-50/30 via-transparent to-red-50/20 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+                  
+                  {/* Reflective Shine Effect */}
+                  <div className="pointer-events-none absolute inset-0 z-20">
+                    <div className="absolute -inset-[100%] top-0 h-full w-1/2 -rotate-45 bg-gradient-to-r from-transparent via-white/20 to-transparent transition-all duration-1000 group-hover:animate-shine" />
                   </div>
 
-                  {/* Image Section */}
-                  <div className="flex-1 w-full flex items-center justify-center relative min-h-0">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-slate-50/0 via-slate-50/50 to-slate-50/0 rounded-full scale-50 group-hover:scale-100 transition-transform duration-1000" />
+                  {/* Header Section */}
+                  <div className="relative z-10 w-full flex-shrink-0">
+                    <div className="mb-1.5 flex justify-center items-center gap-2">
+                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                        Fine Gold 999.9
+                      </span>
+                    </div>
+                    <h4 className="text-lg font-extrabold text-slate-800 transition-all duration-500 group-hover:-translate-y-1 group-hover:text-red-900 md:text-xl text-center w-full">
+                      {item.title}
+                    </h4>
+                  </div>
+
+                  {/* Image Section with Floating Animation */}
+                  <div className="relative z-10 flex flex-1 w-full items-center justify-center p-4">
                     <img
-                      className="max-h-[100px] md:max-h-[130px] w-auto object-contain relative z-10 transition-transform duration-500 group-hover:scale-105"
+                      className="h-auto max-h-[120px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-110 group-hover:animate-float md:max-h-[160px]"
                       src={item.url}
                       alt={item.title}
                     />
                   </div>
 
-
-
-                  {/* Hover Action Indicator */}
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-amber-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                  {/* Bottom Info */}
+                  <div className="relative z-10 mt-auto w-full">
+                    <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-slate-900/5 border border-slate-900/5 text-slate-700 text-xs font-bold tracking-wide transition-all duration-300 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 group-hover:shadow-lg group-hover:shadow-red-200">
+                      {item.weight}
+                    </div>
+                  </div>
                 </Link>
               </SwiperSlide>
             ))}

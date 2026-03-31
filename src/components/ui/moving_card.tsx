@@ -88,36 +88,22 @@ export const MovingCards = ({
       >
         {items.map((item) => (
           <li
-            className="relative w-[350px] max-w-full shrink-0 rounded-2xl border border-b-0 border-zinc-200 bg-[linear-gradient(180deg,#fafafa,#f5f5f5)] px-8 py-6 md:w-[450px] flex flex-col"
+            className="relative w-[340px] max-w-full shrink-0 rounded-2xl bg-white/40 px-8 py-12 backdrop-blur-xl md:w-[460px] flex flex-col items-center justify-center text-center min-h-[200px]"
             key={item.name}
           >
-            <blockquote className="flex flex-col h-full">
-              <div
-                aria-hidden="true"
-                className="user-select-none pointer-events-none absolute -top-0.5 -left-0.5 -z-1 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
-              ></div>
-              <span className="relative z-20 text-sm leading-[1.6] font-normal text-neutral-800 flex-1">
+            {/* Soft decorative background quote icon */}
+            <div className="absolute top-2 left-6 text-slate-300/30 text-7xl font-serif pointer-events-none select-none">
+              &ldquo;
+            </div>
+
+            <span className="relative z-10 text-xl md:text-2xl leading-[1.6] font-medium text-slate-700 font-handwritten flex-1 flex flex-col items-center justify-center gap-4">
+              <span className="inline-block break-words max-w-[90%] mx-auto text-balance">
                 "{item.quote}"
               </span>
-              <div className="relative z-20 mt-6 flex flex-row items-center gap-3 pt-4 border-t border-zinc-200/80">
-                {item.avatar && (
-                  <img
-                    src={item.avatar}
-                    alt={item.name}
-                    className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white shadow-sm"
-                    referrerPolicy="no-referrer"
-                  />
-                )}
-                <span className="flex flex-col gap-0.5">
-                  <span className="text-sm leading-[1.4] font-semibold text-neutral-700">
-                    {item.name}
-                  </span>
-                  <span className="text-xs leading-[1.4] font-normal text-neutral-500">
-                    {item.title}
-                  </span>
-                </span>
-              </div>
-            </blockquote>
+              <span className="text-[16px] font-sans font-bold text-red-600/80 tracking-[0.2em] mt-2 block not-italic font-handwritten">
+                ~ {item.name} ~
+              </span>
+            </span>
           </li>
         ))}
       </ul>
