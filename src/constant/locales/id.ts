@@ -329,4 +329,10 @@ export const id = {
             },
         ],
     },
+    notFound: {
+        title: "Halaman Tidak Ditemukan",
+        desc: "Maaf, halaman yang Anda cari mungkin telah dipindahkan atau tidak ada.",
+        backHome: "Kembali ke Beranda",
+        goBack: "Kembali",
+    },
 };

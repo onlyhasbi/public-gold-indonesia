@@ -207,4 +207,10 @@ export const ms = {
             },
         ],
     },
+    notFound: {
+        title: "Halaman Tidak Dijumpai",
+        desc: "Maaf, halaman yang anda cari mungkin telah dipindahkan atau tidak wujud.",
+        backHome: "Kembali ke Laman Utama",
+        goBack: "Kembali",
+    },
 };

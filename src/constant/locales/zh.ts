@@ -330,4 +330,10 @@ export const zh = {
             },
         ],
     },
+    notFound: {
+        title: "页面未找到",
+        desc: "抱歉，您访问的页面可能已移动或不存在。",
+        backHome: "返回首页",
+        goBack: "返回",
+    },
 };
