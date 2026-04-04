@@ -319,9 +319,9 @@ function PriceList({ price }: Props) {
                   </div>
 
                   {/* Image Section with Floating Animation */}
-                  <div className="relative z-10 flex flex-1 w-full items-center justify-center p-4">
+                  <div className="relative z-10 flex flex-1 w-full items-center justify-center p-2">
                     <img
-                      className="h-auto max-h-[120px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-110 group-hover:animate-float md:max-h-[160px]"
+                      className="h-auto max-h-[180px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-110 md:group-hover:animate-float md:max-h-[200px]"
                       src={item.url}
                       alt={item.title}
                     />
