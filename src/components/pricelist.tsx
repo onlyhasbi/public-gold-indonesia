@@ -296,7 +296,7 @@ function PriceList({ price }: Props) {
               <SwiperSlide key={`${item.title}-${index}`}>
                 <Link
                   to="/register"
-                  className="group relative flex h-[320px] w-full flex-col items-center overflow-hidden rounded-[2rem] bg-white/40 p-6 text-center backdrop-blur-xl transition-all duration-500 hover:bg-white/60 hover:shadow-[-20px_0_40px_-20px_rgba(0,0,0,0.1),20px_0_40px_-20px_rgba(0,0,0,0.1)] md:h-[380px]"
+                  className="group relative flex h-[380px] w-full flex-col items-center overflow-hidden rounded-[2rem] bg-white/40 p-5 md:p-6 text-center backdrop-blur-xl transition-all duration-500 hover:bg-white/60 hover:shadow-[-20px_0_40px_-20px_rgba(0,0,0,0.1),20px_0_40px_-20px_rgba(0,0,0,0.1)] md:h-[420px]"
                 >
                   {/* Premium Background Glow */}
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-50/30 via-transparent to-red-50/20 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
@@ -319,9 +319,9 @@ function PriceList({ price }: Props) {
                   </div>
 
                   {/* Image Section with Floating Animation */}
-                  <div className="relative z-10 flex flex-1 w-full items-center justify-center p-2">
+                  <div className="relative z-10 flex flex-1 w-full items-center justify-center p-2 py-4">
                     <img
-                      className="h-auto max-h-[180px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-110 md:group-hover:animate-float md:max-h-[200px]"
+                      className="h-full max-h-[240px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-110 md:group-hover:animate-float md:max-h-[280px]"
                       src={item.url}
                       alt={item.title}
                     />
