@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { useFormik } from "formik";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { dialCodeOptions } from "../constant/countries";
 import { branchLabelOptions } from "../constant/branches";
 import { extractDataFromNIK, calculateAge } from "../lib/utils";
@@ -26,8 +27,19 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   const pendingFormData = useRef<string | null>(null);
   const pendingEndpoint = useRef<string | null>(null);
 
-  const formik = useFormik({
-    initialValues: {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    watch,
+    reset,
+    trigger,
+    formState: { errors, touchedFields }
+  } = useForm({
+    mode: "onTouched",
+    resolver: yupResolver(getValidationSchema(isAnak, isIndonesia)),
+    defaultValues: {
       'label-name': '',
       'idselect': countryMode === 'INTL' ? 'passportforeign' : 'newic',
       'label-ic': '',
@@ -41,96 +53,100 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
       'parent_idselect': countryMode === 'INTL' ? 'passportforeign' : 'newic',
       'label-parent-ic': '',
       'newsletter': true,
-    },
-    enableReinitialize: true,
-    validateOnBlur: false,
-    validateOnChange: false,
-    validationSchema: getValidationSchema(isAnak, isIndonesia),
-    onSubmit: (values) => {
-      setStatus("idle");
-      setMessage("");
-
-      const age = calculateAge(values['label-dob']);
-      if (isAnak && age >= 18) {
-        setShowAgeSwitch("dewasa");
-        return;
-      }
-      if (!isAnak && age < 18) {
-        setShowAgeSwitch("anak");
-        return;
-      }
-
-      const payload = new URLSearchParams();
-      payload.append("newsletter", values.newsletter ? "1" : "0");
-      Object.entries(values).forEach(([key, val]) => {
-        if (key !== "newsletter") payload.append(key, val as string);
-      });
-      payload.append("label-intro-pgcode", "PG01387609");
-      payload.append("label-intro-name", "A. MUH. HASBI HAERURRIJAL ");
-
-      pendingFormData.current = payload.toString();
-
-      const proxyPrefix = isIndonesia ? "/api-proxy" : "/api-proxy-my";
-      const baseUrl = `${proxyPrefix}/index.php?route=account/register&intro_pgcode=PG01387609&is_dealer=1`;
-      pendingEndpoint.current = isAnak ? `${baseUrl}&form_type=ja` : baseUrl;
-
-      const branchLabel = branchLabelOptions[values.upreferredbranch] || "-";
-
-      const dialOption = dialCodeOptions.find((o) => o.value === values['label-mobile-dialcode']);
-      const dialLabel = dialOption ? `+${dialOption.value}` : `+${values['label-mobile-dialcode']}`;
-
-      const idTypeLabel = values.idselect === "passportforeign" ? (isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID") : (isIndonesia ? "KTP" : "NEW IC");
-
-      const items: FormSummaryItem[] = [
-        { label: isAnak ? "Nama Anak" : "Nama Lengkap", value: values['label-name'] || "-" },
-        { label: isAnak ? "Tipe Identitas Anak" : "Tipe Identitas", value: idTypeLabel },
-        { label: isAnak ? "Nomor Identitas Anak" : "Nomor Identitas", value: values['label-ic'] || "-" },
-      ];
-
-      if (isIndonesia) {
-        items.push({ label: "NPWP", value: values['label-individualgstid'] || "-" });
-      }
-
-      items.push(
-        { label: isAnak ? "Tanggal Lahir Anak" : "Tanggal Lahir", value: values['label-dob'] || "-" },
-        { label: "Email", value: values['label-email'] || "-" },
-      );
-
-      if (isAnak) {
-        const parentIdTypeLabel = values.parent_idselect === "passportforeign" ? (isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID") : (isIndonesia ? "KTP" : "NEW IC");
-        items.push(
-          { label: "Nama Orang Tua", value: values['label-parent-name'] || "-" },
-          { label: "Tipe Identitas Orang Tua", value: parentIdTypeLabel },
-          { label: "No. Identitas Orang Tua", value: values['label-parent-ic'] || "-" },
-        );
-      }
-
-      items.push(
-        { label: "Nomor Handphone", value: `${dialLabel} ${values['label-mobile'] || "-"}` },
-        { label: "Cabang Terdekat", value: branchLabel },
-      );
-
-      setConfirmItems(items);
-      setShowConfirm(true);
     }
   });
 
+  const onSubmit = (values: any) => {
+    setStatus("idle");
+    setMessage("");
+
+    const age = calculateAge(values['label-dob']);
+    if (isAnak && age >= 18) {
+      setShowAgeSwitch("dewasa");
+      return;
+    }
+    if (!isAnak && age < 18) {
+      setShowAgeSwitch("anak");
+      return;
+    }
+
+    const payload = new URLSearchParams();
+    payload.append("newsletter", values.newsletter ? "1" : "0");
+    Object.entries(values).forEach(([key, val]) => {
+      if (key !== "newsletter") payload.append(key, val as string);
+    });
+    const refPgcode = localStorage.getItem('ref_pgcode') || "PG01387609";
+    const refName = localStorage.getItem('ref_name') || "A. MUH. HASBI HAERURRIJAL ";
+
+    payload.append("label-intro-pgcode", refPgcode);
+    payload.append("label-intro-name", refName);
+
+    pendingFormData.current = payload.toString();
+
+    const proxyPrefix = isIndonesia ? "/api-proxy" : "/api-proxy-my";
+    const baseUrl = `${proxyPrefix}/index.php?route=account/register&intro_pgcode=${refPgcode}&is_dealer=1`;
+    pendingEndpoint.current = isAnak ? `${baseUrl}&form_type=ja` : baseUrl;
+
+    const branchLabel = branchLabelOptions[values.upreferredbranch as keyof typeof branchLabelOptions] || "-";
+
+    const dialOption = dialCodeOptions.find((o) => o.value === values['label-mobile-dialcode']);
+    const dialLabel = dialOption ? `+${dialOption.value}` : `+${values['label-mobile-dialcode']}`;
+
+    const idTypeLabel = values.idselect === "passportforeign" ? (isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID") : (isIndonesia ? "KTP" : "NEW IC");
+
+    const items: FormSummaryItem[] = [
+      { label: isAnak ? "Nama Anak" : "Nama Lengkap", value: values['label-name'] || "-" },
+      { label: isAnak ? "Tipe Identitas Anak" : "Tipe Identitas", value: idTypeLabel },
+      { label: isAnak ? "Nomor Identitas Anak" : "Nomor Identitas", value: values['label-ic'] || "-" },
+    ];
+
+    if (isIndonesia) {
+      items.push({ label: "NPWP", value: values['label-individualgstid'] || "-" });
+    }
+
+    items.push(
+      { label: isAnak ? "Tanggal Lahir Anak" : "Tanggal Lahir", value: values['label-dob'] || "-" },
+      { label: "Email", value: values['label-email'] || "-" },
+    );
+
+    if (isAnak) {
+      const parentIdTypeLabel = values.parent_idselect === "passportforeign" ? (isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID") : (isIndonesia ? "KTP" : "NEW IC");
+      items.push(
+        { label: "Nama Orang Tua", value: values['label-parent-name'] || "-" },
+        { label: "Tipe Identitas Orang Tua", value: parentIdTypeLabel },
+        { label: "No. Identitas Orang Tua", value: values['label-parent-ic'] || "-" },
+      );
+    }
+
+    items.push(
+      { label: "Nomor Handphone", value: `${dialLabel} ${values['label-mobile'] || "-"}` },
+      { label: "Cabang Terdekat", value: branchLabel },
+    );
+
+    setConfirmItems(items);
+    setShowConfirm(true);
+  };
+
   const handleNikBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    formik.handleBlur(e);
+    // Manually trigger validation on blur for NIK
+    trigger("label-ic");
     const nik = e.currentTarget.value;
     const { validFormat, dateOfBirth } = extractDataFromNIK(nik);
 
     if (validFormat && dateOfBirth) {
-      formik.setFieldValue("label-dob", dateOfBirth);
+      setValue("label-dob", dateOfBirth, { shouldValidate: true, shouldDirty: true });
       setIsDobDisabled(true);
     } else {
       setIsDobDisabled(false);
     }
   };
 
-  const handlePhoneInput = (e: React.FormEvent<HTMLInputElement>) => {
-    setPhoneWarning(e.currentTarget.value.startsWith("0"));
-    formik.handleChange(e);
+  const handlePhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow digits
+    const cleaned = e.target.value.replace(/\D/g, "");
+    e.target.value = cleaned;
+    setPhoneWarning(cleaned.startsWith("0"));
+    return cleaned;
   };
 
   const confirmSubmit = async () => {
@@ -150,7 +166,7 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
       if (response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400)) {
         setMessage("Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.");
         setStatus("success");
-        formik.resetForm();
+        reset();
         setIsDobDisabled(false);
         setPhoneWarning(false);
         setFormKey(prev => prev + 1);
@@ -175,7 +191,7 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
 
       setMessage(successMessage);
       setStatus("success");
-      formik.resetForm();
+      reset();
       setIsDobDisabled(false);
       setPhoneWarning(false);
       setFormKey(prev => prev + 1);
@@ -191,7 +207,15 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   };
 
   return {
-    formik,
+    register,
+    handleSubmit,
+    onSubmit,
+    errors,
+    touchedFields,
+    setValue,
+    watch,
+    getValues,
+    reset,
     isLoading,
     status,
     setStatus,

@@ -11,7 +11,7 @@ export const ta = {
     },
     hero: {
         eyebrow: "Public Gold அங்கீகரிக்கப்பட்ட டீலர்",
-        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> வணக்கம், நான் <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>Hasbi</span>",
+        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> வணக்கம், நான் <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
         mission: "நிலையான மற்றும் எளிதில் பணமாக்கக்கூடிய உடல் தங்கத்தின் மூலம் பணவீக்கத்திலிருந்து உங்கள் பணத்தின் மதிப்பைப் பாதுகாக்கவும். Public Gold இல் பாதுகாப்பான, வெளிப்படையான மற்றும் உங்கள் தேவைகளுக்குப் பொருத்தமான முறையில் தங்க முதலீட்டைத் தொடங்க உங்களுக்கு உதவ நான் தயாராக உள்ளேன்.",
         cta: "இலவச ஆலோசனை பெறுங்கள்",
     },

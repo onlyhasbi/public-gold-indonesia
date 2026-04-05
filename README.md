@@ -1,17 +1,30 @@
-Welcome to your new TanStack app! 
+# Public Gold - Agent Portal (Monorepo)
 
-# Getting Started
+Aplikasi ini menggunakan arsitektur Monorepo yang berisi Frontend (React/Vite) dan Backend (ElysiaJS/Bun).
 
-To run this application:
+## Menjalankan Aplikasi Secara Lokal (Development)
+
+Pastikan Anda sudah menginstal **Bun** di komputer Anda. Cukup jalankan perintah berikut dari direktori root (satu kali eksekusi untuk menjalankan spesifik Frontend dan Backend secara bersamaan):
 
 ```bash
 bun install
-bun --bun run start
+bun run dev:all
 ```
+
+Perintah `dev:all` akan menjalankan server secara paralel menggunakan *concurrently*:
+1. **Frontend (Vite)** akan berjalan di `http://localhost:5173`
+2. **Backend (Elysia)** akan berjalan di *port* default backend (seperti `http://localhost:3000`)
+
+### Menjalankan Secara Terpisah:
+Jika Anda hanya ingin menjalankan salah satunya:
+- **Frontend Saja**: `bun run dev:fe` (atau `bun run dev`)
+- **Backend Saja**: `bun run dev:be`
+
+---
 
 # Building For Production
 
-To build this application for production:
+Untuk membangun (build) aplikasi untuk Production:
 
 ```bash
 bun run build

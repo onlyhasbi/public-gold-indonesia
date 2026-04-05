@@ -36,6 +36,13 @@ export function useResourceReady() {
   }, []);
 
   useEffect(() => {
+    // Admin pages don't need the landing page image preload — dismiss immediately
+    if (window.location.pathname.startsWith('/admin')) {
+      setIsReady(true);
+      dismissLoader();
+      return;
+    }
+
     let timeout: ReturnType<typeof setTimeout>;
 
     const loadResources = async () => {

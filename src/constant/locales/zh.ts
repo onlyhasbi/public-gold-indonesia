@@ -11,7 +11,7 @@ export const zh = {
     },
     hero: {
         eyebrow: "Public Gold 官方经销商",
-        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> 您好，我是 <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>Hasbi</span>",
+        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> 您好，我是 <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
         mission: "通过稳定且易于变现的实物黄金，保护您的财富免受通胀影响。我随时准备帮助您在 Public Gold 以安全、透明且符合您需求的方式开始黄金投资。",
         cta: "立即免费咨询",
     },

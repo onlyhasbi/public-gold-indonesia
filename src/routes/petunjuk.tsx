@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, Wallet, ChevronRight, MessageCircle, Home } from "lucide-react";
 import { PhoneMockup } from "../components/ui/PhoneMockup";
 import { useTranslation } from "react-i18next";
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../lib/api';
 
 export const Route = createFileRoute("/petunjuk")({
   validateSearch: (search: Record<string, unknown>): { pgcode?: string } => {
@@ -59,9 +61,33 @@ function PetunjukPage() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
   const { pgcode } = Route.useSearch();
+  
+  const [pageId, setPageId] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "Petunjuk Pendaftaran | Public Gold Indonesia";
+    // Scroll to top on mount
+    window.scrollTo({ top: 0 });
+    // Check if we have a ref_pageid
+    const storedPageId = localStorage.getItem('ref_pageid');
+    if (storedPageId) {
+      setPageId(storedPageId);
+    }
+  }, []);
+
+  const { data: agentData } = useQuery({
+    queryKey: ['agent-petunjuk', pageId],
+    queryFn: async () => {
+      const res = await api.get(`/public/pgbo/${pageId}`);
+      return res.data.data;
+    },
+    enabled: !!pageId,
+  });
 
   const handleComplete = () => {
-    if (pgcode) {
+    if (agentData?.link_group_whatsapp) {
+      window.open(agentData.link_group_whatsapp, "_blank", "noopener,noreferrer");
+    } else if (pgcode || pageId) {
       window.open("https://chat.whatsapp.com/LyFfjXTmuSf57jcZqhnOzz", "_blank", "noopener,noreferrer");
     }
     navigate({ to: "/" });
@@ -222,10 +248,9 @@ function PetunjukPage() {
   const currentStep = steps[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
-  // Scroll to top on mount
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, []);
+  const helpWaLink = agentData?.no_telpon 
+    ? `https://wa.me/${agentData.no_telpon.replace(/\D/g, '')}` 
+    : "https://wa.me/628979901844";
 
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -243,7 +268,7 @@ function PetunjukPage() {
           <div className="flex-none flex justify-center w-12" />
           <div className="flex-1 flex justify-end">
             <a
-              href="https://wa.me/628979901844"
+              href={helpWaLink}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-1.5 bg-[#25D366]/10 text-[#1da851] px-3 py-1.5 rounded-full hover:bg-[#25D366]/20 transition-all active:scale-95"
@@ -509,12 +534,12 @@ function PetunjukPage() {
                     type="button"
                     onClick={handleComplete}
                     className={`inline-flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg active:scale-[0.98] cursor-pointer text-sm ${
-                      pgcode 
+                      (pgcode || pageId)
                         ? "bg-gradient-to-r from-[#25D366] to-[#1da851] hover:from-[#1da851] hover:to-[#189e46] shadow-green-200/40 hover:shadow-green-300/50" 
                         : "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-200/40 hover:shadow-red-300/50"
                     }`}
                   >
-                    {pgcode ? (
+                    {(pgcode || pageId) ? (
                       <>
                         <MessageCircle className="w-5 h-5" /> Join Group
                       </>

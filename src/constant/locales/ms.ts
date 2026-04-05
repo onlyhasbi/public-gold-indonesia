@@ -11,7 +11,7 @@ export const ms = {
     },
     hero: {
         eyebrow: "Dealer Rasmi Public Gold",
-        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> Hai, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>Hasbi</span>",
+        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> Hai, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
         mission: "Lindungi nilai wang anda daripada inflasi dengan emas fizikal yang stabil dan mudah dicairkan. Saya sedia membantu anda memulakan pelaburan emas dengan cara yang selamat, telus, dan sesuai keperluan anda di Public Gold.",
         cta: "Konsultasi Percuma Sekarang",
     },

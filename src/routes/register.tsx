@@ -49,7 +49,14 @@ function RegisterPage() {
   const [isTermsExpanded, setIsTermsExpanded] = useState(false);
 
   const {
-    formik,
+    register,
+    handleSubmit,
+    onSubmit,
+    errors,
+    touchedFields,
+    setValue,
+    watch,
+    reset,
     isLoading,
     status,
     setStatus,
@@ -142,7 +149,7 @@ function RegisterPage() {
               <button
                 type="button"
                 onClick={() => {
-                  formik.resetForm();
+                  reset();
                   navigate({ to: "/register", search: { type: "dewasa" } });
                 }}
                 className={cn("flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer", !isAnak ? "bg-white text-red-600 shadow-sm" : "text-slate-500 hover:text-slate-700")}
@@ -152,7 +159,7 @@ function RegisterPage() {
               <button
                 type="button"
                 onClick={() => {
-                  formik.resetForm();
+                  reset();
                   navigate({ to: "/register", search: { type: "anak" } });
                 }}
                 className={cn("flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer", isAnak ? "bg-white text-red-600 shadow-sm" : "text-slate-500 hover:text-slate-700")}
@@ -173,18 +180,16 @@ function RegisterPage() {
               <AlertMessage type={status} message={message} onClose={() => setStatus("idle")} />
             )}
 
-            <form key={formKey} onSubmit={formik.handleSubmit} className="space-y-6">
+            <form key={formKey} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <InputField
                 label={labels.nameLabel(isAnak)}
                 id="label-name"
                 required
                 placeholder={labels.namePlaceholder(isAnak)}
-                {...formik.getFieldProps("label-name")}
-                onChange={(e) => {
-                  e.target.value = e.target.value.toUpperCase();
-                  formik.handleChange(e);
-                }}
-                error={formik.touched["label-name"] && formik.errors["label-name"]}
+                {...register("label-name", {
+                  onChange: (e) => e.target.value = e.target.value.toUpperCase()
+                })}
+                error={touchedFields["label-name"] && (errors["label-name"]?.message as string)}
               />
 
               <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
@@ -192,18 +197,20 @@ function RegisterPage() {
                   label={labels.idTypeLabel}
                   id="idselect"
                   options={idTypeOptions}
-                  {...formik.getFieldProps("idselect")}
-                  error={formik.touched["idselect"] && formik.errors["idselect"]}
+                  {...register("idselect")}
+                  error={touchedFields["idselect"] && (errors["idselect"]?.message as string)}
                 />
                 <InputField
                   label={<span>{labels.icLabel(isAnak)}</span>}
                   id="label-ic"
                   required
                   maxLength={20}
-                  {...formik.getFieldProps("label-ic")}
+                  {...register("label-ic", {
+                    onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
+                  })}
                   onBlur={handleNikBlur}
                   placeholder={labels.icPlaceholder(isAnak)}
-                  error={formik.touched["label-ic"] && formik.errors["label-ic"]}
+                  error={touchedFields["label-ic"] && (errors["label-ic"]?.message as string)}
                 />
               </div>
 
@@ -212,8 +219,10 @@ function RegisterPage() {
                   label={<span>{labels.npwpLabel} <span className="text-slate-400 font-normal">{labels.npwpDesc}</span></span>}
                   id="label-individualgstid"
                   placeholder={labels.npwpPlaceholder}
-                  {...formik.getFieldProps("label-individualgstid")}
-                  error={formik.touched["label-individualgstid"] && formik.errors["label-individualgstid"]}
+                  {...register("label-individualgstid", {
+                    onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
+                  })}
+                  error={touchedFields["label-individualgstid"] && (errors["label-individualgstid"]?.message as string)}
                 />
               )}
 
@@ -223,10 +232,10 @@ function RegisterPage() {
                   id="label-dob"
                   type="date"
                   required
-                  {...formik.getFieldProps("label-dob")}
+                  {...register("label-dob")}
                   readOnly={isDobDisabled}
                   className={cn(inputClass, isDobDisabled && "bg-slate-100/80 text-slate-500 cursor-not-allowed opacity-90")}
-                  error={formik.touched["label-dob"] && formik.errors["label-dob"]}
+                  error={touchedFields["label-dob"] && (errors["label-dob"]?.message as string)}
                 />
                 <InputField
                   label={labels.emailLabel}
@@ -234,8 +243,8 @@ function RegisterPage() {
                   type="email"
                   required
                   placeholder={labels.emailPlaceholder}
-                  {...formik.getFieldProps("label-email")}
-                  error={formik.touched["label-email"] && formik.errors["label-email"]}
+                  {...register("label-email")}
+                  error={touchedFields["label-email"] && (errors["label-email"]?.message as string)}
                 />
               </div>
 
@@ -252,12 +261,10 @@ function RegisterPage() {
                     id="label-parent-name"
                     required
                     placeholder={labels.parentNamePlaceholder}
-                    {...formik.getFieldProps("label-parent-name")}
-                    onChange={(e) => {
-                      e.target.value = e.target.value.toUpperCase();
-                      formik.handleChange(e);
-                    }}
-                    error={formik.touched["label-parent-name"] && formik.errors["label-parent-name"]}
+                    {...register("label-parent-name", {
+                      onChange: (e) => e.target.value = e.target.value.toUpperCase()
+                    })}
+                    error={touchedFields["label-parent-name"] && (errors["label-parent-name"]?.message as string)}
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
@@ -265,8 +272,8 @@ function RegisterPage() {
                       label={labels.idTypeLabel}
                       id="parent_idselect"
                       options={idTypeOptions}
-                      {...formik.getFieldProps("parent_idselect")}
-                      error={formik.touched["parent_idselect"] && formik.errors["parent_idselect"]}
+                      {...register("parent_idselect")}
+                      error={touchedFields["parent_idselect"] && (errors["parent_idselect"]?.message as string)}
                     />
                     <InputField
                       label={labels.parentIcLabel}
@@ -274,8 +281,10 @@ function RegisterPage() {
                       required
                       maxLength={20}
                       placeholder={labels.parentIcPlaceholder}
-                      {...formik.getFieldProps("label-parent-ic")}
-                      error={formik.touched["label-parent-ic"] && formik.errors["label-parent-ic"]}
+                      {...register("label-parent-ic", {
+                        onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
+                      })}
+                      error={touchedFields["label-parent-ic"] && (errors["label-parent-ic"]?.message as string)}
                     />
                   </div>
                 </>
@@ -285,15 +294,15 @@ function RegisterPage() {
                 label={labels.mobileLabel(isAnak)}
                 id="label-mobile"
                 required
-                error={formik.touched["label-mobile"] && formik.errors["label-mobile"]}
+                error={touchedFields["label-mobile"] && (errors["label-mobile"]?.message as string)}
               >
                 <div className="relative pb-0.5">
                   <div className="flex gap-2 sm:gap-3">
                     <Select
                       name="label-mobile-dialcode"
                       options={dialCodeOptions}
-                      value={dialCodeOptions.find((o) => o.value === formik.values["label-mobile-dialcode"])}
-                      onChange={(opt) => formik.setFieldValue("label-mobile-dialcode", opt?.value)}
+                      value={dialCodeOptions.find((o) => o.value === watch("label-mobile-dialcode"))}
+                      onChange={(opt) => setValue("label-mobile-dialcode", opt?.value, { shouldValidate: true })}
                       isSearchable={true}
                       formatOptionLabel={(option, { context }) => context === "value" ? option.label.split(" ").slice(0, 2).join(" ") : option.label}
                       classNames={{
@@ -310,13 +319,12 @@ function RegisterPage() {
                       type="tel"
                       required
                       placeholder={labels.mobilePlaceholder}
-                      {...formik.getFieldProps("label-mobile")}
-                      onChange={handlePhoneInput}
-                      className={cn(inputClass, formik.touched["label-mobile"] && formik.errors["label-mobile"] && "border-red-500 focus:ring-red-500/30 focus:border-red-500", "flex-1 min-w-0")}
+                      {...register("label-mobile", { onChange: handlePhoneInput })}
+                      className={cn(inputClass, touchedFields["label-mobile"] && errors["label-mobile"] && "border-red-500 focus:ring-red-500/30 focus:border-red-500", "flex-1 min-w-0")}
                     />
                   </div>
                   <div className="absolute top-full left-1 mt-1">
-                    {phoneWarning && !formik.errors["label-mobile"] && (
+                    {phoneWarning && !errors["label-mobile"] && (
                       <p className="text-[11px] font-medium text-amber-600 flex items-center gap-1.5 animate-in fade-in duration-200">
                         <AlertCircle className="w-3 h-3 shrink-0" /> {labels.mobileWarning}
                       </p>
@@ -331,8 +339,8 @@ function RegisterPage() {
                 required
                 options={branchOptions}
                 description={labels.branchDesc}
-                {...formik.getFieldProps("upreferredbranch")}
-                error={formik.touched["upreferredbranch"] && formik.errors["upreferredbranch"]}
+                {...register("upreferredbranch")}
+                error={touchedFields["upreferredbranch"] && (errors["upreferredbranch"]?.message as string)}
               />
 
               <div className="pt-8 pb-1 space-y-6">
@@ -346,7 +354,7 @@ function RegisterPage() {
 
                 <div className="space-y-3 text-[13px] text-left transition-all duration-300 text-slate-800">
                   <label className="flex items-start sm:items-center gap-3 cursor-pointer font-medium text-slate-800">
-                    <input type="checkbox" className="w-5 h-5 sm:w-4 sm:h-4 mt-0.5 sm:mt-0 shrink-0 rounded border-slate-300 focus:ring-blue-500 accent-blue-600 cursor-pointer" {...formik.getFieldProps("newsletter")} checked={formik.values.newsletter} />
+                    <input type="checkbox" className="w-5 h-5 sm:w-4 sm:h-4 mt-0.5 sm:mt-0 shrink-0 rounded border-slate-300 focus:ring-blue-500 accent-blue-600 cursor-pointer" {...register("newsletter")} />
                     <span>{isIndonesia ? "Berlangganan & Setujui Syarat dan Ketentuan" : "Subscribe to newsletter & Agree to terms"}</span>
                   </label>
 
@@ -449,7 +457,7 @@ function RegisterPage() {
           showSwitchTo={showAgeSwitch}
           onConfirm={() => {
             setShowAgeSwitch(null);
-            formik.resetForm();
+            reset();
             navigate({ to: "/register", search: { type: showAgeSwitch } });
           }}
           onCancel={() => setShowAgeSwitch(null)}

@@ -2,8 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Home } from "lucide-react";
 
+const HOME_URL = import.meta.env.DEV ? "/" : "https://mypublicgold.id";
+
 export default function NotFound() {
   const { t } = useTranslation();
+
+  const buttonClass = "inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white shadow-lg hover:bg-red-700 transition-all hover:scale-110 active:scale-95 no-underline";
+  const buttonTitle = t("notFound.backHome", "Kembali ke Beranda");
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 bg-white animate-in fade-in duration-700">
@@ -25,13 +30,23 @@ export default function NotFound() {
 
         {/* Single CTA */}
         <div className="pt-8">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white shadow-lg hover:bg-red-700 transition-all hover:scale-110 active:scale-95 no-underline"
-            title={t("notFound.backHome", "Kembali ke Beranda")}
-          >
-            <Home className="w-8 h-8" />
-          </Link>
+          {import.meta.env.DEV ? (
+            <Link
+              to="/"
+              className={buttonClass}
+              title={buttonTitle}
+            >
+              <Home className="w-8 h-8" />
+            </Link>
+          ) : (
+            <a
+              href={HOME_URL}
+              className={buttonClass}
+              title={buttonTitle}
+            >
+              <Home className="w-8 h-8" />
+            </a>
+          )}
         </div>
       </div>
     </div>

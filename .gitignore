@@ -3,3 +3,12 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Environment secrets — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# SQLite local database
+*.db
+*.db-journal

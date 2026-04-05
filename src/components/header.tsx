@@ -2,10 +2,25 @@ import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 import { MessageCircle } from "lucide-react";
 
-function Header() {
+interface PgboData {
+  foto_profil_url?: string | null;
+  nama_lengkap?: string | null;
+  nama_panggilan?: string | null;
+  no_telpon?: string | null;
+  link_group_whatsapp?: string | null;
+  pgcode?: string | null;
+  [key: string]: any;
+}
+
+function Header({ pgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
 
-
+  const hasPhoto = !!pgbo?.foto_profil_url;
+  const hasPhone = !!pgbo?.no_telpon;
+  const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
+  const whatsappLink = hasPhone
+    ? `https://wa.me/${pgbo!.no_telpon!.replace(/\D/g, "")}`
+    : null;
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0">
@@ -40,11 +55,17 @@ function Header() {
             50% { transform: translateY(-8px); }
           }
         `}</style>
-        <img
-          className="relative overflow-hidden rounded-full w-full h-full object-cover shadow-2xl shadow-slate-200"
-          src="./me.webp"
-          alt="A. Muh. Hasbi Haerurrijal - Authorized Public Gold Dealer"
-        />
+        {hasPhoto ? (
+          <img
+            className="relative overflow-hidden rounded-full w-full h-full object-cover shadow-2xl shadow-slate-200"
+            src={pgbo!.foto_profil_url!}
+            alt={`${displayName} - Authorized Public Gold Dealer`}
+          />
+        ) : (
+          <div className="relative rounded-full w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 shadow-2xl shadow-slate-200 flex items-center justify-center">
+            <span className="text-slate-400 text-lg font-semibold tracking-wide uppercase">Photo</span>
+          </div>
+        )}
         <span className="w-20 h-20 md:w-24 md:h-24 absolute bottom-0 right-0 z-[99] animate-[float_4s_ease-in-out_infinite]">
           <img
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-lg"
@@ -57,23 +78,25 @@ function Header() {
 
         <h1 
           className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.2] tracking-tight text-slate-900"
-          dangerouslySetInnerHTML={{ __html: t('hero.headline') }}
+          dangerouslySetInnerHTML={{ __html: t('hero.headline', { name: displayName, interpolation: { escapeValue: false } }) }}
         />
         <p 
           className="text-base sm:text-lg text-slate-600 max-w-[520px] leading-relaxed mx-auto md:mx-0"
           dangerouslySetInnerHTML={{ __html: t('hero.mission') }}
         />
-        <div className="pt-2 sm:pt-4">
-          <a
-            href="https://wa.me/628979901844"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_25px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 no-underline ring-1 ring-red-500/20"
-          >
-            <MessageCircle className="w-5 h-5" />
-            {t('hero.cta')}
-          </a>
-        </div>
+        {whatsappLink && (
+          <div className="pt-2 sm:pt-4">
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_25px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 no-underline ring-1 ring-red-500/20"
+            >
+              <MessageCircle className="w-5 h-5" />
+              {t('hero.cta')}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

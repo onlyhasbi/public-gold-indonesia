@@ -10,6 +10,7 @@ export const getValidationSchema = (isAnak: boolean, isIndonesia: boolean) => {
       .required("Nama wajib diisi"),
     'idselect': yup.string(),
     'label-ic': yup.string()
+      .matches(/^[0-9]+$/, "Hanya boleh berisi angka")
       .required("Nomor identitas wajib diisi")
       .max(20, "Maksimal 20 digit"),
     'label-dob': yup.string().required("Tanggal lahir wajib diisi"),
@@ -23,13 +24,15 @@ export const getValidationSchema = (isAnak: boolean, isIndonesia: boolean) => {
         .matches(nameRegex, nameErrMsg)
         .required("Nama orang tua wajib diisi"),
       'label-parent-ic': yup.string()
+        .matches(/^[0-9]+$/, "Hanya boleh berisi angka")
         .required("Nomor identitas orang tua wajib diisi")
         .max(20, "Maksimal 20 digit"),
     } : {})
   };
 
   if (isIndonesia) {
-    schemaShape['label-individualgstid'] = yup.string();
+    schemaShape['label-individualgstid'] = yup.string()
+      .matches(/^[0-9]*$/, "Hanya boleh berisi angka");
   }
 
   return yup.object().shape(schemaShape);

@@ -2,8 +2,24 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import BaseLayout from "../layout/base";
 import { useTranslation } from "react-i18next";
 
-export default function CallToAction() {
+interface PgboData {
+  foto_profil_url?: string | null;
+  nama_lengkap?: string | null;
+  no_telpon?: string | null;
+  link_group_whatsapp?: string | null;
+  pgcode?: string | null;
+  [key: string]: any;
+}
+
+export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
     const { t } = useTranslation();
+
+    const hasPhoto = !!pgbo?.foto_profil_url;
+    const hasPhone = !!pgbo?.no_telpon;
+    const displayName = pgbo?.nama_lengkap || "Authorized Dealer";
+    const whatsappLink = hasPhone
+      ? `https://wa.me/${pgbo!.no_telpon!.replace(/\D/g, "")}`
+      : null;
 
     return (
         <BaseLayout className="flex-col py-20">
@@ -26,11 +42,17 @@ export default function CallToAction() {
                                 <style>{`@keyframes ripple { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.25); opacity: 0; } }`}</style>
 
                                 {/* Photo */}
-                                <img
-                                    src="./me.webp"
-                                    alt="Hasbi - Dealer Public Gold"
-                                    className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
-                                />
+                                {hasPhoto ? (
+                                    <img
+                                        src={pgbo!.foto_profil_url!}
+                                        alt={`${displayName} - Dealer Public Gold`}
+                                        className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
+                                    />
+                                ) : (
+                                    <div className="relative w-full h-full rounded-full bg-gradient-to-br from-white/30 to-white/10 border-4 border-white shadow-2xl flex items-center justify-center">
+                                        <span className="text-white/60 text-lg font-semibold tracking-wide uppercase">Photo</span>
+                                    </div>
+                                )}
 
                             </div>
                         </div>
@@ -50,18 +72,20 @@ export default function CallToAction() {
                             </p>
 
                             {/* CTA Button */}
-                            <div className="flex justify-center lg:justify-start">
-                                <a
-                                    href="https://mypublicgold.com/app/link/hasbi/whatsapp/id"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 bg-white text-red-600 hover:bg-slate-50"
-                                >
-                                    <MessageCircle className="w-5 h-5" />
-                                    {t('cta.whatsapp')}
-                                    <ArrowRight className="w-5 h-5" />
-                                </a>
-                            </div>
+                            {whatsappLink && (
+                                <div className="flex justify-center lg:justify-start">
+                                    <a
+                                        href={whatsappLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 bg-white text-red-600 hover:bg-slate-50"
+                                    >
+                                        <MessageCircle className="w-5 h-5" />
+                                        {t('cta.whatsapp')}
+                                        <ArrowRight className="w-5 h-5" />
+                                    </a>
+                                </div>
+                            )}
 
                         </div>
                     </div>
