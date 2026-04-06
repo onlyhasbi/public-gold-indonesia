@@ -13,7 +13,6 @@ import { ConfirmationModal, AgeSwitchModal } from "../components/RegisterModals"
 import { NextStepModal } from "../components/NextStepModal";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import { ShieldCheck } from "lucide-react";
 
 type RegisterSearch = {
   type?: "dewasa" | "anak";
@@ -35,7 +34,7 @@ function RegisterPage() {
   const navigate = useNavigate();
   const isAnak = type === "anak";
 
-  const { data: referralData, isLoading: isLoadingReferral, isError: isReferralError } = useQuery({
+  const { data: referralData, isError: isReferralError } = useQuery({
     queryKey: ['referral', ref],
     queryFn: async () => {
       if (!ref) return null;
@@ -199,31 +198,6 @@ function RegisterPage() {
               </p>
             </div>
 
-            {/* REFERRAL INFORMATION BAR */}
-            {ref && (
-              <div className="mb-6 relative group">
-                {isLoadingReferral ? (
-                  <div className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-2xl animate-pulse">
-                    <div className="w-5 h-5 bg-slate-200 rounded-full" />
-                    <div className="h-4 bg-slate-200 rounded w-32" />
-                  </div>
-                ) : referralData ? (
-                  <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-emerald-50/80 to-teal-50/50 border border-emerald-100 rounded-2xl shadow-sm transition-all hover:shadow-md hover:border-emerald-200">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mb-1">Direferensikan oleh</span>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                        <span className="text-sm font-bold text-slate-800">{referralData.nama_panggilan || referralData.nama_lengkap}</span>
-                        <span className="hidden sm:inline text-slate-300 mx-1">|</span>
-                        <span className="text-xs font-mono font-medium text-slate-500 bg-white/50 px-1.5 py-0.5 rounded border border-emerald-100/50">{referralData.pgcode}</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            )}
 
             {/* Tab Toggle */}
             <div className="flex bg-slate-100 rounded-xl p-1 mb-6">
