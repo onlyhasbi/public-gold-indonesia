@@ -54,24 +54,18 @@
       pointer-events: none;
     }
 
-    .loader-logo {
-      width: 114px;
-      height: 114px;
-      object-fit: contain;
-      animation: loader-breathe 2s ease-in-out infinite;
+    .circle-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #fecaca;
+      border-top-color: #dc2626;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
 
-    @keyframes loader-breathe {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.7;
-      }
-
-      50% {
-        transform: scale(1.08);
-        opacity: 1;
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
     }
   </style>
@@ -80,7 +74,7 @@
 <body>
   <!-- Loading Overlay — lives OUTSIDE #app so React won't destroy it -->
   <div id="initial-loader">
-    <img class="loader-logo" src="/logo.svg" alt="Public Gold" />
+    <div class="circle-spinner"></div>
   </div>
 
   <!-- React app root -->
