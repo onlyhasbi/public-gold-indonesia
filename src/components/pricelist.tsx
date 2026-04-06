@@ -1,8 +1,9 @@
 import { Autoplay, FreeMode, Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { TrendingUp, ShieldCheck, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { TrendingUp, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import GradientHighlight from "./ui/gradient_highlight";
+import { Spinner } from "./ui/spinner";
 import { useState } from "react";
 
 import "swiper/css";
@@ -17,6 +18,7 @@ type PriceListKey = "poe" | "dinar" | "goldbar";
 
 type Props = {
   price?: GoldPricesResult;
+  pgbo?: any;
 };
 
 export const dinar = [
@@ -99,7 +101,7 @@ export const goldbar = [
 
 import { useTranslation } from "react-i18next";
 
-function PriceList({ price }: Props) {
+function PriceList({ price, pgbo }: Props) {
   const { t, i18n } = useTranslation();
   const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
 
@@ -134,8 +136,8 @@ function PriceList({ price }: Props) {
 
   const formatPrice = (priceValue: string | null | undefined) => {
     if (!priceValue) return (
-      <span className="flex items-center gap-1 text-slate-400">
-        <Clock className="w-3 h-3 animate-pulse" />
+      <span className="flex items-center gap-2 text-slate-400">
+        <Spinner size={12} className="text-slate-400 opacity-100" />
         {t("priceList.loading")}
       </span>
     );
@@ -296,6 +298,7 @@ function PriceList({ price }: Props) {
               <SwiperSlide key={`${item.title}-${index}`}>
                 <Link
                   to="/register"
+                  search={{ ref: pgbo?.pageid }}
                   className="group relative flex h-[380px] w-full flex-col items-center overflow-hidden rounded-[2rem] bg-white/40 p-5 md:p-6 text-center backdrop-blur-xl transition-all duration-500 hover:bg-white/60 hover:shadow-[-20px_0_40px_-20px_rgba(0,0,0,0.1),20px_0_40px_-20px_rgba(0,0,0,0.1)] md:h-[420px]"
                 >
                   {/* Premium Background Glow */}

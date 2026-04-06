@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, ShieldCheck, KeyRound, AlertCircle, Clock, LogIn, UserPlus } from 'lucide-react'
+import { ShieldCheck, KeyRound, AlertCircle, LogIn, UserPlus } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { Spinner } from '../components/ui/spinner'
+import { api } from '../lib/api'
 
 export const Route = createFileRoute('/')({
   component: LandingAuthPage,
@@ -15,6 +17,7 @@ function LandingAuthPage() {
   const [errorMsg, setErrorMsg] = useState('')
   const [attempts, setAttempts] = useState(0)
   const [lockoutTime, setLockoutTime] = useState<number>(0)
+  const [isVerifying, setIsVerifying] = useState(false)
 
   // Initialize lockout from localStorage just in case of refresh
   useEffect(() => {
@@ -51,32 +54,34 @@ function LandingAuthPage() {
 
   const handleSecretSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (lockoutTime > 0 || isVerifying) return
 
-    if (lockoutTime > 0) return
+    setIsVerifying(true)
+    setErrorMsg('')
 
-    // Securely check the secret code using SHA-256 hashing so the plaintext never appears in the JS bundle
-    const encoder = new TextEncoder()
-    const data = encoder.encode(secretCode.toLowerCase().trim())
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-
-    if (hashHex === '2044fbdb55f9238637ff4adbdd07a491f8225a62b4db057bca43b73de9b3abad') {
-      setIsUnlocked(true)
-      setErrorMsg('')
-      setAttempts(0)
-    } else {
+    try {
+      const res = await api.post('/public/portal/verify', { code: secretCode })
+      if (res.data.success) {
+        setIsUnlocked(true)
+        setErrorMsg('')
+        setAttempts(0)
+      }
+    } catch (error: any) {
       const newAttempts = attempts + 1
       setAttempts(newAttempts)
-      if (newAttempts >= 5) {
-        // Calculate 5 minutes from now
-        const expiryTime = Date.now() + 5 * 60 * 1000;
-        localStorage.setItem('portal_lock_expiry', expiryTime.toString());
-        setLockoutTime(300) // 300 seconds = 5 minutes
-        setErrorMsg('Terlalu banyak percobaan yang salah.')
-      } else {
-        setErrorMsg('Secret code salah.')
+      
+      const isLockout = newAttempts >= 5
+      if (isLockout) {
+        const expiryTime = Date.now() + 5 * 60 * 1000
+        localStorage.setItem('portal_lock_expiry', expiryTime.toString())
+        setLockoutTime(300)
       }
+      
+      setErrorMsg(isLockout 
+        ? 'Terlalu banyak percobaan yang salah.' 
+        : (error.response?.data?.message || 'Secret code salah.'))
+    } finally {
+      setIsVerifying(false)
       setSecretCode('')
     }
   }
@@ -131,35 +136,36 @@ function LandingAuthPage() {
               {lockoutTime > 0 ? (
                 <div className="flex flex-col items-center justify-center gap-2 mt-4 text-center">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <Clock className="w-5 h-5 text-red-500 animate-pulse" />
+                    <Spinner size={20} className="text-red-500 opacity-100" />
                     <span className="text-red-400 font-mono text-xl font-bold tracking-widest leading-none translate-y-[1px]">{formatTime(lockoutTime)}</span>
                   </div>
                   <p className="text-red-500 text-sm font-medium">{errorMsg}</p>
                   <p className="text-slate-400 text-xs">Silahkan coba lagi dalam 5 menit.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSecretSubmit} className="flex flex-col">
-                  <div className={`relative flex items-center bg-slate-950/80 border ${errorMsg ? 'border-red-500/50 focus-within:border-red-500 max-w-[280px] mx-auto w-full' : 'border-slate-800 focus-within:border-slate-500 w-full'} rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-slate-500 transition-colors`}>
-                    <div className="pl-4 text-slate-500 flex items-center justify-center">
+                <form onSubmit={handleSecretSubmit} className="flex flex-col gap-4">
+                  <div className={`relative flex items-center bg-slate-950/80 border ${errorMsg ? 'border-red-500/50 focus-within:border-red-500 max-w-[280px] mx-auto w-full' : 'border-slate-800 focus-within:border-slate-500 w-full'} rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-slate-500 transition-all`}>
+                    <div className="pl-4 text-slate-500">
                       <KeyRound className="w-4 h-4" />
                     </div>
                     <input 
                       type="password" 
                       value={secretCode}
                       onChange={(e) => setSecretCode(e.target.value)}
-                      placeholder="Secret code..."
-                      className="flex-1 bg-transparent text-white px-3 py-3 focus:outline-none placeholder-slate-600"
+                      placeholder="Identitas portal..."
+                      className="flex-1 bg-transparent text-white px-4 py-4 focus:outline-none placeholder-slate-600 font-mono tracking-widest"
                       autoFocus
                     />
-                    <button 
-                      type="submit"
-                      disabled={!secretCode}
-                      className="w-8 h-8 mr-2 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 disabled:bg-transparent disabled:text-slate-600 text-white transition-all duration-300"
-                      aria-label="Unlock"
-                    >
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
                   </div>
+                  
+                  <button
+                    type="submit"
+                    disabled={lockoutTime > 0 || isVerifying || secretCode.length < 3}
+                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold shadow-xl shadow-red-600/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98]"
+                  >
+                    {isVerifying ? <Spinner size={20} className="text-white" /> : <LogIn className="w-5 h-5" />}
+                    Buka Portal
+                  </button>
                   {errorMsg && (
                     <p className="text-xs text-red-400 font-medium flex items-center gap-1 justify-center mt-3">
                       <AlertCircle className="w-3 h-3" /> 

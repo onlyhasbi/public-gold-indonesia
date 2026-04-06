@@ -9,7 +9,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/data-table'
-import { Trash2, Plus, X, ToggleLeft, ToggleRight, Pencil } from 'lucide-react'
+import { Trash2, Plus, X, ToggleLeft, ToggleRight, Pencil, KeyRound, RefreshCw, Eye, EyeOff, Save } from 'lucide-react'
+import { Spinner } from '../../components/ui/spinner'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminDashboard,
@@ -48,6 +49,52 @@ function AdminDashboard() {
   const [pageIdErrorCreate, setPageIdErrorCreate] = useState<string | null>(null)
   const [pageIdErrorEdit, setPageIdErrorEdit] = useState<string | null>(null)
   const [showPasswordSementara, setShowPasswordSementara] = useState(false)
+
+  // System Settings: Secret Code
+  const [isSecretModalOpen, setIsSecretModalOpen] = useState(false)
+  const [showSecretInModal, setShowSecretInModal] = useState(false)
+  const [tempSecretCode, setTempSecretCode] = useState('')
+
+  const { data: currentSecret } = useQuery({
+    queryKey: ['admin_secret_code'],
+    queryFn: async () => {
+      const res = await api.get('/admin/settings/secret-code', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+      })
+      return res.data?.data?.code || ''
+    },
+    enabled: isSecretModalOpen,
+  })
+
+  useEffect(() => {
+    if (currentSecret) setTempSecretCode(currentSecret)
+  }, [currentSecret])
+
+  const updateSecretMutation = useMutation({
+    mutationFn: async (code: string) => {
+      const res = await api.patch('/admin/settings/secret-code', { code }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+      })
+      return res.data
+    },
+    onSuccess: (data) => {
+      showToast(data.message, 'success')
+      setIsSecretModalOpen(false)
+      queryClient.invalidateQueries({ queryKey: ['admin_secret_code'] })
+    },
+    onError: (error: any) => {
+      showToast(error.response?.data?.message || 'Gagal memperbarui kode rahasia', 'error')
+    }
+  })
+
+  const generateRandom = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setTempSecretCode(result);
+  }
 
   const checkPageId = async (pageid: string, excludeId?: string): Promise<boolean> => {
     if (!pageid || pageid.length < 3) return true;
@@ -415,10 +462,17 @@ function AdminDashboard() {
                 <span className="font-bold text-lg hidden sm:block">Super Admin Portal</span>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsSecretModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"
+              >
+                <KeyRound size={16} />
+                <span className="hidden sm:inline">Secret Code</span>
+              </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-red-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                className="px-4 py-2 text-sm font-medium text-red-400 hover:text-white hover:bg-slate-800 rounded-lg transition border border-red-500/20"
               >
                 Logout
               </button>
@@ -727,6 +781,76 @@ function AdminDashboard() {
               >
                 {deleteMutation.isPending ? 'Menghapus...' : 'Ya, Hapus'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECRET CODE MODAL */}
+      {isSecretModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center p-5 border-b border-slate-100 bg-slate-50">
+              <div className="flex items-center gap-2">
+                <KeyRound size={20} className="text-slate-900" />
+                <h3 className="text-lg font-bold text-slate-900">Portal Secret Code</h3>
+              </div>
+              <button onClick={() => setIsSecretModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kode Saat Ini</label>
+                <div className="relative group">
+                  <input
+                    type={showSecretInModal ? 'text' : 'password'}
+                    value={tempSecretCode}
+                    onChange={(e) => setTempSecretCode(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-mono text-lg tracking-widest focus:ring-2 focus:ring-slate-900 focus:outline-none transition-all"
+                    placeholder="Masukkan kode..."
+                  />
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowSecretInModal(!showSecretInModal)}
+                      className="p-2 text-slate-400 hover:text-slate-600 transition"
+                      title={showSecretInModal ? "Sembunyikan" : "Lihat"}
+                    >
+                      {showSecretInModal ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={generateRandom}
+                      className="p-2 text-slate-400 hover:text-slate-900 transition hover:bg-slate-100 rounded-lg"
+                      title="Generate Acak"
+                    >
+                      <RefreshCw size={18} />
+                    </button>
+                  </div>
+                </div>
+                <p className="mt-2 text-[11px] text-slate-400 leading-relaxed italic">
+                  * Kode ini digunakan untuk membuka portal landing page. Sistem akan memperbarui kode ini secara otomatis setiap 24 jam.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setIsSecretModalOpen(false)}
+                  className="flex-1 px-4 py-3 text-slate-600 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => updateSecretMutation.mutate(tempSecretCode)}
+                  disabled={updateSecretMutation.isPending || tempSecretCode.length < 3}
+                  className="flex-1 px-4 py-3 text-white bg-slate-900 hover:bg-slate-800 font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {updateSecretMutation.isPending ? <Spinner size={16} className="text-white" /> : <Save size={18} />}
+                  Simpan
+                </button>
+              </div>
             </div>
           </div>
         </div>

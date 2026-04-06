@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Spinner } from "./ui/spinner";
 
 export function NextStepModal({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
@@ -20,9 +21,9 @@ export function NextStepModal({ onClose }: { onClose: () => void }) {
         <div className="relative px-8 pt-10 pb-8 text-center">
           {/* Animated Success Icon */}
           <div className="relative inline-flex items-center justify-center mb-6">
-            {/* Pulse rings */}
+            {/* Consistent Spinner Rings */}
             <div className="absolute w-24 h-24 rounded-full bg-emerald-100 animate-ping opacity-20" />
-            <div className="absolute w-20 h-20 rounded-full bg-emerald-50 animate-pulse" />
+            <Spinner size={84} className="absolute text-emerald-100/50 opacity-100" />
             {/* Icon circle */}
             <div className="relative w-18 h-18 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl shadow-emerald-200/60"
               style={{ width: '72px', height: '72px' }}

@@ -4,9 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
-    "dev:fe": "bunx --bun vite",
-    "dev:be": "cd backend && bun run dev",
-    "dev:all": "concurrently -c \"cyan.bold,magenta.bold\" -n \"FRONTEND,BACKEND\" \"bun run dev:fe\" \"bun run dev:be\"",
     "build": "bunx --bun vite build",
     "start": "bunx --bun vite preview"
   },

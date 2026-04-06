@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 
-function Topbar() {
+function Topbar({ pgbo }: { pgbo?: any }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
@@ -197,7 +197,7 @@ function Topbar() {
                 <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 z-50">
                   <Link
                     to="/register"
-                    search={{ type: "dewasa" }}
+                    search={{ type: "dewasa", ref: pgbo?.pageid }}
                     onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
                   >
@@ -205,7 +205,7 @@ function Topbar() {
                   </Link>
                   <Link
                     to="/register"
-                    search={{ type: "anak" }}
+                    search={{ type: "anak", ref: pgbo?.pageid }}
                     onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
                   >

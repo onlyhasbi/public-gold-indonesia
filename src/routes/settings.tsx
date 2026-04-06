@@ -6,6 +6,7 @@ import { useToast } from '../components/toast'
 import { useForm } from 'react-hook-form'
 import { ImageCropper } from '../components/ui/image-cropper'
 import { ArrowLeft, Camera, Save, User, Mail, Phone, Link2, Globe } from 'lucide-react'
+import { Spinner } from '../components/ui/spinner'
 
 export const Route = createFileRoute('/settings')({
   component: SettingsPage,
@@ -162,7 +163,7 @@ function SettingsPage() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-3 border-red-200 border-t-red-600 rounded-full animate-spin" />
+          <Spinner size={40} className="text-red-600 opacity-100" />
           <p className="text-slate-500 text-sm font-medium">Memuat pengaturan...</p>
         </div>
       </div>

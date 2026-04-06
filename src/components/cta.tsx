@@ -1,6 +1,7 @@
 import { ArrowRight, MessageCircle } from "lucide-react";
 import BaseLayout from "../layout/base";
 import { useTranslation } from "react-i18next";
+import { trackEvent } from "../lib/analytics";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -78,6 +79,7 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
                                         href={whatsappLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={() => trackEvent(pgbo?.pageid, 'whatsapp_click')}
                                         className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 bg-white text-red-600 hover:bg-slate-50"
                                     >
                                         <MessageCircle className="w-5 h-5" />

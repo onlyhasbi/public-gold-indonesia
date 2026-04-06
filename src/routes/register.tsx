@@ -11,9 +11,13 @@ import { useRegisterForm } from "../hooks/useRegisterForm";
 import { InputField, SelectField, AlertMessage, inputClass } from "../components/ui/form-elements";
 import { ConfirmationModal, AgeSwitchModal } from "../components/RegisterModals";
 import { NextStepModal } from "../components/NextStepModal";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../lib/api";
+import { ShieldCheck } from "lucide-react";
 
 type RegisterSearch = {
   type?: "dewasa" | "anak";
+  ref?: string;
 };
 
 export const Route = createFileRoute("/register")({
@@ -21,14 +25,61 @@ export const Route = createFileRoute("/register")({
   validateSearch: (search: Record<string, unknown>): RegisterSearch => {
     return {
       type: search.type === "anak" ? "anak" : "dewasa",
+      ref: search.ref as string | undefined,
     };
   },
 });
 
 function RegisterPage() {
-  const { type } = Route.useSearch();
+  const { type, ref } = Route.useSearch();
   const navigate = useNavigate();
   const isAnak = type === "anak";
+
+  const { data: referralData, isLoading: isLoadingReferral, isError: isReferralError } = useQuery({
+    queryKey: ['referral', ref],
+    queryFn: async () => {
+      if (!ref) return null;
+      try {
+        const res = await api.get(`/public/pgbo/${ref}`);
+        return res.data.data;
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          throw new Error('Agent not found');
+        }
+        throw err;
+      }
+    },
+    enabled: !!ref,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (!ref) {
+      const storedPageId = localStorage.getItem('ref_pageid');
+      if (storedPageId) {
+        // Auto-recovery: If ref is missing but we have it in storage, redirect to include it
+        navigate({ 
+          to: "/register", 
+          search: (prev: any) => ({ ...prev, ref: storedPageId }), 
+          replace: true 
+        });
+      } else {
+        // No referral found anywhere, redirect to home
+        navigate({ to: "/", replace: true });
+      }
+      return;
+    }
+
+    if (referralData) {
+      // Sync the latest pageid to localStorage
+      localStorage.setItem('ref_pageid', referralData.pageid);
+    }
+
+    if (isReferralError) {
+      // If ref is invalid, go to not found page
+      navigate({ to: '/$pgcode', params: { pgcode: 'not-found' }, replace: true });
+    }
+  }, [ref, referralData, isReferralError, navigate]);
 
   const { i18n } = useTranslation();
   const [countryMode, setCountryMode] = useState<"ID" | "MY" | "INTL">("ID");
@@ -74,7 +125,7 @@ function RegisterPage() {
     handleNikBlur,
     handlePhoneInput,
     confirmSubmit,
-  } = useRegisterForm(isAnak, countryMode);
+  } = useRegisterForm(isAnak, countryMode, referralData);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
 
@@ -114,7 +165,11 @@ function RegisterPage() {
           <div className="w-full max-w-lg mx-auto">
 
             <div className="flex justify-between items-center mb-6 lg:mb-8">
-              <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm">
+              <Link 
+                to={referralData?.pageid ? "/$pgcode" : "/"} 
+                params={referralData?.pageid ? { pgcode: referralData.pageid } : undefined}
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
+              >
                 <ArrowLeft className="w-4 h-4" /> Kembali
               </Link>
 
@@ -143,6 +198,32 @@ function RegisterPage() {
                 {isAnak ? labels.descAnak : labels.descDewasa}
               </p>
             </div>
+
+            {/* REFERRAL INFORMATION BAR */}
+            {ref && (
+              <div className="mb-6 relative group">
+                {isLoadingReferral ? (
+                  <div className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-2xl animate-pulse">
+                    <div className="w-5 h-5 bg-slate-200 rounded-full" />
+                    <div className="h-4 bg-slate-200 rounded w-32" />
+                  </div>
+                ) : referralData ? (
+                  <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-emerald-50/80 to-teal-50/50 border border-emerald-100 rounded-2xl shadow-sm transition-all hover:shadow-md hover:border-emerald-200">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mb-1">Direferensikan oleh</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1">
+                        <span className="text-sm font-bold text-slate-800">{referralData.nama_panggilan || referralData.nama_lengkap}</span>
+                        <span className="hidden sm:inline text-slate-300 mx-1">|</span>
+                        <span className="text-xs font-mono font-medium text-slate-500 bg-white/50 px-1.5 py-0.5 rounded border border-emerald-100/50">{referralData.pgcode}</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
 
             {/* Tab Toggle */}
             <div className="flex bg-slate-100 rounded-xl p-1 mb-6">

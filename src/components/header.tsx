@@ -1,6 +1,7 @@
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 import { MessageCircle } from "lucide-react";
+import { trackEvent } from "../lib/analytics";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -9,11 +10,16 @@ interface PgboData {
   no_telpon?: string | null;
   link_group_whatsapp?: string | null;
   pgcode?: string | null;
+  pageid?: string | null;
   [key: string]: any;
 }
 
 function Header({ pgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
+
+  const handleWhatsAppClick = () => {
+    trackEvent(pgbo?.pageid, 'whatsapp_click');
+  };
 
   const hasPhoto = !!pgbo?.foto_profil_url;
   const hasPhone = !!pgbo?.no_telpon;
@@ -90,6 +96,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={handleWhatsAppClick}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_25px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 no-underline ring-1 ring-red-500/20"
             >
               <MessageCircle className="w-5 h-5" />

@@ -35,10 +35,13 @@ function RootComponent() {
   const isNotFound = (matches.length === 1 && location.pathname !== "/") || routerState.statusCode === 404;
   const hideTopbar = isStandalone || isNotFound;
 
+  const pgboMatch = matches.find(m => m.routeId === "/$pgcode");
+  const pgbo = (pgboMatch?.loaderData as any)?.pgbo;
+
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        {!hideTopbar && <Topbar />}
+        {!hideTopbar && <Topbar pgbo={pgbo} />}
         <main key={i18n.language}>
           <Outlet />
         </main>

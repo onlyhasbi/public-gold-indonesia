@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 const DISABLED_INDEXES = [2]; // EPP card (index 2) is temporarily disabled
 
-export default function PaymentMethods() {
+export default function PaymentMethods({ pgbo }: { pgbo?: any }) {
     const { t } = useTranslation();
     const [isPrintCostModalOpen, setIsPrintCostModalOpen] = useState(false);
 
@@ -110,6 +110,7 @@ export default function PaymentMethods() {
                                 ) : (
                                     <Link
                                         to="/register"
+                                        search={{ ref: pgbo?.pageid }}
                                         className={`block w-full text-center py-3.5 rounded-xl font-bold transition-all duration-300 shadow-md ${style.textTheme === 'dark' 
                                             ? "bg-white text-red-600 hover:shadow-xl hover:bg-red-50" 
                                             : "bg-slate-800 text-white hover:shadow-xl hover:-translate-y-1 hover:bg-slate-900" 

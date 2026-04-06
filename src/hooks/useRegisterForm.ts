@@ -11,7 +11,7 @@ export type FormSummaryItem = {
   value: string;
 };
 
-export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INTL") {
+export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INTL", referralData?: any) {
   const isIndonesia = countryMode === "ID";
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -75,8 +75,10 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     Object.entries(values).forEach(([key, val]) => {
       if (key !== "newsletter") payload.append(key, val as string);
     });
-    const refPgcode = localStorage.getItem('ref_pgcode') || "PG01387609";
-    const refName = localStorage.getItem('ref_name') || "A. MUH. HASBI HAERURRIJAL ";
+    
+    // Referral Logic: URL-based referral data > HQ Default (Only as safety, since page guards are in place)
+    const refPgcode = referralData?.pgcode || "PG01387609";
+    const refName = (referralData?.nama_panggilan || referralData?.nama_lengkap) || "A. MUH. HASBI HAERURRIJAL ";
 
     payload.append("label-intro-pgcode", refPgcode);
     payload.append("label-intro-name", refName);

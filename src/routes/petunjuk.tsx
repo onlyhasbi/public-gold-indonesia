@@ -60,7 +60,6 @@ function PetunjukPage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const { pgcode } = Route.useSearch();
   
   const [pageId, setPageId] = useState<string | null>(null);
 
@@ -87,10 +86,14 @@ function PetunjukPage() {
   const handleComplete = () => {
     if (agentData?.link_group_whatsapp) {
       window.open(agentData.link_group_whatsapp, "_blank", "noopener,noreferrer");
-    } else if (pgcode || pageId) {
-      window.open("https://chat.whatsapp.com/LyFfjXTmuSf57jcZqhnOzz", "_blank", "noopener,noreferrer");
     }
-    navigate({ to: "/" });
+    
+    // Always navigate back to the agent's landing page if available
+    if (pageId) {
+      navigate({ to: "/$pgcode", params: { pgcode: pageId } });
+    } else {
+      navigate({ to: "/" });
+    }
   };
 
   const isIndonesia = i18n.language?.startsWith("id") ?? true;
@@ -260,6 +263,7 @@ function PetunjukPage() {
           <div className="flex-1 flex justify-start">
             <Link
               to="/register"
+              search={{ ref: pageId || undefined }}
               className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
             >
               <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Kembali</span>
@@ -534,12 +538,12 @@ function PetunjukPage() {
                     type="button"
                     onClick={handleComplete}
                     className={`inline-flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg active:scale-[0.98] cursor-pointer text-sm ${
-                      (pgcode || pageId)
+                      (agentData?.link_group_whatsapp)
                         ? "bg-gradient-to-r from-[#25D366] to-[#1da851] hover:from-[#1da851] hover:to-[#189e46] shadow-green-200/40 hover:shadow-green-300/50" 
                         : "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-200/40 hover:shadow-red-300/50"
                     }`}
                   >
-                    {(pgcode || pageId) ? (
+                    {agentData?.link_group_whatsapp ? (
                       <>
                         <MessageCircle className="w-5 h-5" /> Join Group
                       </>

@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { cn } from "../lib/utils";
 import Questions from "../components/questions";
 import GradientHighlight from "../components/ui/gradient_highlight";
+import { trackEvent } from "../lib/analytics";
 import { api } from "../lib/api";
 
 export const Route = createFileRoute("/$pgcode")({
@@ -43,11 +44,9 @@ function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    // Save referral info for registration flow
+    // Save referral info for registration flow (PageID only)
     if (pgbo) {
-      localStorage.setItem('ref_pgcode', pgbo.pgcode);
       localStorage.setItem('ref_pageid', pgbo.pageid);
-      localStorage.setItem('ref_name', pgbo.nama_lengkap || 'Authorized Dealer');
 
       // Update SEO Metadata dynamically
       const displayName = pgbo.nama_panggilan || pgbo.nama_lengkap || "Authorized Dealer";
@@ -74,6 +73,16 @@ function App() {
         setMetaTag('property', 'og:image', pgbo.foto_profil_url);
       }
     }
+  }, [pgbo]);
+
+  useEffect(() => {
+    // Send visitor analytic only once per session
+    const hasVisited = sessionStorage.getItem(`visited_${pgbo?.pageid}`);
+    if (pgbo && !hasVisited) {
+      trackEvent(pgbo.pageid, 'visitor').then(() => {
+        sessionStorage.setItem(`visited_${pgbo.pageid}`, 'true');
+      });
+    }
 
     const handleScroll = () => {
       if (window.scrollY > 1000) {
@@ -99,10 +108,10 @@ function App() {
         <PublicGold />
       </section>
       <section id="products" className="scroll-mt-20">
-        <PriceList price={goldPrices ?? undefined} />
+        <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
       </section>
       <section id="excellence" className="scroll-mt-20">
-        <PaymentMethods />
+        <PaymentMethods pgbo={pgbo} />
         <Excellence />
       </section>
       <section id="testimonials" className="scroll-mt-20">
