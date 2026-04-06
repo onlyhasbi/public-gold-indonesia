@@ -170,8 +170,8 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
         // Track locally
         const values = getValues();
         if (referralData?.pageid) {
-          const dialCode = values.idselect === "id" ? "62" : (values.idselect === "passportforeign" ? "" : "60");
-          const phoneWithDial = dialCode ? `+${dialCode}${values['label-mobile']}` : values['label-mobile'];
+          const dialCode = values['label-mobile-dialcode'] || '62';
+          const phoneWithDial = `+${dialCode}${values['label-mobile']}`;
           api.post("/public/register-track", {
             pageid: referralData.pageid,
             nama: values['label-name'],
@@ -206,14 +206,14 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
       // Track locally for success alert case
       const values = getValues();
       if (referralData?.pageid) {
-        const dialCode = values.idselect === "id" ? "62" : (values.idselect === "passportforeign" ? "" : "60");
-        const phoneWithDial = dialCode ? `+${dialCode}${values['label-mobile']}` : values['label-mobile'];
+        const dialCode = values['label-mobile-dialcode'] || '62';
+        const phoneWithDial = `+${dialCode}${values['label-mobile']}`;
         api.post("/public/register-track", {
           pageid: referralData.pageid,
           nama: values['label-name'],
-            branch: values['upreferredbranch'],
-            no_telpon: phoneWithDial
-          }).catch((err: any) => console.warn("Track failed:", err));
+          branch: values['upreferredbranch'],
+          no_telpon: phoneWithDial
+        }).catch((err: any) => console.warn("Track failed:", err));
       }
 
       const successMessage = successAlert?.textContent?.trim() || "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.";

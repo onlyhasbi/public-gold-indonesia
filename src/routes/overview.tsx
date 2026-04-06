@@ -27,6 +27,9 @@ function OverviewPage() {
       return res.data
     },
     retry: 1,
+    refetchInterval: 30_000, // Auto-refresh setiap 30 detik
+    refetchOnWindowFocus: true, // Refresh saat user kembali ke tab
+    staleTime: 10_000, // Data dianggap stale setelah 10 detik
   })
 
   useEffect(() => {
