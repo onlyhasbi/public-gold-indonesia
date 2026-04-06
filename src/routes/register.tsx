@@ -546,7 +546,7 @@ function RegisterPage() {
       )}
 
       {showNextStepModal && (
-        <NextStepModal onClose={() => setShowNextStepModal(false)} />
+        <NextStepModal refId={ref} onClose={() => setShowNextStepModal(false)} />
       )}
     </div>
   );

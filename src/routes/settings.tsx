@@ -15,6 +15,8 @@ export const Route = createFileRoute('/settings')({
 function SettingsPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
+  const [isCheckingGoogle, setIsCheckingGoogle] = useState(true);
   const [fotoFile, setFotoFile] = useState<File | null>(null)
   const [croppedPreview, setCroppedPreview] = useState<string | null>(null)
   const [cropperSrc, setCropperSrc] = useState<string | null>(null)
@@ -158,6 +160,68 @@ function SettingsPage() {
     
     mutation.mutate(submitData)
   }
+
+  // Google Integration logic
+  useEffect(() => {
+    fetchGoogleStatus();
+
+    // Check for google_code in URL
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('google_code');
+    if (code) {
+      saveGoogleToken(code);
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
+  const fetchGoogleStatus = async () => {
+    setIsCheckingGoogle(true);
+    try {
+      const res = await api.get('/google/status');
+      setIsGoogleConnected(res.data.connected);
+    } catch (err) {
+      console.error("Failed to fetch google status:", err);
+    } finally {
+      setIsCheckingGoogle(false);
+    }
+  };
+
+  const saveGoogleToken = async (code: string) => {
+    try {
+      const res = await api.post('/google/save-token', { code });
+      if (res.data.success) {
+        showToast('Google account connected!', 'success');
+        setIsGoogleConnected(true);
+      }
+    } catch (err: any) {
+      showToast(err.response?.data?.message || 'Failed to connect Google account', 'error');
+    }
+  };
+
+  const handleGoogleConnect = async () => {
+    try {
+      const res = await api.get('/google/auth-url');
+      if (res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (err) {
+      showToast('Gagal mendapatkan tautan otorisasi Google', 'error');
+    }
+  };
+
+  const handleGoogleDisconnect = async () => {
+    if (!confirm('Apakah Anda yakin ingin memutuskan koneksi Google? Sinkronisasi otomatis akan berhenti.')) return;
+    try {
+      const res = await api.post('/google/disconnect');
+      if (res.data.success) {
+        showToast('Koneksi Google diputuskan', 'success');
+        setIsGoogleConnected(false);
+      }
+    } catch (err) {
+      showToast('Gagal memutuskan koneksi', 'error');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -409,6 +473,57 @@ function SettingsPage() {
                   placeholder="https://tiktok.com/@..."
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Google Sync Card */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-slate-800">Integrasi Google Contacts</h2>
+                <p className="text-xs text-slate-400 mt-0.5">Sinkronisasi pendaftar langsung ke HP Anda</p>
+              </div>
+              <div className={`px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider ${isGoogleConnected ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                {isCheckingGoogle ? 'Checking...' : (isGoogleConnected ? 'Connected' : 'Disconnected')}
+              </div>
+            </div>
+            <div className="p-5 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isGoogleConnected ? 'bg-red-50 text-red-600' : 'bg-slate-50 text-slate-400'}`}>
+                    <Globe className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">Google People API</p>
+                    <p className="text-xs text-slate-500">Otomatis tambah kontak saat pendaftaran sukses</p>
+                  </div>
+                </div>
+                {isGoogleConnected ? (
+                  <button
+                    type="button"
+                    onClick={handleGoogleDisconnect}
+                    className="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs sm:text-sm font-semibold rounded-xl transition-all"
+                  >
+                    Putuskan Koneksi
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleGoogleConnect}
+                    className="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md shadow-red-600/10 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Hubungkan ke Google
+                  </button>
+                )}
+              </div>
+              {!isGoogleConnected && !isCheckingGoogle && (
+                <div className="mt-4 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                  <p className="text-[11px] text-amber-700 leading-relaxed">
+                    <strong>Penting:</strong> Fitur ini memerlukan izin akses ke kontak Google Anda untuk menambahkan nasabah baru secara otomatis. Kami tidak akan menghapus atau memodifikasi kontak yang sudah ada.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

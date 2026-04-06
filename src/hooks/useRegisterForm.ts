@@ -5,6 +5,7 @@ import { dialCodeOptions } from "../constant/countries";
 import { branchLabelOptions } from "../constant/branches";
 import { extractDataFromNIK, calculateAge } from "../lib/utils";
 import { getValidationSchema } from "../lib/validations";
+import { api } from "../lib/api";
 
 export type FormSummaryItem = {
   label: string;
@@ -166,6 +167,19 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
       });
 
       if (response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400)) {
+        // Track locally
+        const values = getValues();
+        if (referralData?.pageid) {
+          const dialCode = values.idselect === "id" ? "62" : (values.idselect === "passportforeign" ? "" : "60");
+          const phoneWithDial = dialCode ? `+${dialCode}${values['label-mobile']}` : values['label-mobile'];
+          api.post("/public/register-track", {
+            pageid: referralData.pageid,
+            nama: values['label-name'],
+            branch: values['upreferredbranch'],
+            no_telpon: phoneWithDial
+          }).catch((err: any) => console.warn("Track failed:", err));
+        }
+
         setMessage("Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.");
         setStatus("success");
         reset();
@@ -187,6 +201,19 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
 
       if (!response.ok) {
         throw new Error("Terjadi kesalahan pada jaringan.");
+      }
+
+      // Track locally for success alert case
+      const values = getValues();
+      if (referralData?.pageid) {
+        const dialCode = values.idselect === "id" ? "62" : (values.idselect === "passportforeign" ? "" : "60");
+        const phoneWithDial = dialCode ? `+${dialCode}${values['label-mobile']}` : values['label-mobile'];
+        api.post("/public/register-track", {
+          pageid: referralData.pageid,
+          nama: values['label-name'],
+            branch: values['upreferredbranch'],
+            no_telpon: phoneWithDial
+          }).catch((err: any) => console.warn("Track failed:", err));
       }
 
       const successMessage = successAlert?.textContent?.trim() || "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.";

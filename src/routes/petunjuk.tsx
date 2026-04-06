@@ -7,9 +7,9 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
 export const Route = createFileRoute("/petunjuk")({
-  validateSearch: (search: Record<string, unknown>): { pgcode?: string } => {
+  validateSearch: (search: Record<string, unknown>): { ref?: string } => {
     return {
-      pgcode: (search.pgcode as string) || undefined,
+      ref: (search.ref as string) || undefined,
     }
   },
   component: PetunjukPage,
@@ -61,18 +61,25 @@ function PetunjukPage() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
   
+  const { ref } = Route.useSearch();
+  
   const [pageId, setPageId] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = "Petunjuk Pendaftaran | Public Gold Indonesia";
     // Scroll to top on mount
     window.scrollTo({ top: 0 });
-    // Check if we have a ref_pageid
-    const storedPageId = localStorage.getItem('ref_pageid');
-    if (storedPageId) {
-      setPageId(storedPageId);
+
+    const effectivePageId = ref || localStorage.getItem('ref_pageid');
+    
+    if (effectivePageId) {
+      setPageId(effectivePageId);
+      // Ensure localStorage is synced if it came from URL
+      if (ref) {
+        localStorage.setItem('ref_pageid', ref);
+      }
     }
-  }, []);
+  }, [ref]);
 
   const { data: agentData } = useQuery({
     queryKey: ['agent-petunjuk', pageId],
