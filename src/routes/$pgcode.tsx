@@ -18,18 +18,15 @@ import Questions from "../components/questions";
 import GradientHighlight from "../components/ui/gradient_highlight";
 import { trackEvent } from "../lib/analytics";
 import { api } from "../lib/api";
+import type { GoldPricesResult } from "../types";
 
 export const Route = createFileRoute("/$pgcode")({
   component: App,
   loader: async ({ params }) => {
     try {
-      const [goldRes, pgboRes] = await Promise.all([
-        getGoldPrices(),
-        api.get(`/public/pgbo/${params.pgcode}`)
-      ]);
+      const pgboRes = await api.get(`/public/pgbo/${params.pgcode}`);
       
       return {
-        goldPrices: goldRes,
         pgbo: pgboRes.data.data
       };
     } catch {
@@ -39,9 +36,14 @@ export const Route = createFileRoute("/$pgcode")({
 });
 
 function App() {
-  const { goldPrices, pgbo } = Route.useLoaderData();
+  const { pgbo } = Route.useLoaderData();
+  const [goldPrices, setGoldPrices] = useState<GoldPricesResult | null>(null);
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    getGoldPrices().then(setGoldPrices);
+  }, []);
 
   useEffect(() => {
     // Save referral info for registration flow (PageID only)
