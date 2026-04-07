@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, Wallet, ChevronRight, MessageCircle, Home } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, LogIn, ShieldCheck, Wallet, ChevronRight, MessageCircle } from "lucide-react";
 import { PhoneMockup } from "../components/ui/PhoneMockup";
 import { useTranslation } from "react-i18next";
 import { useQuery } from '@tanstack/react-query';
@@ -541,25 +541,23 @@ function PetunjukPage() {
                 </button>
 
                 {isLastStep ? (
-                  <button
-                    type="button"
-                    onClick={handleComplete}
-                    className={`inline-flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg active:scale-[0.98] cursor-pointer text-sm ${
-                      (agentData?.link_group_whatsapp)
-                        ? "bg-gradient-to-r from-[#25D366] to-[#1da851] hover:from-[#1da851] hover:to-[#189e46] shadow-green-200/40 hover:shadow-green-300/50" 
-                        : "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-200/40 hover:shadow-red-300/50"
-                    }`}
-                  >
-                    {agentData?.link_group_whatsapp ? (
-                      <>
-                        <MessageCircle className="w-5 h-5" /> Join Group
-                      </>
-                    ) : (
-                      <>
-                        <Home className="w-5 h-5" /> Halaman Beranda
-                      </>
-                    )}
-                  </button>
+                  agentData?.link_group_whatsapp ? (
+                    <button
+                      type="button"
+                      onClick={handleComplete}
+                      className="inline-flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg active:scale-[0.98] cursor-pointer text-sm bg-gradient-to-r from-[#25D366] to-[#1da851] hover:from-[#1da851] hover:to-[#189e46] shadow-green-200/40 hover:shadow-green-300/50"
+                    >
+                      <MessageCircle className="w-5 h-5" /> Join Group
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleComplete}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-red-200/40 hover:shadow-red-300/50 active:scale-[0.98] cursor-pointer text-sm"
+                    >
+                      Selesai <Check className="w-4 h-4" />
+                    </button>
+                  )
                 ) : (
                   <button
                     type="button"
@@ -569,6 +567,7 @@ function PetunjukPage() {
                     Selanjutnya <ArrowRight className="w-4 h-4" />
                   </button>
                 )}
+
               </div>
             </div>
           </div>

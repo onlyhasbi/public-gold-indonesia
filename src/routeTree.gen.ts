@@ -9,8 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PetunjukRouteImport } from './routes/petunjuk'
@@ -21,16 +19,6 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminSignupRouteImport } from './routes/admin/signup'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SigninRoute = SigninRouteImport.update({
-  id: '/signin',
-  path: '/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -84,8 +72,6 @@ export interface FileRoutesByFullPath {
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/signup': typeof AdminSignupRoute
   '/admin': typeof AdminIndexRoute
@@ -97,8 +83,6 @@ export interface FileRoutesByTo {
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/signup': typeof AdminSignupRoute
   '/admin': typeof AdminIndexRoute
@@ -111,8 +95,6 @@ export interface FileRoutesById {
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/signup': typeof AdminSignupRoute
   '/admin/': typeof AdminIndexRoute
@@ -126,8 +108,6 @@ export interface FileRouteTypes {
     | '/petunjuk'
     | '/register'
     | '/settings'
-    | '/signin'
-    | '/signup'
     | '/admin/login'
     | '/admin/signup'
     | '/admin'
@@ -139,8 +119,6 @@ export interface FileRouteTypes {
     | '/petunjuk'
     | '/register'
     | '/settings'
-    | '/signin'
-    | '/signup'
     | '/admin/login'
     | '/admin/signup'
     | '/admin'
@@ -152,8 +130,6 @@ export interface FileRouteTypes {
     | '/petunjuk'
     | '/register'
     | '/settings'
-    | '/signin'
-    | '/signup'
     | '/admin/login'
     | '/admin/signup'
     | '/admin/'
@@ -166,8 +142,6 @@ export interface RootRouteChildren {
   PetunjukRoute: typeof PetunjukRoute
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRoute
-  SigninRoute: typeof SigninRoute
-  SignupRoute: typeof SignupRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminSignupRoute: typeof AdminSignupRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -217,20 +191,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signin': {
-      id: '/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof SigninRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -262,8 +222,6 @@ const rootRouteChildren: RootRouteChildren = {
   PetunjukRoute: PetunjukRoute,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
-  SigninRoute: SigninRoute,
-  SignupRoute: SignupRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminSignupRoute: AdminSignupRoute,
   AdminIndexRoute: AdminIndexRoute,

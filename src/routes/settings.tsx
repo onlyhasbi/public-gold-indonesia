@@ -45,7 +45,7 @@ function SettingsPage() {
   useEffect(() => {
     document.title = "Pengaturan Profil | Public Gold Indonesia";
     if (!localStorage.getItem('token')) {
-      navigate({ to: '/signin' })
+      navigate({ to: '/' })
     }
   }, [navigate])
 

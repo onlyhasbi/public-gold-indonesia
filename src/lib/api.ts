@@ -33,9 +33,9 @@ api.interceptors.response.use(
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // Redirect to signin only if NOT already on auth pages
-      if (path !== "/signin" && path !== "/signup") {
-        window.location.href = "/signin";
+      // Redirect to root auth page only if NOT already there
+      if (path !== "/") {
+        window.location.href = "/";
       }
     }
 

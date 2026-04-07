@@ -22,7 +22,7 @@ function OverviewPage() {
   useEffect(() => {
     document.title = "Dashboard PGBO | Public Gold Indonesia";
     if (!localStorage.getItem('token')) {
-      navigate({ to: '/signin' })
+      navigate({ to: '/' })
     }
   }, [navigate])
 
@@ -48,7 +48,7 @@ function OverviewPage() {
   const handleLogout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    navigate({ to: '/signin' })
+    navigate({ to: '/' })
   }
 
   // --- SYNC TO GOOGLE CONTACTS MUTATION ---
@@ -166,7 +166,7 @@ function OverviewPage() {
           <h2 className="text-xl font-bold text-slate-900 mb-2">Sesi Berakhir</h2>
           <p className="text-slate-500 text-sm mb-6">Sesi Anda telah berakhir atau terjadi kesalahan. Silakan masuk kembali.</p>
           <button 
-            onClick={() => navigate({ to: '/signin' })}
+            onClick={() => navigate({ to: '/' })}
             className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all shadow-md"
           >
             Masuk Kembali
