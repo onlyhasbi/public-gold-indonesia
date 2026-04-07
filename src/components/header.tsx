@@ -1,6 +1,5 @@
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
-import { MessageCircle } from "lucide-react";
 import { trackEvent } from "../lib/analytics";
 
 interface PgboData {
@@ -99,7 +98,10 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               onClick={handleWhatsAppClick}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_25px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 no-underline ring-1 ring-red-500/20"
             >
-              <MessageCircle className="w-5 h-5" />
+              <span className="relative flex h-2 w-2 mr-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400 shadow-[0_0_10px_4px_rgba(74,222,128,0.8),0_0_20px_8px_rgba(74,222,128,0.4)]"></span>
+              </span>
               {t('hero.cta')}
             </a>
           </div>

@@ -25,7 +25,7 @@ export function ConfirmationModal({ isAnak, items, onConfirm, onCancel }: { isAn
             Kembali
           </button>
           <button type="button" onClick={onConfirm} className="flex-1 px-4 py-3 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 rounded-xl hover:from-red-700 hover:to-rose-700 transition-all shadow-lg shadow-red-200/60 cursor-pointer">
-            Konfirmasi & Kirim
+            OK
           </button>
         </div>
       </div>

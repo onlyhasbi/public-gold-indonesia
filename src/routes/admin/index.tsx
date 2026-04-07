@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/data-table'
-import { Trash2, Plus, X, ToggleLeft, ToggleRight, Pencil, KeyRound, RefreshCw, Eye, EyeOff, Save } from 'lucide-react'
+import { Trash2, Plus, X, Pencil, KeyRound, RefreshCw, Eye, EyeOff, Save } from 'lucide-react'
 import { Spinner } from '../../components/ui/spinner'
 
 export const Route = createFileRoute('/admin/')({
@@ -45,6 +45,7 @@ function AdminDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [pgboToDelete, setPgboToDelete] = useState<string | null>(null)
   const [pgboToEdit, setPgboToEdit] = useState<any | null>(null)
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState<string[] | null>(null)
 
   const [pageIdErrorCreate, setPageIdErrorCreate] = useState<string | null>(null)
   const [pageIdErrorEdit, setPageIdErrorEdit] = useState<string | null>(null)
@@ -181,6 +182,42 @@ function AdminDashboard() {
     },
     onError: (error: any) => {
       showToast(error.response?.data?.message || 'Gagal mengubah status PGBO', 'error')
+    }
+  })
+
+  // --- BULK DELETE MUTATION ---
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const res = await api.post('/admin/pgbo/bulk-delete', { ids }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+      })
+      return res.data
+    },
+    onSuccess: (data) => {
+      showToast(data.message, 'success')
+      queryClient.invalidateQueries({ queryKey: ['admin_pgbo'] })
+      setBulkDeleteConfirm(null)
+    },
+    onError: (error: any) => {
+      showToast(error.response?.data?.message || 'Gagal menghapus PGBO', 'error')
+      setBulkDeleteConfirm(null)
+    }
+  })
+
+  // --- BULK TOGGLE MUTATION ---
+  const bulkToggleMutation = useMutation({
+    mutationFn: async ({ ids, active }: { ids: string[]; active: boolean }) => {
+      const res = await api.patch('/admin/pgbo/bulk-toggle', { ids, active }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+      })
+      return res.data
+    },
+    onSuccess: (data) => {
+      showToast(data.message, 'success')
+      queryClient.invalidateQueries({ queryKey: ['admin_pgbo'] })
+    },
+    onError: (error: any) => {
+      showToast(error.response?.data?.message || 'Gagal mengubah status', 'error')
     }
   })
 
@@ -395,19 +432,15 @@ function AdminDashboard() {
       cell: (info) => {
         const isActive = !!info.row.original.is_active;
         return (
-          <button
-            onClick={() => toggleMutation.mutate(info.row.original.id)}
-            disabled={toggleMutation.isPending}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+          <span
+            className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
               isActive
-                ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                ? 'bg-emerald-50 text-emerald-700'
+                : 'bg-slate-100 text-slate-500'
             }`}
-            title={isActive ? 'Nonaktifkan' : 'Aktifkan'}
           >
-            {isActive ? <ToggleRight size={16} className="text-emerald-600" /> : <ToggleLeft size={16} />}
             {isActive ? 'Aktif' : 'Nonaktif'}
-          </button>
+          </span>
         )
       }
     }),
@@ -502,13 +535,57 @@ function AdminDashboard() {
           columns={columns}
           data={pgboData || []}
           emptyMessage="Belum ada data pendaftar."
+          enableSearch
+          searchPlaceholder="Cari PGCode, nama, page ID..."
+          enablePagination
+          defaultPageSize={10}
+          enableRowSelection
+          renderBulkActions={(count, selectedRows, clearSelection) => (
+            <>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${count > 0 ? 'text-red-600 bg-red-50' : 'text-slate-400 bg-slate-100'}`}>
+                {count} terpilih
+              </span>
+              <select
+                disabled={count === 0 || bulkToggleMutation.isPending}
+                defaultValue=""
+                onChange={(e) => {
+                  const val = e.target.value
+                  if (!val) return
+                  const ids = selectedRows.map((r: any) => r.id)
+                  bulkToggleMutation.mutate({ ids, active: val === 'active' }, { onSuccess: () => { clearSelection(); e.target.value = '' } })
+                }}
+                className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/15 focus:border-red-400 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <option value="" disabled>Ubah Status</option>
+                <option value="active">Aktifkan</option>
+                <option value="inactive">Nonaktifkan</option>
+              </select>
+              <button
+                onClick={() => {
+                  const ids = selectedRows.map((r: any) => r.id)
+                  setBulkDeleteConfirm(ids)
+                }}
+                disabled={count === 0}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition border border-red-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-50"
+              >
+                <Trash2 size={13} />
+                Hapus
+              </button>
+            </>
+          )}
         />
       </main>
 
       {/* CREATE PGBO MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+          onClick={() => { setIsModalOpen(false); resetCreate(); setPageIdErrorCreate(null); }}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center p-5 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-900">Buat Page Baru PGBO</h3>
               <button onClick={() => { setIsModalOpen(false); resetCreate(); setPageIdErrorCreate(null); }} className="text-slate-400 hover:text-slate-600 transition">
@@ -646,8 +723,14 @@ function AdminDashboard() {
 
       {/* EDIT PGBO MODAL */}
       {pgboToEdit && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+          onClick={() => { setPgboToEdit(null); setPageIdErrorEdit(null); }}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center p-5 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-900">Sunting Informasi</h3>
               <button onClick={() => { setPgboToEdit(null); setPageIdErrorEdit(null); }} className="text-slate-400 hover:text-slate-600 transition">
@@ -758,8 +841,14 @@ function AdminDashboard() {
 
       {/* DELETE CONFIRMATION MODAL */}
       {pgboToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative p-6 text-center animate-in fade-in zoom-in-95 duration-200">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+          onClick={() => setPgboToDelete(null)}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative p-6 text-center animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Trash2 size={24} />
             </div>
@@ -786,10 +875,52 @@ function AdminDashboard() {
         </div>
       )}
 
+      {/* BULK DELETE CONFIRMATION MODAL */}
+      {bulkDeleteConfirm && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+          onClick={() => setBulkDeleteConfirm(null)}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative p-6 text-center animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Hapus {bulkDeleteConfirm.length} PGBO?</h3>
+            <p className="text-slate-500 text-sm mb-6">
+              Semua halaman terpilih beserta data terkait akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setBulkDeleteConfirm(null)}
+                className="w-full px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium rounded-lg transition"
+              >
+                Batal
+              </button>
+              <button
+                onClick={() => bulkDeleteMutation.mutate(bulkDeleteConfirm)}
+                disabled={bulkDeleteMutation.isPending}
+                className="w-full px-4 py-2 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg transition disabled:opacity-70"
+              >
+                {bulkDeleteMutation.isPending ? 'Menghapus...' : 'Ya, Hapus Semua'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SECRET CODE MODAL */}
       {isSecretModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+          onClick={() => setIsSecretModalOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center p-5 border-b border-slate-100 bg-slate-50">
               <div className="flex items-center gap-2">
                 <KeyRound size={20} className="text-slate-900" />

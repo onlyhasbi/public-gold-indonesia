@@ -110,6 +110,11 @@ function SettingsPage() {
       if (data.success) {
         showToast('Profil berhasil diperbarui!', 'success')
         queryClient.invalidateQueries({ queryKey: ['settings'] })
+
+        // Update user data in localStorage to reflect changes in Header
+        const oldUser = JSON.parse(localStorage.getItem('user') || '{}')
+        const updatedUser = { ...oldUser, ...data.data }
+        localStorage.setItem('user', JSON.stringify(updatedUser))
       } else {
         showToast(data.message, 'error')
       }
@@ -265,7 +270,7 @@ function SettingsPage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-4 sm:-mt-6 pb-10">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+        <form id="settings-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
           {/* Profile Photo Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 sm:p-6">
             <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
@@ -527,18 +532,22 @@ function SettingsPage() {
             </div>
           </div>
 
-          {/* Submit */}
-          <div className="flex justify-end pt-1">
-            <button
-              type="submit"
-              disabled={mutation.isPending}
-              className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-red-600/20 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
-            >
-              <Save className="w-4 h-4" />
-              {mutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
-            </button>
-          </div>
         </form>
+      </div>
+
+      {/* Sticky Save Button */}
+      <div className="sticky bottom-0 z-40 bg-gradient-to-t from-white via-white/95 to-white/0 pt-6 pb-4 sm:pb-5 pointer-events-none">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 flex justify-center pointer-events-auto">
+          <button
+            type="submit"
+            form="settings-form"
+            disabled={mutation.isPending}
+            className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/30 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+          >
+            <Save className="w-4 h-4" />
+            {mutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+          </button>
+        </div>
       </div>
     </div>
   )
