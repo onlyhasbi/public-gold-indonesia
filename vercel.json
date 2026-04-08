@@ -9,6 +9,10 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "https://be-public-gold-indonesia.vercel.app/api/public/sitemap.xml"
+    },
+    {
       "source": "/api-proxy/:match*",
       "destination": "https://publicgold.co.id/:match*"
     },
