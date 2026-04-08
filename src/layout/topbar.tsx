@@ -1,17 +1,14 @@
-import { navigation } from "../constant/navigation";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Menu, X, ChevronDown, Languages } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 
 function Topbar({ pgbo }: { pgbo?: any }) {
-  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("about");
   const [registerMenuOpen, setRegisterMenuOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
   const registerMenuRef = useRef<HTMLDivElement>(null);
@@ -19,19 +16,6 @@ function Topbar({ pgbo }: { pgbo?: any }) {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-
-      // Detect active section
-      const sections = navigation.map((item) => item.href.replace("#", ""));
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 100) {
-            setActiveSection(sections[i]);
-            break;
-          }
-        }
-      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -52,10 +36,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
 
   const lang = i18n.language;
 
-  const dynamicNavigation = navigation.map((item) => ({
-    ...item,
-    label: t(item.translationKey),
-  }));
+
 
   const languages = [
     { id: "id", label: "Indonesia", emoji: "🇮🇩", code: "ID" },
@@ -73,19 +54,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
   const currentLangEmoji = currentLang?.emoji ?? "🌐";
   const currentLangLabel = currentLang?.code ?? "EN";
 
-  const scrollToSection = (href: string) => {
-    const id = href.replace("#", "");
 
-    if (window.location.pathname !== "/") {
-      navigate({ to: "/", hash: id });
-    } else {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-    setIsOpen(false);
-  };
 
   return (
     <>
@@ -111,31 +80,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
             <img src={`./logo.svg`} alt="Public Gold" className="h-14 w-auto group-hover:scale-105 transition-transform" />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center">
-            <ul className="flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm">
-              {dynamicNavigation.map((item, index) => {
-                const sectionId = item.href.replace("#", "");
-                const isActive = activeSection === sectionId;
-                return (
-                  <li key={`${index}-${item.translationKey}`}>
-                    <a
-                      href={item.href}
-                      onClick={(e) => { e.preventDefault(); scrollToSection(item.href); }}
-                      className={cn(
-                        "px-4 py-2 rounded-full text-sm font-medium transition-all",
-                        isActive
-                          ? "bg-white text-red-600 shadow-sm"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
-                      )}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+
 
           <div className="flex items-center gap-4">
             {/* Language Selector (Desktop) */}
