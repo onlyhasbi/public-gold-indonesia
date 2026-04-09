@@ -16,19 +16,19 @@ export function ConfirmationModal({ isAnak, items, onConfirm, onCancel }: { isAn
 
         <div className="px-6 py-5 space-y-2 max-h-[60vh] overflow-y-auto">
           {items.map((item) => (
-            <div key={item.label} className="flex gap-4 py-2 border-b border-slate-100 last:border-b-0">
-              <span className="text-sm text-slate-500 w-[40%] shrink-0 font-medium whitespace-nowrap">{item.label}</span>
-              <span className="text-sm font-semibold text-slate-800 text-left break-all flex-1">{item.value}</span>
+            <div key={item.label} className="flex flex-row gap-3 py-2.5 border-b border-slate-100 last:border-b-0 items-baseline">
+              <span className="text-[12px] md:text-sm text-slate-500 w-[35%] shrink-0 font-medium">{item.label}</span>
+              <span className="text-[13px] md:text-sm font-semibold text-slate-800 text-left break-all flex-1">{item.value}</span>
             </div>
           ))}
         </div>
 
-        <DialogFooter className="px-6 py-4 bg-slate-50 flex gap-3 sm:flex-row -mx-0 -mb-0 rounded-none border-t border-slate-100">
-          <Button variant="outline" size="lg" rounded="xl" onClick={onCancel} className="flex-1 font-semibold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+        <DialogFooter className="px-8 pb-6 pt-2 bg-slate-50 flex flex-col-reverse sm:flex-row gap-3 rounded-b-2xl border-t border-slate-100">
+          <Button variant="outline" onClick={onCancel} className="w-full sm:flex-1 font-semibold text-slate-600 bg-white border-slate-200 hover:bg-slate-50 rounded-xl">
             Kembali
           </Button>
-          <Button size="lg" rounded="xl" onClick={onConfirm} className="flex-1 font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 border-none shadow-lg shadow-red-200/60">
-            OK
+          <Button onClick={onConfirm} className="w-full sm:flex-1 font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 border-none shadow-lg shadow-red-200/60 rounded-xl">
+            Konfirmasi
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -59,11 +59,11 @@ export function AgeSwitchModal({ showSwitchTo, onConfirm, onCancel }: { showSwit
           </DialogDescription>
         </div>
 
-        <DialogFooter className="px-6 py-4 bg-slate-50 flex gap-3 sm:flex-row -mx-0 -mb-0 rounded-none border-t border-slate-100">
-          <Button variant="outline" size="lg" rounded="xl" onClick={onCancel} className="flex-1 font-semibold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+        <DialogFooter className="px-8 pb-6 pt-2 bg-slate-50 flex flex-col-reverse sm:flex-row gap-3 rounded-b-2xl border-t border-slate-100">
+          <Button variant="outline" onClick={onCancel} className="w-full sm:flex-1 font-semibold text-slate-600 bg-white border-slate-200 hover:bg-slate-50 rounded-xl">
             Batal
           </Button>
-          <Button size="lg" rounded="xl" onClick={onConfirm} className="flex-1 font-bold text-amber-900 bg-amber-400 hover:bg-amber-500 border-none shadow-lg shadow-amber-200/60">
+          <Button onClick={onConfirm} className="w-full sm:flex-1 font-bold text-amber-900 bg-amber-400 hover:bg-amber-500 border-none shadow-lg shadow-amber-200/60 rounded-xl">
             Ya, Beralih
           </Button>
         </DialogFooter>

@@ -85,8 +85,8 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
                                             rel="noopener noreferrer"
                                             onClick={() => trackEvent(pgbo?.pageid, 'whatsapp_click')}
                                             className={cn(
-                                                buttonVariants({ variant: "outline", size: "lg", rounded: "full" }),
-                                                "px-8 py-7 font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 bg-white text-primary border-white hover:bg-slate-50 no-underline"
+                                                buttonVariants({ variant: "outline", size: "default", rounded: "full" }),
+                                                "px-10 py-6 font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 bg-white text-primary border-white hover:bg-slate-50 no-underline"
                                             )}
                                         >
                                             <MessageCircle className="w-5 h-5 text-primary" />

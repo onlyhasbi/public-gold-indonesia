@@ -97,8 +97,8 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               rel="noopener noreferrer"
               onClick={handleWhatsAppClick}
               className={cn(
-                buttonVariants({ variant: "default", size: "lg", rounded: "full" }),
-                "px-8 py-7 font-bold transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(220,38,38,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white no-underline ring-1 ring-white/10"
+                buttonVariants({ variant: "default", size: "default", rounded: "full" }),
+                "px-10 py-6 font-bold transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(220,38,38,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white no-underline ring-1 ring-white/10"
               )}
             >
               <span className="relative flex h-2 w-2 mr-2">
