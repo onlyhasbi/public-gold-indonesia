@@ -96,11 +96,11 @@ export default function PaymentMethods({ pgbo }: { pgbo?: any }) {
                                                 to="/register"
                                                 search={{ ref: pgbo?.pageid }}
                                                 className={cn(
-                                                    buttonVariants({ variant: "default" }),
+                                                    buttonVariants({ variant: "outline" }),
                                                     "w-full h-12 rounded-xl font-bold transition-all duration-300 shadow-md",
                                                     style.textTheme === 'dark'
-                                                        ? "bg-white text-red-600 hover:shadow-xl hover:bg-red-50 hover:text-red-700"
-                                                        : "bg-slate-800 text-white hover:shadow-xl hover:-translate-y-1 hover:bg-slate-900",
+                                                        ? "bg-white text-red-600 hover:shadow-xl hover:!bg-slate-50 border-none"
+                                                        : "bg-slate-800 text-white hover:shadow-xl hover:-translate-y-1 hover:bg-slate-900 border-none",
                                                     "no-underline"
                                                 )}
                                             >
