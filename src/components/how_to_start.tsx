@@ -1,6 +1,7 @@
 import { UserPlus, ShieldCheck, PiggyBank, ArrowRight } from "lucide-react";
 import BaseLayout from "../layout/base";
 import { useTranslation } from "react-i18next";
+import { Card, CardContent } from "@/components/ui/card";
 
 function HowToStart() {
     const { t } = useTranslation();
@@ -34,37 +35,39 @@ function HowToStart() {
             {/* Steps Grid */}
             <div className="grid md:grid-cols-3 gap-8 w-full relative z-10">
                 {steps.map((item, index) => (
-                    <div
+                    <Card
                         key={index}
-                        className="group relative bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                        className="group relative bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                     >
-                        {/* Step Number */}
-                        <div className="absolute top-6 right-6 text-6xl font-black text-slate-50 group-hover:text-red-50 transition-colors pointer-events-none">
-                            0{index + 1}
-                        </div>
-
-                        {/* Icon */}
-                        <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300 relative z-10">
-                            {icons[index]}
-                        </div>
-
-                        {/* Content */}
-                        <div className="relative z-10">
-                            <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-red-700 transition-colors">
-                                {item.title}
-                            </h3>
-                            <p className="text-slate-500 leading-relaxed mb-6">
-                                {item.desc}
-                            </p>
-                        </div>
-
-                        {/* Connecting Arrow (Desktop only, except last item) */}
-                        {index < steps.length - 1 && (
-                            <div className="hidden md:block absolute top-1/2 -right-4 -translate-y-1/2 z-20 text-slate-300">
-                                <ArrowRight className="w-6 h-6" />
+                        <CardContent className="p-0">
+                            {/* Step Number */}
+                            <div className="absolute top-6 right-6 text-6xl font-black text-slate-50 group-hover:text-red-50 transition-colors pointer-events-none">
+                                0{index + 1}
                             </div>
-                        )}
-                    </div>
+
+                            {/* Icon */}
+                            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300 relative z-10">
+                                {icons[index]}
+                            </div>
+
+                            {/* Content */}
+                            <div className="relative z-10">
+                                <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-red-700 transition-colors">
+                                    {item.title}
+                                </h3>
+                                <p className="text-slate-500 leading-relaxed mb-6">
+                                    {item.desc}
+                                </p>
+                            </div>
+
+                            {/* Connecting Arrow (Desktop only, except last item) */}
+                            {index < steps.length - 1 && (
+                                <div className="hidden md:block absolute top-1/2 -right-4 -translate-y-1/2 z-20 text-slate-300">
+                                    <ArrowRight className="w-6 h-6" />
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 ))}
             </div>
 

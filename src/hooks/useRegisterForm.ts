@@ -35,10 +35,10 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     getValues,
     watch,
     reset,
-    trigger,
     formState: { errors, touchedFields }
   } = useForm({
-    mode: "onTouched",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     resolver: yupResolver(getValidationSchema(isAnak, isIndonesia)),
     defaultValues: {
       'label-name': '',
@@ -131,13 +131,12 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   };
 
   const handleNikBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Manually trigger validation on blur for NIK
-    trigger("label-ic");
+    // We no longer trigger manual validation on blur as requested
     const nik = e.currentTarget.value;
     const { validFormat, dateOfBirth } = extractDataFromNIK(nik);
 
     if (validFormat && dateOfBirth) {
-      setValue("label-dob", dateOfBirth, { shouldValidate: true, shouldDirty: true });
+      setValue("label-dob", dateOfBirth, { shouldValidate: false, shouldDirty: true });
       setIsDobDisabled(true);
     } else {
       setIsDobDisabled(false);

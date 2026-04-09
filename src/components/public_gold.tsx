@@ -10,6 +10,7 @@ import {
   BadgeDollarSign,
   RefreshCcw,
 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const MEDIA_LIST = [
   { name: "tvOneNews", href: "https://www.tvonenews.com/berita/294721-perusahaan-ini-cetak-rekor-penjualan-74-ton-emas-15-juta-pelanggan-di-asia-tenggara" },
@@ -59,17 +60,19 @@ function PublicGold() {
           {/* Right: Stats + Desc + Media + Group Logos — vertically centered */}
           <div className="lg:w-[58%] flex flex-col justify-center gap-5">
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 md:grid-cols-4">
               {[
                 { label: t("publicGold.stats.years"), value: info.tahunBeroperasi },
                 { label: t("publicGold.stats.customers"), value: info.nasabah },
                 { label: t("publicGold.stats.branches"), value: info.cabang.total },
                 { label: t("publicGold.statsLabels.country"), value: info.negara },
               ].map((item, i) => (
-                <div key={i} className="bg-gradient-to-br from-red-50/60 to-rose-50/40 rounded-xl p-3.5 text-center border border-red-100/50">
-                  <div className="text-2xl md:text-3xl font-bold text-red-600">{item.value}</div>
-                  <div className="text-[11px] text-slate-500 font-medium mt-0.5">{item.label}</div>
-                </div>
+                <Card key={i} className="bg-gradient-to-br from-red-50/60 to-rose-50/40 rounded-xl border-none shadow-[0_8px_15px_-3px_rgba(0,0,0,0.1)] md:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] ring-0">
+                  <CardContent className="p-3.5 text-center px-1 md:px-2">
+                    <div className="text-2xl md:text-3xl font-bold text-red-600">{item.value}</div>
+                    <div className="text-[11px] text-slate-500 font-medium mt-0.5">{item.label}</div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
 
@@ -125,11 +128,11 @@ function PublicGold() {
             features.map((feature, i) => {
               const Icon = FEATURE_ICONS[i] || ShieldCheck;
               return (
-                <div
+                <Card
                   key={i}
-                  className="group bg-white border border-slate-100 rounded-xl p-5 hover:border-red-200 hover:shadow-md transition-all duration-300"
+                  className="group rounded-xl border-none shadow-[0_8px_15px_-3px_rgba(0,0,0,0.1)] md:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] hover:shadow-xl hover:bg-slate-50 transition-all duration-300 ring-0"
                 >
-                  <div className="flex items-start gap-3.5">
+                  <CardContent className="flex items-start gap-3.5 p-5">
                     <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center shrink-0 group-hover:bg-red-100 transition-colors">
                       <Icon className="w-5 h-5 text-red-500" />
                     </div>
@@ -142,8 +145,8 @@ function PublicGold() {
                         dangerouslySetInnerHTML={{ __html: feature.description }}
                       />
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               );
             })}
         </div>

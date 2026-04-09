@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '../../lib/api'
+import { api } from '@/lib/api'
 import { useEffect, useState, useMemo } from 'react'
 import dayjs from 'dayjs'
 import { useToast } from '../../components/toast'
@@ -9,8 +9,36 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/data-table'
-import { Trash2, Plus, X, Pencil, KeyRound, RefreshCw, Eye, EyeOff, Save } from 'lucide-react'
-import { Spinner } from '../../components/ui/spinner'
+import { Trash2, Plus, Pencil, KeyRound, RefreshCw, Eye, EyeOff, Save, LogOut, Loader2, User, Phone, Image as ImageIcon, Lock } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxTrigger,
+  ComboboxValue,
+} from "@/components/ui/combobox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { dialCodeOptions } from '@/constant/countries'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminDashboard,
@@ -55,6 +83,26 @@ function AdminDashboard() {
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false)
   const [showSecretInModal, setShowSecretInModal] = useState(false)
   const [tempSecretCode, setTempSecretCode] = useState('')
+
+  const [createDialCodeSearch, setCreateDialCodeSearch] = useState("");
+  const createFilteredDialCodes = useMemo(() => {
+    if (!createDialCodeSearch) return dialCodeOptions;
+    const term = createDialCodeSearch.toLowerCase();
+    return dialCodeOptions.filter(opt =>
+      opt.label.toLowerCase().includes(term) ||
+      opt.value.includes(term)
+    );
+  }, [createDialCodeSearch]);
+
+  const [editDialCodeSearch, setEditDialCodeSearch] = useState("");
+  const editFilteredDialCodes = useMemo(() => {
+    if (!editDialCodeSearch) return dialCodeOptions;
+    const term = editDialCodeSearch.toLowerCase();
+    return dialCodeOptions.filter(opt =>
+      opt.label.toLowerCase().includes(term) ||
+      opt.value.includes(term)
+    );
+  }, [editDialCodeSearch]);
 
   const { data: currentSecret } = useQuery({
     queryKey: ['admin_secret_code'],
@@ -227,6 +275,7 @@ function AdminDashboard() {
     handleSubmit: handleSubmitCreate,
     reset: resetCreate,
     setValue: setValueCreate,
+    watch: watchCreate,
     formState: { errors: createErrors, isValid: isValidCreate },
   } = useForm({
     resolver: yupResolver(createSchema),
@@ -276,6 +325,7 @@ function AdminDashboard() {
     handleSubmit: handleSubmitEdit,
     reset: resetEdit,
     setValue: setValueEdit,
+    watch: watchEdit,
     formState: { errors: editErrors, isValid: isValidEdit },
   } = useForm({
     resolver: yupResolver(editSchema),
@@ -361,11 +411,10 @@ function AdminDashboard() {
     if (data.nama_lengkap) formData.append('nama_lengkap', data.nama_lengkap)
     
     if (data.no_telpon) {
-      // Hilangkan awalan 0 jika user terlanjur mengetiknya
       const cleanPhone = data.no_telpon.replace(/^0+/, '')
       formData.append('no_telpon', `${data.country_code}${cleanPhone}`)
     } else {
-      formData.append('no_telpon', '') // To allow clearing the phone number
+      formData.append('no_telpon', '')
     }
     
     if (data.foto_profil && data.foto_profil.length > 0) {
@@ -387,14 +436,14 @@ function AdminDashboard() {
       cell: (info) => (
         <div className="flex flex-col">
           <span className="text-sm font-medium text-slate-900">{info.getValue()}</span>
-          <span className="text-xs text-slate-500">{info.row.original.nama_lengkap || '-'}</span>
+          <span className="text-[11px] text-slate-400 font-medium uppercase tracking-tight">{info.row.original.nama_lengkap || '-'}</span>
         </div>
       ),
     }),
     columnHelper.accessor('pageid', {
-      header: 'Link/Identitas',
+      header: 'Link ID',
       cell: (info) => (
-        <span className="text-xs text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md inline-block w-fit font-mono">
+        <span className="text-xs text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg inline-block w-fit font-mono font-semibold border border-slate-200">
           /{info.getValue()}
         </span>
       ),
@@ -405,13 +454,17 @@ function AdminDashboard() {
       cell: (info) => {
         const d = info.row.original;
         return (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             {d.no_telpon ? (
-              <span className="text-xs text-slate-600 flex items-center gap-1">📞 {d.no_telpon}</span>
+              <span className="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                <Phone className="w-3 h-3 text-red-500" />
+                {d.no_telpon}
+              </span>
             ) : <span className="text-xs text-slate-400">Tidak ada telp</span>}
             {d.foto_profil_url && (
-              <a href={d.foto_profil_url} target="_blank" rel="noreferrer" className="text-xs text-blue-500 hover:underline flex items-center gap-1">
-                🖼️ Lihat Foto
+              <a href={d.foto_profil_url} target="_blank" rel="noreferrer" className="text-xs text-red-600 hover:text-red-700 font-bold flex items-center gap-1.5 hover:underline">
+                <ImageIcon className="w-3 h-3" />
+                Lihat Foto
               </a>
             )}
           </div>
@@ -419,10 +472,10 @@ function AdminDashboard() {
       }
     }),
     columnHelper.accessor('created_at', {
-      header: 'Tanggal Terdaftar',
+      header: 'Terdaftar',
       cell: (info) => (
-        <span className="text-sm text-slate-500">
-          {dayjs(info.getValue()).format('DD MMM YYYY, HH:mm')}
+        <span className="text-xs text-slate-500 font-medium">
+          {dayjs(info.getValue()).format('DD MMM YYYY')}
         </span>
       ),
     }),
@@ -432,51 +485,55 @@ function AdminDashboard() {
       cell: (info) => {
         const isActive = !!info.row.original.is_active;
         return (
-          <span
-            className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
-              isActive
-                ? 'bg-emerald-50 text-emerald-700'
-                : 'bg-slate-100 text-slate-500'
-            }`}
+          <Button
+            size="xs"
+            variant="ghost"
+            onClick={() => toggleMutation.mutate(info.row.original.id)}
+            disabled={toggleMutation.isPending}
+            className={cn(
+              "rounded-full px-2.5 h-6 text-[10px] font-bold uppercase tracking-wider",
+              isActive 
+                ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800" 
+                : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-600"
+            )}
           >
-            {isActive ? 'Aktif' : 'Nonaktif'}
-          </span>
+             {toggleMutation.isPending ? 'Updating...' : (isActive ? 'Aktif' : 'Nonaktif')}
+          </Button>
         )
       }
     }),
     columnHelper.display({
       id: 'aksi',
-      header: 'Aksi',
+      header: '',
       cell: (info) => (
-        <div className="flex items-center gap-1">
-          <button
+        <div className="flex items-center justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => openEditModal(info.row.original)}
-            className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition"
-            title="Sunting Informasi"
+            className="h-8 w-8 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg"
           >
-            <Pencil size={15} />
-          </button>
-          <button
+            <Pencil size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setPgboToDelete(info.row.original.id)}
-            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
-            title="Hapus PGBO"
+            className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
           >
-            <Trash2 size={15} />
-          </button>
+            <Trash2 size={14} />
+          </Button>
         </div>
       )
     })
   ], [toggleMutation])
 
-  // Table instance is now managed by DataTable component
-
-  // Render Loader
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-3 border-red-200 border-t-red-600 rounded-full animate-spin" />
-          <p className="text-slate-500 text-sm font-medium">Memuat dashboard...</p>
+          <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+          <p className="text-slate-500 text-sm font-medium">Memuat admin dashboard...</p>
         </div>
       </div>
     )
@@ -484,51 +541,62 @@ function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-10">
-      <nav className="bg-slate-900 text-white shadow-md">
+      <nav className="bg-slate-900 text-white shadow-xl shadow-slate-200/50 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-16 sm:h-20">
             <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center gap-2">
-                <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
-                  <span className="font-bold text-white text-sm">SA</span>
+              <div className="flex-shrink-0 flex items-center gap-3">
+                <div className="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/20 ring-2 ring-white/10">
+                  <Lock className="w-4.5 h-4.5 text-white" />
                 </div>
-                <span className="font-bold text-lg hidden sm:block">Super Admin Portal</span>
+                <div>
+                  <span className="font-extrabold text-sm sm:text-lg block tracking-tight leading-none">Super Admin</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 block">Public Gold Portal</span>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button
+                variant="ghost"
+                rounded="xl"
                 onClick={() => setIsSecretModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                className="text-slate-300 hover:text-white hover:bg-slate-800 border-transparent hover:border-slate-700 transition-all font-semibold"
               >
-                <KeyRound size={16} />
-                <span className="hidden sm:inline">Secret Code</span>
-              </button>
-              <button
+                <KeyRound className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Portal Secret</span>
+              </Button>
+              <Button
+                variant="outline"
+                rounded="xl"
                 onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-red-400 hover:text-white hover:bg-slate-800 rounded-lg transition border border-red-500/20"
+                className="bg-transparent text-red-400 hover:text-white hover:bg-red-600 border-red-500/30 hover:border-red-600 transition-all font-bold"
               >
-                Logout
-              </button>
+                <LogOut className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline text-xs">Logout</span>
+              </Button>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Daftar Landing Page PGBO</h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Total {pgboData?.length || 0} page aktif tercatat dalam sistem.
+      <main className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Daftar Halaman PGBO</h1>
+            <p className="text-sm sm:text-base text-slate-500 font-medium">
+              Manajemen Landing Page Landing Page
+              <span className="mx-2 text-slate-300 font-light">|</span>
+              <span className="text-red-500 font-bold">{pgboData?.length || 0} Akun Aktif</span>
             </p>
           </div>
-          <button 
+          <Button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm"
+            size="lg"
+            className="w-full md:w-auto h-auto py-3.5 px-8 rounded-2xl font-bold shadow-xl shadow-red-200 hover:shadow-2xl hover:shadow-red-200 transition-all active:scale-[0.98]"
           >
-            <Plus size={16} />
-            Buat Page Baru
-          </button>
+            <Plus className="w-5 h-5 mr-2" />
+            Tambah Halaman Baru
+          </Button>
         </div>
 
         <DataTable
@@ -542,77 +610,73 @@ function AdminDashboard() {
           enableRowSelection
           renderBulkActions={(count, selectedRows, clearSelection) => (
             <>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${count > 0 ? 'text-red-600 bg-red-50' : 'text-slate-400 bg-slate-100'}`}>
-                {count} terpilih
+              <span className={cn("text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border", count > 0 ? "text-red-600 bg-red-50 border-red-100" : "text-slate-400 bg-slate-50 border-slate-100")}>
+                {count} Terpilih
               </span>
-              <select
-                disabled={count === 0 || bulkToggleMutation.isPending}
-                defaultValue=""
-                onChange={(e) => {
-                  const val = e.target.value
-                  if (!val) return
-                  const ids = selectedRows.map((r: any) => r.id)
-                  bulkToggleMutation.mutate({ ids, active: val === 'active' }, { onSuccess: () => { clearSelection(); e.target.value = '' } })
-                }}
-                className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/15 focus:border-red-400 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <option value="" disabled>Ubah Status</option>
-                <option value="active">Aktifkan</option>
-                <option value="inactive">Nonaktifkan</option>
-              </select>
-              <button
-                onClick={() => {
-                  const ids = selectedRows.map((r: any) => r.id)
-                  setBulkDeleteConfirm(ids)
-                }}
-                disabled={count === 0}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition border border-red-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-50"
-              >
-                <Trash2 size={13} />
-                Hapus
-              </button>
+              <div className="flex items-center gap-2">
+                <Select
+                  disabled={count === 0 || bulkToggleMutation.isPending}
+                  onValueChange={(val: string | null) => {
+                    if (!val) return
+                    const ids = selectedRows.map((r: any) => r.id)
+                    bulkToggleMutation.mutate({ ids, active: val === 'active' }, { onSuccess: () => { clearSelection() } })
+                  }}
+                >
+                  <SelectTrigger className="w-[140px] text-[11px] font-bold h-9 rounded-xl bg-white focus:ring-0">
+                    <SelectValue placeholder="Ubah Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active" className="text-xs font-medium">🟢 Aktifkan</SelectItem>
+                    <SelectItem value="inactive" className="text-xs font-medium">🔴 Nonaktifkan</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const ids = selectedRows.map((r: any) => r.id)
+                    setBulkDeleteConfirm(ids)
+                  }}
+                  disabled={count === 0}
+                  className="h-9 px-4 text-[11px] font-bold text-red-600 bg-red-50 hover:bg-red-100 border-red-100 rounded-xl"
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                  Hapus
+                </Button>
+              </div>
             </>
           )}
         />
       </main>
 
       {/* CREATE PGBO MODAL */}
-      {isModalOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-          onClick={() => { setIsModalOpen(false); resetCreate(); setPageIdErrorCreate(null); }}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center p-5 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Buat Page Baru PGBO</h3>
-              <button onClick={() => { setIsModalOpen(false); resetCreate(); setPageIdErrorCreate(null); }} className="text-slate-400 hover:text-slate-600 transition">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <form onSubmit={handleSubmitCreate(onSubmitCreate)}>
-              <fieldset disabled={createMutation.isPending} className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">PGCode</label>
-                  <input
-                    type="text"
+      <Dialog open={isModalOpen} onOpenChange={(open) => { if(!open) { setIsModalOpen(false); resetCreate(); setPageIdErrorCreate(null); } }}>
+        <DialogContent className="max-w-md rounded-2xl sm:rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
+          <DialogHeader className="p-6 pb-4 bg-slate-50 border-b border-slate-100">
+            <DialogTitle className="text-xl font-extrabold text-slate-900 tracking-tight">Buat Page PGBO Baru</DialogTitle>
+            <DialogDescription className="text-slate-500 font-medium">Daftarkan page baru untuk dealer Public Gold</DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="p-6">
+            <fieldset disabled={createMutation.isPending} className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="create-pgcode" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">PGCode</Label>
+                  <Input
+                    id="create-pgcode"
                     {...registerCreate('pgcode', {
                       onBlur: (e) => fetchIntroducerName(e.target.value, false)
                     })}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none ${createErrors.pgcode ? 'border-red-500' : 'border-slate-300'}`}
+                    className={cn("rounded-xl h-11 focus-visible:ring-red-500/20", createErrors.pgcode ? "border-red-500" : "border-slate-200")}
                     placeholder="Contoh: PG123456"
                   />
-                  {createErrors.pgcode && <p className="mt-1 text-sm text-red-500">{createErrors.pgcode.message}</p>}
+                  {createErrors.pgcode && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{createErrors.pgcode.message}</p>}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Page ID (Unik)</label>
-                  <input
-                    type="text"
+                <div className="space-y-2">
+                  <Label htmlFor="create-pageid" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">Page ID (Unik)</Label>
+                  <Input
+                    id="create-pageid"
                     {...registerCreate('pageid', {
                       onBlur: async (e) => {
                         if (e.target.value.length >= 3) {
@@ -624,138 +688,136 @@ function AdminDashboard() {
                         }
                       }
                     })}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none ${createErrors.pageid || pageIdErrorCreate ? 'border-red-500' : 'border-slate-300'}`}
-                    placeholder="Contoh: my-gold-shop"
+                    className={cn("rounded-xl h-11 focus-visible:ring-red-500/20", (createErrors.pageid || pageIdErrorCreate) ? "border-red-500" : "border-slate-200")}
+                    placeholder="Contoh: gold-expert"
                   />
-                  {(createErrors.pageid || pageIdErrorCreate) && <p className="mt-1 text-sm text-red-500">{createErrors.pageid?.message || pageIdErrorCreate}</p>}
+                  {(createErrors.pageid || pageIdErrorCreate) && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{createErrors.pageid?.message || pageIdErrorCreate}</p>}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
-                <input
-                  type="text"
-                  readOnly
-                  disabled
-                  {...registerCreate('nama_lengkap')}
-                  className="w-full px-4 py-2 border border-slate-200 bg-slate-100 text-slate-500 rounded-lg cursor-not-allowed focus:outline-none"
-                  placeholder="Terisi otomatis..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Foto Profil (Opsional - max 2MB)</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  {...registerCreate('foto_profil')}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">No. Telepon (WhatsApp)</label>
-                <div className="flex shadow-sm rounded-lg overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-slate-900 focus-within:border-slate-900">
-                  <select
-                    {...registerCreate('country_code')}
-                    className="bg-slate-50 px-3 py-2 text-slate-700 border-none focus:ring-0 outline-none border-r border-slate-300 sm:text-sm"
-                  >
-                    <option value="62">🇮🇩 +62</option>
-                    <option value="60">🇲🇾 +60</option>
-                    <option value="65">🇸🇬 +65</option>
-                  </select>
-                  <input
-                    type="text"
-                    {...registerCreate('no_telpon')}
-                    className="flex-1 w-full px-4 py-2 border-none focus:ring-0 outline-none sm:text-sm"
-                    placeholder="8123456789"
-                  />
-                </div>
-                {createErrors.no_telpon && <p className="mt-1 text-sm text-red-500">{createErrors.no_telpon.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Password Sementara</label>
+              <div className="space-y-2">
+                <Label htmlFor="create-nama" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">Nama Lengkap (Otomatis)</Label>
                 <div className="relative">
-                  <input
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    id="create-nama"
+                    readOnly
+                    {...registerCreate('nama_lengkap')}
+                    className="rounded-xl h-11 pl-10 bg-slate-50 border-slate-200 text-slate-500 font-bold"
+                    placeholder="Terisi otomatis setelah PGCode valid..."
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">No. Telepon (WhatsApp)</Label>
+                <div className="flex -space-x-px">
+                  <Combobox
+                    onValueChange={(val: string | null) => { if (val) setValueCreate('country_code', val); }}
+                    value={watchCreate('country_code') || "62"}
+                    inputValue={createDialCodeSearch}
+                    onInputValueChange={setCreateDialCodeSearch}
+                  >
+                    <ComboboxTrigger className="w-[100px] rounded-r-none border-r-0 focus:ring-0 focus:ring-offset-0 shadow-none">
+                      <ComboboxValue>
+                        {dialCodeOptions.find(opt => opt.value === watchCreate('country_code'))?.label?.replace('+', '') || '62'}
+                      </ComboboxValue>
+                    </ComboboxTrigger>
+                    <ComboboxContent>
+                      <ComboboxInput placeholder="Cari..." />
+                      <ComboboxEmpty>No results.</ComboboxEmpty>
+                      {createFilteredDialCodes.map((opt) => (
+                        <ComboboxItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxContent>
+                  </Combobox>
+                  <div className="relative flex-1">
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      {...registerCreate('no_telpon')}
+                      className="rounded-l-none pl-10 focus-visible:ring-offset-0"
+                      placeholder="8123456789"
+                    />
+                  </div>
+                </div>
+                {createErrors.no_telpon && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{createErrors.no_telpon.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="create-pass" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">Password Sementara</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    id="create-pass"
                     type={showPasswordSementara ? 'text' : 'password'}
                     {...registerCreate('katasandi')}
-                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none ${createErrors.katasandi ? 'border-red-500' : 'border-slate-300'}`}
-                    placeholder="Katasandi akses pertama PGBO"
+                    className={cn("rounded-xl h-11 pl-10 pr-10 border-slate-200", createErrors.katasandi ? "border-red-500" : "border-slate-200")}
+                    placeholder="Minimal 6 karakter"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setShowPasswordSementara(!showPasswordSementara)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
-                    tabIndex={-1}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-slate-400 rounded-lg"
                   >
-                    {showPasswordSementara ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-5 0-9.27-3.11-11-7.5a11.72 11.72 0 013.168-4.477M6.343 6.343A9.97 9.97 0 0112 5c5 0 9.27 3.11 11 7.5a11.72 11.72 0 01-4.168 4.477M6.343 6.343L3 3m3.343 3.343l2.829 2.829m4.243 4.243l2.829 2.829M3 3l18 18M9.878 9.878a3 3 0 104.243 4.243" /></svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                    )}
-                  </button>
+                    {showPasswordSementara ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </Button>
                 </div>
-                {createErrors.katasandi && <p className="mt-1 text-sm text-red-500">{createErrors.katasandi.message}</p>}
+                {createErrors.katasandi && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{createErrors.katasandi.message}</p>}
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
-                <button
+              <DialogFooter className="pt-4 gap-3 sm:gap-0">
+                <Button
                   type="button"
-                  onClick={() => { setIsModalOpen(false); resetCreate(); setPageIdErrorCreate(null); }}
-                  className="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium rounded-lg transition"
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                  className="rounded-xl h-11 font-bold text-slate-600 order-2 sm:order-1"
                 >
                   Batal
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
                   disabled={createMutation.isPending || !isValidCreate || !!pageIdErrorCreate}
-                  className="px-4 py-2 text-white bg-slate-900 hover:bg-slate-800 font-medium rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-red-200 flex-1 sm:flex-none order-1 sm:order-2"
                 >
-                  {createMutation.isPending ? 'Menyimpan...' : 'Buat'}
-                </button>
-              </div>
-              </fieldset>
-            </form>
-          </div>
-        </div>
-      )}
+                  {createMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  {createMutation.isPending ? 'Memproses...' : 'Buat Halaman'}
+                </Button>
+              </DialogFooter>
+            </fieldset>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* EDIT PGBO MODAL */}
-      {pgboToEdit && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-          onClick={() => { setPgboToEdit(null); setPageIdErrorEdit(null); }}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center p-5 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Sunting Informasi</h3>
-              <button onClick={() => { setPgboToEdit(null); setPageIdErrorEdit(null); }} className="text-slate-400 hover:text-slate-600 transition">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <form onSubmit={handleSubmitEdit(onSubmitEdit)}>
-              <fieldset disabled={editMutation.isPending} className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">PGCode</label>
-                  <input
-                    type="text"
+      <Dialog open={!!pgboToEdit} onOpenChange={(open) => { if(!open) setPgboToEdit(null); }}>
+        <DialogContent className="max-w-md rounded-2xl sm:rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
+          <DialogHeader className="p-6 pb-4 bg-slate-50 border-b border-slate-100">
+            <DialogTitle className="text-xl font-extrabold text-slate-900 tracking-tight">Sunting Informasi Dealer</DialogTitle>
+            <DialogDescription className="text-slate-500 font-medium">Perbarui informasi profil dan link PGBO</DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmitEdit(onSubmitEdit)} className="p-6">
+            <fieldset disabled={editMutation.isPending} className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-pgcode" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">PGCode</Label>
+                  <Input
+                    id="edit-pgcode"
                     {...registerEdit('pgcode', {
                       onBlur: (e) => fetchIntroducerName(e.target.value, true)
                     })}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none ${editErrors.pgcode ? 'border-red-500' : 'border-slate-300'}`}
+                    className={cn("rounded-xl h-11 focus-visible:ring-red-500/20", editErrors.pgcode ? "border-red-500" : "border-slate-200")}
                   />
-                  {editErrors.pgcode && <p className="mt-1 text-sm text-red-500">{editErrors.pgcode.message}</p>}
+                  {editErrors.pgcode && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{editErrors.pgcode.message}</p>}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Page ID</label>
-                  <input
-                    type="text"
+                <div className="space-y-2">
+                  <Label htmlFor="edit-pageid" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">Page ID</Label>
+                  <Input
+                    id="edit-pageid"
                     {...registerEdit('pageid', {
                       onBlur: async (e) => {
                         if (e.target.value.length >= 3 && pgboToEdit?.pageid !== e.target.value) {
@@ -767,225 +829,226 @@ function AdminDashboard() {
                         }
                       }
                     })}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none ${editErrors.pageid || pageIdErrorEdit ? 'border-red-500' : 'border-slate-300'}`}
+                    className={cn("rounded-xl h-11 focus-visible:ring-red-500/20", (editErrors.pageid || pageIdErrorEdit) ? "border-red-500" : "border-slate-200")}
                   />
-                  {(editErrors.pageid || pageIdErrorEdit) && <p className="mt-1 text-sm text-red-500">{editErrors.pageid?.message || pageIdErrorEdit}</p>}
+                  {(editErrors.pageid || pageIdErrorEdit) && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{editErrors.pageid?.message || pageIdErrorEdit}</p>}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
-                <input
-                  type="text"
-                  readOnly
-                  disabled
-                  {...registerEdit('nama_lengkap')}
-                  className="w-full px-4 py-2 border border-slate-200 bg-slate-100 text-slate-500 rounded-lg cursor-not-allowed focus:outline-none"
-                  placeholder="Terisi otomatis..."
-                />
+              <div className="space-y-2">
+                <Label htmlFor="edit-nama" className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">Nama Lengkap</Label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    id="edit-nama"
+                    readOnly
+                    {...registerEdit('nama_lengkap')}
+                    className="rounded-xl h-11 pl-10 bg-slate-50 border-slate-200 text-slate-500 font-bold"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">No. Telepon (WhatsApp)</label>
-                <div className="flex shadow-sm rounded-lg overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-slate-900 focus-within:border-slate-900">
-                  <select
-                    {...registerEdit('country_code')}
-                    className="bg-slate-50 px-3 py-2 text-slate-700 border-none focus:ring-0 outline-none border-r border-slate-300 sm:text-sm"
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-600 uppercase tracking-widest pl-1">No. Telepon (WhatsApp)</Label>
+                <div className="flex -space-x-px">
+                  <Combobox
+                    onValueChange={(val: string | null) => { if (val) setValueEdit('country_code', val); }}
+                    value={watchEdit('country_code') || "62"}
+                    inputValue={editDialCodeSearch}
+                    onInputValueChange={setEditDialCodeSearch}
                   >
-                    <option value="62">🇮🇩 +62</option>
-                    <option value="60">🇲🇾 +60</option>
-                    <option value="65">🇸🇬 +65</option>
-                  </select>
-                  <input
-                    type="text"
-                    {...registerEdit('no_telpon')}
-                    className="flex-1 w-full px-4 py-2 border-none focus:ring-0 outline-none sm:text-sm"
-                    placeholder="8123456789"
-                  />
-                </div>
-                {editErrors.no_telpon && <p className="mt-1 text-sm text-red-500">{editErrors.no_telpon.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Foto Profil Baru (Opsional - max 2MB)</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  {...registerEdit('foto_profil')}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100"
-                />
-                <p className="mt-1 text-xs text-slate-500">Biarkan kosong jika tidak ingin mengubah foto</p>
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => { setPgboToEdit(null); setPageIdErrorEdit(null); }}
-                  className="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium rounded-lg transition"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={editMutation.isPending || !isValidEdit || !!pageIdErrorEdit}
-                  className="px-4 py-2 text-white bg-slate-900 hover:bg-slate-800 font-medium rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {editMutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
-                </button>
-              </div>
-              </fieldset>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* DELETE CONFIRMATION MODAL */}
-      {pgboToDelete && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-          onClick={() => setPgboToDelete(null)}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative p-6 text-center animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Hapus Halaman PGBO?</h3>
-            <p className="text-slate-500 text-sm mb-6">
-              Aksi ini akan menghapus halaman dan seluruh data terkait secara permanen. Anda tidak dapat mengembalikan tindakan ini.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => setPgboToDelete(null)}
-                className="w-full px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium rounded-lg transition"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => deleteMutation.mutate(pgboToDelete)}
-                disabled={deleteMutation.isPending}
-                className="w-full px-4 py-2 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg transition disabled:opacity-70"
-              >
-                {deleteMutation.isPending ? 'Menghapus...' : 'Ya, Hapus'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* BULK DELETE CONFIRMATION MODAL */}
-      {bulkDeleteConfirm && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-          onClick={() => setBulkDeleteConfirm(null)}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative p-6 text-center animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Hapus {bulkDeleteConfirm.length} PGBO?</h3>
-            <p className="text-slate-500 text-sm mb-6">
-              Semua halaman terpilih beserta data terkait akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => setBulkDeleteConfirm(null)}
-                className="w-full px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium rounded-lg transition"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => bulkDeleteMutation.mutate(bulkDeleteConfirm)}
-                disabled={bulkDeleteMutation.isPending}
-                className="w-full px-4 py-2 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg transition disabled:opacity-70"
-              >
-                {bulkDeleteMutation.isPending ? 'Menghapus...' : 'Ya, Hapus Semua'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* SECRET CODE MODAL */}
-      {isSecretModalOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-          onClick={() => setIsSecretModalOpen(false)}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden relative animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center p-5 border-b border-slate-100 bg-slate-50">
-              <div className="flex items-center gap-2">
-                <KeyRound size={20} className="text-slate-900" />
-                <h3 className="text-lg font-bold text-slate-900">Portal Secret Code</h3>
-              </div>
-              <button onClick={() => setIsSecretModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className="p-6 space-y-5">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kode Saat Ini</label>
-                <div className="relative group">
-                  <input
-                    type={showSecretInModal ? 'text' : 'password'}
-                    value={tempSecretCode}
-                    onChange={(e) => setTempSecretCode(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-mono text-lg tracking-widest focus:ring-2 focus:ring-slate-900 focus:outline-none transition-all"
-                    placeholder="Masukkan kode..."
-                  />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setShowSecretInModal(!showSecretInModal)}
-                      className="p-2 text-slate-400 hover:text-slate-600 transition"
-                      title={showSecretInModal ? "Sembunyikan" : "Lihat"}
-                    >
-                      {showSecretInModal ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={generateRandom}
-                      className="p-2 text-slate-400 hover:text-slate-900 transition hover:bg-slate-100 rounded-lg"
-                      title="Generate Acak"
-                    >
-                      <RefreshCw size={18} />
-                    </button>
+                    <ComboboxTrigger className="w-[100px] rounded-r-none border-r-0 focus:ring-0 focus:ring-offset-0 shadow-none">
+                      <ComboboxValue>
+                        {dialCodeOptions.find(opt => opt.value === watchEdit('country_code'))?.label?.replace('+', '') || '62'}
+                      </ComboboxValue>
+                    </ComboboxTrigger>
+                    <ComboboxContent>
+                      <ComboboxInput placeholder="Cari..." />
+                      <ComboboxEmpty>No results.</ComboboxEmpty>
+                      {editFilteredDialCodes.map((opt) => (
+                        <ComboboxItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxContent>
+                  </Combobox>
+                  <div className="relative flex-1">
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      {...registerEdit('no_telpon')}
+                      className="rounded-l-none pl-10 focus-visible:ring-offset-0"
+                      placeholder="8123456789"
+                    />
                   </div>
                 </div>
-                <p className="mt-2 text-[11px] text-slate-400 leading-relaxed italic">
-                  * Kode ini digunakan untuk membuka portal landing page. Sistem akan memperbarui kode ini secara otomatis setiap 24 jam.
-                </p>
+                {editErrors.no_telpon && <p className="mt-1 text-[10px] font-bold text-red-500 pl-1">{editErrors.no_telpon.message}</p>}
               </div>
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => setIsSecretModalOpen(false)}
-                  className="flex-1 px-4 py-3 text-slate-600 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl transition-all"
+              <DialogFooter className="pt-4 gap-3 sm:gap-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setPgboToEdit(null)}
+                  className="rounded-xl h-11 font-bold text-slate-600 order-2 sm:order-1"
                 >
                   Batal
-                </button>
-                <button
-                  onClick={() => updateSecretMutation.mutate(tempSecretCode)}
-                  disabled={updateSecretMutation.isPending || tempSecretCode.length < 3}
-                  className="flex-1 px-4 py-3 text-white bg-slate-900 hover:bg-slate-800 font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={editMutation.isPending || !isValidEdit || !!pageIdErrorEdit}
+                  className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-red-200 flex-1 sm:flex-none order-1 sm:order-2"
                 >
-                  {updateSecretMutation.isPending ? <Spinner size={16} className="text-white" /> : <Save size={18} />}
-                  Simpan
-                </button>
+                  {editMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  {editMutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+                </Button>
+              </DialogFooter>
+            </fieldset>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <Dialog open={!!pgboToDelete} onOpenChange={(open) => { if(!open) setPgboToDelete(null); }}>
+        <DialogContent className="max-w-sm rounded-2xl overflow-hidden p-0 gap-0 border-none shadow-2xl">
+          <div className="p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trash2 className="w-7 h-7" />
+            </div>
+            <DialogHeader className="p-0 mb-3">
+              <DialogTitle className="text-xl font-extrabold text-slate-900 text-center tracking-tight">Hapus Halaman PGBO?</DialogTitle>
+            </DialogHeader>
+            <DialogDescription className="text-slate-500 font-medium text-sm leading-relaxed mb-0 text-center">
+              Aksi ini akan menghapus seluruh data Dealer secara permanen. Anda tidak dapat mengembalikan tindakan ini.
+            </DialogDescription>
+          </div>
+          <DialogFooter className="p-6 pt-0 flex-row gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setPgboToDelete(null)}
+              className="flex-1 rounded-2xl h-11 font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border-slate-200 transition-all"
+            >
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => pgboToDelete && deleteMutation.mutate(pgboToDelete)}
+              disabled={deleteMutation.isPending}
+              className="flex-1 rounded-2xl h-11 font-bold shadow-xl shadow-red-200 transition-all"
+            >
+              {deleteMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              {deleteMutation.isPending ? 'Menghapus...' : 'Ya, Hapus'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* BULK DELETE CONFIRMATION MODAL */}
+      <Dialog open={!!bulkDeleteConfirm} onOpenChange={(open) => { if(!open) setBulkDeleteConfirm(null); }}>
+        <DialogContent className="max-w-sm rounded-2xl overflow-hidden p-0 gap-0 border-none shadow-2xl">
+          <div className="p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trash2 className="w-7 h-7" />
+            </div>
+            <DialogHeader className="p-0 mb-3">
+              <DialogTitle className="text-xl font-extrabold text-slate-900 text-center tracking-tight">Hapus {bulkDeleteConfirm?.length} PGBO?</DialogTitle>
+            </DialogHeader>
+            <DialogDescription className="text-slate-500 font-medium text-sm leading-relaxed mb-0 text-center">
+              Semua halaman terpilih akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </div>
+          <DialogFooter className="p-6 pt-0 flex-row gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setBulkDeleteConfirm(null)}
+              className="flex-1 rounded-2xl h-11 font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border-slate-200"
+            >
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => bulkDeleteConfirm && bulkDeleteMutation.mutate(bulkDeleteConfirm)}
+              disabled={bulkDeleteMutation.isPending}
+              className="flex-1 rounded-2xl h-11 font-bold shadow-xl shadow-red-200"
+            >
+              {bulkDeleteMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              {bulkDeleteMutation.isPending ? 'Hapus Semua' : 'Ya, Hapus Semua'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* SECRET CODE MODAL */}
+      <Dialog open={isSecretModalOpen} onOpenChange={(open) => { if(!open) setIsSecretModalOpen(false); }}>
+        <DialogContent className="max-w-sm rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
+          <DialogHeader className="p-6 bg-slate-900 text-white">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center ring-1 ring-white/10">
+                <KeyRound className="w-5 h-5 text-red-500" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-extrabold tracking-tight">Portal Secret Code</DialogTitle>
+                <DialogDescription className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Pengaturan Keamanan</DialogDescription>
               </div>
             </div>
+          </DialogHeader>
+          
+          <div className="p-6 space-y-6">
+            <div className="space-y-3">
+              <Label className="text-xs font-extrabold text-slate-500 uppercase tracking-widest pl-1">Akses Kode Pendaftaran</Label>
+              <div className="relative group">
+                <Input
+                  type={showSecretInModal ? 'text' : 'password'}
+                  value={tempSecretCode}
+                  onChange={(e) => setTempSecretCode(e.target.value)}
+                  className="h-14 bg-slate-50 border-slate-200 rounded-2xl font-mono text-xl text-center tracking-[0.5em] font-bold focus-visible:ring-red-500/20 transition-all"
+                  placeholder="CODE"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowSecretInModal(!showSecretInModal)}
+                    className="h-10 w-10 text-slate-400 hover:text-slate-600 rounded-xl"
+                  >
+                    {showSecretInModal ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={generateRandom}
+                    className="h-10 w-10 text-slate-400 hover:text-red-600 transition hover:bg-red-50 rounded-xl"
+                  >
+                    <RefreshCw size={18} />
+                  </Button>
+                </div>
+              </div>
+              <p className="px-2 text-[11px] text-slate-400 leading-relaxed italic font-medium">
+                * Kode ini digunakan untuk masuk ke portal pendaftaran. Dealer harus mengetahui kode ini agar dapat mendaftarkan akun baru.
+              </p>
+            </div>
+
+            <DialogFooter className="flex-row gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsSecretModalOpen(false)}
+                className="flex-1 rounded-2xl h-12 font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border-slate-200"
+              >
+                Batal
+              </Button>
+              <Button
+                onClick={() => updateSecretMutation.mutate(tempSecretCode)}
+                disabled={updateSecretMutation.isPending || tempSecretCode.length < 3}
+                className="flex-1 rounded-2xl h-12 font-bold shadow-xl shadow-red-200 transition-all active:scale-[0.98]"
+              >
+                {updateSecretMutation.isPending ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
+                Simpan
+              </Button>
+            </DialogFooter>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

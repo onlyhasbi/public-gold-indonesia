@@ -1,17 +1,21 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X, ChevronDown, Languages } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { cn } from "../lib/utils";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 function Topbar({ pgbo }: { pgbo?: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [registerMenuOpen, setRegisterMenuOpen] = useState(false);
-  const langMenuRef = useRef<HTMLDivElement>(null);
-  const registerMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,22 +25,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
-        setLangMenuOpen(false);
-      }
-      if (registerMenuRef.current && !registerMenuRef.current.contains(event.target as Node)) {
-        setRegisterMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const lang = i18n.language;
-
-
 
   const languages = [
     { id: "id", label: "Indonesia", emoji: "🇮🇩", code: "ID" },
@@ -47,14 +36,11 @@ function Topbar({ pgbo }: { pgbo?: any }) {
 
   const toggleLang = (selected: "id" | "ms" | "zh" | "ta") => {
     i18n.changeLanguage(selected);
-    setLangMenuOpen(false);
   };
 
-  const currentLang = languages.find(l => lang.startsWith(l.id));
+  const currentLang = languages.find((l) => lang.startsWith(l.id));
   const currentLangEmoji = currentLang?.emoji ?? "🌐";
   const currentLangLabel = currentLang?.code ?? "EN";
-
-
 
   return (
     <>
@@ -69,96 +55,119 @@ function Topbar({ pgbo }: { pgbo?: any }) {
         <div className="flex items-center justify-between w-11/12 max-w-7xl mx-auto h-full">
           {/* Logo */}
           <Link
-            to="/"
+            to="/$pgcode"
+            params={{ pgcode: pgbo?.pageid || "" }}
             onClick={() => {
-              if (window.location.pathname === "/") {
+              if (window.location.pathname.startsWith("/")) {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
             className="group flex items-center gap-2 cursor-pointer"
           >
-            <img src={`./logo.svg`} alt="Public Gold" className="h-14 w-auto group-hover:scale-105 transition-transform" />
+            <img
+              src={`./logo.svg`}
+              alt="Public Gold"
+              className="h-14 w-auto group-hover:scale-105 transition-transform"
+            />
           </Link>
-
-
 
           <div className="flex items-center gap-4">
             {/* Language Selector (Desktop) */}
-            <div ref={langMenuRef} className="hidden lg:relative lg:block">
-              <button
-                onClick={() => setLangMenuOpen(!langMenuOpen)}
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm font-semibold border",
-                  langMenuOpen
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                )}
-              >
-                <Languages className={cn("w-4 h-4", langMenuOpen ? "text-amber-400" : "text-slate-400")} />
-                <span className="flex items-center gap-1.5">
-                  <span className="text-base leading-none">{currentLangEmoji}</span>
-                  <span>{currentLangLabel}</span>
-                </span>
-                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", langMenuOpen && "rotate-180")} />
-              </button>
-
-              {/* Dropdown */}
-              {langMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select Language</div>
+            <div className="hidden lg:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      rounded="xl"
+                      className="flex items-center gap-2 px-3 font-semibold border-slate-200 hover:border-slate-300 transition-all h-11"
+                    >
+                      <Languages className="w-4 h-4 text-slate-400" />
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-base leading-none">
+                          {currentLangEmoji}
+                        </span>
+                        <span>{currentLangLabel}</span>
+                      </span>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" />
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2">
                   {languages.map((l) => (
-                    <button
+                    <DropdownMenuItem
                       key={l.id}
                       onClick={() => toggleLang(l.id as any)}
                       className={cn(
-                        "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
+                        "flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer",
                         lang.startsWith(l.id)
                           ? "text-red-600 font-bold bg-red-50/50"
-                          : "text-slate-600 hover:bg-slate-50"
+                          : "text-slate-600"
                       )}
                     >
                       <span className="flex items-center gap-3">
                         <span className="text-lg">{l.emoji}</span>
                         {l.label}
                       </span>
-                      {lang.startsWith(l.id) && <div className="w-1.5 h-1.5 rounded-full bg-red-600" />}
-                    </button>
+                      {lang.startsWith(l.id) && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                      )}
+                    </DropdownMenuItem>
                   ))}
-                </div>
-              )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            {/* CTA - Register Dropdown */}
-            <div className="relative" ref={registerMenuRef}>
-              <button
-                onClick={() => setRegisterMenuOpen(!registerMenuOpen)}
-                className="flex items-center justify-center gap-1.5 bg-red-600 text-white px-4 py-2 lg:px-6 lg:py-2.5 rounded-xl text-xs lg:text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 hover:shadow-red-200 active:scale-95 cursor-pointer"
-              >
-                {t("nav.register")}
-                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", registerMenuOpen && "rotate-180")} />
-              </button>
-
-              {registerMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 z-50">
-                  <Link
-                    to="/register"
-                    search={{ type: "dewasa", ref: pgbo?.pageid }}
-                    onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
+            {/* Registration Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    rounded="xl"
+                    className="font-bold shadow-lg shadow-red-600/20 active:scale-95 transition-all h-11"
                   >
-                    <img src="./dewasa.webp" alt="Dewasa" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Dewasa
-                  </Link>
-                  <Link
-                    to="/register"
-                    search={{ type: "anak", ref: pgbo?.pageid }}
-                    onClick={() => { setRegisterMenuOpen(false); setIsOpen(false); }}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium no-underline"
-                  >
-                    <img src="./anak.webp" alt="Anak" className="w-5 h-5 object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> Akun Anak
-                  </Link>
-                </div>
-              )}
-            </div>
+                    {t("nav.register")}
+                    <ChevronDown className="w-3.5 h-3.5 ml-1 transition-transform duration-200" />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align="end" className="w-52 rounded-2xl p-2 z-50">
+                <DropdownMenuItem
+                  render={
+                    <Link
+                      to="/register"
+                      search={{ type: "dewasa", ref: pgbo?.pageid }}
+                      className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
+                    >
+                      <img
+                        src="./dewasa.webp"
+                        alt="Dewasa"
+                        className="w-5 h-5 object-cover rounded-full"
+                        style={{ objectPosition: "center 10%" }}
+                      />{" "}
+                      Akun Dewasa
+                    </Link>
+                  }
+                />
+                <DropdownMenuItem
+                  render={
+                    <Link
+                      to="/register"
+                      search={{ type: "anak", ref: pgbo?.pageid }}
+                      className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
+                    >
+                      <img
+                        src="./anak.webp"
+                        alt="Anak"
+                        className="w-5 h-5 object-cover rounded-full"
+                        style={{ objectPosition: "center 10%" }}
+                      />{" "}
+                      Akun Anak
+                    </Link>
+                  }
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Mobile Menu Button */}
             <button

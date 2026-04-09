@@ -1,17 +1,15 @@
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { Spinner } from "./ui/spinner";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
+import { Button } from "./ui/button";
 
 export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () => void }) {
   const navigate = useNavigate();
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.25)] overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent showCloseButton={false} className="p-0 overflow-hidden border-none sm:max-w-md bg-white rounded-2xl shadow-2xl">
         {/* Decorative top gradient */}
         <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 opacity-10 pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
@@ -24,8 +22,10 @@ export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () 
             {/* Consistent Spinner Rings */}
             <div className="absolute w-24 h-24 rounded-full bg-emerald-100 animate-ping opacity-20" />
             <Spinner size={84} className="absolute text-emerald-100/50 opacity-100" />
+            
             {/* Icon circle */}
-            <div className="relative w-18 h-18 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl shadow-emerald-200/60"
+            <div 
+              className="relative w-18 h-18 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl shadow-emerald-200/60"
               style={{ width: '72px', height: '72px' }}
             >
               <CheckCircle className="w-9 h-9 text-white" strokeWidth={2.5} />
@@ -35,29 +35,31 @@ export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () 
           {/* Title */}
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
-            <h2 className="text-2xl font-bold text-slate-800">
+            <DialogTitle className="text-2xl font-bold text-slate-800">
               Pendaftaran Berhasil!
-            </h2>
+            </DialogTitle>
             <Sparkles className="w-5 h-5 text-amber-400" />
           </div>
 
           {/* Description */}
-          <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-sm mx-auto">
+          <DialogDescription className="text-slate-500 text-sm leading-relaxed mb-8 max-w-sm mx-auto">
             Akun Anda sedang diproses. Ikuti langkah berikut agar Anda bisa mulai bertransaksi emas.
-          </p>
+          </DialogDescription>
 
           {/* CTA Button */}
-          <button
+          <Button
             type="button"
+            size="lg"
+            rounded="xl"
             onClick={() => {
               onClose();
               navigate({ to: "/petunjuk", search: { ref: refId } });
             }}
-            className="group w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl shadow-emerald-200/50 hover:shadow-emerald-300/60 active:scale-[0.98] cursor-pointer"
+            className="group w-full gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold h-16 shadow-xl shadow-emerald-200/50 hover:shadow-emerald-300/60 border-none"
           >
             Lihat Petunjuk Selanjutnya
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
+          </Button>
 
           {/* Skip link */}
           <button
@@ -68,7 +70,7 @@ export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () 
             Lewati untuk sekarang
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

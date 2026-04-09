@@ -1,4 +1,5 @@
-import { Toaster, toast } from 'sonner'
+import { Toaster } from './ui/sonner'
+import { toast } from 'sonner'
 import type { ReactNode } from 'react'
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
@@ -10,12 +11,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <Toaster
         position="top-center"
         richColors
-        closeButton
         toastOptions={{
           duration: 4000,
-          style: {
-            fontSize: '14px',
-          },
         }}
       />
     </>
