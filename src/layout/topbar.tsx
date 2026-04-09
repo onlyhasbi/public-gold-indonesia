@@ -35,6 +35,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
 
   const toggleLang = (selected: "id" | "ms" | "zh" | "ta") => {
     i18n.changeLanguage(selected);
+    setIsOpen(false);
   };
 
   const currentLang = languages.find((l) => lang.startsWith(l.id));
