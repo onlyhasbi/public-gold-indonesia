@@ -208,9 +208,12 @@ function RegisterPage() {
                 onValueChange={(val: string | null) => {
                   if (val) {
                     setCountryMode(val as "ID" | "MY" | "INTL");
-                    if (val === 'ID') i18n.changeLanguage('id');
-                    else if (val === 'MY') i18n.changeLanguage('ms');
-                    else i18n.changeLanguage('en');
+                    // Delay language change slightly more to let the popup close and release scroll lock
+                    setTimeout(() => {
+                      if (val === 'ID') i18n.changeLanguage('id');
+                      else if (val === 'MY') i18n.changeLanguage('ms');
+                      else i18n.changeLanguage('en');
+                    }, 200);
                   }
                 }}
               >

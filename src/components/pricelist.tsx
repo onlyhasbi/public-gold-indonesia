@@ -1,4 +1,4 @@
-import { TrendingUp, AlertCircle, Info, MousePointer2 } from "lucide-react";
+import { AlertCircle, Info } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import GradientHighlight from "./ui/gradient_highlight";
 import { Spinner } from "./ui/spinner";

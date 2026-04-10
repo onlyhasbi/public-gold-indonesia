@@ -264,6 +264,10 @@ function LandingAuthPage() {
     exit: { opacity: 0, x: -20, transition: { duration: 0.4 } },
   }
 
+  useEffect(() => {
+    navigate({ to: '/$pgcode', params: { pgcode: 'hasbi' } });
+  }, [])
+
   return (
     <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-[#020617] overflow-hidden px-6 font-sans">
 
@@ -585,13 +589,13 @@ function LandingAuthPage() {
                             </div>
                           </div>
 
-                           <button
-                             type="submit"
-                             disabled={registerMutation.isPending || !signupForm.formState.isValid || !isPgcodeValid || !isPageIdValid || !!pageIdError}
-                             className="w-full py-3.5 mt-2 bg-white text-[#020617] rounded-xl font-bold shadow-xl transition-all active:scale-[0.98] disabled:opacity-20 flex items-center justify-center"
-                           >
-                             {registerMutation.isPending ? <Spinner size={20} className="text-[#020617]" /> : "Buat Akun Portal"}
-                           </button>
+                          <button
+                            type="submit"
+                            disabled={registerMutation.isPending || !signupForm.formState.isValid || !isPgcodeValid || !isPageIdValid || !!pageIdError}
+                            className="w-full py-3.5 mt-2 bg-white text-[#020617] rounded-xl font-bold shadow-xl transition-all active:scale-[0.98] disabled:opacity-20 flex items-center justify-center"
+                          >
+                            {registerMutation.isPending ? <Spinner size={20} className="text-[#020617]" /> : "Buat Akun Portal"}
+                          </button>
                         </motion.form>
                       )}
                     </AnimatePresence>
@@ -605,7 +609,7 @@ function LandingAuthPage() {
         {/* Minimal Footer */}
         <AnimatePresence>
           {lockoutTime === 0 && !isUnlocked && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
