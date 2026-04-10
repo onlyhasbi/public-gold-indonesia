@@ -1,4 +1,4 @@
-import { TrendingUp, ShieldCheck, AlertCircle, Info, MousePointer2 } from "lucide-react";
+import { TrendingUp, AlertCircle, Info, MousePointer2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import GradientHighlight from "./ui/gradient_highlight";
 import { Spinner } from "./ui/spinner";
@@ -350,14 +350,11 @@ function PriceList({ price, pgbo }: Props) {
 
       {/* Price Stats Section - Minimalist Centered Layout with Divider */}
       <div className="w-full max-w-5xl mx-auto mb-16 relative z-10 px-4 md:px-0">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 py-10 border-b border-slate-100">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 py-10">
           {/* Column 1: Saving Estimate */}
           <div className="flex flex-col items-center justify-center group cursor-default">
             <div className="flex items-center gap-2 mb-3">
-              <div className="bg-red-50 p-1.5 rounded-lg border border-red-100/50">
-                <TrendingUp className="w-3.5 h-3.5 text-red-600" />
-              </div>
-              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+              <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
                 Harga per <span className="text-red-600 underline underline-offset-2">{gramsFor300k ?? "..."}</span> gram
               </span>
             </div>
@@ -371,10 +368,7 @@ function PriceList({ price, pgbo }: Props) {
           {/* Column 2: Spot Price */}
           <div className="flex flex-col items-center justify-center group cursor-default">
             <div className="flex items-center gap-2 mb-3">
-              <div className="bg-blue-50 p-1.5 rounded-lg border border-blue-100/50">
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              </div>
-              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+              <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
                 Harga per gram saat ini
               </span>
             </div>
@@ -388,11 +382,8 @@ function PriceList({ price, pgbo }: Props) {
           {/* Column 3: Pricing Switch */}
           <div className="flex flex-col items-center justify-center group cursor-default">
             <div className="flex items-center gap-2 mb-3">
-              <div className="bg-violet-50 p-1.5 rounded-lg border border-violet-100/50">
-                <MousePointer2 className="w-3.5 h-3.5 text-violet-600" />
-              </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
                   Pilihan Harga
                 </span>
                 <Popover>
