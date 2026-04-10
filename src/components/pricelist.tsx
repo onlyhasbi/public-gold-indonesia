@@ -1,22 +1,48 @@
-import { Autoplay, FreeMode, Pagination, Navigation } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { TrendingUp, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { TrendingUp, ShieldCheck, AlertCircle, Info, MousePointer2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import GradientHighlight from "./ui/gradient_highlight";
 import { Spinner } from "./ui/spinner";
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import useEmblaCarousel from 'embla-carousel-react'
+import Autoplay from 'embla-carousel-autoplay'
+import {
+  NextButton,
+  PrevButton,
+  usePrevNextButtons,
+} from './ui/EmblaCarouselButtons'
 
-import "swiper/css";
-import "swiper/css/autoplay";
-import "swiper/css/free-mode";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import BaseLayout from "../layout/base";
 import type { GoldPricesResult } from "../types";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
+// Embla Tween Logic Constants
+const TWEEN_FACTOR_BASE = 0.8 // Pronounced factor for 'Pop-out' effect
 
+const numberWithinRange = (number: number, min: number, max: number): number =>
+  Math.min(Math.max(number, min), max)
+
+const PRINTING_COSTS: Record<string, number> = {
+  // Goldbar
+  "0.5g": 52500,
+  "1g": 52500,
+  "5g": 30000,
+  "10g": 45000,
+  "20g": 70000,
+  "50g": 120000,
+  "100g": 210000,
+  // Dinar
+  "1.0625g": 70000,
+  "2.125g": 30000,
+  "4.25g": 30000,
+  "21.25g": 70000,
+  "42.5g": 120000,
+};
 
 type Props = {
   price?: GoldPricesResult;
@@ -101,12 +127,16 @@ export const goldbar = [
   },
 ];
 
-import { useTranslation } from "react-i18next";
+const allProducts = [...dinar, ...goldbar];
 
 function PriceList({ price, pgbo }: Props) {
   const { t, i18n } = useTranslation();
   const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
+  const [priceMode, setPriceMode] = useState<"tabungan" | "tunai">("tabungan");
 
+  const getWeightNumber = (weightStr: string): number => {
+    return parseFloat(weightStr.replace(/[^\d.]/g, '')) || 0;
+  };
 
   const parsePriceToNumber = (priceStr: string | null | undefined): number | null => {
     if (!priceStr) return null;
@@ -115,33 +145,176 @@ function PriceList({ price, pgbo }: Props) {
     return isNaN(num) ? null : num;
   };
 
-  const perGramPrice = parsePriceToNumber(price?.poe?.[1]?.price);
+  const perGramPrice = useMemo(() => parsePriceToNumber(price?.poe?.[1]?.price), [price]);
   const budgetAmount = 300_000;
   const gramsFor300k = perGramPrice ? (budgetAmount / perGramPrice).toFixed(4) : null;
 
-  const formatPrice = (priceValue: string | null | undefined) => {
-    if (!priceValue) return (
+  // Embla Setup
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: 'center', skipSnaps: false },
+    [Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })]
+  )
+  const tweenFactor = useRef(0)
+  const tweenNodes = useRef<(HTMLElement | null)[]>([])
+
+  const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } = usePrevNextButtons(emblaApi)
+
+  const setTweenNodes = useCallback((emblaApi: any) => {
+    tweenNodes.current = emblaApi.slideNodes().map((slideNode: HTMLElement) => {
+      return slideNode.querySelector('.embla__tween__node') as HTMLElement | null
+    })
+  }, [])
+
+  const setTweenFactor = useCallback((emblaApi: any) => {
+    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length
+  }, [])
+
+  const tweenScale = useCallback((emblaApi: any, event?: any) => {
+    const engine = emblaApi.internalEngine()
+    const scrollProgress = emblaApi.scrollProgress()
+    const slidesInView = emblaApi.slidesInView()
+    const isScrollEvent = event?.type === 'scroll'
+
+    emblaApi.scrollSnapList().forEach((scrollSnap: number, snapIndex: number) => {
+      let diffToTarget = scrollSnap - scrollProgress
+      const slideRegistry = engine.slideRegistry
+      if (!slideRegistry) return
+
+      const slidesInSnap = slideRegistry[snapIndex]
+
+      slidesInSnap.forEach((slideIndex: number) => {
+        if (isScrollEvent && !slidesInView.includes(slideIndex)) return
+
+        if (engine.options.loop) {
+          engine.slideLooper.loopPoints.forEach((loopItem: any) => {
+            const target = loopItem.target()
+
+            if (slideIndex === loopItem.index && target !== 0) {
+              const sign = Math.sign(target)
+              if (sign === -1) diffToTarget = scrollSnap - (1 + scrollProgress)
+              if (sign === 1) diffToTarget = scrollSnap + (1 - scrollProgress)
+            }
+          })
+        }
+
+        const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current)
+        const scale = numberWithinRange(tweenValue, 0.65, 1).toString()
+        const opacity = numberWithinRange(tweenValue, 0.4, 1).toString()
+        const tweenNode = tweenNodes.current[slideIndex]
+
+        if (tweenNode) {
+          tweenNode.style.transform = `scale(${scale})`
+          tweenNode.style.opacity = opacity
+        }
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!emblaApi) return
+
+    setTweenNodes(emblaApi)
+    setTweenFactor(emblaApi)
+    tweenScale(emblaApi)
+
+    emblaApi
+      .on('reInit', setTweenNodes)
+      .on('reInit', setTweenFactor)
+      .on('reInit', tweenScale)
+      .on('scroll', tweenScale)
+  }, [emblaApi, tweenScale, setTweenNodes, setTweenFactor])
+
+
+  const formatPrice = (priceValue: string | number | null | undefined) => {
+    if (priceValue === null || priceValue === undefined) return (
       <span className="flex items-center gap-2 text-slate-400">
         <Spinner size={12} className="text-slate-400 opacity-100" />
         {t("priceList.loading")}
       </span>
     );
-    return priceValue;
+
+    const val = typeof priceValue === 'string' ? parsePriceToNumber(priceValue) : priceValue;
+    if (val === null) return "Rp ...";
+
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(val).replace('Rp', 'Rp ');
+  };
+
+  const getCalculatedPrice = (item: typeof allProducts[0]) => {
+    const weight = getWeightNumber(item.weight);
+    let printCost = PRINTING_COSTS[item.weight] || 0;
+
+    if (priceMode === "tabungan") {
+      if (!perGramPrice) return null;
+      return (perGramPrice * weight) + printCost;
+    } else {
+      // mode tunai: check for special promotional printing costs
+      if (item.category === "goldbar") {
+        if (item.weight === "1g") printCost = 0;
+        else if (item.weight === "5g") printCost = 15000;
+      }
+
+      const apiArray = item.category === "dinar" ? price?.dinar : price?.goldbar;
+      const apiItem = apiArray?.find(p => p.label === item.title);
+      const apiPrice = parsePriceToNumber(apiItem?.price);
+
+      if (!apiPrice) return null;
+      return apiPrice + printCost;
+    }
   };
 
   return (
     <BaseLayout className="flex-col bg-white overflow-hidden relative">
+      <style>{`
+        .embla {
+          overflow: hidden;
+          width: 100%;
+        }
+        .embla__viewport {
+          overflow: visible;
+          cursor: grab;
+        }
+        .embla__viewport:active {
+          cursor: grabbing;
+        }
+        .embla__container {
+          display: flex;
+          align-items: center;
+          touch-action: pan-y pinch-zoom;
+          margin-left: -1rem;
+        }
+        .embla__slide {
+          flex: 0 0 85%;
+          min-width: 0;
+          padding-left: 1rem;
+        }
+        @media (min-width: 768px) {
+          .embla__slide {
+            flex: 0 0 60%;
+          }
+        }
+        @media (min-width: 1024px) {
+          .embla__slide {
+            flex: 0 0 42%;
+          }
+        }
+      `}</style>
+
       {/* Decorative Orbs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 -z-1" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/2 -z-1" />
 
       {/* Section Header */}
-      <div className="text-center mb-16 relative z-10 flex flex-col items-center">
+      <div className="text-center mb-12 relative z-10 flex flex-col items-center">
         <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
           <GradientHighlight text={t("priceList.title")} highlight="Harga Emas" />
         </h2>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-3">
-          <p className="text-slate-500 text-base md:text-lg max-w-2xl leading-relaxed text-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-3 px-4">
+          <p className="text-slate-500 text-sm md:text-lg max-w-2xl leading-relaxed text-center">
             {(() => {
               const text = t("priceList.subtitle");
               const parts = text.split("{mbr}");
@@ -157,7 +330,7 @@ function PriceList({ price, pgbo }: Props) {
             })()}
           </p>
           <div className="flex items-center gap-2">
-            <span className="inline md:hidden text-slate-500 text-base">
+            <span className="inline md:hidden text-slate-500 text-sm">
               {t("priceList.subtitle").split("{mbr}")[1] || ""}
             </span>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs font-bold tracking-wide">
@@ -175,77 +348,105 @@ function PriceList({ price, pgbo }: Props) {
         </div>
       </div>
 
-      {/* POE & Markets Stats */}
-      <div className="w-full flex flex-col-reverse lg:flex-row gap-6 mb-16 relative z-10 items-stretch">
-
-        {/* TradingView Widget */}
-        <Card className="w-full lg:flex-1 h-[400px] lg:h-[420px] rounded-2xl md:rounded-3xl overflow-hidden bg-white border-none shadow-none p-0 ring-0">
-          <CardContent className="p-0 w-full h-full">
-            {/* Wrapper peretas batas (Border hack wrapper) - Menyembunyikan 1px border native TradingView dari dalam iframe dengan cara menggesernya keluar dari 'overflow-hidden' */}
-            <div className="w-[calc(100%+4px)] h-[calc(100%+4px)] -ml-[2px] -mt-[2px]">
-              <iframe
-                src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=60&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=2&timezone=Asia%2FJakarta&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=id"
-                className="w-full h-full border-none pointer-events-auto min-h-[400px]"
-                title="TradingView XAUUSD"
-              />
+      {/* Price Stats Section - Minimalist Centered Layout with Divider */}
+      <div className="w-full max-w-5xl mx-auto mb-16 relative z-10 px-4 md:px-0">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 py-10 border-b border-slate-100">
+          {/* Column 1: Saving Estimate */}
+          <div className="flex flex-col items-center justify-center group cursor-default">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="bg-red-50 p-1.5 rounded-lg border border-red-100/50">
+                <TrendingUp className="w-3.5 h-3.5 text-red-600" />
+              </div>
+              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                Harga per <span className="text-red-600 underline underline-offset-2">{gramsFor300k ?? "..."}</span> gram
+              </span>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Kontainer Utama POE & Harga Per Gram (Unified Side Panel) */}
-        <Card className="w-full lg:w-[35%] xl:w-[32%] flex flex-col shrink-0 overflow-hidden rounded-2xl md:rounded-3xl transition-all duration-300 bg-transparent group/container h-auto lg:h-[420px] border-none shadow-none p-0 py-0 ring-0">
-          <CardContent className="p-0 flex flex-col flex-1 px-0">
-            {/* PRIMARY: Pre-Order Emas (POE) - Top Stack */}
-            <div className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group/primary cursor-default rounded-t-[inherit]">
-              {/* Dekorasi Ikon */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 transition-transform duration-700 group-hover/primary:scale-110 pointer-events-none mix-blend-overlay">
-                <TrendingUp className="w-48 h-48 sm:w-56 sm:h-56" />
-              </div>
-
-              <div className="relative z-10 w-full flex flex-col items-center">
-                <h3 className="text-lg md:text-xl font-medium mb-1 tracking-tight text-red-100">
-                  Harga per <span className="font-black text-white bg-white/10 px-2 py-0.5 rounded-md mx-0.5">{gramsFor300k ?? "..."}</span> gram
-                </h3>
-
-                <div className="mt-1">
-                  <span className="text-3xl lg:text-4xl font-black tracking-tighter leading-none whitespace-nowrap">
-                    {formatPrice(price?.poe?.[0]?.price)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Glossy Overlay Tersembunyi */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover/primary:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            <div className="text-3xl md:text-3xl font-black text-slate-900 tracking-tighter transition-transform duration-500 group-hover:scale-[1.02]">
+              {formatPrice(price?.poe?.[0]?.price)}
             </div>
+          </div>
 
-            {/* Divider Horizontal Universal */}
-            <div className="h-[1px] w-full bg-slate-200" />
+          <div className="hidden md:block w-px h-12 bg-slate-100"></div>
 
-            {/* SECONDARY: Harga Per Gram - Bottom Stack */}
-            <div className="flex-1 bg-gradient-to-br from-white to-slate-50 p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group/secondary cursor-default rounded-b-[inherit]">
-              {/* Dekorasi Ikon */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] transition-transform duration-700 group-hover/secondary:scale-110 pointer-events-none">
-                <ShieldCheck className="w-40 h-40 sm:w-48 sm:h-48 text-slate-900" />
+          {/* Column 2: Spot Price */}
+          <div className="flex flex-col items-center justify-center group cursor-default">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="bg-blue-50 p-1.5 rounded-lg border border-blue-100/50">
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
               </div>
+              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                Harga per gram saat ini
+              </span>
+            </div>
+            <div className="text-3xl md:text-3xl font-black text-slate-900 tracking-tighter transition-transform duration-500 group-hover:scale-[1.02]">
+              {formatPrice(price?.poe?.[1]?.price)}
+            </div>
+          </div>
 
-              <div className="relative z-10 w-full flex flex-col items-center gap-1">
-                <h4 className="text-lg md:text-xl font-medium tracking-tight mb-1 text-slate-500 w-full text-center">
-                  Harga per gram
-                </h4>
-                <div className="w-full mt-1">
-                  <span className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-none whitespace-nowrap">
-                    {formatPrice(price?.poe?.[1]?.price)}
-                  </span>
-                </div>
+          <div className="hidden md:block w-px h-12 bg-slate-100"></div>
+
+          {/* Column 3: Pricing Switch */}
+          <div className="flex flex-col items-center justify-center group cursor-default">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="bg-violet-50 p-1.5 rounded-lg border border-violet-100/50">
+                <MousePointer2 className="w-3.5 h-3.5 text-violet-600" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  Pilihan Harga
+                </span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="text-slate-300 hover:text-red-500 transition-colors">
+                      <Info className="w-3.5 h-3.5" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="center" className="p-5 shadow-2xl border-slate-100 ring-1 ring-black/5 rounded-2xl">
+                    <div className="flex gap-3">
+                      <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                      <div className="space-y-1.5">
+                        <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-left">Informasi Harga</h4>
+                        <p className="text-[11px] md:text-xs text-slate-500 leading-relaxed italic text-left">
+                          Harga bersifat estimasi dan akan dikunci saat pesanan dibuat.
+                          Update harga berkala: <span className="font-bold text-slate-700">Tunai</span> (setiap 20 menit), <span className="font-bold text-slate-700">Tabungan</span> (setiap 24 jam atau jika terjadi fluktuasi signifikan pada pasar emas global XAUUSD).
+                        </p>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div className="bg-slate-50 p-1 rounded-full flex items-center border border-slate-200/60 transition-transform duration-500 group-hover:scale-[1.02]">
+              <button
+                onClick={() => setPriceMode("tabungan")}
+                className={cn(
+                  "px-6 py-2 rounded-full text-[11px] md:text-xs font-bold transition-all duration-300",
+                  priceMode === "tabungan"
+                    ? "bg-white text-red-600 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                Tabungan
+              </button>
+              <button
+                onClick={() => setPriceMode("tunai")}
+                className={cn(
+                  "px-6 py-2 rounded-full text-[11px] md:text-xs font-bold transition-all duration-300",
+                  priceMode === "tunai"
+                    ? "bg-white text-red-600 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                Tunai
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Featured Products List */}
+      {/* Slider Section (Full Width Focused) */}
       <div
-        className="w-full relative z-10"
+        className="w-full relative z-10 mb-16"
         onMouseMove={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = e.clientX - rect.left;
@@ -253,85 +454,80 @@ function PriceList({ price, pgbo }: Props) {
         }}
         onMouseLeave={() => setHoverSide(null)}
       >
+        {/* Navigation Arrows */}
+        <PrevButton
+          onClick={onPrevButtonClick}
+          disabled={prevBtnDisabled}
+          className={cn(
+            "absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
+            hoverSide === "left" ? "opacity-100" : "opacity-0 pointer-events-none"
+          )}
+        />
+        <NextButton
+          onClick={onNextButtonClick}
+          disabled={nextBtnDisabled}
+          className={cn(
+            "absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
+            hoverSide === "right" ? "opacity-100" : "opacity-0 pointer-events-none"
+          )}
+        />
 
-        {/* Navigation Arrows positioned on sides */}
-        <button className={`swiper-prev-btn absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300 ${hoverSide === "left" ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-          <ChevronLeft className="w-5 md:w-6 h-5 md:h-6" />
-        </button>
-        <button className={`swiper-next-btn absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300 ${hoverSide === "right" ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-          <ChevronRight className="w-5 md:w-6 h-5 md:h-6" />
-        </button>
+        <div className="embla">
+          <div className="embla__viewport" ref={emblaRef}>
+            <div className="embla__container">
+              {allProducts.map((item, index) => {
+                const weightNum = getWeightNumber(item.weight);
+                const isLarge = weightNum > 2;
+                const calculatedPrice = getCalculatedPrice(item);
 
-        <div className="-mx-[calc((100vw-100%)/2)] px-[calc((100vw-100%)/2)]">
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={16}
-            breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 16 },
-              1024: { slidesPerView: 3, spaceBetween: 20 },
-            }}
-            autoplay={{
-              delay: 4000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            navigation={{
-              prevEl: ".swiper-prev-btn",
-              nextEl: ".swiper-next-btn",
-            }}
-            modules={[FreeMode, Pagination, Autoplay, Navigation]}
-            className="!pb-16 !overflow-visible"
-          >
-            {[...dinar, ...goldbar].map((item, index) => (
-              <SwiperSlide key={`${item.title}-${index}`}>
-                <Link
-                  to="/register"
-                  search={{ ref: pgbo?.pageid }}
-                  className={cn(
-                    "group relative flex h-[380px] w-full flex-col items-center overflow-hidden rounded-[2rem] bg-white p-5 md:p-6 text-center transition-all duration-500 hover:shadow-[-20px_0_40px_-20px_rgba(0,0,0,0.1),20px_0_40px_-20px_rgba(0,0,0,0.1)] md:h-[420px] no-underline border-none shadow-none"
-                  )}
-                >
+                return (
+                  <div className="embla__slide" key={`${item.title}-${index}`}>
+                    <div className="embla__tween__node w-full">
+                      <Link
+                        to="/register"
+                        search={{ ref: pgbo?.pageid }}
+                        className={cn(
+                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white p-6 md:py-8 md:px-10 text-center shadow-[0_15px_45px_-15px_rgba(0,0,0,0.08)] transition-all duration-500 no-underline border border-slate-50",
+                          isLarge ? "aspect-square h-auto" : "h-auto min-h-[380px]"
+                        )}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
 
-                  {/* Premium Background Glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/20 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+                        {/* Title Section */}
+                        <div className="relative z-10 w-full flex-shrink-0 mb-4">
+                          <h4 className="text-xl font-bold text-slate-800 transition-all duration-500 group-hover:text-red-700 lg:text-2xl text-center w-full tracking-tight">
+                            {item.title}
+                          </h4>
+                          <div className="mt-1 flex items-center justify-center gap-1.5 opacity-60">
+                            <span className="text-[10px] md:text-xs tracking-[0.051em] text-slate-600 uppercase font-medium">
+                              Fine Gold 999.9
+                            </span>
+                          </div>
+                        </div>
 
-                  {/* Reflective Shine Effect */}
-                  <div className="pointer-events-none absolute inset-0 z-20">
-                    <div className="absolute -inset-[100%] top-0 h-full w-1/2 -rotate-45 bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-1000 group-hover:animate-shine" />
-                  </div>
+                        {/* Image Section - Scaled Down slightly for space */}
+                        <div className="relative z-10 flex flex-1 w-full items-center justify-center py-2">
+                          <img
+                            className="h-full max-h-[160px] md:max-h-[180px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-105"
+                            src={item.url}
+                            alt={item.title}
+                          />
+                        </div>
 
-                  {/* Header Section */}
-                  <div className="relative z-10 w-full flex-shrink-0">
-                    <div className="mb-1.5 flex justify-center items-center gap-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                        Fine Gold 999.9
-                      </span>
-                    </div>
-                    <h4 className="text-lg font-extrabold text-slate-800 transition-all duration-500 group-hover:-translate-y-1 group-hover:text-red-900 md:text-xl text-center w-full">
-                      {item.title}
-                    </h4>
-                  </div>
-
-                  {/* Image Section with Floating Animation */}
-                  <div className="relative z-10 flex flex-1 w-full items-center justify-center p-2 py-4">
-                    <img
-                      className="h-full max-h-[240px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-110 md:group-hover:animate-float md:max-h-[280px]"
-                      src={item.url}
-                      alt={item.title}
-                    />
-                  </div>
-
-                  {/* Bottom Info */}
-                  <div className="relative z-10 mt-auto w-full">
-                    <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-slate-900/5 border border-slate-900/5 text-slate-700 text-xs font-bold tracking-wide transition-all duration-300 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 group-hover:shadow-lg group-hover:shadow-red-200">
-                      {item.weight}
+                        {/* Price Section */}
+                        <div className="relative z-10 w-full flex-shrink-0 mt-6 flex flex-col items-center">
+                          <div className="text-xl md:text-2xl font-black tracking-tight leading-none text-slate-900">
+                            {formatPrice(calculatedPrice)}
+                          </div>
+                          <div className="w-10 h-1.5 bg-red-600 rounded-full mt-3"></div>
+                        </div>
+                      </Link>
                     </div>
                   </div>
-                </Link>
-              </SwiperSlide>
-
-            ))}
-          </Swiper>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </BaseLayout>
