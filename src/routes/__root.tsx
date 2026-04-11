@@ -8,6 +8,7 @@ import { ToastProvider } from "../components/toast";
 import { queryClient } from "../lib/queryClient";
 import NotFound from "../components/not_found";
 import { ScrollUnlocker } from "../components/ScrollUnlocker";
+import { agentQueryOptions } from "../lib/queryOptions";
 
 const TanStackRouterDevtools =
   import.meta.env.PROD
@@ -35,7 +36,8 @@ function RootComponent() {
   const hideTopbar = isStandalone || isNotFound;
 
   const pgboMatch = matches.find(m => m.routeId === "/$pgcode");
-  const pgbo = (pgboMatch?.loaderData as any)?.pgbo;
+  const pgcode = (pgboMatch?.params as any)?.pgcode;
+  const pgbo = pgcode ? queryClient.getQueryData(agentQueryOptions(pgcode).queryKey) : null;
 
   return (
     <QueryClientProvider client={queryClient}>

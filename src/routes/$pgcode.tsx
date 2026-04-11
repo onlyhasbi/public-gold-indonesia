@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
 import Benefit from "../components/benefit";
@@ -7,73 +7,52 @@ import Excellence from "../components/excellence";
 import Header from "../components/header";
 import PaymentMethods from "../components/payment_methods";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import PriceList from "../components/pricelist";
 import PublicGold from "../components/public_gold";
-import { MovingCards } from "../components/ui/moving_card";
-import { getGoldPrices } from "../services/getGoldPrices";
-import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
-import { cn } from "../lib/utils";
 import Questions from "../components/questions";
 import GradientHighlight from "../components/ui/gradient_highlight";
+import { MovingCards } from "../components/ui/moving_card";
 import { trackEvent } from "../lib/analytics";
-import { api } from "../lib/api";
-import type { GoldPricesResult } from "../types";
+import { queryClient } from "../lib/queryClient";
+import { agentQueryOptions, goldPricesQueryOptions } from "../lib/queryOptions";
+import { cn } from "../lib/utils";
+import { useSEO } from "../hooks/useSEO";
 
 export const Route = createFileRoute("/$pgcode")({
   component: App,
   loader: async ({ params }) => {
-    try {
-      const pgboRes = await api.get(`/public/pgbo/${params.pgcode}`);
-      
-      return {
-        pgbo: pgboRes.data.data
-      };
-    } catch {
-      throw notFound();
-    }
+    await Promise.all([
+      queryClient.ensureQueryData(agentQueryOptions(params.pgcode)),
+      queryClient.ensureQueryData(goldPricesQueryOptions()),
+    ]);
   },
 });
 
 function App() {
-  const { pgbo } = Route.useLoaderData();
-  const [goldPrices, setGoldPrices] = useState<GoldPricesResult | null>(null);
+  const { pgcode } = Route.useParams();
+  const { data: pgbo } = useSuspenseQuery(agentQueryOptions(pgcode));
+  const { data: goldPrices } = useSuspenseQuery(goldPricesQueryOptions());
+
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  useEffect(() => {
-    getGoldPrices().then(setGoldPrices);
-  }, []);
+  const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
+  const title = `${displayName} | Dealer Resmi Public Gold Indonesia`;
+  const description = `Beli emas murni 24K dari Dealer Resmi Public Gold Indonesia. Hubungi ${displayName} untuk mulai tabungan emas Anda.`;
+
+  useSEO({
+    title,
+    description,
+    image: pgbo?.foto_profil_url,
+  });
 
   useEffect(() => {
     // Save referral info for registration flow (PageID only)
     if (pgbo) {
       localStorage.setItem('ref_pageid', pgbo.pageid);
-
-      // Update SEO Metadata dynamically
-      const displayName = pgbo.nama_panggilan || pgbo.nama_lengkap || "Authorized Dealer";
-      const title = `${displayName} | Dealer Resmi Public Gold Indonesia`;
-      const description = `Beli emas murni 24K dari Dealer Resmi Public Gold Indonesia. Hubungi ${displayName} untuk mulai tabungan emas Anda.`;
-
-      document.title = title;
-
-      const setMetaTag = (attrName: string, attrValue: string, content: string) => {
-        let meta = document.querySelector(`meta[${attrName}="${attrValue}"]`);
-        if (!meta) {
-          meta = document.createElement('meta');
-          meta.setAttribute(attrName, attrValue);
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute('content', content);
-      };
-
-      setMetaTag('name', 'description', description);
-      setMetaTag('property', 'og:title', title);
-      setMetaTag('property', 'og:description', description);
-      
-      if (pgbo.foto_profil_url) {
-        setMetaTag('property', 'og:image', pgbo.foto_profil_url);
-      }
     }
   }, [pgbo]);
 
@@ -148,8 +127,8 @@ function App() {
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className={cn(
           "md:hidden fixed right-6 bottom-8 w-12 h-12 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-50 transition-all duration-500 border border-slate-200/50 active:scale-95",
-          showScrollTop 
-            ? "opacity-100 translate-y-0 pointer-events-auto" 
+          showScrollTop
+            ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none"
         )}
         aria-label="Scroll to top"

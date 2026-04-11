@@ -4,8 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { dialCodeOptions } from "../constant/countries";
 import { branchLabelOptions } from "../constant/branches";
 import { extractDataFromNIK, calculateAge } from "../lib/utils";
+import { formatPhoneForAPI } from "../lib/phone";
 import { getValidationSchema } from "../lib/validations";
 import { api } from "../lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 export type FormSummaryItem = {
   label: string;
@@ -14,9 +16,6 @@ export type FormSummaryItem = {
 
 export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INTL", referralData?: any) {
   const isIndonesia = countryMode === "ID";
-  const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
   const [isDobDisabled, setIsDobDisabled] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmItems, setConfirmItems] = useState<FormSummaryItem[]>([]);
@@ -24,6 +23,8 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   const [formKey, setFormKey] = useState(0);
   const [showAgeSwitch, setShowAgeSwitch] = useState<"anak" | "dewasa" | null>(null);
   const [showNextStepModal, setShowNextStepModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const pendingFormData = useRef<string | null>(null);
   const pendingEndpoint = useRef<string | null>(null);
@@ -58,8 +59,8 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   });
 
   const onSubmit = (values: any) => {
-    setStatus("idle");
-    setMessage("");
+    setErrorMessage("");
+    setSuccessMessage("");
 
     const age = calculateAge(values['label-dob']);
     if (isAnak && age >= 18) {
@@ -151,13 +152,10 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     return cleaned;
   };
 
-  const confirmSubmit = async () => {
-    if (!pendingFormData.current || !pendingEndpoint.current) return;
+  const registerMutation = useMutation({
+    mutationFn: async () => {
+      if (!pendingFormData.current || !pendingEndpoint.current) return;
 
-    setShowConfirm(false);
-    setIsLoading(true);
-
-    try {
       const response = await fetch(pendingEndpoint.current, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -170,22 +168,15 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
         const values = getValues();
         if (referralData?.pageid) {
           const dialCode = values['label-mobile-dialcode'] || '62';
-          const phoneWithDial = `+${dialCode}${values['label-mobile']}`;
+          const fullPhone = formatPhoneForAPI(dialCode, values['label-mobile']);
           api.post("/public/register-track", {
             pageid: referralData.pageid,
             nama: values['label-name'],
             branch: values['upreferredbranch'],
-            no_telpon: phoneWithDial
+            no_telpon: `+${fullPhone}`
           }).catch((err: any) => console.warn("Track failed:", err));
         }
-
-        setMessage("Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.");
-        setStatus("success");
-        reset();
-        setIsDobDisabled(false);
-        setPhoneWarning(false);
-        setFormKey(prev => prev + 1);
-        return;
+        return { success: true, message: "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya." };
       }
 
       const htmlText = await response.text();
@@ -202,36 +193,41 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
         throw new Error("Terjadi kesalahan pada jaringan.");
       }
 
-      // Track locally for success alert case
+      // Track locally for success case
       const values = getValues();
       if (referralData?.pageid) {
         const dialCode = values['label-mobile-dialcode'] || '62';
-        const phoneWithDial = `+${dialCode}${values['label-mobile']}`;
+        const fullPhone = formatPhoneForAPI(dialCode, values['label-mobile']);
         api.post("/public/register-track", {
           pageid: referralData.pageid,
           nama: values['label-name'],
           branch: values['upreferredbranch'],
-          no_telpon: phoneWithDial
+          no_telpon: `+${fullPhone}`
         }).catch((err: any) => console.warn("Track failed:", err));
       }
 
-      const successMessage = successAlert?.textContent?.trim() || "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.";
-
-      setMessage(successMessage);
-      setStatus("success");
-      reset();
-      setIsDobDisabled(false);
-      setPhoneWarning(false);
-      setFormKey(prev => prev + 1);
-    } catch (error: any) {
-      console.error("Error:", error);
-      setMessage(error.message || "Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
-      setStatus("error");
-    } finally {
-      setIsLoading(false);
-      pendingFormData.current = null;
-      pendingEndpoint.current = null;
+      return {
+        success: true,
+        message: successAlert?.textContent?.trim() || "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya."
+      };
+    },
+    onSuccess: (data: any) => {
+      if (data?.success) {
+        setSuccessMessage(data.message);
+        reset();
+        setIsDobDisabled(false);
+        setPhoneWarning(false);
+        setFormKey(prev => prev + 1);
+      }
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.message || "Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
     }
+  });
+
+  const confirmSubmit = async () => {
+    setShowConfirm(false);
+    registerMutation.mutate();
   };
 
   return {
@@ -244,10 +240,9 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     watch,
     getValues,
     reset,
-    isLoading,
-    status,
-    setStatus,
-    message,
+    isLoading: registerMutation.isPending,
+    status: registerMutation.isSuccess ? ("success" as const) : registerMutation.isError ? ("error" as const) : ("idle" as const),
+    message: registerMutation.isSuccess ? successMessage : errorMessage,
     isDobDisabled,
     showConfirm,
     setShowConfirm,
