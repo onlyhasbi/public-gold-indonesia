@@ -354,30 +354,30 @@ function PriceList({ price, pgbo }: Props) {
           {/* Column 1: Saving Estimate */}
           <div className="flex flex-col items-center justify-center group cursor-default">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
-                Harga per <span className="text-red-600 underline underline-offset-2">{gramsFor300k ?? "..."}</span> gram
+              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-none">
+                Harga per <span className="text-red-600 underline underline-offset-4 decoration-red-600/30 font-black">{gramsFor300k ?? "..."}</span> gram
               </span>
             </div>
-            <div className="text-3xl md:text-3xl font-black text-slate-900 tracking-tighter transition-transform duration-500 group-hover:scale-[1.02]">
+            <div className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600">
               {formatPrice(price?.poe?.[0]?.price)}
             </div>
           </div>
 
-          <div className="hidden md:block w-px h-12 bg-slate-100"></div>
+          <div className="hidden md:block w-[1.5px] h-10 bg-gradient-to-b from-transparent via-slate-200 to-transparent"></div>
 
           {/* Column 2: Spot Price */}
           <div className="flex flex-col items-center justify-center group cursor-default">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
+              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-none">
                 Harga per gram saat ini
               </span>
             </div>
-            <div className="text-3xl md:text-3xl font-black text-slate-900 tracking-tighter transition-transform duration-500 group-hover:scale-[1.02]">
+            <div className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600">
               {formatPrice(price?.poe?.[1]?.price)}
             </div>
           </div>
 
-          <div className="hidden md:block w-px h-12 bg-slate-100"></div>
+          <div className="hidden md:block w-[1.5px] h-10 bg-gradient-to-b from-transparent via-slate-200 to-transparent"></div>
 
           {/* Column 3: Pricing Switch */}
           <div className="flex flex-col items-center justify-center group cursor-default">
@@ -407,13 +407,13 @@ function PriceList({ price, pgbo }: Props) {
                 </Popover>
               </div>
             </div>
-            <div className="bg-slate-50 p-1 rounded-full flex items-center border border-slate-200/60 transition-transform duration-500 group-hover:scale-[1.02]">
+            <div className="bg-slate-100/50 backdrop-blur-sm p-1.5 rounded-full flex items-center border border-slate-200/60 transition-all duration-500 group-hover:border-slate-300">
               <button
                 onClick={() => setPriceMode("tabungan")}
                 className={cn(
-                  "px-6 py-2 rounded-full text-[11px] md:text-xs font-bold transition-all duration-300",
+                  "px-8 py-2.5 rounded-full text-[11px] md:text-xs font-black transition-all duration-300 uppercase tracking-wide",
                   priceMode === "tabungan"
-                    ? "bg-white text-red-600 shadow-sm"
+                    ? "bg-white text-red-600 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
                     : "text-slate-500 hover:text-slate-700"
                 )}
               >
@@ -422,9 +422,9 @@ function PriceList({ price, pgbo }: Props) {
               <button
                 onClick={() => setPriceMode("tunai")}
                 className={cn(
-                  "px-6 py-2 rounded-full text-[11px] md:text-xs font-bold transition-all duration-300",
+                  "px-8 py-2.5 rounded-full text-[11px] md:text-xs font-black transition-all duration-300 uppercase tracking-wide",
                   priceMode === "tunai"
-                    ? "bg-white text-red-600 shadow-sm"
+                    ? "bg-white text-red-600 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
                     : "text-slate-500 hover:text-slate-700"
                 )}
               >
@@ -468,7 +468,6 @@ function PriceList({ price, pgbo }: Props) {
             <div className="embla__container">
               {allProducts.map((item, index) => {
                 const weightNum = getWeightNumber(item.weight);
-                const isLarge = weightNum > 2;
                 const calculatedPrice = getCalculatedPrice(item);
 
                 return (
@@ -478,8 +477,8 @@ function PriceList({ price, pgbo }: Props) {
                         to="/register"
                         search={{ ref: pgbo?.pageid }}
                         className={cn(
-                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white p-6 md:py-8 md:px-10 text-center shadow-[0_15px_45px_-15px_rgba(0,0,0,0.08)] transition-all duration-500 no-underline border border-slate-50",
-                          isLarge ? "aspect-square h-auto" : "h-auto min-h-[380px]"
+                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-6 md:py-8 md:px-10 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
+                          "aspect-[4/3] h-auto"
                         )}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
@@ -497,9 +496,9 @@ function PriceList({ price, pgbo }: Props) {
                         </div>
 
                         {/* Image Section - Scaled Down slightly for space */}
-                        <div className="relative z-10 flex flex-1 w-full items-center justify-center py-2">
+                        <div className="relative z-10 flex flex-1 w-full items-center justify-center py-4">
                           <img
-                            className="h-full max-h-[160px] md:max-h-[180px] w-auto object-contain drop-shadow-2xl transition-all duration-700 group-hover:scale-105"
+                            className="h-full max-h-[140px] md:max-h-[200px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                             src={item.url}
                             alt={item.title}
                           />

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router'
 import {
   ShieldCheck,
   ShieldAlert,
@@ -33,6 +33,18 @@ const signupSchema = yup.object().shape({
 
 // --- Route Definition ---
 export const Route = createFileRoute('/')({
+  beforeLoad: () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+    if (token) {
+      throw redirect({ to: '/overview', replace: true })
+    }
+    
+    throw redirect({
+      to: '/$pgcode',
+      params: { pgcode: 'hasbi' },
+      replace: true,
+    })
+  },
   validateSearch: (search: Record<string, unknown>): { mode?: 'signin' | 'signup' } => {
     return {
       mode: (search.mode as 'signin' | 'signup') || undefined,
@@ -66,13 +78,6 @@ function LandingAuthPage() {
   const [isPageIdValid, setIsPageIdValid] = useState(false)
   const [isVerifyingPageId, setIsVerifyingPageId] = useState(false)
 
-  // --- Redirect if already logged in ---
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      navigate({ to: '/overview', replace: true })
-    }
-  }, [navigate])
 
   // Sync mode from URL search param
   useEffect(() => {
@@ -264,9 +269,6 @@ function LandingAuthPage() {
     exit: { opacity: 0, x: -20, transition: { duration: 0.4 } },
   }
 
-  useEffect(() => {
-    navigate({ to: '/$pgcode', params: { pgcode: 'hasbi' } });
-  }, [])
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-[#020617] overflow-hidden px-6 font-sans">
