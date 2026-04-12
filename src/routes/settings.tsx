@@ -389,7 +389,7 @@ function SettingsPage() {
                       <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                       Email Publik
                     </Label>
-                    <Input id="email" {...register('email')} type="email" />
+                    <Input id="email" {...register('email')} type="email" placeholder="contoh@email.com" />
                   </div>
 
                   <div className="space-y-2">

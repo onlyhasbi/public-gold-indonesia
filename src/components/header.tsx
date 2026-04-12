@@ -3,6 +3,12 @@ import { useTranslation } from "react-i18next";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { MoreVertical, Facebook, Instagram, Music2 } from "lucide-react";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -15,6 +21,37 @@ interface PgboData {
   [key: string]: any;
 }
 
+const formatSocialUrl = (url: string | null | undefined, platform: 'instagram' | 'tiktok' | 'facebook') => {
+  if (!url) return "#";
+  let formatted = url.trim();
+  
+  // Remove trailing slashes
+  formatted = formatted.replace(/\/+$/, '');
+  
+  // Check if it looks like a full URL by checking for standard domains
+  const isLikelyUrl = 
+    formatted.startsWith('http') || 
+    formatted.includes('instagram.com') || 
+    formatted.includes('tiktok.com') || 
+    formatted.includes('facebook.com') || 
+    formatted.includes('fb.com');
+
+  if (isLikelyUrl) {
+    if (!formatted.startsWith('http://') && !formatted.startsWith('https://')) {
+      return `https://${formatted}`;
+    }
+    return formatted;
+  }
+  
+  // Fallback: it's highly likely just a username (even if it contains dots)
+  const username = formatted.startsWith('@') ? formatted.substring(1) : formatted;
+  switch(platform) {
+    case 'instagram': return `https://instagram.com/${username}`;
+    case 'tiktok': return `https://tiktok.com/@${username.replace(/^@/, '')}`;
+    case 'facebook': return `https://facebook.com/${username}`;
+  }
+};
+
 function Header({ pgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
 
@@ -23,9 +60,9 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
   };
 
   const hasPhoto = !!pgbo?.foto_profil_url;
-  const hasPhone = !!pgbo?.no_telpon;
   const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
   const whatsappLink = getWhatsAppLink(pgbo);
+  const hasSosmed = !!(pgbo?.sosmed_facebook || pgbo?.sosmed_instagram || pgbo?.sosmed_tiktok);
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0 overflow-hidden">
@@ -88,8 +125,8 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
           />
         </div>
 
-        {whatsappLink && (
-          <div className="pt-2 sm:pt-4">
+        <div className="pt-2 sm:pt-4 flex flex-wrap items-center justify-center md:justify-start gap-4">
+          {whatsappLink && (
             <a
               href={whatsappLink}
               target="_blank"
@@ -106,8 +143,50 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               </span>
               {t('hero.cta')}
             </a>
-          </div>
-        )}
+          )}
+
+          {hasSosmed && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="w-12 h-12 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all shadow-[0_4px_15px_-5px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_20px_-5px_rgba(0,0,0,0.15)] active:scale-95 shrink-0"
+                  aria-label="Social Media Links"
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-[180px] p-2 shadow-xl border-slate-100 rounded-2xl mr-4 md:mr-0 z-50 bg-white">
+                <div className="flex flex-col gap-1">
+                  {pgbo?.sosmed_instagram && (
+                    <a href={formatSocialUrl(pgbo.sosmed_instagram, 'instagram')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-rose-600 font-medium text-sm no-underline group">
+                      <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+                        <Instagram className="w-4 h-4 text-rose-500" />
+                      </div>
+                      Instagram
+                    </a>
+                  )}
+                  {pgbo?.sosmed_tiktok && (
+                    <a href={formatSocialUrl(pgbo.sosmed_tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-slate-900 font-medium text-sm no-underline group">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                        <Music2 className="w-4 h-4 text-slate-700" />
+                      </div>
+                      TikTok
+                    </a>
+                  )}
+                  {pgbo?.sosmed_facebook && (
+                    <a href={formatSocialUrl(pgbo.sosmed_facebook, 'facebook')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-blue-600 font-medium text-sm no-underline group">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                        <Facebook className="w-4 h-4 text-blue-500" />
+                      </div>
+                      Facebook
+                    </a>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
       </div>
     </div>
   );

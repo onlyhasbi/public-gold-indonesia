@@ -21,7 +21,6 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
     const { t } = useTranslation();
 
     const hasPhoto = !!pgbo?.foto_profil_url;
-    const hasPhone = !!pgbo?.no_telpon;
     const displayName = pgbo?.nama_lengkap || "Authorized Dealer";
     const whatsappLink = getWhatsAppLink(pgbo);
 

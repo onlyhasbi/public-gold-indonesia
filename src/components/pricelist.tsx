@@ -372,6 +372,8 @@ function PriceList({ price, pgbo }: Props) {
         .embla {
           overflow: hidden;
           width: 100%;
+          padding-top: 1rem;
+          padding-bottom: 3.5rem;
         }
         .embla__viewport {
           overflow: visible;
@@ -448,38 +450,42 @@ function PriceList({ price, pgbo }: Props) {
       </div>
 
       {/* Price Stats Section - Minimalist Centered Layout with Divider */}
-      <div className="w-full max-w-5xl mx-auto mb-16 relative z-10 px-4 md:px-0">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 py-10">
-          {/* Column 1: Saving Estimate */}
-          <div className="flex flex-col items-center justify-center group cursor-default">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-none">
-                Harga per <span className="text-red-600 underline underline-offset-4 decoration-red-600/30 font-black">{gramsFor300k ?? "..."}</span> gram
-              </span>
+      <div className="w-full max-w-5xl mx-auto mb-12 md:mb-16 relative z-10 px-2 sm:px-4 md:px-0">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-14 lg:gap-20 py-8 md:py-10">
+          
+          {/* Pair of Prices */}
+          <div className="flex flex-row items-center justify-center w-full md:w-auto gap-2 sm:gap-6 md:gap-14 lg:gap-20 px-1 sm:px-0">
+            {/* Column 1: Saving Estimate */}
+            <div className="flex-1 md:flex-none flex flex-col items-center justify-center group cursor-default min-w-0">
+              <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
+                <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
+                  Harga per <span className="text-red-600 underline underline-offset-4 decoration-red-600/30 font-black">{gramsFor300k ?? "..."}</span> gram
+                </span>
+              </div>
+              <div className="text-[26px] sm:text-[32px] md:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600 whitespace-nowrap">
+                {formatPrice(price?.poe?.[0]?.price)}
+              </div>
             </div>
-            <div className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600">
-              {formatPrice(price?.poe?.[0]?.price)}
+
+            <div className="w-[1px] md:w-[1.5px] h-12 md:h-16 bg-gradient-to-b from-transparent via-slate-200 to-transparent shrink-0"></div>
+
+            {/* Column 2: Spot Price */}
+            <div className="flex-1 md:flex-none flex flex-col items-center justify-center group cursor-default min-w-0">
+              <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
+                <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
+                  Harga per gram saat ini
+                </span>
+              </div>
+              <div className="text-[26px] sm:text-[32px] md:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600 whitespace-nowrap">
+                {formatPrice(price?.poe?.[1]?.price)}
+              </div>
             </div>
           </div>
 
-          <div className="hidden md:block w-[1.5px] h-10 bg-gradient-to-b from-transparent via-slate-200 to-transparent"></div>
-
-          {/* Column 2: Spot Price */}
-          <div className="flex flex-col items-center justify-center group cursor-default">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-none">
-                Harga per gram saat ini
-              </span>
-            </div>
-            <div className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600">
-              {formatPrice(price?.poe?.[1]?.price)}
-            </div>
-          </div>
-
-          <div className="hidden md:block w-[1.5px] h-10 bg-gradient-to-b from-transparent via-slate-200 to-transparent"></div>
+          <div className="hidden md:block w-[1.5px] h-10 bg-gradient-to-b from-transparent via-slate-200 to-transparent shrink-0"></div>
 
           {/* Column 3: Pricing Switch */}
-          <div className="flex flex-col items-center justify-center group cursor-default">
+          <div className="flex flex-col items-center justify-center group cursor-default mt-2 md:mt-0">
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center gap-1.5">
                 <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
@@ -566,7 +572,6 @@ function PriceList({ price, pgbo }: Props) {
           <div className="embla__viewport" ref={emblaRef}>
             <div className="embla__container">
               {allProducts.map((item, index) => {
-                const weightNum = getWeightNumber(item.weight);
                 const calculatedPrice = getCalculatedPrice(item);
 
                 return (
@@ -576,15 +581,15 @@ function PriceList({ price, pgbo }: Props) {
                         to="/register"
                         search={{ ref: pgbo?.pageid }}
                         className={cn(
-                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-10 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
-                          "aspect-[4/5] md:aspect-[4/3] h-auto"
+                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
+                          "h-[360px] sm:h-[400px] md:h-[460px]"
                         )}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
 
                         {/* Title Section */}
-                        <div className="relative z-10 w-full flex-shrink-0 mb-4">
-                          <h4 className="text-xl font-bold text-slate-800 transition-all duration-500 group-hover:text-red-700 lg:text-2xl text-center w-full tracking-tight">
+                        <div className="relative z-10 w-full h-[60px] md:h-[80px] flex-shrink-0 flex flex-col items-center justify-start mb-2">
+                          <h4 className="text-lg lg:text-2xl font-bold text-slate-800 transition-all duration-500 group-hover:text-red-700 text-center w-full tracking-tight leading-tight line-clamp-2 px-2">
                             {item.title}
                           </h4>
                           <div className="mt-1 flex items-center justify-center gap-1.5 opacity-60">
@@ -594,21 +599,21 @@ function PriceList({ price, pgbo }: Props) {
                           </div>
                         </div>
 
-                        {/* Image Section - Scaled Down slightly for space */}
-                        <div className="relative z-10 flex flex-1 w-full items-center justify-center py-4">
+                        {/* Image Section - Locked Height Wrapper */}
+                        <div className="relative z-10 flex flex-1 w-full items-center justify-center py-2 h-[120px] md:h-[180px] shrink-0 px-4">
                           <img
-                            className="h-full max-h-[120px] md:max-h-[200px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
+                            className="h-full w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                             src={item.url}
                             alt={item.title}
                           />
                         </div>
 
                         {/* Price Section */}
-                        <div className="relative z-10 w-full flex-shrink-0 mt-6 flex flex-col items-center">
+                        <div className="relative z-10 w-full flex-shrink-0 mt-auto pt-4 flex flex-col items-center">
                           <div className="text-xl md:text-2xl font-black tracking-tight leading-none text-slate-900">
                             {formatPrice(calculatedPrice)}
                           </div>
-                          <div className="w-10 h-1.5 bg-red-600 rounded-full mt-3"></div>
+                          <div className="w-8 md:w-10 h-1.5 bg-red-600 rounded-full mt-3"></div>
                         </div>
                       </Link>
                     </div>
