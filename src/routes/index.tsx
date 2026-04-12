@@ -137,6 +137,14 @@ function LandingAuthPage() {
     },
     onSuccess: (data) => {
       if (data.success) {
+        if (data.user?.role !== 'pgbo') {
+          showToast('Akses ditolak. Akun ini bukan Dealer PGBO.', 'error')
+          return
+        }
+        if (data.user?.is_active === false) {
+          showToast('Akun Anda sedang dinonaktifkan. Silakan hubungi admin.', 'error')
+          return
+        }
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
         navigate({ to: '/overview' })
@@ -156,6 +164,14 @@ function LandingAuthPage() {
     },
     onSuccess: (data) => {
       if (data.success) {
+        if (data.user?.role !== 'pgbo') {
+          showToast('Registrasi berhasil, namun akses portal ditolak.', 'error')
+          return
+        }
+        if (data.user?.is_active === false) {
+          showToast('Registrasi berhasil. Tunggu verifikasi admin untuk aktif.', 'error')
+          return
+        }
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
         showToast(data.message, 'success')

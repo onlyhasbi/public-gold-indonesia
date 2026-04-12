@@ -20,7 +20,21 @@ export const Route = createFileRoute('/overview')({
   ),
   beforeLoad: () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (!token) {
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+
+    if (!token || !userStr) {
+      throw redirect({ to: '/', replace: true });
+    }
+
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role !== 'pgbo') {
+        throw redirect({ to: '/', replace: true });
+      }
+      if (user.is_active === false) {
+        throw redirect({ to: '/', replace: true });
+      }
+    } catch {
       throw redirect({ to: '/', replace: true });
     }
   },
