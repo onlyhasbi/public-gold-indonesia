@@ -39,7 +39,15 @@ export const Route = createFileRoute('/overview')({
     }
   },
   loader: async () => {
-    await queryClient.ensureQueryData(overviewQueryOptions());
+    try {
+      await queryClient.ensureQueryData(overviewQueryOptions());
+    } catch {
+      // Break redirect loop: clear session if data fails to load (e.g. 404 or profile missing)
+      queryClient.clear();
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      throw redirect({ to: '/', replace: true });
+    }
   },
 });
 

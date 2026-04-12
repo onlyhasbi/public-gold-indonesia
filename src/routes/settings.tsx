@@ -54,12 +54,22 @@ export const Route = createFileRoute('/settings')({
   ),
   beforeLoad: () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (!token) {
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    
+    if (!token || !userStr) {
       throw redirect({ to: '/', replace: true });
     }
   },
   loader: async () => {
-    await queryClient.ensureQueryData(settingsQueryOptions());
+    try {
+      await queryClient.ensureQueryData(settingsQueryOptions());
+    } catch {
+      // Break redirect loop: clear session if data fails to load
+      queryClient.clear();
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      throw redirect({ to: '/', replace: true });
+    }
   },
 });
 
