@@ -477,8 +477,8 @@ function PriceList({ price, pgbo }: Props) {
                         to="/register"
                         search={{ ref: pgbo?.pageid }}
                         className={cn(
-                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-6 md:py-8 md:px-10 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
-                          "aspect-[4/3] h-auto"
+                          "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-10 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
+                          "aspect-[4/5] md:aspect-[4/3] h-auto"
                         )}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
@@ -498,7 +498,7 @@ function PriceList({ price, pgbo }: Props) {
                         {/* Image Section - Scaled Down slightly for space */}
                         <div className="relative z-10 flex flex-1 w-full items-center justify-center py-4">
                           <img
-                            className="h-full max-h-[140px] md:max-h-[200px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
+                            className="h-full max-h-[120px] md:max-h-[200px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                             src={item.url}
                             alt={item.title}
                           />
