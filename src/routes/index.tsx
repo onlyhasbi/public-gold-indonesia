@@ -309,7 +309,7 @@ function LandingAuthPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="flex items-center justify-center gap-6 md:gap-8 w-full max-w-lg mb-4"
+              className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 w-full max-w-lg mb-4"
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -391,7 +391,7 @@ function LandingAuthPage() {
                             value={secretCode}
                             onChange={(e) => setSecretCode(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
                             placeholder="Kode akses"
-                            className="flex-1 bg-transparent text-white px-7 py-4.5 focus:outline-none placeholder:text-slate-600 text-lg font-medium"
+                            className="flex-1 bg-transparent text-white px-4 sm:px-7 py-3 sm:py-4.5 focus:outline-none placeholder:text-slate-600 text-base sm:text-lg font-medium"
                             autoFocus
                           />
 
@@ -399,7 +399,7 @@ function LandingAuthPage() {
                           <button
                             type="submit"
                             disabled={lockoutTime > 0 || isVerifying || secretCode.length < 3}
-                            className="mr-3 p-3.5 bg-white text-[#020617] rounded-xl shadow-lg transition-all hover:bg-slate-200 active:scale-90 disabled:opacity-20 flex items-center justify-center"
+                            className="mr-2 sm:mr-3 p-2.5 sm:p-3.5 bg-white text-[#020617] rounded-xl shadow-lg transition-all hover:bg-slate-200 active:scale-90 disabled:opacity-20 flex items-center justify-center"
                           >
                             {isVerifying ? (
                               <Spinner size={20} className="text-[#020617]" />
