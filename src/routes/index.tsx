@@ -38,12 +38,12 @@ export const Route = createFileRoute('/')({
     if (token) {
       throw redirect({ to: '/overview', replace: true })
     }
-    
-    throw redirect({
-      to: '/$pgcode',
-      params: { pgcode: 'hasbi' },
-      replace: true,
-    })
+
+    // throw redirect({
+    //   to: '/$pgcode',
+    //   params: { pgcode: 'hasbi' },
+    //   replace: true,
+    // })
   },
   validateSearch: (search: Record<string, unknown>): { mode?: 'signin' | 'signup' } => {
     return {
