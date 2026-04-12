@@ -33,10 +33,9 @@ api.interceptors.response.use(
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // Redirect to root auth page only if NOT already there
-      if (path !== "/") {
-        window.location.href = "/";
-      }
+      
+      // If we're on a protected route, the app should naturally 
+      // redirect on next navigation or route guard check.
     }
 
     // Rate limited

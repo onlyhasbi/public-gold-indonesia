@@ -196,6 +196,7 @@ function AdminDashboard() {
   }, [isError, error, navigate])
 
   const handleLogout = () => {
+    queryClient.clear()
     localStorage.removeItem('admin_token')
     localStorage.removeItem('admin_user')
     navigate({ to: '/admin/login' })

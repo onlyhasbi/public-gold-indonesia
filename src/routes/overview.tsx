@@ -52,6 +52,7 @@ function OverviewPage() {
   const [copied, setCopied] = useState(false)
 
   const handleLogout = () => {
+    queryClient.clear()
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     navigate({ to: '/' })
