@@ -5,6 +5,7 @@ import { PhoneMockup } from "../components/ui/PhoneMockup";
 import { useTranslation } from "react-i18next";
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
+import { getWhatsAppLink } from "../lib/contact";
 
 export const Route = createFileRoute("/petunjuk")({
   validateSearch: (search: Record<string, unknown>): { ref?: string } => {
@@ -258,9 +259,7 @@ function PetunjukPage() {
   const currentStep = steps[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
-  const helpWaLink = agentData?.no_telpon 
-    ? `https://wa.me/${agentData.no_telpon.replace(/\D/g, '')}` 
-    : "https://wa.me/628979901844";
+  const helpWaLink = getWhatsAppLink(agentData);
 
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 via-white to-slate-100">

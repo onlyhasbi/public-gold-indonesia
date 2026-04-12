@@ -36,6 +36,7 @@ import { NextStepModal } from "../components/NextStepModal";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { motion, AnimatePresence } from "motion/react";
+import { getWhatsAppLink } from "../lib/contact";
 
 type RegisterSearch = {
   type?: "dewasa" | "anak";
@@ -280,7 +281,7 @@ function RegisterPage() {
                 )}
 
                 {status !== "idle" && (
-                  <AlertMessage type={status} message={message} onClose={() => setStatus("idle")} />
+                  <AlertMessage type={status as "success" | "error"} message={message} onClose={() => setStatus("idle")} />
                 )}
 
                 <form key={formKey} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -641,7 +642,12 @@ function RegisterPage() {
 
           {/* Floating Help CTA */}
           <div className="absolute bottom-10 right-10 z-20">
-            <a href="https://wa.me/628979901844" target="_blank" rel="noopener noreferrer" className="group relative flex items-center gap-4 bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/10 hover:border-white/20 p-4 pr-7 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(37,211,102,0.2)] cursor-pointer overflow-hidden">
+            <a 
+              href={getWhatsAppLink(referralData)} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="group relative flex items-center gap-4 bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/10 hover:border-white/20 p-4 pr-7 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(37,211,102,0.2)] cursor-pointer overflow-hidden"
+            >
               <div className="relative z-10">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] flex items-center justify-center shadow-lg shadow-[#25D366]/30 group-hover:shadow-[#25D366]/60 group-hover:scale-110 transition-all duration-500 ease-out">
                   <MessageCircle className="w-6 h-6 text-white" />
@@ -661,7 +667,12 @@ function RegisterPage() {
         </div>
 
         {/* Mobile-only Floating WA Button */}
-        <a href="https://wa.me/628979901844" target="_blank" rel="noopener noreferrer" className="lg:hidden group fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] text-white shadow-[0_8px_32px_rgba(37,211,102,0.4)] hover:shadow-[0_16px_48px_rgba(37,211,102,0.6)] hover:-translate-y-1.5 hover:scale-105 transition-all duration-500 active:scale-95">
+        <a 
+          href={getWhatsAppLink(referralData)} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="lg:hidden group fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] text-white shadow-[0_8px_32px_rgba(37,211,102,0.4)] hover:shadow-[0_16px_48px_rgba(37,211,102,0.6)] hover:-translate-y-1.5 hover:scale-105 transition-all duration-500 active:scale-95"
+        >
           <MessageCircle className="w-6 h-6" />
           <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-200 opacity-75"></span>

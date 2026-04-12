@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
+import { getWhatsAppLink } from "../lib/contact";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -24,9 +25,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
   const hasPhoto = !!pgbo?.foto_profil_url;
   const hasPhone = !!pgbo?.no_telpon;
   const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
-  const whatsappLink = hasPhone
-    ? `https://wa.me/${pgbo!.no_telpon!.replace(/\D/g, "")}`
-    : null;
+  const whatsappLink = getWhatsAppLink(pgbo);
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0 overflow-hidden">

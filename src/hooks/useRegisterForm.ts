@@ -256,5 +256,8 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     handleNikBlur,
     handlePhoneInput,
     confirmSubmit,
+    setStatus: (val: "idle") => {
+      if (val === "idle") registerMutation.reset();
+    },
   };
 }

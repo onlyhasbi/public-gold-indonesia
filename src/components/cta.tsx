@@ -4,6 +4,7 @@ import BaseLayout from "../layout/base";
 import { useTranslation } from "react-i18next";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
+import { getWhatsAppLink } from "../lib/contact";
 import { Card, CardContent } from "@/components/ui/card";
 
 
@@ -22,9 +23,7 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
     const hasPhoto = !!pgbo?.foto_profil_url;
     const hasPhone = !!pgbo?.no_telpon;
     const displayName = pgbo?.nama_lengkap || "Authorized Dealer";
-    const whatsappLink = hasPhone
-      ? `https://wa.me/${pgbo!.no_telpon!.replace(/\D/g, "")}`
-      : null;
+    const whatsappLink = getWhatsAppLink(pgbo);
 
     return (
         <BaseLayout className="flex-col py-20">
