@@ -13,8 +13,8 @@ export const agentQueryOptions = (pgcode: string) =>
       const res = await api.get(`/public/pgbo/${pgcode}`);
       return res.data.data;
     },
-    // Agent data doesn't change frequently, but we want it fresh.
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    // USER REQUIREMENT: Always fresh data for previews
+    staleTime: 0,
   });
 
 /**
@@ -42,7 +42,7 @@ export const overviewQueryOptions = () =>
       const res = await api.get("/overview");
       return res.data?.data;
     },
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: 0,
   });
 
 /**
@@ -55,7 +55,7 @@ export const settingsQueryOptions = () =>
       const res = await api.get("/settings");
       return res.data?.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
   });
 
 /**
@@ -68,5 +68,5 @@ export const googleStatusQueryOptions = () =>
       const res = await api.get("/google/status");
       return res.data;
     },
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: 0,
   });
