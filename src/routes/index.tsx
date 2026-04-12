@@ -385,13 +385,13 @@ function LandingAuthPage() {
                         {/* Glow effect */}
                         <div className="absolute -inset-[1px] bg-white/10 rounded-xl opacity-20 group-focus-within:opacity-100 transition duration-700" />
 
-                        <div className="relative flex items-center bg-slate-950/40 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden focus-within:border-white/20 transition-all">
+                        <div className="relative flex items-center bg-slate-950/40 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 focus-within:border-white/20 transition-all">
                           <input
                             type="password"
                             value={secretCode}
                             onChange={(e) => setSecretCode(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
                             placeholder="Kode akses"
-                            className="flex-1 bg-transparent text-white px-4 sm:px-7 py-3 sm:py-4.5 focus:outline-none placeholder:text-slate-600 text-base sm:text-lg font-medium"
+                            className="flex-1 bg-transparent text-white pl-5 sm:pl-7 pr-2 py-3 sm:py-4 focus:outline-none placeholder:text-slate-600 text-base sm:text-lg font-medium"
                             autoFocus
                           />
 
@@ -399,7 +399,7 @@ function LandingAuthPage() {
                           <button
                             type="submit"
                             disabled={lockoutTime > 0 || isVerifying || secretCode.length < 3}
-                            className="mr-2 sm:mr-3 p-2.5 sm:p-3.5 bg-white text-[#020617] rounded-xl shadow-lg transition-all hover:bg-slate-200 active:scale-90 disabled:opacity-20 flex items-center justify-center"
+                            className="p-2.5 sm:p-3.5 bg-white text-[#020617] rounded-xl shadow-lg transition-all hover:bg-slate-200 active:scale-90 disabled:opacity-20 flex items-center justify-center shrink-0"
                           >
                             {isVerifying ? (
                               <Spinner size={20} className="text-[#020617]" />
