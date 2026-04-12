@@ -33,6 +33,7 @@ import { formatPhoneForAPI } from '../lib/phone'
 import { ProfilePhotoCard } from '../components/settings/ProfilePhotoCard'
 import { GoogleSyncCard } from '../components/settings/GoogleSyncCard'
 import { SocialMediaCard } from '../components/settings/SocialMediaCard'
+import { PasswordCard } from '../components/settings/PasswordCard'
 
 export interface SettingsFormValues {
   nama_lengkap: string
@@ -370,6 +371,8 @@ function SettingsPage() {
             onConnect={handleGoogleConnect}
             onDisconnect={handleGoogleDisconnect}
           />
+
+          <PasswordCard />
         </form>
       </div>
 
