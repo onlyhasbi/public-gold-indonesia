@@ -83,6 +83,7 @@ function AdminDashboard() {
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false)
   const [showSecretInModal, setShowSecretInModal] = useState(false)
   const [tempSecretCode, setTempSecretCode] = useState('')
+  const [isAutoRotate, setIsAutoRotate] = useState(false)
 
   const [createDialCodeSearch, setCreateDialCodeSearch] = useState("");
   const createFilteredDialCodes = useMemo(() => {
@@ -110,18 +111,21 @@ function AdminDashboard() {
       const res = await api.get('/admin/settings/secret-code', {
         headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
       })
-      return res.data?.data?.code || ''
+      return res.data?.data || { code: '', auto_rotate: false }
     },
     enabled: isSecretModalOpen,
   })
 
   useEffect(() => {
-    if (currentSecret) setTempSecretCode(currentSecret)
+    if (currentSecret) {
+      setTempSecretCode(currentSecret.code || '')
+      setIsAutoRotate(!!currentSecret.auto_rotate)
+    }
   }, [currentSecret])
 
   const updateSecretMutation = useMutation({
-    mutationFn: async (code: string) => {
-      const res = await api.patch('/admin/settings/secret-code', { code }, {
+    mutationFn: async (payload: { code: string; auto_rotate: boolean }) => {
+      const res = await api.patch('/admin/settings/secret-code', payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
       })
       return res.data
@@ -1029,6 +1033,36 @@ function AdminDashboard() {
               </p>
             </div>
 
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-tight">Perbarui Otomatis (24 Jam)</span>
+                   <div className="p-1 bg-red-100 rounded-md">
+                      <RefreshCw size={10} className={cn("text-red-600", isAutoRotate && "animate-spin-slow")} />
+                   </div>
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-medium leading-tight">Generate ulang kode otomatis oleh sistem</p>
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={() => setIsAutoRotate(!isAutoRotate)}
+                  className={cn(
+                    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2",
+                    isAutoRotate ? "bg-red-600" : "bg-slate-200"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                      isAutoRotate ? "translate-x-5" : "translate-x-0"
+                    )}
+                  />
+                </button>
+              </div>
+            </div>
+
             <DialogFooter className="flex-row gap-3 pt-2">
               <Button
                 variant="outline"
@@ -1038,7 +1072,7 @@ function AdminDashboard() {
                 Batal
               </Button>
               <Button
-                onClick={() => updateSecretMutation.mutate(tempSecretCode)}
+                onClick={() => updateSecretMutation.mutate({ code: tempSecretCode, auto_rotate: isAutoRotate })}
                 disabled={updateSecretMutation.isPending || tempSecretCode.length < 3}
                 className="flex-1 rounded-2xl h-12 font-bold shadow-xl shadow-red-200 transition-all active:scale-[0.98]"
               >
