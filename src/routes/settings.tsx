@@ -1,21 +1,20 @@
-import { api } from '../lib/api'
-import { useState, useMemo, Suspense, useEffect } from 'react'
-import { useToast } from '../components/toast'
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft, Globe, Link2, Mail, Phone, Save, Share2, ShieldCheck, User } from 'lucide-react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { settingsQueryOptions, googleStatusQueryOptions } from '../lib/queryOptions'
-import { queryClient } from '../lib/queryClient'
-import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import { redirect, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Save, User, Mail, Phone, Link2, Globe } from 'lucide-react'
-import { Spinner } from '../components/ui/spinner'
+import { GoogleSyncCard } from '../components/settings/GoogleSyncCard'
+import { PasswordCard } from '../components/settings/PasswordCard'
+import { ProfilePhotoCard } from '../components/settings/ProfilePhotoCard'
+import { SocialMediaCard } from '../components/settings/SocialMediaCard'
+import { useToast } from '../components/toast'
+import { Button } from "../components/ui/button"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../components/ui/card"
-import { Input } from "../components/ui/input"
-import { Label } from "../components/ui/label"
 import {
   Combobox,
   ComboboxContent,
@@ -25,15 +24,17 @@ import {
   ComboboxTrigger,
   ComboboxValue,
 } from "../components/ui/combobox"
+import { Input } from "../components/ui/input"
+import { Label } from "../components/ui/label"
+import { Spinner } from '../components/ui/spinner'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { dialCodeOptions } from '../constant/countries'
-import { Button } from "../components/ui/button"
-import { cn } from '../lib/utils'
 import { useSEO } from '../hooks/useSEO'
+import { api } from '../lib/api'
 import { formatPhoneForAPI } from '../lib/phone'
-import { ProfilePhotoCard } from '../components/settings/ProfilePhotoCard'
-import { GoogleSyncCard } from '../components/settings/GoogleSyncCard'
-import { SocialMediaCard } from '../components/settings/SocialMediaCard'
-import { PasswordCard } from '../components/settings/PasswordCard'
+import { queryClient } from '../lib/queryClient'
+import { googleStatusQueryOptions, settingsQueryOptions } from '../lib/queryOptions'
+import { cn } from '../lib/utils'
 
 export interface SettingsFormValues {
   nama_lengkap: string
@@ -45,6 +46,9 @@ export interface SettingsFormValues {
   sosmed_facebook: string
   sosmed_instagram: string
   sosmed_tiktok: string
+  katasandi_lama?: string
+  katasandi_baru?: string
+  konfirmasi_katasandi?: string
 }
 
 export const Route = createFileRoute('/settings')({
@@ -56,7 +60,7 @@ export const Route = createFileRoute('/settings')({
   beforeLoad: () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    
+
     if (!token || !userStr) {
       throw redirect({ to: '/', replace: true });
     }
@@ -86,11 +90,11 @@ function SettingsPage() {
   // Prepare initial values from profile data
   const initialValues = useMemo(() => {
     if (!profileData) return {};
-    
+
     let formPhone = profileData.no_telpon || '';
     let initialCountryCode = '62';
     let initialPhoneRest = formPhone;
-    
+
     // Detect country code from phone number
     ['62', '60', '65'].forEach(code => {
       if (formPhone.startsWith(code)) {
@@ -117,7 +121,7 @@ function SettingsPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<SettingsFormValues>({
     values: initialValues as SettingsFormValues,
   })
@@ -127,7 +131,7 @@ function SettingsPage() {
   const [croppedPreview, setCroppedPreview] = useState<string | null>(null)
   const [cropperSrc, setCropperSrc] = useState<string | null>(null)
   const [dialCodeSearch, setDialCodeSearch] = useState("");
-  
+
   const filteredDialCodes = useMemo(() => {
     if (!dialCodeSearch) return dialCodeOptions;
     const term = dialCodeSearch.toLowerCase();
@@ -144,22 +148,61 @@ function SettingsPage() {
     mutationFn: async (formData: SettingsFormValues) => {
       const data = new FormData()
       if (fotoFile) data.append('foto_profil', fotoFile)
-      Object.keys(formData).forEach((key) => {
-        const value = formData[key as keyof SettingsFormValues];
+
+      // Separate password fields from profile fields
+      const { katasandi_lama, katasandi_baru, konfirmasi_katasandi, ...profileData } = formData;
+
+      Object.keys(profileData).forEach((key) => {
+        const value = profileData[key as keyof typeof profileData];
         if (value !== undefined) data.append(key, value);
       })
 
       const res = await api.put('/settings', data, { headers: { 'Content-Type': 'multipart/form-data' } })
-      return res.data
+      return { profile: res.data, passwordFields: { katasandi_lama, katasandi_baru } }
     },
-    onSuccess: (data: any) => {
-      if (data.success) {
-        showToast('Profil berhasil diperbarui!', 'success')
+    onSuccess: async (data: any) => {
+      if (data.profile.success) {
         queryClient.invalidateQueries({ queryKey: ['settings'] })
         const oldUser = JSON.parse(localStorage.getItem('user') || '{}')
-        localStorage.setItem('user', JSON.stringify({ ...oldUser, ...data.data }))
+        localStorage.setItem('user', JSON.stringify({ ...oldUser, ...data.profile.data }))
+
+        // Check what actually changed
+        const profileFieldsChanged = Object.keys(dirtyFields).some(key => 
+          !['katasandi_lama', 'katasandi_baru', 'konfirmasi_katasandi', 'country_code'].includes(key)
+        ) || !!fotoFile;
+
+        let passwordUpdated = false
+        if (data.passwordFields.katasandi_baru && data.passwordFields.katasandi_lama) {
+          try {
+            const pwdRes = await api.patch('/settings/password', {
+              katasandi_lama: data.passwordFields.katasandi_lama,
+              katasandi_baru: data.passwordFields.katasandi_baru,
+            });
+            if (pwdRes.data.success) {
+              passwordUpdated = true
+              setValue('katasandi_lama', '');
+              setValue('katasandi_baru', '');
+              setValue('konfirmasi_katasandi', '');
+            } else {
+              showToast(pwdRes.data.message || 'Gagal memperbarui kata sandi', 'warning');
+            }
+          } catch (err: any) {
+            showToast(err.response?.data?.message || 'Gagal memperbarui kata sandi', 'error');
+          }
+        }
+
+        if (profileFieldsChanged && passwordUpdated) {
+          showToast('Profil dan kata sandi berhasil diperbarui!', 'success')
+        } else if (passwordUpdated) {
+          showToast('Kata sandi berhasil diperbarui!', 'success')
+        } else if (profileFieldsChanged) {
+          showToast('Profil berhasil diperbarui!', 'success')
+        } else {
+          // Fallback if triggered without dirty fields but technically successful
+          showToast('Pengaturan berhasil diperbarui!', 'success')
+        }
       } else {
-        showToast(data.message, 'error')
+        showToast(data.profile.message, 'error')
       }
     },
     onError: (error: any) => showToast(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan pengaturan.', 'error')
@@ -222,7 +265,7 @@ function SettingsPage() {
   const onSubmit = (data: SettingsFormValues) => {
     const finalPhone = formatPhoneForAPI(data.country_code, data.no_telpon);
     const { country_code, ...submitData } = { ...data, no_telpon: finalPhone };
-    mutation.mutate(submitData as any); // Cast to any here if needed as it's being converted via phone utils, or update mutation to take final shape
+    mutation.mutate(submitData as any);
   };
 
   const handleGoogleConnect = async () => {
@@ -254,7 +297,7 @@ function SettingsPage() {
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-white">Pengaturan Profil</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">Pengaturan Profil</h1>
               <p className="text-red-100 text-xs sm:text-sm">Kelola informasi landing page Anda</p>
             </div>
           </div>
@@ -274,105 +317,146 @@ function SettingsPage() {
             onCropCancel={handleCropCancel}
           />
 
-          {/* Basic Info Card */}
-          <Card className="rounded-2xl shadow-sm border-slate-100 overflow-hidden bg-white">
-            <CardHeader className="px-5 sm:px-6 py-4 border-b border-slate-100">
-              <CardTitle className="text-sm sm:text-base font-bold text-slate-800">Informasi Dasar</CardTitle>
-            </CardHeader>
-            <CardContent className="p-5 sm:p-6 space-y-4 sm:space-y-5">
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
-                  <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                  PG Code
-                </Label>
-                <Input type="text" disabled value={profileData?.pgcode || ''} className="bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed" />
-              </div>
+          <Tabs defaultValue="informasi" className="w-full">
+            <div className="flex justify-start sm:justify-center overflow-x-auto no-scrollbar mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+              <TabsList variant="line" className="flex bg-transparent border-none h-auto p-0 gap-6 sm:gap-10 pb-2">
+                <TabsTrigger
+                  value="informasi"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  Informasi Dasar
+                </TabsTrigger>
+                <TabsTrigger
+                  value="password"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  Ubah Kata Sandi
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sosmed"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Sosial Media
+                </TabsTrigger>
+                <TabsTrigger
+                  value="google"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                >
+                  <Globe className="w-4 h-4" />
+                  Integrasi Google
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                <div className="space-y-2">
-                  <Label htmlFor="nama_lengkap" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                    Nama Lengkap
-                  </Label>
-                  <Input id="nama_lengkap" {...register('nama_lengkap', { required: 'Nama lengkap wajib diisi' })} type="text" className={cn(errors.nama_lengkap && "border-red-400 bg-red-50/50")} />
-                  {errors.nama_lengkap && <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.nama_lengkap.message as string}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="nama_panggilan" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                    Nama Panggilan
-                  </Label>
-                  <Input id="nama_panggilan" {...register('nama_panggilan')} type="text" placeholder="Opsional" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
-                  <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                  Email Publik
-                </Label>
-                <Input id="email" {...register('email')} type="email" />
-              </div>
-
-              {/* Phone Input with Dial Code Combobox */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
-                  <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                  Nomor Telepon (WhatsApp)
-                </Label>
-                <div className="flex bg-white rounded-xl overflow-hidden border border-slate-200 focus-within:ring-2 focus-within:ring-red-500/20 focus-within:border-red-500 transition-all">
-                  <div className="w-[100px] border-r border-slate-200">
-                    <Combobox
-                      onValueChange={(val: string | null) => val && setValue('country_code', val)}
-                      value={(watch('country_code') as string) || '62'}
-                      inputValue={dialCodeSearch}
-                      onInputValueChange={setDialCodeSearch}
-                    >
-                      <ComboboxTrigger className="border-none bg-slate-50 rounded-none h-full focus:ring-0">
-                        <ComboboxValue className="truncate">
-                          {dialCodeOptions.find(opt => opt.value === watch('country_code'))?.label?.replace('+', '') || '62'}
-                        </ComboboxValue>
-                      </ComboboxTrigger>
-                      <ComboboxContent>
-                        <ComboboxInput placeholder="Cari..." />
-                        <ComboboxEmpty>No results.</ComboboxEmpty>
-                        {filteredDialCodes.map((opt) => (
-                          <ComboboxItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </ComboboxItem>
-                        ))}
-                      </ComboboxContent>
-                    </Combobox>
+            <TabsContent value="informasi" className="space-y-5 sm:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <Card className="rounded-2xl shadow-sm border-slate-100 overflow-hidden bg-white">
+                <CardHeader className="px-5 sm:px-6 py-4 border-b border-slate-100">
+                  <CardTitle className="text-sm sm:text-base font-bold text-slate-800">Informasi Dasar</CardTitle>
+                </CardHeader>
+                <CardContent className="p-5 sm:p-6 space-y-4 sm:space-y-5">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                      <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                      PG Code
+                    </Label>
+                    <Input type="text" disabled value={profileData?.pgcode || ''} className="bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed" />
                   </div>
-                  <Input
-                    {...register('no_telpon', { onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "") })}
-                    type="text"
-                    className="flex-1 border-none bg-transparent focus-visible:ring-0"
-                    placeholder="8123456789"
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="link_group_whatsapp" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
-                  <Link2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                  Link Grup WhatsApp
-                </Label>
-                <Input id="link_group_whatsapp" {...register('link_group_whatsapp')} type="text" placeholder="https://chat.whatsapp.com/..." />
-              </div>
-            </CardContent>
-          </Card>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="nama_lengkap" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                        Nama Lengkap
+                      </Label>
+                      <Input id="nama_lengkap" {...register('nama_lengkap', { required: 'Nama lengkap wajib diisi' })} type="text" className={cn(errors.nama_lengkap && "border-red-400 bg-red-50/50")} />
+                      {errors.nama_lengkap && <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.nama_lengkap.message as string}</p>}
+                    </div>
 
-          <SocialMediaCard register={register} />
-          
-          <GoogleSyncCard
-            isConnected={isGoogleConnected}
-            onConnect={handleGoogleConnect}
-            onDisconnect={handleGoogleDisconnect}
-          />
+                    <div className="space-y-2">
+                      <Label htmlFor="nama_panggilan" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                        Nama Panggilan
+                      </Label>
+                      <Input id="nama_panggilan" {...register('nama_panggilan')} type="text" placeholder="Opsional" />
+                    </div>
+                  </div>
 
-          <PasswordCard />
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                      <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                      Email Publik
+                    </Label>
+                    <Input id="email" {...register('email')} type="email" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                      <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                      Nomor Telepon (WhatsApp)
+                    </Label>
+                    <div className="flex bg-white rounded-xl overflow-hidden border border-slate-200 focus-within:ring-2 focus-within:ring-red-500/20 focus-within:border-red-500 transition-all">
+                      <div className="w-[100px] border-r border-slate-200">
+                        <Combobox
+                          onValueChange={(val: string | null) => val && setValue('country_code', val)}
+                          value={(watch('country_code') as string) || '62'}
+                          inputValue={dialCodeSearch}
+                          onInputValueChange={setDialCodeSearch}
+                        >
+                          <ComboboxTrigger className="border-none bg-slate-50 rounded-none h-full focus:ring-0">
+                            <ComboboxValue className="truncate">
+                              {dialCodeOptions.find(opt => opt.value === watch('country_code'))?.label?.replace('+', '') || '62'}
+                            </ComboboxValue>
+                          </ComboboxTrigger>
+                          <ComboboxContent>
+                            <ComboboxInput placeholder="Cari..." />
+                            <ComboboxEmpty>No results.</ComboboxEmpty>
+                            {filteredDialCodes.map((opt) => (
+                              <ComboboxItem key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </ComboboxItem>
+                            ))}
+                          </ComboboxContent>
+                        </Combobox>
+                      </div>
+                      <Input
+                        {...register('no_telpon', { onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "") })}
+                        type="text"
+                        className="flex-1 border-none bg-transparent focus-visible:ring-0"
+                        placeholder="8123456789"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="link_group_whatsapp" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                      <Link2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                      Link Grup WhatsApp
+                    </Label>
+                    <Input id="link_group_whatsapp" {...register('link_group_whatsapp')} type="text" placeholder="https://chat.whatsapp.com/..." />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="password" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <PasswordCard register={register} errors={errors} watch={watch} />
+            </TabsContent>
+
+            <TabsContent value="sosmed" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <SocialMediaCard register={register} />
+            </TabsContent>
+
+            <TabsContent value="google" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <GoogleSyncCard
+                isConnected={isGoogleConnected}
+                onConnect={handleGoogleConnect}
+                onDisconnect={handleGoogleDisconnect}
+              />
+            </TabsContent>
+          </Tabs>
         </form>
       </div>
 
@@ -383,7 +467,7 @@ function SettingsPage() {
             type="submit"
             form="settings-form"
             disabled={mutation.isPending}
-            className="px-6 sm:px-8 h-auto py-2.5 sm:py-3 rounded-xl shadow-lg shadow-red-600/25"
+            className="px-6 sm:px-8 h-auto py-2.5 sm:py-3 rounded-xl shadow-lg shadow-red-600/25 bg-red-600 hover:bg-red-700 transition-all text-white"
           >
             <Save className="w-4 h-4 mr-2" />
             {mutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}

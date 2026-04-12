@@ -1,25 +1,25 @@
-import { AlertCircle, Info } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import GradientHighlight from "./ui/gradient_highlight";
-import { Spinner } from "./ui/spinner";
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import useEmblaCarousel from 'embla-carousel-react'
-import Autoplay from 'embla-carousel-autoplay'
+import Autoplay from 'embla-carousel-autoplay';
+import useEmblaCarousel from 'embla-carousel-react';
+import { AlertCircle, Info } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   NextButton,
   PrevButton,
   usePrevNextButtons,
-} from './ui/EmblaCarouselButtons'
+} from './ui/EmblaCarouselButtons';
+import GradientHighlight from "./ui/gradient_highlight";
+import { Spinner } from "./ui/spinner";
 
-import BaseLayout from "../layout/base";
-import type { GoldPricesResult } from "../types";
-import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import BaseLayout from "../layout/base";
+import type { GoldPricesResult } from "../types";
 
 // Embla Tween Logic Constants
 const TWEEN_FACTOR_BASE = 0.8 // Pronounced factor for 'Pop-out' effect
@@ -51,9 +51,21 @@ type Props = {
 
 export const dinar = [
   {
-    title: "1/4 Dinar",
+    title: "1/4 Dinar - Mekah",
     weight: "1.0625g",
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PDI0001B.png",
+    category: "dinar",
+  },
+  {
+    title: "1/4 Dinar - Masjid Istiqlal",
+    weight: "1.0625g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PDI0001BB_1741330037.png",
+    category: "dinar",
+  },
+  {
+    title: "1/4 Dinar - Raya 2026",
+    weight: "1.0625g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PDI0001BC_1770285287.png",
     category: "dinar",
   },
   {
@@ -84,15 +96,81 @@ export const dinar = [
 
 export const goldbar = [
   {
-    title: "0.5 gram",
+    title: "0.5 gram - Thank You",
+    weight: "0.5g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001CZ_1692589929.png",
+    category: "goldbar",
+  },
+  {
+    title: "0.5 gram - Birthday",
+    weight: "0.5g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NI_1741330059.png",
+    category: "goldbar",
+  },
+  {
+    title: "0.5 gram - Batik Megamendung",
+    weight: "0.5g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NJ_1750906442.png",
+    category: "goldbar",
+  },
+  {
+    title: "0.5 gram - Batik Lontara",
     weight: "0.5g",
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NL_1756438125.png",
     category: "goldbar",
   },
   {
-    title: "1 gram",
+    title: "1 gram - Batik Toraja",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NA.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Batik Krakatau",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NB.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Batik Sentani",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NC.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Batik Pekalongan",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001ND.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Batik Enggang",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NE.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Cenderawasih Merah",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NF.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Raya 2025",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NG_1742458634.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Merdeka",
     weight: "1g",
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NK_1753243761.png",
+    category: "goldbar",
+  },
+  {
+    title: "1 gram - Sultan Hasanuddin",
+    weight: "1g",
+    url: "https://my-cdn.publicgold.com.my/image/catalog/product/PP0001NM_1756437982.png",
     category: "goldbar",
   },
   {
@@ -250,20 +328,41 @@ function PriceList({ price, pgbo }: Props) {
 
     if (priceMode === "tabungan") {
       if (!perGramPrice) return null;
+      // Tabungan formula: (Weight * PerGramPrice) + Print Cost
       return (perGramPrice * weight) + printCost;
     } else {
-      // mode tunai: check for special promotional printing costs
-      if (item.category === "goldbar") {
-        if (item.weight === "1g") printCost = 0;
-        else if (item.weight === "5g") printCost = 15000;
-      }
-
+      // mode tunai: prices from unit endpoint with specific adjustments
       const apiArray = item.category === "dinar" ? price?.dinar : price?.goldbar;
-      const apiItem = apiArray?.find(p => p.label === item.title);
+      const apiItem = apiArray?.find(p => item.title.startsWith(p.label));
       const apiPrice = parsePriceToNumber(apiItem?.price);
 
       if (!apiPrice) return null;
-      return apiPrice + printCost;
+
+      if (item.category === "goldbar") {
+        // Goldbar 0.5g & 1g: print cost is 0
+        if (weight <= 1) {
+          printCost = 0;
+        } 
+        // Goldbar 5g: print cost is fixed 15,000
+        else if (weight === 5) {
+          printCost = 15000;
+        }
+        // Goldbar 10g and above: use base printing cost from map
+        
+        return apiPrice + printCost;
+      } else {
+        // category === "dinar"
+        // Dinar 1/4 & 1/2: print cost is 0
+        if (weight <= 2.125) {
+          printCost = 0;
+        }
+        // Dinar 1 Dinar and above: use base printing cost from map
+
+        // Formula: (Unit Price + Print Cost) + (1.1% Tax rounded down to nearest 1000)
+        const baseAmount = apiPrice + printCost;
+        const tax = Math.floor((baseAmount * 0.011) / 1000) * 1000;
+        return baseAmount + tax;
+      }
     }
   };
 

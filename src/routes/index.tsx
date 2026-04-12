@@ -1,21 +1,37 @@
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { cn } from '@/lib/utils'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router'
 import {
-  ShieldCheck,
-  ShieldAlert,
   ArrowRight,
+  Check,
   Eye,
   EyeOff,
-  Check
+  MessageCircle,
+  ShieldAlert,
+  ShieldCheck
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { useToast } from '../components/toast'
 import { Spinner } from '../components/ui/spinner'
 import { api } from '../lib/api'
-import { motion, AnimatePresence } from 'motion/react'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
-import { useMutation } from '@tanstack/react-query'
-import { useToast } from '../components/toast'
+
+const MotionCard = motion.create(Card)
 
 // --- Validation Schemas ---
 const signinSchema = yup.object().shape({
@@ -287,180 +303,154 @@ function LandingAuthPage() {
 
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-[#020617] overflow-hidden px-6 font-sans">
+    <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 overflow-hidden px-6 font-sans">
 
-      {/* Refined Background Layers */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-rose-900/10 via-[#020617] to-[#020617] pointer-events-none" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-rose-600/[0.05] rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] pointer-events-none mix-blend-overlay" />
+      {/* Refined Background Layers - Minimalist */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-rose-50/50 via-slate-50 to-slate-50 pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-rose-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
 
       {/* Main Container - Centered Stack */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="relative z-10 w-full max-w-xl flex flex-col items-center gap-10 md:gap-12"
+        className="relative z-10 w-full max-w-5xl flex flex-col items-center gap-8 md:gap-10"
       >
-        {/* Row 1: Brand Presentation (Horizontal like sketch) */}
+        {/* Row 1: Brand Presentation (Minimal) */}
         <AnimatePresence>
           {lockoutTime === 0 && !isUnlocked && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 w-full max-w-lg mb-4"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex flex-col items-center text-center gap-4 lg:gap-6 w-full max-w-lg mb-4"
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="flex-shrink-0 relative p-4 bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl"
+                className="p-3 bg-[#000856] rounded-2xl shadow-sm border border-slate-100"
               >
-                <img
-                  src="/5g.webp"
-                  alt="Logo"
-                  className="w-14 h-14 md:w-16 md:h-16 object-contain brightness-110"
-                />
+                <img src="https://mypublicgold.com/5g/logo/logo_gold.png" alt="Logo" className="w-12 h-12 object-contain" />
               </motion.div>
 
-              <div className="flex flex-col text-left">
-                <h1 className="text-3xl md:text-5xl font-black text-white leading-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
-                  PGBO Portal
-                </h1>
-                <p className="text-slate-500 text-xs md:text-sm font-medium leading-relaxed max-w-[280px]">
-                  Dashboard eksklusif untuk pantau bisnismu secara real-time.
-                </p>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Row 2: Interactive Access Field */}
-        <div className="w-full max-w-md relative self-center">
-          <div className={`relative transition-all duration-1000 ease-[0.2, 1, 0.2, 1] w-full ${isUnlocked
-            ? 'bg-white/[0.02] backdrop-blur-3xl border border-white/10 p-1 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.8)]'
-            : 'p-0'
-            }`}>
-            {isUnlocked && (
-              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/[0.02] to-indigo-500/[0.02] rounded-[2.5rem] pointer-events-none" />
-            )}
+        {/* Interaktif: Gate atau Form Portal */}
+        <AnimatePresence mode="wait">
+          {!isUnlocked ? (
+            <motion.div
+              key="secret-gate"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="w-full max-w-md mx-auto p-8 py-12 md:py-16 bg-white shadow-xl shadow-slate-200/40 rounded-[2rem] overflow-hidden ring-0"
+            >
+              {lockoutTime > 0 ? (
+                <div className="flex flex-col items-center justify-center text-center space-y-8 py-8 transition-all duration-700">
+                  <div className="relative flex items-center justify-center">
+                    {/* Stellar Security Animation System */}
+                    <div className="absolute inset-0 bg-rose-500/20 rounded-full blur-[40px] animate-pulse" />
+                    <div className="absolute inset-0 border-2 border-rose-500/30 rounded-full animate-ping [animation-duration:3s]" />
 
-            <div className={`${isUnlocked ? 'p-6 sm:p-8 bg-[#0f172a]/20 rounded-[2.25rem] border border-white/5 overflow-hidden' : ''}`}>
-              <AnimatePresence mode="wait">
-                {!isUnlocked ? (
-                  <motion.div
-                    key="secret-gate"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    className="w-full"
-                  >
-                    {lockoutTime > 0 ? (
-                      <div className="flex flex-col items-center justify-center py-10 px-4 text-center space-y-6">
-                        <div className="relative">
-                          {/* Pulsing Alert Rings */}
-                          <div className="absolute inset-0 bg-rose-500/20 rounded-full blur-2xl animate-pulse" />
-                          <div className="absolute inset-0 border-2 border-rose-500/30 rounded-full animate-ping duration-[3000ms]" />
-                          <div className="relative p-6 bg-[#020617] rounded-full border border-rose-500/20 shadow-[0_0_40px_rgba(244,63,94,0.1)]">
-                            <ShieldAlert className="w-8 h-8 text-rose-500 animate-pulse" />
-                          </div>
-                        </div>
+                    <div className="relative p-7 bg-rose-50/80 rounded-full border border-rose-200 shadow-2xl shadow-rose-200/50">
+                      <ShieldAlert className="w-10 h-10 text-rose-600" />
+                    </div>
+                  </div>
 
-                        <div className="space-y-4">
-                          <div className="flex flex-col items-center">
-                            <span className="text-rose-400 font-mono text-5xl font-black tracking-widest tabular-nums drop-shadow-[0_0_15px_rgba(244,63,94,0.4)]">
-                              {formatTime(lockoutTime)}
-                            </span>
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="text-rose-500/90 text-[11px] font-black">{errorMsg}</p>
-                            <p className="text-slate-500 text-[9px] font-medium max-w-[200px] mx-auto leading-relaxed">
-                              Portal dikunci sementara.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <form onSubmit={handleSecretSubmit} className="relative group">
-                        {/* Glow effect */}
-                        <div className="absolute -inset-[1px] bg-white/10 rounded-xl opacity-20 group-focus-within:opacity-100 transition duration-700" />
-
-                        <div className="relative flex items-center bg-slate-950/40 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 focus-within:border-white/20 transition-all">
-                          <input
-                            type="password"
-                            value={secretCode}
-                            onChange={(e) => setSecretCode(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
-                            placeholder="Kode akses"
-                            className="flex-1 bg-transparent text-white pl-5 sm:pl-7 pr-2 py-3 sm:py-4 focus:outline-none placeholder:text-slate-600 text-base sm:text-lg font-medium"
-                            autoFocus
-                          />
-
-                          {/* Integrated Action Button */}
-                          <button
-                            type="submit"
-                            disabled={lockoutTime > 0 || isVerifying || secretCode.length < 3}
-                            className="p-2.5 sm:p-3.5 bg-white text-[#020617] rounded-xl shadow-lg transition-all hover:bg-slate-200 active:scale-90 disabled:opacity-20 flex items-center justify-center shrink-0"
-                          >
-                            {isVerifying ? (
-                              <Spinner size={20} className="text-[#020617]" />
-                            ) : (
-                              <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                            )}
-                          </button>
-                        </div>
-
-                        {errorMsg && (
-                          <motion.p
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                            className="absolute -bottom-7 left-0 w-full text-center text-[10px] text-rose-500 font-bold tracking-wide"
-                          >
-                            {errorMsg} {attempts > 0 && attempts < 5 && <span>({attempts}/5)</span>}
-                          </motion.p>
-                        )}
-                      </form>
-                    )}
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="auth-content"
-                    initial={{ opacity: 0, filter: 'blur(8px)' }}
-                    animate={{ opacity: 1, filter: 'blur(0px)' }}
-                    className="space-y-8"
-                  >
-                    {/* Simplified Tabs */}
-                    <div className="flex p-1 bg-slate-950/50 rounded-xl border border-white/5">
-                      <button
-                        onClick={() => setAuthMode('signin')}
-                        className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all duration-500 ${authMode === 'signin'
-                          ? 'bg-rose-600 text-white shadow-xl shadow-rose-950/40'
-                          : 'text-slate-500 hover:text-slate-300'
-                          }`}
-                      >
-                        Masuk
-                      </button>
-                      <button
-                        onClick={() => setAuthMode('signup')}
-                        className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all duration-500 ${authMode === 'signup'
-                          ? 'bg-rose-600 text-white shadow-xl shadow-rose-950/40'
-                          : 'text-slate-500 hover:text-slate-300'
-                          }`}
-                      >
-                        Daftar
-                      </button>
+                  <div className="space-y-4">
+                    <div className="flex flex-col items-center">
+                      <span className="text-rose-600 font-mono text-5xl font-black tracking-[0.2em] tabular-nums drop-shadow-[0_0_15px_rgba(244,63,94,0.4)]">
+                        {formatTime(lockoutTime)}
+                      </span>
                     </div>
 
+                    <div className="space-y-1.5 px-4">
+                      <p className="text-rose-600 text-xs tracking-[0.05em]">Banyak percobaan yang salah</p>
+                      <p className="text-slate-400 text-[11px] font-medium max-w-[200px] mx-auto leading-relaxed">
+                        Portal dikunci sementara demi keamanan akun Anda.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleSecretSubmit} className="relative group max-w-xs mx-auto space-y-5">
+
+                  <div className="relative flex items-center bg-slate-50/50 border border-slate-100 rounded-lg h-11 p-0.5 focus-within:bg-white focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all duration-300">
+                    <input
+                      type="password"
+                      value={secretCode}
+                      onChange={(e) => setSecretCode(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
+                      placeholder="••••••"
+                      className="flex-1 bg-transparent text-slate-900 text-center pl-8 pr-1 h-full focus:outline-none placeholder:text-slate-200 text-sm font-black tracking-[0.5em] selection:bg-rose-100"
+                      autoFocus
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      type="submit"
+                      disabled={lockoutTime > 0 || isVerifying || secretCode.length < 3}
+                      className="h-9 w-9 bg-slate-900 text-white rounded-md shadow-lg shadow-slate-900/20 transition-colors hover:bg-black disabled:opacity-20 flex items-center justify-center shrink-0"
+                    >
+                      {isVerifying ? (
+                        <Spinner size={14} className="text-white" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4 stroke-[3]" />
+                      )}
+                    </motion.button>
+                  </div>
+
+                  {errorMsg && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -2 }} animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center justify-center gap-1 text-[10px] text-rose-500 mt-1"
+                    >
+                      <ShieldAlert className="w-3 h-3" />
+                      {errorMsg} {attempts > 0 && attempts < 5 && <span className="opacity-60">({attempts}/5)</span>}
+                    </motion.div>
+                  )}
+                </form>
+              )}
+            </motion.div>
+          ) : (
+            <MotionCard
+              key="auth-content"
+              initial={{ opacity: 0, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              className="bg-white rounded-[1.5rem] overflow-hidden shadow-2xl shadow-slate-200/40 border-none ring-0 max-w-lg mx-auto w-full"
+            >
+              <CardContent className="p-0 flex flex-col h-full">
+                <Tabs value={authMode} onValueChange={(v) => setAuthMode(v as 'signin' | 'signup')} className="w-full">
+                  <div className="flex justify-center mb-4 pt-4">
+                    <TabsList variant="line" className="flex bg-transparent border-none h-auto p-0 gap-8">
+                      <TabsTrigger
+                        value="signin"
+                        className="font-bold rounded-none border-none py-3 text-xs transition-all px-2 text-slate-400 data-[state=active]:text-slate-900 data-[state=active]:after:!bg-slate-900"
+                      >
+                        Masuk
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="signup"
+                        className="font-bold rounded-none border-none py-3 text-xs transition-all px-2 text-slate-400 data-[state=active]:text-slate-900 data-[state=active]:after:!bg-slate-900"
+                      >
+                        Daftar
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
+
+                  <div className="p-6 sm:px-10 pb-8 pt-0">
                     <AnimatePresence mode="wait">
-                      {authMode === 'signin' ? (
+                      <TabsContent value="signin" className="mt-0 outline-none">
                         <motion.form
                           key="signin-form"
-                          className="space-y-5"
+                          className="space-y-6"
                           variants={formVariants} initial="initial" animate="animate" exit="exit"
                           onSubmit={signinForm.handleSubmit(onSigninSubmit)}
                         >
-                          <div className="space-y-4">
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-bold text-slate-500 pl-1">PGCode</label>
-                              <input
+                          <div className="space-y-5">
+                            <div className="space-y-2">
+                              <Label className="text-[11px] text-slate-400 ml-1">PGCode</Label>
+                              <Input
                                 {...signinForm.register('pgcode', {
                                   onChange: (e) => {
                                     const value = e.target.value;
@@ -468,38 +458,52 @@ function LandingAuthPage() {
                                     if (value !== sanitized) signinForm.setValue('pgcode', sanitized);
                                   }
                                 })}
-                                placeholder="Contoh: PG123456"
-                                className={`w-full bg-slate-950/20 border ${signinForm.formState.errors.pgcode ? 'border-rose-500/30' : 'border-white/5'} rounded-xl py-3.5 px-6 text-white focus:outline-none focus:border-rose-500/40 transition-all placeholder:text-slate-700 font-medium`}
+                                placeholder="PG123456"
+                                className={cn(
+                                  "bg-slate-50/50 border-slate-100 rounded-lg h-11 px-5 text-sm text-slate-900 focus-visible:bg-white focus-visible:border-slate-900 focus-visible:ring-4 focus-visible:ring-slate-900/5 transition-all duration-300 font-semibold placeholder:text-slate-200",
+                                  signinForm.formState.errors.pgcode && "border-rose-200 bg-rose-50/30"
+                                )}
                               />
-                              {signinForm.formState.errors.pgcode && <p className="text-[10px] text-rose-500 font-bold pl-1">{signinForm.formState.errors.pgcode.message}</p>}
                             </div>
 
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-bold text-slate-500 pl-1">Password</label>
+                            <div className="space-y-2">
+                              <Label className="text-[11px] text-slate-400 ml-1">Password</Label>
                               <div className="relative">
-                                <input
+                                <Input
                                   type={showPassword ? 'text' : 'password'}
                                   {...signinForm.register('katasandi')}
-                                  placeholder="Masukkan password"
-                                  className={`w-full bg-slate-950/20 border ${signinForm.formState.errors.katasandi ? 'border-rose-500/30' : 'border-white/5'} rounded-xl py-3.5 px-6 text-white focus:outline-none focus:border-rose-500/40 transition-all placeholder:text-slate-700 font-medium`}
+                                  placeholder="••••••••"
+                                  className={cn(
+                                    "bg-slate-50/50 border-slate-100 rounded-lg h-11 px-5 text-sm text-slate-900 focus-visible:bg-white focus-visible:border-slate-900 focus-visible:ring-4 focus-visible:ring-slate-900/5 transition-all duration-300 font-semibold placeholder:text-slate-200",
+                                    signinForm.formState.errors.katasandi && "border-rose-200 bg-rose-50/30"
+                                  )}
                                 />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-600">
-                                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-300 hover:text-slate-500 hover:bg-transparent"
+                                >
+                                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </Button>
                               </div>
-                              {signinForm.formState.errors.katasandi && <p className="text-[10px] text-rose-500 font-bold pl-1">{signinForm.formState.errors.katasandi.message}</p>}
                             </div>
                           </div>
 
-                          <button
-                            type="submit"
-                            disabled={loginMutation.isPending || !signinForm.formState.isValid}
-                            className="w-full py-3.5 bg-gradient-to-r from-rose-600 to-rose-700 text-white rounded-xl font-bold shadow-2xl shadow-rose-950/20 transition-all active:scale-[0.98] disabled:opacity-20"
-                          >
-                            {loginMutation.isPending ? <Spinner size={20} className="text-white" /> : "Masuk Portal"}
-                          </button>
+                          <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
+                            <Button
+                              type="submit"
+                              disabled={loginMutation.isPending || !signinForm.formState.isValid}
+                              className="font-bold w-full h-11 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm shadow-xl shadow-slate-900/10 transition-all border-none"
+                            >
+                              {loginMutation.isPending ? <Spinner size={20} className="text-white" /> : "Masuk"}
+                            </Button>
+                          </motion.div>
                         </motion.form>
-                      ) : (
+                      </TabsContent>
+
+                      <TabsContent value="signup" className="mt-0 outline-none">
                         <motion.form
                           key="signup-form"
                           className="space-y-6"
@@ -507,13 +511,13 @@ function LandingAuthPage() {
                           onSubmit={signupForm.handleSubmit(onSignupSubmit)}
                         >
                           <div className="space-y-4">
-                            <div className="space-y-1.5">
+                            <div className="space-y-2">
                               <div className="flex justify-between items-center px-1">
-                                <label className="text-[11px] font-bold text-slate-500">Dealer PGCode</label>
-                                {namaLengkap && <span className="text-[10px] text-emerald-500 font-bold">{namaLengkap}</span>}
+                                <Label className="text-[11px] text-slate-400">PGCode</Label>
+                                {namaLengkap && <span className="text-[10px] text-emerald-600 tracking-tighter">{namaLengkap}</span>}
                               </div>
                               <div className="relative">
-                                <input
+                                <Input
                                   {...signupForm.register('pgcode', {
                                     onChange: (e) => {
                                       const value = e.target.value;
@@ -524,26 +528,34 @@ function LandingAuthPage() {
                                     onBlur: (e) => fetchIntroducerName(e.target.value)
                                   })}
                                   placeholder="PG123456"
-                                  className={`w-full bg-slate-950/20 border ${signupForm.formState.errors.pgcode ? 'border-rose-500/30' : 'border-white/5'} rounded-xl py-3.5 px-6 text-white focus:outline-none focus:border-rose-500/40 transition-all font-medium`}
+                                  className={cn(
+                                    "bg-slate-50/50 border-slate-100 rounded-lg h-11 px-5 text-sm text-slate-900 focus-visible:bg-white focus-visible:border-slate-900 focus-visible:ring-4 focus-visible:ring-slate-900/5 transition-all duration-300 font-semibold placeholder:text-slate-200",
+                                    signupForm.formState.errors.pgcode && "border-rose-200 bg-rose-50/30"
+                                  )}
                                 />
-                                <div className="absolute right-6 inset-y-0 flex items-center">
-                                  {isVerifyingPgcode ? <Spinner size={18} className="text-slate-500" /> : isPgcodeValid && <Check className="w-5 h-5 text-emerald-500" />}
+                                <div className="absolute right-3 inset-y-0 flex items-center">
+                                  {isVerifyingPgcode ? <Spinner size={16} className="text-slate-300" /> : isPgcodeValid && <Check className="w-5 h-5 text-emerald-500" />}
                                 </div>
                               </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div className="space-y-1.5">
-                                <label className="text-[11px] font-bold text-slate-500 pl-1">WhatsApp</label>
-                                <div className="flex bg-slate-950/20 border border-white/5 rounded-xl overflow-hidden focus-within:border-rose-500/40">
-                                  <select
-                                    {...signupForm.register('country_code')}
-                                    className="bg-transparent text-slate-400 pl-4 py-3.5 border-none focus:ring-0 outline-none text-xs font-bold appearance-none cursor-pointer"
+                              <div className="space-y-2">
+                                <Label className="text-[11px] text-slate-400 ml-1">WhatsApp</Label>
+                                <div className="flex bg-slate-50/50 border border-slate-100 rounded-lg overflow-hidden focus-within:bg-white focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all duration-300">
+                                  <Select
+                                    defaultValue="62"
+                                    onValueChange={(val) => signupForm.setValue('country_code', val as string)}
                                   >
-                                    <option value="62" className="bg-[#020617]">🇮🇩 +62</option>
-                                    <option value="60" className="bg-[#020617]">🇲🇾 +60</option>
-                                  </select>
-                                  <input
+                                    <SelectTrigger className="w-[80px] bg-transparent border-none text-slate-500 pl-4 h-11 focus:ring-0 ring-0 shadow-none text-xs hover:bg-slate-100/50 transition-colors">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white border-slate-100 shadow-2xl rounded-lg">
+                                      <SelectItem value="62" className="focus:bg-slate-50 rounded-lg">🇮🇩 +62</SelectItem>
+                                      <SelectItem value="60" className="focus:bg-slate-50 rounded-lg">🇲🇾 +60</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <Input
                                     {...signupForm.register('no_telpon', {
                                       onChange: (e) => {
                                         const value = e.target.value;
@@ -552,14 +564,14 @@ function LandingAuthPage() {
                                       }
                                     })}
                                     placeholder="812..."
-                                    className="flex-1 bg-transparent px-3 py-3.5 text-white focus:outline-none text-sm font-medium"
+                                    className="flex-1 bg-transparent border-none focus-visible:ring-0 h-11 px-2 text-slate-900 text-sm font-semibold placeholder:text-slate-200"
                                   />
                                 </div>
                               </div>
-                              <div className="space-y-1.5">
-                                <label className="text-[11px] font-bold text-slate-500 pl-1">Custom Page ID</label>
+                              <div className="space-y-2">
+                                <Label className="text-[11px] text-slate-400 ml-1">ID Halaman</Label>
                                 <div className="relative">
-                                  <input
+                                  <Input
                                     {...signupForm.register('pageid', {
                                       onChange: (e) => {
                                         const value = e.target.value;
@@ -580,49 +592,76 @@ function LandingAuthPage() {
                                         }
                                       }
                                     })}
-                                    placeholder="page-id"
-                                    className={`w-full bg-slate-950/20 border ${signupForm.formState.errors.pageid || pageIdError ? 'border-rose-500/30' : 'border-white/5'} rounded-xl py-3.5 px-6 text-white focus:outline-none text-base font-medium`}
+                                    placeholder="username"
+                                    className={cn(
+                                      "bg-slate-50/50 border-slate-100 rounded-lg h-11 px-5 text-sm text-slate-900 focus-visible:bg-white focus-visible:border-slate-900 focus-visible:ring-4 focus-visible:ring-slate-900/5 transition-all duration-300 font-semibold placeholder:text-slate-200",
+                                      (signupForm.formState.errors.pageid || pageIdError) && "border-rose-200 bg-rose-50/30"
+                                    )}
                                   />
-                                  <div className="absolute right-6 inset-y-0 flex items-center">
-                                    {isVerifyingPageId ? <Spinner size={18} className="text-slate-500" /> : isPgcodeValid && isPageIdValid && !pageIdError && <Check className="w-5 h-5 text-emerald-500" />}
+                                  <div className="absolute right-5 inset-y-0 flex items-center">
+                                    {isVerifyingPageId ? <Spinner size={16} className="text-slate-300" /> : isPgcodeValid && isPageIdValid && !pageIdError && <Check className="w-5 h-5 text-emerald-500" />}
                                   </div>
                                 </div>
-                                {pageIdError === 'Taken' && <p className="text-[10px] text-rose-500 font-bold pl-1 mt-1">Page ID sudah digunakan</p>}
                               </div>
                             </div>
 
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-bold text-slate-500 pl-1">Password</label>
+                            <div className="space-y-2">
+                              <Label className="text-[11px] text-slate-400 ml-1">Password Baru</Label>
                               <div className="relative">
-                                <input
+                                <Input
                                   type={showPassword ? 'text' : 'password'}
                                   {...signupForm.register('katasandi')}
                                   placeholder="Min. 6 Karakter"
-                                  className={`w-full bg-slate-950/20 border ${signupForm.formState.errors.katasandi ? 'border-rose-500/30' : 'border-white/5'} rounded-xl py-3.5 px-6 text-white focus:outline-none focus:border-rose-500/40 transition-all font-medium`}
+                                  className={cn(
+                                    "bg-slate-50/50 border-slate-100 rounded-lg h-11 px-5 text-sm text-slate-900 focus-visible:bg-white focus-visible:border-slate-900 focus-visible:ring-4 focus-visible:ring-slate-900/5 transition-all duration-300 font-semibold placeholder:text-slate-200",
+                                    signupForm.formState.errors.katasandi && "border-rose-200 bg-rose-50/30"
+                                  )}
                                 />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-600">
-                                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-300 hover:text-slate-500 hover:bg-transparent"
+                                >
+                                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </Button>
                               </div>
                             </div>
                           </div>
 
-                          <button
-                            type="submit"
-                            disabled={registerMutation.isPending || !signupForm.formState.isValid || !isPgcodeValid || !isPageIdValid || !!pageIdError}
-                            className="w-full py-3.5 mt-2 bg-white text-[#020617] rounded-xl font-bold shadow-xl transition-all active:scale-[0.98] disabled:opacity-20 flex items-center justify-center"
-                          >
-                            {registerMutation.isPending ? <Spinner size={20} className="text-[#020617]" /> : "Buat Akun Portal"}
-                          </button>
+                          <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
+                            <Button
+                              type="submit"
+                              disabled={registerMutation.isPending || !signupForm.formState.isValid || !isPgcodeValid || !isPageIdValid || !!pageIdError}
+                              className="font-bold w-full h-11 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm shadow-xl shadow-slate-900/10 transition-all active:scale-[0.98] border-none"
+                            >
+                              {registerMutation.isPending ? <Spinner size={20} className="text-white" /> : "Buat Akun"}
+                            </Button>
+                          </motion.div>
                         </motion.form>
-                      )}
+                      </TabsContent>
                     </AnimatePresence>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
+                  </div>
+                </Tabs>
+
+                <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex justify-center bg-transparent">
+                  <a
+                    href="https://wa.me/628979901844"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <div className="p-1.5 bg-emerald-50 rounded-full">
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    </div>
+                    <span className="text-[9px] text-slate-400 tracking-wider">Butuh Bantuan? Hubungi Admin</span>
+                  </a>
+                </div>
+              </CardContent>
+            </MotionCard>
+          )}
+        </AnimatePresence>
 
         {/* Minimal Footer */}
         <AnimatePresence>
@@ -631,12 +670,10 @@ function LandingAuthPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center gap-6 opacity-30 mt-4 font-bold text-[10px] text-white"
+              className="flex items-center justify-center gap-2 opacity-30 mt-4 text-[9px] text-slate-500"
             >
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                Keamanan Portal Terjamin
-              </div>
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              Portal Keamanan Terpusat Public Gold
             </motion.div>
           )}
         </AnimatePresence>
