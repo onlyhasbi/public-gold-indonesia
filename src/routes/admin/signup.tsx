@@ -127,6 +127,9 @@ function AdminSignupPage() {
               <input
                 type={showSecret ? 'text' : 'password'}
                 {...register('secretCode')}
+                autoComplete="off"
+                data-1p-ignore="true"
+                data-lpignore="true"
                 className={`w-full px-4 py-2 pr-10 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-white ${errors.secretCode ? 'border-red-500' : 'border-slate-600'}`}
                 placeholder="Kode Akses Pendaftaran"
               />

@@ -1003,9 +1003,13 @@ function AdminDashboard() {
               <div className="relative group">
                 <Input
                   type={showSecretInModal ? 'text' : 'password'}
+                  autoComplete="off"
+                  data-1p-ignore="true"
+                  data-lpignore="true"
+                  spellCheck="false"
                   value={tempSecretCode}
                   onChange={(e) => setTempSecretCode(e.target.value)}
-                  className="h-14 bg-slate-50 border-slate-200 rounded-2xl font-mono text-xl text-center tracking-[0.5em] font-bold focus-visible:ring-red-500/20 transition-all"
+                  className="h-14 bg-slate-50 border-slate-200 rounded-2xl font-mono text-xl text-center tracking-[0.5em] font-bold focus-visible:ring-red-500/20 transition-all cursor-text select-text"
                   placeholder="CODE"
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
