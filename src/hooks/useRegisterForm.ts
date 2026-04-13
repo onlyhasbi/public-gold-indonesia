@@ -75,7 +75,11 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     const payload = new URLSearchParams();
     payload.append("newsletter", values.newsletter ? "1" : "0");
     Object.entries(values).forEach(([key, val]) => {
-      if (key !== "newsletter") payload.append(key, val as string);
+      if (key === "newsletter") return;
+      if (!isAnak && (key.includes("parent") || key === "parent_idselect")) return;
+      if (!isIndonesia && key === "label-individualgstid") return;
+      
+      payload.append(key, val as string);
     });
 
     // Referral Logic: URL-based referral data (Guaranteed by page guards)

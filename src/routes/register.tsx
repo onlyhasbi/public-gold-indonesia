@@ -642,10 +642,10 @@ function RegisterPage() {
 
           {/* Floating Help CTA */}
           <div className="absolute bottom-10 right-10 z-20">
-            <a 
-              href={getWhatsAppLink(referralData)} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={getWhatsAppLink(referralData)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative flex items-center gap-4 bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/10 hover:border-white/20 p-4 pr-7 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(37,211,102,0.2)] cursor-pointer overflow-hidden"
             >
               <div className="relative z-10">
@@ -667,10 +667,10 @@ function RegisterPage() {
         </div>
 
         {/* Mobile-only Floating WA Button */}
-        <a 
-          href={getWhatsAppLink(referralData)} 
-          target="_blank" 
-          rel="noopener noreferrer" 
+        <a
+          href={getWhatsAppLink(referralData)}
+          target="_blank"
+          rel="noopener noreferrer"
           className="lg:hidden group fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] text-white shadow-[0_8px_32px_rgba(37,211,102,0.4)] hover:shadow-[0_16px_48px_rgba(37,211,102,0.6)] hover:-translate-y-1.5 hover:scale-105 transition-all duration-500 active:scale-95"
         >
           <MessageCircle className="w-6 h-6" />
