@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { MoreVertical, Facebook, Instagram, Music2 } from "lucide-react";
+import { MoreVertical, Facebook, Instagram, Music2, Share2 } from "lucide-react";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -57,6 +57,29 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
 
   const handleWhatsAppClick = () => {
     trackEvent(pgbo?.pageid, 'whatsapp_click');
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const plainTitle = `Public Gold - ${pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer"}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: plainTitle,
+          url: url
+        });
+      } catch (err) {
+        console.error("Error sharing", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        alert("Tautan berhasil disalin!");
+      } catch (err) {
+        console.error("Failed to copy link", err);
+      }
+    }
   };
 
   const hasPhoto = !!pgbo?.foto_profil_url;
@@ -145,7 +168,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
             </a>
           )}
 
-          {hasSosmed && (
+          {hasSosmed ? (
             <Popover>
               <PopoverTrigger asChild>
                 <button
@@ -185,6 +208,15 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
                 </div>
               </PopoverContent>
             </Popover>
+          ) : (
+            <button
+              type="button"
+              onClick={handleShare}
+              className="w-12 h-12 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all shadow-[0_4px_15px_-5px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_20px_-5px_rgba(0,0,0,0.15)] active:scale-95 shrink-0"
+              aria-label="Share Profile"
+            >
+              <Share2 className="w-5 h-5" />
+            </button>
           )}
         </div>
       </div>
