@@ -205,6 +205,18 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
                       Facebook
                     </a>
                   )}
+                  
+                  <div className="h-px bg-slate-100 my-1 mx-2" />
+                  
+                  <button 
+                    onClick={handleShare} 
+                    className="flex w-full text-left items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-slate-900 font-medium text-sm group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                      <Share2 className="w-4 h-4 text-slate-500 group-hover:text-slate-700" />
+                    </div>
+                    Bagikan
+                  </button>
                 </div>
               </PopoverContent>
             </Popover>
