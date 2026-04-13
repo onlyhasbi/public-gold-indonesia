@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
 import Benefit from "../components/benefit";
@@ -24,10 +24,14 @@ import { useSEO } from "../hooks/useSEO";
 export const Route = createFileRoute("/$pgcode")({
   component: App,
   loader: async ({ params }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(agentQueryOptions(params.pgcode)),
-      queryClient.ensureQueryData(goldPricesQueryOptions()),
-    ]);
+    try {
+      await Promise.all([
+        queryClient.ensureQueryData(agentQueryOptions(params.pgcode)),
+        queryClient.ensureQueryData(goldPricesQueryOptions()),
+      ]);
+    } catch {
+      throw notFound();
+    }
   },
 });
 

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Send, ChevronDown, ChevronUp, AlertCircle, MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
+import NotFound from "../components/not_found";
 import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
 import { cn } from "@/lib/utils";
@@ -94,14 +95,14 @@ function RegisterPage() {
     if (referralData) {
       localStorage.setItem('ref_pageid', referralData.pageid);
     }
-
-    if (isReferralError) {
-      navigate({ to: '/$pgcode', params: { pgcode: 'not-found' }, replace: true });
-    }
-  }, [ref, referralData, isReferralError, navigate]);
+  }, [ref, referralData, navigate]);
 
   const { i18n } = useTranslation();
   const [countryMode, setCountryMode] = useState<"ID" | "MY" | "INTL">("ID");
+
+  if (isReferralError) {
+    return <NotFound />;
+  }
 
   useEffect(() => {
     const lang = i18n.language || "";

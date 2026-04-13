@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { getWhatsAppLink } from "../lib/contact";
+import NotFound from "../components/not_found";
 
 export const Route = createFileRoute("/petunjuk")({
   validateSearch: (search: Record<string, unknown>): { ref?: string } => {
@@ -82,7 +83,7 @@ function PetunjukPage() {
     }
   }, [ref]);
 
-  const { data: agentData } = useQuery({
+  const { data: agentData, isError } = useQuery({
     queryKey: ['agent-petunjuk', pageId],
     queryFn: async () => {
       const res = await api.get(`/public/pgbo/${pageId}`);
@@ -90,6 +91,10 @@ function PetunjukPage() {
     },
     enabled: !!pageId,
   });
+
+  if (isError) {
+    return <NotFound />;
+  }
 
   const handleComplete = () => {
     if (agentData?.link_group_whatsapp) {

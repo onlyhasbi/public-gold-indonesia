@@ -1,13 +1,23 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Home } from "lucide-react";
+import { Home, ArrowLeft } from "lucide-react";
 
 const HOME_URL = import.meta.env.DEV ? "/" : "https://mypublicgold.id";
 
 export default function NotFound() {
   const { t } = useTranslation();
+  const router = useRouter();
 
-  const buttonClass = "inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white shadow-lg hover:bg-red-700 transition-all hover:scale-110 active:scale-95 no-underline";
+  // Memastikan history benar-benar ada. Beberapa browser menset history.length = 2 pada tab baru.
+  // Pengecekan length > 2 memastikan user benar-benar telah bernavigasi lebih dari sekali.
+  const hasHistory = typeof window !== 'undefined' && window.history.length > 2;
+
+  const handleBack = () => {
+    if (hasHistory) {
+      router.history.back();
+    }
+  };
+
   const buttonTitle = t("notFound.backHome", "Kembali ke Beranda");
 
   return (
@@ -28,24 +38,16 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* Single CTA */}
-        <div className="pt-8">
-          {import.meta.env.DEV ? (
-            <Link
-              to="/"
-              className={buttonClass}
-              title={buttonTitle}
+        {/* Dynamic CTA */}
+        <div className="pt-8 flex flex-col items-center justify-center gap-3">
+          {hasHistory && (
+            <button
+              onClick={handleBack}
+              title="Kembali ke Halaman Sebelumnya"
+              className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-600 text-white shadow-lg shadow-red-500/30 hover:bg-red-700 transition-all hover:scale-110 hover:-translate-y-1 active:scale-95"
             >
-              <Home className="w-8 h-8" />
-            </Link>
-          ) : (
-            <a
-              href={HOME_URL}
-              className={buttonClass}
-              title={buttonTitle}
-            >
-              <Home className="w-8 h-8" />
-            </a>
+              <ArrowLeft className="w-6 h-6" />
+            </button>
           )}
         </div>
       </div>
