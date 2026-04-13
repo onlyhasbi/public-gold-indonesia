@@ -1,8 +1,7 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Home, ArrowLeft } from "lucide-react";
 
-const HOME_URL = import.meta.env.DEV ? "/" : "https://mypublicgold.id";
 
 export default function NotFound() {
   const { t } = useTranslation();
@@ -18,7 +17,6 @@ export default function NotFound() {
     }
   };
 
-  const buttonTitle = t("notFound.backHome", "Kembali ke Beranda");
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 bg-white animate-in fade-in duration-700">
@@ -27,7 +25,7 @@ export default function NotFound() {
         <h1 className="text-[12rem] md:text-[16rem] font-black tracking-tighter text-slate-100 select-none leading-none">
           404
         </h1>
-        
+
         {/* Simple Typography */}
         <div className="space-y-4">
           <h2 className="text-3xl font-bold text-slate-900 tracking-wide">
