@@ -77,10 +77,10 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     Object.entries(values).forEach(([key, val]) => {
       if (key !== "newsletter") payload.append(key, val as string);
     });
-    
-    // Referral Logic: URL-based referral data > HQ Default (Only as safety, since page guards are in place)
-    const refPgcode = referralData?.pgcode || "PG01387609";
-    const refName = (referralData?.nama_panggilan || referralData?.nama_lengkap) || "A. MUH. HASBI HAERURRIJAL ";
+
+    // Referral Logic: URL-based referral data (Guaranteed by page guards)
+    const refPgcode = referralData?.pgcode;
+    const refName = (referralData?.nama_lengkap);
 
     payload.append("label-intro-pgcode", refPgcode);
     payload.append("label-intro-name", refName);
