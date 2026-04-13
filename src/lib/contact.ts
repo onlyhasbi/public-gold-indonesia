@@ -12,9 +12,9 @@ export const SUPPORT_WHATSAPP = "628979901844";
  * 2. Direct WhatsApp chat (wa.me) using no_telpon
  * 3. Fallback to global support number
  */
-export function getWhatsAppLink(data?: ContactData | null): string {
-  // 1. Priority: Group Link
-  if (data?.link_group_whatsapp && data.link_group_whatsapp.trim().startsWith("http")) {
+export function getWhatsAppLink(data?: ContactData | null, preferGroup: boolean = false): string {
+  // 1. WhatsApp Group Link (ONLY if preferGroup is true)
+  if (preferGroup && data?.link_group_whatsapp && data.link_group_whatsapp.trim().startsWith("http")) {
     return data.link_group_whatsapp.trim();
   }
 

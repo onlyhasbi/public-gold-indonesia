@@ -259,7 +259,7 @@ function PetunjukPage() {
   const currentStep = steps[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
-  const helpWaLink = getWhatsAppLink(agentData);
+  const helpWaLink = getWhatsAppLink(agentData, true);
 
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 via-white to-slate-100">
