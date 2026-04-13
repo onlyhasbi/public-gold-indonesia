@@ -146,7 +146,7 @@ export default function PaymentMethods({ pgbo }: { pgbo?: any }) {
                     </DialogHeader>
 
                     {/* Konten Modal */}
-                    <div className="p-6 overflow-y-auto">
+                    <div className="px-6 pb-6 overflow-y-auto">
                         <div className="grid md:grid-cols-2 gap-8">
                             {/* Tabel Logam Mulia */}
                             <div>
