@@ -11,6 +11,7 @@ import { Button } from "../components/ui/button"
 import { useSEO } from '../hooks/useSEO'
 import { StatsGrid } from '../components/overview/StatsGrid'
 import { LeadsDataTable } from '../components/overview/LeadsDataTable'
+import { useDebounce } from '../hooks/useDebounce'
 
 export const Route = createFileRoute('/overview')({
   component: () => (
@@ -53,7 +54,9 @@ export const Route = createFileRoute('/overview')({
 
 function OverviewPage() {
   const navigate = useNavigate()
-  const { data: overviewData } = useSuspenseQuery(overviewQueryOptions());
+  const [serverSearch, setServerSearch] = useState('')
+  const debouncedSearch = useDebounce(serverSearch, 500)
+  const { data: overviewData } = useSuspenseQuery(overviewQueryOptions(debouncedSearch));
 
   useSEO({ title: "Dashboard PGBO | Public Gold Indonesia" });
 
@@ -165,7 +168,11 @@ function OverviewPage() {
           </Card>
         )}
 
-        <LeadsDataTable leads={overviewData?.tabel_pendaftar_terbaru || []} />
+        <LeadsDataTable 
+          leads={overviewData?.tabel_pendaftar_terbaru || []} 
+          serverSearchValue={serverSearch}
+          onServerSearchChange={setServerSearch}
+        />
       </div>
     </div>
   )

@@ -21,9 +21,11 @@ const columnHelper = createColumnHelper<any>()
 
 interface LeadsDataTableProps {
   leads: any[]
+  serverSearchValue?: string
+  onServerSearchChange?: (val: string) => void
 }
 
-export function LeadsDataTable({ leads }: LeadsDataTableProps) {
+export function LeadsDataTable({ leads, serverSearchValue, onServerSearchChange }: LeadsDataTableProps) {
   const queryClient = useQueryClient()
   const { showToast } = useToast()
   const [leadToDelete, setLeadToDelete] = useState<string | null>(null)
@@ -133,6 +135,8 @@ export function LeadsDataTable({ leads }: LeadsDataTableProps) {
         emptyMessage="Belum ada pendaftar"
         enableSearch
         searchPlaceholder="Cari nama, branch, no. telepon..."
+        serverSearchValue={serverSearchValue}
+        onServerSearchChange={onServerSearchChange}
         enablePagination
         defaultPageSize={10}
         enableRowSelection

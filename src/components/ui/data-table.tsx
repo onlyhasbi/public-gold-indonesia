@@ -23,6 +23,8 @@ interface DataTableProps<TData> {
   onSelectionChange?: (selectedRows: TData[]) => void
   /** Render bulk actions — receives count, selectedRows, clearSelection */
   renderBulkActions?: (count: number, selectedRows: TData[], clearSelection: () => void) => ReactNode
+  serverSearchValue?: string
+  onServerSearchChange?: (val: string) => void
 }
 
 export function DataTable<TData>({
@@ -37,6 +39,8 @@ export function DataTable<TData>({
   enableRowSelection = false,
   onSelectionChange,
   renderBulkActions,
+  serverSearchValue,
+  onServerSearchChange,
 }: DataTableProps<TData>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -75,7 +79,7 @@ export function DataTable<TData>({
     onRowSelectionChange: setRowSelection,
     enableRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: enableSearch ? getFilteredRowModel() : undefined,
+    getFilteredRowModel: (enableSearch && !onServerSearchChange) ? getFilteredRowModel() : undefined,
     getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
     initialState: {
       pagination: { pageSize: defaultPageSize },
@@ -104,8 +108,14 @@ export function DataTable<TData>({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
-                value={globalFilter ?? ''}
-                onChange={(e) => setGlobalFilter(e.target.value)}
+                value={onServerSearchChange ? (serverSearchValue ?? '') : (globalFilter ?? '')}
+                onChange={(e) => {
+                  if (onServerSearchChange) {
+                    onServerSearchChange(e.target.value)
+                  } else {
+                    setGlobalFilter(e.target.value)
+                  }
+                }}
                 placeholder={searchPlaceholder}
                 className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/15 focus:border-red-400 transition-all bg-white"
               />

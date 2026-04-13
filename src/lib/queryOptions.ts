@@ -35,11 +35,11 @@ export const goldPricesQueryOptions = () =>
 /**
  * Query Options for Dashboard Overview (Admin)
  */
-export const overviewQueryOptions = () =>
+export const overviewQueryOptions = (search?: string) =>
   queryOptions({
-    queryKey: ["overview"],
+    queryKey: ["overview", search],
     queryFn: async () => {
-      const res = await api.get("/overview");
+      const res = await api.get(`/overview${search ? `?search=${encodeURIComponent(search)}` : ''}`);
       return res.data?.data;
     },
     staleTime: 0,

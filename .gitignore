@@ -12,3 +12,4 @@ dist-ssr
 # SQLite local database
 *.db
 *.db-journal
+local.db.backup

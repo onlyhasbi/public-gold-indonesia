@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { useEffect, useState, useMemo } from 'react'
 import dayjs from 'dayjs'
@@ -11,6 +11,7 @@ import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/data-table'
 import { Trash2, Plus, Pencil, KeyRound, RefreshCw, Eye, EyeOff, Save, LogOut, Loader2, User, Phone, Image as ImageIcon, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useDebounce } from '../../hooks/useDebounce'
 import {
   Dialog,
   DialogContent,
@@ -170,16 +171,20 @@ function AdminDashboard() {
 
   const adminToken = localStorage.getItem('admin_token')
 
+  const [serverSearch, setServerSearch] = useState('')
+  const debouncedSearch = useDebounce(serverSearch, 500)
+
   const { data: pgboData, isLoading, isError, error } = useQuery({
-    queryKey: ['admin_pgbo'],
+    queryKey: ['admin_pgbo', debouncedSearch],
     queryFn: async () => {
-      const res = await api.get('/admin/pgbo', {
+      const res = await api.get(`/admin/pgbo${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ''}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('admin_token')}`
         }
       })
       return res.data?.data || []
     },
+    placeholderData: keepPreviousData,
     retry: 1,
     enabled: !!adminToken,
   })
@@ -607,9 +612,11 @@ function AdminDashboard() {
         <DataTable
           columns={columns}
           data={pgboData || []}
-          emptyMessage="Belum ada data pendaftar."
+          emptyMessage="Belum ada data Dealer (PGBO)."
           enableSearch
-          searchPlaceholder="Cari PGCode, nama, page ID..."
+          searchPlaceholder="Cari PGCode, Nama, atau Page ID..."
+          serverSearchValue={serverSearch}
+          onServerSearchChange={setServerSearch}
           enablePagination
           defaultPageSize={10}
           enableRowSelection
