@@ -30,7 +30,7 @@ function RootComponent() {
   const location = useLocation();
   const matches = useMatches();
   const routerState = useRouterState();
-  const dashboardPaths = ["/register", "/petunjuk", "/overview", "/settings", "/admin"];
+  const dashboardPaths = ["/register", "/petunjuk", "/overview", "/settings", "/admin", "/legal"];
   const isStandalone = dashboardPaths.some((p) => location.pathname.startsWith(p)) || location.pathname === "/";
   const isNotFound = (matches.length === 1 && location.pathname !== "/") || routerState.statusCode === 404;
   const hideTopbar = isStandalone || isNotFound;

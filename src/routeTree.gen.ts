@@ -13,6 +13,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PetunjukRouteImport } from './routes/petunjuk'
 import { Route as OverviewRouteImport } from './routes/overview'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as PgcodeRouteImport } from './routes/$pgcode'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -37,6 +38,11 @@ const PetunjukRoute = PetunjukRouteImport.update({
 const OverviewRoute = OverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PgcodeRoute = PgcodeRouteImport.update({
@@ -68,6 +74,7 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$pgcode': typeof PgcodeRoute
+  '/legal': typeof LegalRoute
   '/overview': typeof OverviewRoute
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$pgcode': typeof PgcodeRoute
+  '/legal': typeof LegalRoute
   '/overview': typeof OverviewRoute
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$pgcode': typeof PgcodeRoute
+  '/legal': typeof LegalRoute
   '/overview': typeof OverviewRoute
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$pgcode'
+    | '/legal'
     | '/overview'
     | '/petunjuk'
     | '/register'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$pgcode'
+    | '/legal'
     | '/overview'
     | '/petunjuk'
     | '/register'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$pgcode'
+    | '/legal'
     | '/overview'
     | '/petunjuk'
     | '/register'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PgcodeRoute: typeof PgcodeRoute
+  LegalRoute: typeof LegalRoute
   OverviewRoute: typeof OverviewRoute
   PetunjukRoute: typeof PetunjukRoute
   RegisterRoute: typeof RegisterRoute
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/$pgcode'
       fullPath: '/$pgcode'
       preLoaderRoute: typeof PgcodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/overview': {
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PgcodeRoute: PgcodeRoute,
+  LegalRoute: LegalRoute,
   OverviewRoute: OverviewRoute,
   PetunjukRoute: PetunjukRoute,
   RegisterRoute: RegisterRoute,
