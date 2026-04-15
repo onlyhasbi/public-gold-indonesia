@@ -1,6 +1,15 @@
 import type { TranslationKeys } from "./types";
 
 export const id: TranslationKeys = {
+    seo: {
+        title: "{{name}} | Dealer Resmi Public Gold Indonesia",
+        description: "Beli emas murni 24K dari Dealer Resmi Public Gold Indonesia. Hubungi {{name}} untuk mulai tabungan emas Anda.",
+    },
+    ui: {
+        highlightTestimonials: "Kata Mereka",
+        highlightPrice: "Harga Emas",
+        photo: "Foto",
+    },
     nav: {
         about: "Tentang Kami",
         advantage: "Keunggulan",
@@ -194,6 +203,7 @@ export const id: TranslationKeys = {
         whatsapp: "Konsultasi Sekarang",
         badges: ["Gratis Konsultasi", "Pendampingan", "Sesuai Syariah"],
         footer: "Dealer Resmi Public Gold Indonesia",
+        copyright: "© {{year}} 5G Associates Indonesia. Hak cipta dilindungi undang-undang.",
     },
     contact: {
         badge: "Hubungi Kami",

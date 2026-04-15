@@ -1,4 +1,13 @@
 export interface TranslationKeys {
+    seo: {
+        title: string;
+        description: string;
+    };
+    ui: {
+        highlightTestimonials: string;
+        highlightPrice: string;
+        photo: string;
+    };
     nav: {
         about: string;
         advantage: string;
@@ -112,6 +121,7 @@ export interface TranslationKeys {
         whatsapp: string;
         badges: string[];
         footer: string;
+        copyright: string;
     };
     contact: {
         badge: string;

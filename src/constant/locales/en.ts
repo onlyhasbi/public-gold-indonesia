@@ -1,6 +1,15 @@
 import type { TranslationKeys } from "./types";
 
 export const en: TranslationKeys = {
+    seo: {
+        title: "{{name}} | Public Gold Authorized Dealer",
+        description: "Buy 24K pure gold from an Authorized Dealer of Public Gold Indonesia. Contact {{name}} to start your gold savings journey.",
+    },
+    ui: {
+        highlightTestimonials: "Testimonials",
+        highlightPrice: "Gold Price",
+        photo: "Photo",
+    },
     nav: {
         about: "About Us",
         advantage: "Advantages",
