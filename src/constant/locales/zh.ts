@@ -1,4 +1,6 @@
-export const zh = {
+import type { TranslationKeys } from "./types";
+
+export const zh: TranslationKeys = {
     nav: {
         about: "关于我们",
         advantage: "优势",
@@ -8,10 +10,19 @@ export const zh = {
         start: "开始",
         contact: "联系我们",
         register: "注册",
+        share: "分享",
+        accountAdult: "成人账户",
+        accountChild: "少年账户",
+        back: "返回",
+    },
+    registerPage: {
+        selectCountry: "选择国家",
+        selectBranch: "选择分行",
+        termsAndNewsletter: "订阅并同意条款与细则",
     },
     hero: {
         eyebrow: "Public Gold 官方经销商",
-        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> 您好，我是 <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
+        headline: "您好，我是 <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
         mission: "通过稳定且易于变现的实物黄金，保护您的财富免受通胀影响。我随时准备帮助您在 Public Gold 以安全、透明且符合您需求的方式开始黄金投资。",
         cta: "立即免费咨询",
     },
@@ -31,7 +42,7 @@ export const zh = {
             { title: "符合伊斯兰教法", description: "交易安全、透明，并在<a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>的监督下符合伊斯兰教法。" },
             { title: "轻松数字交易", description: "随时随地24小时在线购买黄金。" },
             { title: "安全投保配送", description: "黄金直接送到您的地址，享有全额保险保障。" },
-            { title: "免费存储", description: "通过POE账户享受免费黄金存储服务。" },
+            { title: "免费存储", description: "通过GAP账户享受免费黄金存储服务。" },
             { title: "有竞争力的价格", description: "直接从生产商获得透明且有竞争力的价格。" },
             { title: "回购保证", description: "轻松转售黄金，即使在某些条件下仍可接受。" },
         ],
@@ -65,7 +76,7 @@ export const zh = {
         subtitle: "按照简单步骤开始拥有您的黄金资产。",
         steps: [
             { title: "1. 注册账户（免费）", desc: "通过 Public Gold 官网使用您的身份证信息注册。" },
-            { title: "2. 选择产品", desc: "选择实物黄金或通过 GAP/POE 账户开始储蓄。" },
+            { title: "2. 选择产品", desc: "选择实物黄金或通过 GAP 账户开始储蓄。" },
             { title: "3. 完成付款", desc: "可通过虚拟账户或银行转账付款。" },
             { title: "4. 接收与存储", desc: "黄金可配送至您的地址或通过存储服务保存。" },
         ],
@@ -120,18 +131,6 @@ export const zh = {
         subtitle: "选择最适合您的方式。",
         items: [
             {
-                title: "预购黄金（POE）",
-                subtitle: "数字黄金储蓄",
-                description: "购买黄金并存储于数字账户。\n灵活且可转换为实物黄金。",
-                features: [
-                    "起步仅需 Rp 300.000",
-                    "免费存储",
-                    "可转换为实物黄金",
-                    "灵活便捷",
-                ],
-                cta: "开始储蓄",
-            },
-            {
                 title: "现金支付",
                 subtitle: "直接购买",
                 description: "黄金直接归您所有，并可配送至指定地址。",
@@ -142,6 +141,18 @@ export const zh = {
                     "价格随市场变化",
                 ],
                 cta: "立即购买",
+            },
+            {
+                title: "黄金积累计划（GAP）",
+                subtitle: "数字黄金储蓄",
+                description: "购买黄金并存储于数字账户。\n灵活且可转换为实物黄金。",
+                features: [
+                    "起步仅需 Rp 300,000",
+                    "免费存储",
+                    "可转换为实物黄金",
+                    "灵活便捷",
+                ],
+                cta: "开始储蓄",
             },
             {
                 title: "分期付款（EPP）",
@@ -234,10 +245,17 @@ export const zh = {
         loading: "加载中...",
         priceLabel: "卖出价格",
         currency: "Rp ",
+        pricePerWeight: "每 {{weight}} 克价格",
+        currentPricePerGram: "当前每克价格",
+        priceOptions: "价格选项",
+        infoTitle: "价格信息",
+        infoDesc: "价格仅供参考，将在创建订单时锁定。定期价格更新：现金（每 20 分钟），储蓄（每 24 小时，或在全球黄金市场 XAUUSD 发生重大波动时）。",
+        modeSaving: "储蓄",
+        modeCash: "现金",
         poe: {
-            title: "预购黄金（POE）",
+            title: "黄金积累计划（GAP）",
             subtitle: "数字存储",
-            desc: "起步 Rp 300.000",
+            desc: "起步 Rp 300,000",
         },
         perGram: {
             title: "每克价格",
@@ -256,7 +274,7 @@ export const zh = {
                 title: "客户，望加锡",
             },
             {
-                quote: "通过POE储蓄黄金，最低300,000印尼盾就能开始。攒够需要的克数后，直接到雅加达分行提取实物黄金。服务热情，非常专业，效率很高。最棒了！",
+                quote: "通过GAP储蓄黄金，最低300,000印尼盾就能开始。攒够需要的克数后，直接到雅加达分行提取实物黄金。服务热情，非常专业，效率很高。最棒了！",
                 name: "Cici Anggraeni",
                 title: "客户，雅加达",
             },
@@ -292,7 +310,6 @@ export const zh = {
             },
         ],
     },
-
     faq: {
         badge: "常见问题",
         title: "常见问答",
@@ -300,8 +317,8 @@ export const zh = {
         items: [
             {
                 category: "价格与产品",
-                ask: "数字黄金（POE）和实物黄金有什么区别？",
-                answer: "POE 黄金以数字形式存储在您的账户中，并可随时转换为实物黄金；而实物黄金会直接交付给您。",
+                ask: "数字黄金（GAP）和实物黄金有什么区别？",
+                answer: "GAP 黄金以数字形式存储在您的账户中，并可随时转换为实物黄金；而实物黄金会直接交付给您。",
             },
             {
                 category: "投资",

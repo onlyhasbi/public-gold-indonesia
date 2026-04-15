@@ -97,7 +97,7 @@ function RegisterPage() {
     }
   }, [ref, referralData, navigate]);
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [countryMode, setCountryMode] = useState<"ID" | "MY" | "INTL">("ID");
 
   if (isReferralError) {
@@ -202,7 +202,7 @@ function RegisterPage() {
                 params={referralData?.pageid ? { pgcode: referralData.pageid } : undefined}
                 className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
               >
-                <ArrowLeft className="w-4 h-4" /> Kembali
+                <ArrowLeft className="w-4 h-4" /> {t('nav.back')}
               </Link>
 
               <Combobox
@@ -220,7 +220,7 @@ function RegisterPage() {
                 }}
               >
                 <ComboboxTrigger className="w-fit min-w-[145px] bg-slate-50 border-slate-200">
-                  <ComboboxValue placeholder="Pilih Negara" className="truncate">
+                  <ComboboxValue placeholder={t('registerPage.selectCountry')} className="truncate">
                     {countryMode === 'ID' ? '🇮🇩 Indonesia' : countryMode === 'MY' ? '🇲🇾 Malaysia' : '🌏 International'}
                   </ComboboxValue>
                 </ComboboxTrigger>
@@ -530,7 +530,7 @@ function RegisterPage() {
                     >
                       <ComboboxTrigger id="upreferredbranch" className={cn(errors["upreferredbranch"] && "border-red-500 focus-visible:ring-red-500/30")}>
                         <ComboboxValue className="truncate">
-                          {activeBranchOptions.find(opt => opt.value === watch("upreferredbranch"))?.label || (isIndonesia ? "Pilih Cabang" : "Select Branch")}
+                          {activeBranchOptions.find(opt => opt.value === watch("upreferredbranch"))?.label || t('registerPage.selectBranch')}
                         </ComboboxValue>
                       </ComboboxTrigger>
                       <ComboboxContent>
@@ -585,7 +585,7 @@ function RegisterPage() {
                           {...register("newsletter")}
                         />
                         <Label htmlFor="newsletter" className="cursor-pointer">
-                          {isIndonesia ? "Berlangganan & Setujui Syarat dan Ketentuan" : "Subscribe to newsletter & Agree to terms"}
+                          {t('registerPage.termsAndNewsletter')}
                         </Label>
                       </div>
 

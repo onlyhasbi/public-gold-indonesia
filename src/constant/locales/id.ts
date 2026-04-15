@@ -1,4 +1,6 @@
-export const id = {
+import type { TranslationKeys } from "./types";
+
+export const id: TranslationKeys = {
     nav: {
         about: "Tentang Kami",
         advantage: "Keunggulan",
@@ -8,6 +10,15 @@ export const id = {
         start: "Mulai",
         contact: "Kontak",
         register: "Daftar",
+        share: "Bagikan",
+        accountAdult: "Akun Dewasa",
+        accountChild: "Akun Anak",
+        back: "Kembali",
+    },
+    registerPage: {
+        selectCountry: "Pilih Negara",
+        selectBranch: "Pilih Cabang",
+        termsAndNewsletter: "Berlangganan & Setujui Syarat dan Ketentuan",
     },
     hero: {
         eyebrow: "Dealer Resmi Public Gold",
@@ -234,6 +245,13 @@ export const id = {
         loading: "Memuat harga...",
         priceLabel: "Harga Jual",
         currency: "Rp ",
+        pricePerWeight: "Harga per {{weight}} gram",
+        currentPricePerGram: "Harga per gram saat ini",
+        priceOptions: "Pilihan Harga",
+        infoTitle: "Informasi Harga",
+        infoDesc: "Harga bersifat estimasi dan akan dikunci saat pesanan dibuat. Update harga berkala: Tunai (setiap 20 menit), Tabungan (setiap 24 jam atau jika terjadi fluktuasi signifikan pada pasar emas global XAUUSD).",
+        modeSaving: "Tabungan",
+        modeCash: "Tunai",
         poe: {
             title: "Pre-Order Emas (POE)",
             subtitle: "Menabung Emas",

@@ -215,7 +215,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
                     <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
                       <Share2 className="w-4 h-4 text-slate-500 group-hover:text-slate-700" />
                     </div>
-                    Bagikan
+                    {t('nav.share')}
                   </button>
                 </div>
               </PopoverContent>

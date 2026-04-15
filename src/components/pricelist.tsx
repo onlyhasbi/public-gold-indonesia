@@ -459,7 +459,7 @@ function PriceList({ price, pgbo }: Props) {
             <div className="flex-1 md:flex-none flex flex-col items-center justify-center group cursor-default min-w-0">
               <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
                 <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
-                  Harga per <span className="text-red-600 underline underline-offset-4 decoration-red-600/30 font-black">{gramsFor300k ?? "..."}</span> gram
+                  {t('priceList.pricePerWeight', { weight: gramsFor300k ?? "..." })}
                 </span>
               </div>
               <div className="text-[26px] sm:text-[32px] md:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600 whitespace-nowrap">
@@ -473,7 +473,7 @@ function PriceList({ price, pgbo }: Props) {
             <div className="flex-1 md:flex-none flex flex-col items-center justify-center group cursor-default min-w-0">
               <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
                 <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
-                  Harga per gram saat ini
+                  {t('priceList.currentPricePerGram')}
                 </span>
               </div>
               <div className="text-[26px] sm:text-[32px] md:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600 whitespace-nowrap">
@@ -489,7 +489,7 @@ function PriceList({ price, pgbo }: Props) {
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center gap-1.5">
                 <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
-                  Pilihan Harga
+                  {t('priceList.priceOptions')}
                 </span>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -501,10 +501,9 @@ function PriceList({ price, pgbo }: Props) {
                     <div className="flex gap-3">
                       <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                       <div className="space-y-1.5">
-                        <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-left">Informasi Harga</h4>
+                        <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-left">{t('priceList.infoTitle')}</h4>
                         <p className="text-[11px] md:text-xs text-slate-500 leading-relaxed italic text-left">
-                          Harga bersifat estimasi dan akan dikunci saat pesanan dibuat.
-                          Update harga berkala: <span className="font-bold text-slate-700">Tunai</span> (setiap 20 menit), <span className="font-bold text-slate-700">Tabungan</span> (setiap 24 jam atau jika terjadi fluktuasi signifikan pada pasar emas global XAUUSD).
+                          {t('priceList.infoDesc')}
                         </p>
                       </div>
                     </div>
@@ -522,7 +521,7 @@ function PriceList({ price, pgbo }: Props) {
                     : "text-slate-500 hover:text-slate-700"
                 )}
               >
-                Tabungan
+                {t('priceList.modeSaving')}
               </button>
               <button
                 onClick={() => setPriceMode("tunai")}
@@ -533,7 +532,7 @@ function PriceList({ price, pgbo }: Props) {
                     : "text-slate-500 hover:text-slate-700"
                 )}
               >
-                Tunai
+                {t('priceList.modeCash')}
               </button>
             </div>
           </div>

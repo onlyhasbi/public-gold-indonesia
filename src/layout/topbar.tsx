@@ -28,6 +28,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
 
   const languages = [
     { id: "id", label: "Indonesia", emoji: "🇮🇩", code: "ID" },
+    { id: "en", label: "English", emoji: "🇬🇧", code: "EN" },
     { id: "ms", label: "Malaysia", emoji: "🇲🇾", code: "MS" },
     { id: "zh", label: "Chinese", emoji: "🇨🇳", code: "ZH" },
     { id: "ta", label: "Tamil", emoji: "🇮🇳", code: "TA" },
@@ -141,11 +142,11 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                     >
                       <img
                         src="./dewasa.webp"
-                        alt="Dewasa"
+                        alt={t("nav.accountAdult")}
                         className="w-5 h-5 object-cover rounded-full"
                         style={{ objectPosition: "center 10%" }}
                       />{" "}
-                      Akun Dewasa
+                      {t("nav.accountAdult")}
                     </Link>
                   }
                 />
@@ -158,11 +159,11 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                     >
                       <img
                         src="./anak.webp"
-                        alt="Anak"
+                        alt={t("nav.accountChild")}
                         className="w-5 h-5 object-cover rounded-full"
                         style={{ objectPosition: "center 10%" }}
                       />{" "}
-                      Akun Anak
+                      {t("nav.accountChild")}
                     </Link>
                   }
                 />

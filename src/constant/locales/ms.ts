@@ -1,4 +1,6 @@
-export const ms = {
+import type { TranslationKeys } from "./types";
+
+export const ms: TranslationKeys = {
     nav: {
         about: "Tentang Kami",
         advantage: "Kelebihan",
@@ -8,10 +10,19 @@ export const ms = {
         start: "Mula",
         contact: "Hubungi",
         register: "Daftar",
+        share: "Kongsi",
+        accountAdult: "Akaun Dewasa",
+        accountChild: "Akaun Junior",
+        back: "Kembali",
+    },
+    registerPage: {
+        selectCountry: "Pilih Negara",
+        selectBranch: "Pilih Cawangan",
+        termsAndNewsletter: "Langgan & Setuju pada Terma dan Syarat",
     },
     hero: {
         eyebrow: "Dealer Rasmi Public Gold",
-        headline: "<span class='inline-block origin-[70%_70%] animate-[wave_2.5s_infinite]'>👋</span> Hai, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
+        headline: "Hai, Saya <span class='bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent drop-shadow-sm'>{{name}}</span>",
         mission: "Lindungi nilai wang anda daripada inflasi dengan emas fizikal yang stabil dan mudah dicairkan. Saya sedia membantu anda memulakan pelaburan emas dengan cara yang selamat, telus, dan sesuai keperluan anda di Public Gold.",
         cta: "Konsultasi Percuma Sekarang",
     },
@@ -31,7 +42,7 @@ export const ms = {
             { title: "Patuh Syariah", description: "Transaksi selamat, telus, dan patuh syariah dengan pengawasan <a href='https://amanieadvisors.com/' target='_blank' rel='noopener noreferrer' class='text-red-600 hover:underline font-medium'>Amanie Advisors</a>." },
             { title: "Transaksi Digital Mudah", description: "Beli emas pada bila-bila masa dan di mana sahaja secara dalam talian dengan akses 24 jam." },
             { title: "Penghantaran Selamat & Berinsurans", description: "Emas dihantar terus ke alamat anda dengan perlindungan insurans penuh." },
-            { title: "Penyimpanan Percuma", description: "Nikmati kemudahan penyimpanan emas tanpa caj melalui akaun POE." },
+            { title: "Penyimpanan Percuma", description: "Nikmati kemudahan penyimpanan emas tanpa caj melalui akaun GAP." },
             { title: "Harga Kompetitif", description: "Dapatkan harga terus daripada pengeluar dengan sistem yang telus dan kompetitif." },
             { title: "Jaminan Belian Semula", description: "Jual semula emas dengan mudah, walaupun dalam keadaan tertentu masih boleh diterima." },
         ],
@@ -65,7 +76,7 @@ export const ms = {
         subtitle: "Ikuti langkah mudah untuk mula memiliki emas anda.",
         steps: [
             { title: "1. Daftar Akaun (Percuma)", desc: "Daftar melalui laman rasmi Public Gold menggunakan maklumat pengenalan diri anda." },
-            { title: "2. Pilih Produk", desc: "Pilih emas fizikal atau mula menabung melalui akaun GAP/POE." },
+            { title: "2. Pilih Produk", desc: "Pilih emas fizikal atau mula menabung melalui akaun GAP." },
             { title: "3. Buat Pembayaran", desc: "Pembayaran boleh dibuat melalui Virtual Account atau pindahan bank." },
             { title: "4. Terima & Simpan", desc: "Emas boleh dihantar ke alamat anda atau disimpan melalui kemudahan simpanan." },
         ],
@@ -114,13 +125,143 @@ export const ms = {
             },
         ],
     },
+    paymentMethods: {
+        badge: "Kaedah Pembayaran",
+        title: "Pilih Cara Terbaik {mbr}Memulakan Emas Anda",
+        subtitle: "Sesuaikan dengan matlamat dan kemampuan kewangan anda, daripada menabung hingga pembelian terus.",
+        items: [
+            {
+                title: "Pembayaran Tunai",
+                subtitle: "Pembelian Terus",
+                description: "Miliki emas fizikal secara terus dengan harga mengikut pasaran. Penghantaran selamat ke alamat anda atau ambil di cawangan terdekat.",
+                features: [
+                    "Penghantaran atau ambil di cawangan",
+                    "Perlindungan insurans",
+                    "Produk diperakui",
+                    "Harga mengikut pasaran",
+                ],
+                cta: "Beli Emas Sekarang",
+            },
+            {
+                title: "Gold Accumulation Program (GAP)",
+                subtitle: "Simpanan Emas",
+                description: "Mula menabung emas secara berperingkat, fleksibel mengikut kemampuan, dan boleh dikeluarkan sebagai emas fizikal pada bila-bila masa.",
+                features: [
+                    "Bermula dari kadar mampu milik",
+                    "Tiada caj penyimpanan",
+                    "Boleh dikeluarkan sebagai emas fizikal",
+                    "Fleksibel mengikut keperluan",
+                ],
+                cta: "Mula Menabung Emas",
+            },
+            {
+                title: "Easy Payment Plan (EPP)",
+                subtitle: "Ansuran Syariah",
+                description: "Miliki emas impian dengan ansuran ringan mengikut prinsip syariah. Bebas faedah dan tanpa wang pendahuluan.",
+                features: [
+                    "Tanpa faedah (0%)",
+                    "Tanpa wang pendahuluan (DP)",
+                    "Pilihan tempoh 6 atau 10 bulan",
+                    "Patuh syariah",
+                ],
+                cta: "Mula Ansuran",
+            },
+        ],
+        note: "Perlukan bantuan? Konsultasikan pilihan terbaik mengikut keperluan anda.",
+    },
+    dealer: {
+        badge: "Peluang Perniagaan",
+        title: "Menjadi Dealer Public Gold",
+        subtitle: "Bina peluang pendapatan sampingan sekaligus meluaskan wawasan kewangan.",
+        benefits: [
+            { title: "Pendapatan Sampingan", desc: "Dapatkan insentif daripada aktiviti transaksi." },
+            { title: "Fleksibel", desc: "Boleh dijalankan dari mana-mana sahaja." },
+            { title: "Bimbingan", desc: "Mendapat bimbingan dalam proses pembangunan." },
+        ],
+        joinTeam: "Mengapa Menyertai Pasukan Kami?",
+        teamBenefits: [
+            "Kumpulan edukasi",
+            "Bahan promosi",
+            "Edukasi rutin",
+            "Strategi pemasaran",
+        ],
+        quote: "Menjadi dealer adalah peluang untuk belajar sekaligus berkembang dalam dunia aset emas.",
+    },
     cta: {
         dealerBadge: "Dealer Rasmi",
-        title: "Mulai Amankan Nilai Aset Anda",
+        title: "Mula Amankan Nilai Aset Anda",
         desc: "Dapatkan panduan untuk memulakan pelaburan emas dengan lebih yakin dan terancang.",
         whatsapp: "Konsultasi Percuma di WhatsApp",
         badges: ["Percuma", "Bimbingan Penuh", "Patuh Syariah"],
         footer: "Dealer Rasmi Public Gold Indonesia",
+    },
+    contact: {
+        badge: "Hubungi Kami",
+        title: "Ada Pertanyaan?",
+        desc: "Kami sedia membantu anda memahami pelaburan emas dengan lebih jelas.",
+        form: {
+            firstName: "Nama Depan",
+            lastName: "Nama Belakang",
+            email: "Alamat Emel",
+            message: "Pesanan Anda",
+            submit: "Hantar Pesanan",
+            placeholder: "Tulis pertanyaan anda di sini...",
+        },
+    },
+    howToStart: {
+        badge: "Cara Bermula",
+        title: "3 Langkah Mudah Menyimpan Emas",
+        subtitle: "Proses pantas dan selamat untuk memulakan pelaburan pertama anda.",
+        steps: [
+            { title: "1. Pendaftaran Percuma", desc: "Isi borang pendaftaran mengikut data pengenalan diri tanpa caj." },
+            { title: "2. Pengesahan Akaun", desc: "Muat naik identiti untuk proses keselamatan akaun." },
+            { title: "3. Mula Menabung", desc: "Mula pembelian emas melalui dashboard anda." },
+        ],
+        cta: "Daftar Sekarang",
+        note: "*Pendaftaran percuma tanpa kos tersembunyi",
+    },
+    startPage: {
+        badge: "Panduan Pemula",
+        title: "Mula Simpanan Emas Anda",
+        desc: "Anda boleh mula menabung emas secara berperingkat dengan sistem yang selamat dan fleksibel.",
+        ctaPrimary: "Daftar Sekarang",
+        ctaSecondary: "Ketahui Lebih Lanjut",
+        stepsTitle: "Langkah Bermula",
+        stepsDesc: "Proses pendaftaran yang mudah dan pantas.",
+        steps: [
+            { title: "Pendaftaran Dalam Talian", desc: "Isi data diri melalui borang dalam talian." },
+            { title: "Pengesahan", desc: "Muat naik identiti untuk keselamatan akaun." },
+            { title: "Mula Menabung", desc: "Lakukan pembelian emas mengikut keperluan." },
+        ],
+        guarantee: {
+            title: "Patuh Syariah",
+            subtitle: "Selamat & Dipercayai",
+        },
+    },
+    priceList: {
+        badge: "Harga Real-Time",
+        title: "Harga Emas Hari Ini",
+        subtitle: "Dikemas kini secara berkala mengikut pergerakan {mbr}pasaran global",
+        loading: "Memuatkan harga...",
+        priceLabel: "Harga Jual",
+        currency: "Rp ",
+        pricePerWeight: "Harga per {{weight}} gram",
+        currentPricePerGram: "Harga per gram semasa",
+        priceOptions: "Pilihan Harga",
+        infoTitle: "Maklumat Harga",
+        infoDesc: "Harga bersifat anggaran dan akan dikunci apabila pesanan dibuat. Kemas kini harga berkala: Tunai (setiap 20 minit), Simpanan (setiap 24 jam atau jika berlaku turun naik ketara pada pasaran emas global XAUUSD).",
+        modeSaving: "Simpanan",
+        modeCash: "Tunai",
+        poe: {
+            title: "Gold Accumulation Program (GAP)",
+            subtitle: "Menabung Emas",
+            desc: "Bermula dari kadar kompetitif",
+        },
+        perGram: {
+            title: "Harga Per Gram",
+            subtitle: "Emas Fizikal",
+            desc: "24K | Ketulenan 999.9",
+        },
     },
     testimonials: {
         badge: "Testimoni Pelanggan",
@@ -133,7 +274,7 @@ export const ms = {
                 title: "Nasabah, Makassar",
             },
             {
-                quote: "Nabung emas lewat POE, bisa nabung dikit-dikit minimal 300rb. Kalau udah cukup gramasi yang saya inginkan, langsung saya keluarkan emas fisiknya di kantor cabang Jakarta. Pelayanannya ramah, sangat membantu, pokoknya sat set. Terbaik!",
+                quote: "Nabung emas lewat GAP, bisa nabung dikit-dikit minimal 300rb. Kalau udah cukup gramasi yang saya inginkan, langsung saya keluarkan emas fisiknya di kantor cabang Jakarta. Pelayanannya ramah, sangat membantu, pokoknya sat set. Terbaik!",
                 name: "Cici Anggraeni",
                 title: "Nasabah, Jakarta",
             },
@@ -169,7 +310,6 @@ export const ms = {
             },
         ],
     },
-
     faq: {
         badge: "Soalan Lazim",
         title: "Soalan yang Sering Ditanya",
@@ -177,8 +317,8 @@ export const ms = {
         items: [
             {
                 category: "Harga & Produk",
-                ask: "Apakah perbezaan emas POE dan emas fizikal?",
-                answer: "Emas POE disimpan secara digital dan boleh ditukar kepada fizikal. Emas fizikal pula diterima terus.",
+                ask: "Apakah perbezaan emas GAP dan emas fizikal?",
+                answer: "Emas GAP disimpan secara digital dan boleh ditukar kepada fizikal. Emas fizikal pula diterima terus.",
             },
             {
                 category: "Pelaburan",

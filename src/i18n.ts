@@ -2,6 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { id } from "./constant/locales/id";
+import { en } from "./constant/locales/en";
 import { ms } from "./constant/locales/ms";
 import { zh } from "./constant/locales/zh";
 import { ta } from "./constant/locales/ta";
@@ -12,6 +13,7 @@ i18n
     .init({
         resources: {
             id: { translation: id },
+            en: { translation: en },
             ms: { translation: ms },
             zh: { translation: zh },
             ta: { translation: ta },
