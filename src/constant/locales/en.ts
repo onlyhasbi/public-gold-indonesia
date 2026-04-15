@@ -203,6 +203,7 @@ export const en: TranslationKeys = {
         whatsapp: "Consult Now",
         badges: ["Free Consultation", "Mentorship", "Shariah Compliant"],
         footer: "Official Public Gold Indonesia Dealer",
+        copyright: "© {{year}} 5G Associates Indonesia. All rights reserved.",
     },
     contact: {
         badge: "Contact Us",

@@ -1,6 +1,15 @@
 import type { TranslationKeys } from "./types";
 
 export const ms: TranslationKeys = {
+    seo: {
+        title: "{{name}} | Pengedar Sah Public Gold Malaysia",
+        description: "Beli emas tulen 24K daripada Pengedar Sah Public Gold Indonesia. Hubungi {{name}} untuk mula simpanan emas anda.",
+    },
+    ui: {
+        highlightTestimonials: "Kata Mereka",
+        highlightPrice: "Harga Emas",
+        photo: "Foto",
+    },
     nav: {
         about: "Tentang Kami",
         advantage: "Kelebihan",
@@ -193,7 +202,8 @@ export const ms: TranslationKeys = {
         desc: "Dapatkan panduan untuk memulakan pelaburan emas dengan lebih yakin dan terancang.",
         whatsapp: "Konsultasi Percuma di WhatsApp",
         badges: ["Percuma", "Bimbingan Penuh", "Patuh Syariah"],
-        footer: "Dealer Rasmi Public Gold Indonesia",
+        footer: "Pengedar Sah Public Gold Indonesia",
+        copyright: "© {{year}} 5G Associates Indonesia. Hak cipta terpelihara.",
     },
     contact: {
         badge: "Hubungi Kami",

@@ -1,6 +1,15 @@
 import type { TranslationKeys } from "./types";
 
 export const ta: TranslationKeys = {
+    seo: {
+        title: "{{name}} | Public Gold அங்கீகரிக்கப்பட்ட டீலர்",
+        description: "Public Gold Indonesia-வின் அங்கீகரிக்கப்பட்ட டீலரிடமிருந்து 24K தூய தங்கத்தை வாங்குங்கள். உங்கள் தங்கச் சேமிப்பைத் தொடங்க {{name}}-ஐத் தொடர்பு கொள்ளுங்கள்.",
+    },
+    ui: {
+        highlightTestimonials: "வாடிக்கையாளர் கருத்து",
+        highlightPrice: "தங்க விலை",
+        photo: "புகைப்படம்",
+    },
     nav: {
         about: "எங்களை பற்றி",
         advantage: "சிறப்பம்சங்கள்",
@@ -193,7 +202,8 @@ export const ta: TranslationKeys = {
         desc: "உங்களுக்கு ஏற்ற முதலீட்டை தேர்வு செய்யுங்கள்.",
         whatsapp: "WhatsApp மூலம் தொடர்பு",
         badges: ["இலவச ஆலோசனை", "வழிகாட்டுதல்", "ஷரியா இணக்கம்"],
-        footer: "Public Gold Indonesia அங்கீகரிக்கப்பட்ட டீலர்",
+        footer: "அங்கீகரிக்கப்பட்ட டீலர் - Public Gold Indonesia",
+        copyright: "© {{year}} 5G Associates Indonesia. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.",
     },
     contact: {
         badge: "தொடர்பு",

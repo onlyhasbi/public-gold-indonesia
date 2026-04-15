@@ -1,6 +1,15 @@
 import type { TranslationKeys } from "./types";
 
 export const zh: TranslationKeys = {
+    seo: {
+        title: "{{name}} | Public Gold 授权代理商",
+        description: "从 Public Gold Indonesia 授权代理商处购买 24K 纯金。联系 {{name}} 开启您的黄金储蓄之旅。",
+    },
+    ui: {
+        highlightTestimonials: "客户见证",
+        highlightPrice: "今日金价",
+        photo: "照片",
+    },
     nav: {
         about: "关于我们",
         advantage: "优势",
@@ -193,7 +202,8 @@ export const zh: TranslationKeys = {
         desc: "咨询您的需求，开启正确的黄金投资之路。",
         whatsapp: "通过 WhatsApp 咨询",
         badges: ["免费咨询", "全程指导", "教法合规"],
-        footer: "Public Gold 印度尼西亚官方经销商",
+        footer: "Public Gold Indonesia 授权代理商",
+        copyright: "© {{year}} 5G Associates Indonesia。版权所有。",
     },
     contact: {
         badge: "联系我们",
