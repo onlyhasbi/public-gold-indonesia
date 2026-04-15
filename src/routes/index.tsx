@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate, useSearch } from '@tanstack/react-router'
 import {
   ArrowRight,
   Check,
@@ -645,7 +645,7 @@ function LandingAuthPage() {
                   </div>
                 </Tabs>
 
-                <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex justify-center bg-transparent">
+                <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex flex-col items-center gap-3 bg-transparent">
                   <a
                     href="https://wa.me/628979901844"
                     target="_blank"
@@ -657,6 +657,11 @@ function LandingAuthPage() {
                     </div>
                     <span className="text-[9px] text-slate-400 tracking-wider">Butuh Bantuan? Hubungi Admin</span>
                   </a>
+                  <div className="flex items-center gap-3 text-[9px] text-slate-300">
+                    <Link to="/legal" search={{ tab: 'terms' }} className="hover:text-slate-500 transition-colors no-underline">Syarat & Ketentuan</Link>
+                    <span>•</span>
+                    <Link to="/legal" search={{ tab: 'privacy' }} className="hover:text-slate-500 transition-colors no-underline">Privasi</Link>
+                  </div>
                 </div>
               </CardContent>
             </MotionCard>
@@ -670,10 +675,17 @@ function LandingAuthPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center gap-2 opacity-30 mt-4 text-[9px] text-slate-500"
+              className="flex flex-col items-center gap-3 mt-4"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              Portal Keamanan Terpusat Public Gold
+              <div className="flex items-center justify-center gap-2 opacity-30 text-[9px] text-slate-500">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                Portal Keamanan Terpusat Public Gold
+              </div>
+              <div className="flex items-center gap-3 text-[9px] text-slate-300 opacity-40">
+                <Link to="/legal" search={{ tab: 'terms' }} className="hover:text-slate-500 transition-colors no-underline">Syarat & Ketentuan</Link>
+                <span>•</span>
+                <Link to="/legal" search={{ tab: 'privacy' }} className="hover:text-slate-500 transition-colors no-underline">Privasi</Link>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
