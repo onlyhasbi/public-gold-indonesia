@@ -1,4 +1,7 @@
 export interface TranslationKeys {
+    common: {
+        copySuccess: string;
+    };
     seo: {
         title: string;
         description: string;
@@ -214,5 +217,47 @@ export interface TranslationKeys {
         desc: string;
         backHome: string;
         goBack: string;
+    };
+    registerForm: {
+        titleDewasa: string;
+        descDewasa: string;
+        titleAnak: string;
+        descAnak: string;
+        tabDewasa: string;
+        tabAnak: string;
+        noteAnak: string;
+        parentSectionTitle: string;
+        nameLabelDewasa: string;
+        nameLabelAnak: string;
+        namePlaceholderDewasa: string;
+        namePlaceholderAnak: string;
+        idTypeLabel: string;
+        idTypeKtp: string;
+        idTypePassport: string;
+        icLabelDewasa: string;
+        icLabelAnak: string;
+        icPlaceholderDewasa: string;
+        icPlaceholderAnak: string;
+        npwpLabel: string;
+        npwpDesc: string;
+        npwpPlaceholder: string;
+        dobLabelDewasa: string;
+        dobLabelAnak: string;
+        emailLabel: string;
+        emailPlaceholder: string;
+        parentNameLabel: string;
+        parentNamePlaceholder: string;
+        parentIcLabel: string;
+        parentIcPlaceholder: string;
+        mobileLabelDewasa: string;
+        mobileLabelAnak: string;
+        mobilePlaceholder: string;
+        mobileWarning: string;
+        branchLabel: string;
+        branchDesc: string;
+        submitBtn: string;
+        submittingBtn: string;
+        termsText: string;
+        termsLink: string;
     };
 }

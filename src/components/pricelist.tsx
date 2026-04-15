@@ -411,9 +411,9 @@ function PriceList({ price, pgbo }: Props) {
 
       {/* Section Header */}
       <div className="text-center mb-12 relative z-10 flex flex-col items-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-          <GradientHighlight text={t("priceList.title")} highlight="Harga Emas" />
-        </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 drop-shadow-sm">
+              <GradientHighlight text={t("priceList.title")} highlight={t("ui.highlightPrice")} />
+            </h2>
         <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-3 px-4">
           <p className="text-slate-500 text-sm md:text-lg max-w-2xl leading-relaxed text-center">
             {(() => {

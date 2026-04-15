@@ -54,7 +54,7 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
                                         />
                                     ) : (
                                         <div className="relative w-full h-full rounded-full bg-gradient-to-br from-white/30 to-white/10 border-4 border-white shadow-2xl flex items-center justify-center">
-                                            <span className="text-white/60 text-lg font-semibold tracking-wide uppercase">Photo</span>
+                                            <span className="text-white/60 text-lg font-semibold tracking-wide uppercase">{t("ui.photo")}</span>
                                         </div>
                                     )}
                                 </div>
@@ -101,7 +101,7 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
 
                 {/* Footer info */}
                 <div className="mt-12 text-center text-slate-500 text-sm">
-                    <p>&copy; {new Date().getFullYear()} 5G Associates Indonesia. All rights reserved.</p>
+                    <p>{t("cta.copyright", { year: new Date().getFullYear() })}</p>
                 </div>
             </div>
         </BaseLayout>

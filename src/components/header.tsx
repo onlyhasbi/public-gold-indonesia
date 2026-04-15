@@ -75,7 +75,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
     } else {
       try {
         await navigator.clipboard.writeText(url);
-        alert("Tautan berhasil disalin!");
+        alert(t("common.copySuccess"));
       } catch (err) {
         console.error("Failed to copy link", err);
       }
@@ -120,7 +120,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-              <span className="text-slate-400 text-lg font-semibold tracking-wide uppercase">Photo</span>
+              <span className="text-slate-400 text-lg font-semibold tracking-wide uppercase">{t("ui.photo")}</span>
             </div>
           )}
         </div>

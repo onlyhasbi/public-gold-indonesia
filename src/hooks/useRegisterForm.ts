@@ -8,6 +8,7 @@ import { formatPhoneForAPI } from "../lib/phone";
 import { getValidationSchema } from "../lib/validations";
 import { api } from "../lib/api";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export type FormSummaryItem = {
   label: string;
@@ -15,6 +16,7 @@ export type FormSummaryItem = {
 };
 
 export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INTL", referralData?: any) {
+  const { t } = useTranslation();
   const isIndonesia = countryMode === "ID";
   const [isDobDisabled, setIsDobDisabled] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -36,6 +38,7 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     getValues,
     watch,
     reset,
+    control,
     formState: { errors, touchedFields }
   } = useForm({
     mode: "onSubmit",
@@ -100,35 +103,35 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     const dialOption = dialCodeOptions.find((o) => o.value === values['label-mobile-dialcode']);
     const dialLabel = dialOption ? `+${dialOption.value}` : `+${values['label-mobile-dialcode']}`;
 
-    const idTypeLabel = values.idselect === "passportforeign" ? (isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID") : (isIndonesia ? "KTP" : "NEW IC");
+    const idTypeLabel = values.idselect === "passportforeign" ? t("registerForm.idTypePassport") : t("registerForm.idTypeKtp");
 
     const items: FormSummaryItem[] = [
-      { label: isAnak ? "Nama Anak" : "Nama Lengkap", value: values['label-name'] || "-" },
-      { label: isAnak ? "Tipe Identitas Anak" : "Tipe Identitas", value: idTypeLabel },
-      { label: isAnak ? "Nomor Identitas Anak" : "Nomor Identitas", value: values['label-ic'] || "-" },
+      { label: isAnak ? t("registerForm.nameLabelAnak") : t("registerForm.nameLabelDewasa"), value: values['label-name'] || "-" },
+      { label: t("registerForm.idTypeLabel"), value: idTypeLabel },
+      { label: isAnak ? t("registerForm.icLabelAnak") : t("registerForm.icLabelDewasa"), value: values['label-ic'] || "-" },
     ];
 
     if (isIndonesia) {
-      items.push({ label: "NPWP", value: values['label-individualgstid'] || "-" });
+      items.push({ label: t("registerForm.npwpLabel"), value: values['label-individualgstid'] || "-" });
     }
 
     items.push(
-      { label: isAnak ? "Tanggal Lahir Anak" : "Tanggal Lahir", value: values['label-dob'] || "-" },
-      { label: "Email", value: values['label-email'] || "-" },
+      { label: isAnak ? t("registerForm.dobLabelAnak") : t("registerForm.dobLabelDewasa"), value: values['label-dob'] || "-" },
+      { label: t("registerForm.emailLabel"), value: values['label-email'] || "-" },
     );
 
     if (isAnak) {
-      const parentIdTypeLabel = values.parent_idselect === "passportforeign" ? (isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID") : (isIndonesia ? "KTP" : "NEW IC");
+      const parentIdTypeLabel = values.parent_idselect === "passportforeign" ? t("registerForm.idTypePassport") : t("registerForm.idTypeKtp");
       items.push(
-        { label: "Nama Orang Tua", value: values['label-parent-name'] || "-" },
-        { label: "Tipe Identitas Orang Tua", value: parentIdTypeLabel },
-        { label: "No. Identitas Orang Tua", value: values['label-parent-ic'] || "-" },
+        { label: t("registerForm.parentNameLabel"), value: values['label-parent-name'] || "-" },
+        { label: t("registerForm.idTypeLabel") + " (Parent)", value: parentIdTypeLabel },
+        { label: t("registerForm.parentIcLabel"), value: values['label-parent-ic'] || "-" },
       );
     }
 
     items.push(
-      { label: "Nomor Handphone", value: `${dialLabel} ${values['label-mobile'] || "-"}` },
-      { label: "Cabang Terdekat", value: branchLabel },
+      { label: isAnak ? t("registerForm.mobileLabelAnak") : t("registerForm.mobileLabelDewasa"), value: `${dialLabel} ${values['label-mobile'] || "-"}` },
+      { label: t("registerForm.branchLabel"), value: branchLabel },
     );
 
     setConfirmItems(items);
@@ -180,7 +183,7 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
             no_telpon: `+${fullPhone}`
           }).catch((err: any) => console.warn("Track failed:", err));
         }
-        return { success: true, message: "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya." };
+        return { success: true, message: t("registerForm.submitBtn") + " Success" };
       }
 
       const htmlText = await response.text();
@@ -244,6 +247,7 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     watch,
     getValues,
     reset,
+    control,
     isLoading: registerMutation.isPending,
     status: registerMutation.isSuccess ? ("success" as const) : registerMutation.isError ? ("error" as const) : ("idle" as const),
     message: registerMutation.isSuccess ? successMessage : errorMessage,

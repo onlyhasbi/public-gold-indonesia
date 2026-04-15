@@ -44,8 +44,8 @@ function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
-  const title = `${displayName} | Dealer Resmi Public Gold Indonesia`;
-  const description = `Beli emas murni 24K dari Dealer Resmi Public Gold Indonesia. Hubungi ${displayName} untuk mulai tabungan emas Anda.`;
+  const title = t("seo.title", { name: displayName });
+  const description = t("seo.description", { name: displayName });
 
   useSEO({
     title,
@@ -103,7 +103,7 @@ function App() {
         <div className="w-11/12 max-w-7xl mx-auto py-16">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-              <GradientHighlight text={t("testimonials.title")} highlight="Kata Mereka" />
+              <GradientHighlight text={t("testimonials.title")} highlight={t("ui.highlightTestimonials")} />
             </h2>
             <p className="text-slate-500 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
               {(t("testimonials.desc") as string).split("{mbr}").map((part: string, i: number, arr: string[]) => (

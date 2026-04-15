@@ -1,16 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Send, ChevronDown, ChevronUp, AlertCircle, MessageCircle } from "lucide-react";
+import { Controller } from "react-hook-form";
 import { useState, useEffect, useRef, useMemo } from "react";
 import NotFound from "../components/not_found";
 import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { labelsID, labelsMY } from "../lib/register-text";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { AlertMessage } from "../components/ui/form-elements";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "../components/ui/checkbox";
 import {
   Combobox,
   ComboboxContent,
@@ -100,10 +101,6 @@ function RegisterPage() {
   const { t, i18n } = useTranslation();
   const [countryMode, setCountryMode] = useState<"ID" | "MY" | "INTL">("ID");
 
-  if (isReferralError) {
-    return <NotFound />;
-  }
-
   useEffect(() => {
     const lang = i18n.language || "";
     if (lang.startsWith("id")) {
@@ -116,8 +113,13 @@ function RegisterPage() {
   }, [i18n.language]);
 
   const isIndonesia = countryMode === "ID";
-  const labels = isIndonesia ? labelsID : labelsMY;
   const [isTermsExpanded, setIsTermsExpanded] = useState(false);
+
+  const activeBranchOptions = isIndonesia ? branchOptionsId : branchOptionsMy;
+  const idTypeOptions = [
+    { value: "newic", label: t("registerForm.idTypeKtp") },
+    { value: "passportforeign", label: t("registerForm.idTypePassport") }
+  ];
 
   const {
     register,
@@ -144,6 +146,7 @@ function RegisterPage() {
     handleNikBlur,
     handlePhoneInput,
     confirmSubmit,
+    control,
   } = useRegisterForm(isAnak, countryMode, referralData);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
@@ -158,26 +161,6 @@ function RegisterPage() {
     );
   }, [dialCodeSearch]);
 
-  useEffect(() => {
-    if (status === "success") {
-      formContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      const timer = setTimeout(() => {
-        setShowNextStepModal(true);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [status, setShowNextStepModal]);
-
-  const idTypeOptions = [
-    { value: "newic", label: isIndonesia ? "KTP" : "NEW IC" },
-    { value: "passportforeign", label: isIndonesia ? "PASPOR" : "PASSPORT / FOREIGN ID" }
-  ];
-
-  const activeBranchOptions = isIndonesia ? branchOptionsId : branchOptionsMy;
-
   const [branchSearch, setBranchSearch] = useState("");
   const filteredBranchOptions = useMemo(() => {
     if (!branchSearch) return activeBranchOptions;
@@ -186,6 +169,34 @@ function RegisterPage() {
       opt.label.toLowerCase().includes(term)
     );
   }, [branchSearch, activeBranchOptions]);
+
+  useEffect(() => {
+    if (status === "success") {
+      formContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      const timer = setTimeout(() => {
+        setShowNextStepModal(true);
+      }, 1200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setShowNextStepModal, formContainerRef]);
+
+  if (referralData === undefined && !isReferralError && ref) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+          <p className="text-slate-500 font-medium animate-pulse">Memuat data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isReferralError) {
+    return <NotFound />;
+  }
 
   return (
     <div ref={formContainerRef} className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-3 sm:p-6 md:p-8">
@@ -234,10 +245,10 @@ function RegisterPage() {
 
             <CardHeader className="p-0 mb-6">
               <CardTitle className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                {isAnak ? labels.titleAnak : labels.titleDewasa}
+                {isAnak ? t("registerForm.titleAnak") : t("registerForm.titleDewasa")}
               </CardTitle>
               <CardDescription className="text-slate-500 text-sm">
-                {isAnak ? labels.descAnak : labels.descDewasa}
+                {isAnak ? t("registerForm.descAnak") : t("registerForm.descDewasa")}
               </CardDescription>
             </CardHeader>
 
@@ -254,13 +265,13 @@ function RegisterPage() {
                   value="dewasa"
                   className="flex-1 flex items-center justify-center gap-2 pt-5 pb-4 rounded-none border-none data-[active]:bg-transparent data-[active]:text-slate-900 data-[active]:shadow-none transition-all"
                 >
-                  <img src="/dewasa.webp" alt="" className="w-[22px] h-[22px] object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> {labels.tabDewasa}
+                  <img src="/dewasa.webp" alt="" className="w-[22px] h-[22px] object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> {t("registerForm.tabDewasa")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="anak"
                   className="flex-1 flex items-center justify-center gap-2 pt-5 pb-4 rounded-none border-none data-[active]:bg-transparent data-[active]:text-slate-900 data-[active]:shadow-none transition-all"
                 >
-                  <img src="/anak.webp" alt="" className="w-[22px] h-[22px] object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> {labels.tabAnak}
+                  <img src="/anak.webp" alt="" className="w-[22px] h-[22px] object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> {t("registerForm.tabAnak")}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -276,7 +287,7 @@ function RegisterPage() {
                 {isAnak && (
                   <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
                     <p className="text-xs text-amber-700 leading-relaxed">
-                      {labels.noteAnak}
+                      {t("registerForm.noteAnak")}
                     </p>
                   </div>
                 )}
@@ -287,12 +298,12 @@ function RegisterPage() {
 
                 <form key={formKey} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="label-name" className={labels.nameLabel(isAnak).includes('*') ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ""}>
-                      {labels.nameLabel(isAnak).replace('*', '')}
+                    <Label htmlFor="label-name" className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      {isAnak ? t("registerForm.nameLabelAnak") : t("registerForm.nameLabelDewasa")}
                     </Label>
                     <Input
                       id="label-name"
-                      placeholder={labels.namePlaceholder(isAnak)}
+                      placeholder={isAnak ? t("registerForm.namePlaceholderAnak") : t("registerForm.namePlaceholderDewasa")}
                       {...register("label-name", {
                         onChange: (e) => e.target.value = e.target.value.toUpperCase()
                       })}
@@ -305,7 +316,7 @@ function RegisterPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="idselect">{labels.idTypeLabel}</Label>
+                      <Label htmlFor="idselect">{t("registerForm.idTypeLabel")}</Label>
                       <Combobox
                         key={countryMode}
                         value={watch("idselect") || "newic"}
@@ -331,12 +342,12 @@ function RegisterPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="label-ic" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                        {labels.icLabel(isAnak)}
+                        {isAnak ? t("registerForm.icLabelAnak") : t("registerForm.icLabelDewasa")}
                       </Label>
                       <Input
                         id="label-ic"
                         maxLength={20}
-                        placeholder={labels.icPlaceholder(isAnak)}
+                        placeholder={isAnak ? t("registerForm.icPlaceholderAnak") : t("registerForm.icPlaceholderDewasa")}
                         {...register("label-ic", {
                           onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
                         })}
@@ -352,11 +363,11 @@ function RegisterPage() {
                   {isIndonesia && (
                     <div className="space-y-2">
                       <Label htmlFor="label-individualgstid">
-                        {labels.npwpLabel} <span className="text-slate-400 font-normal">{labels.npwpDesc}</span>
+                        {t("registerForm.npwpLabel")} <span className="text-slate-400 font-normal">{t("registerForm.npwpDesc")}</span>
                       </Label>
                       <Input
                         id="label-individualgstid"
-                        placeholder={labels.npwpPlaceholder}
+                        placeholder={t("registerForm.npwpPlaceholder")}
                         {...register("label-individualgstid", {
                           onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
                         })}
@@ -371,7 +382,7 @@ function RegisterPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="label-dob" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                        {labels.dobLabel(isAnak)}
+                        {isAnak ? t("registerForm.dobLabelAnak") : t("registerForm.dobLabelDewasa")}
                       </Label>
                       <Input
                         id="label-dob"
@@ -386,12 +397,12 @@ function RegisterPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="label-email" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                        {labels.emailLabel}
+                        {t("registerForm.emailLabel")}
                       </Label>
                       <Input
                         id="label-email"
                         type="email"
-                        placeholder={labels.emailPlaceholder}
+                        placeholder={t("registerForm.emailPlaceholder")}
                         {...register("label-email")}
                         className={cn(errors["label-email"] && "border-red-500 focus-visible:ring-red-500/30")}
                       />
@@ -405,16 +416,16 @@ function RegisterPage() {
                     <>
                       <div className="relative py-2 mt-2">
                         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200" /></div>
-                        <div className="relative flex justify-center"><span className="bg-white px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">{labels.parentSectionTitle}</span></div>
+                        <div className="relative flex justify-center"><span className="bg-white px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">{t("registerForm.parentSectionTitle")}</span></div>
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="label-parent-name" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                          {labels.parentNameLabel}
+                          {t("registerForm.parentNameLabel")}
                         </Label>
                         <Input
                           id="label-parent-name"
-                          placeholder={labels.parentNamePlaceholder}
+                          placeholder={t("registerForm.parentNamePlaceholder")}
                           {...register("label-parent-name", {
                             onChange: (e) => e.target.value = e.target.value.toUpperCase()
                           })}
@@ -427,7 +438,7 @@ function RegisterPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="parent_idselect">{labels.idTypeLabel}</Label>
+                          <Label htmlFor="parent_idselect">{t("registerForm.idTypeLabel")}</Label>
                           <Combobox
                             key={countryMode}
                             value={watch("parent_idselect") || "newic"}
@@ -452,12 +463,12 @@ function RegisterPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="label-parent-ic" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                            {labels.parentIcLabel}
+                            {t("registerForm.parentIcLabel")}
                           </Label>
                           <Input
                             id="label-parent-ic"
                             maxLength={20}
-                            placeholder={labels.parentIcPlaceholder}
+                            placeholder={t("registerForm.parentIcPlaceholder")}
                             {...register("label-parent-ic", {
                               onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
                             })}
@@ -473,7 +484,7 @@ function RegisterPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="label-mobile" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      {labels.mobileLabel(isAnak)}
+                      {isAnak ? t("registerForm.mobileLabelAnak") : t("registerForm.mobileLabelDewasa")}
                     </Label>
                     <div className="flex -space-x-px">
                       <div className="w-[100px] sm:w-[120px]">
@@ -502,7 +513,7 @@ function RegisterPage() {
                       <Input
                         id="label-mobile"
                         type="tel"
-                        placeholder={labels.mobilePlaceholder}
+                        placeholder={t("registerForm.mobilePlaceholder")}
                         {...register("label-mobile", { onChange: handlePhoneInput })}
                         className={cn("flex-1 rounded-l-none focus-visible:ring-offset-0", errors["label-mobile"] && "z-10 border-red-500")}
                       />
@@ -510,17 +521,17 @@ function RegisterPage() {
                     <div className="mt-1">
                       {errors["label-mobile"] ? (
                         <p className="text-[11px] font-medium text-red-500">{errors["label-mobile"]?.message as string}</p>
-                      ) : phoneWarning && (
+                      ) : (phoneWarning && (
                         <p className="text-[11px] font-medium text-amber-600 flex items-center gap-1.5 animate-in fade-in duration-200">
-                          <AlertCircle className="w-3 h-3 shrink-0" /> {labels.mobileWarning}
+                          <AlertCircle className="w-3 h-3 shrink-0" /> {t("registerForm.mobileWarning")}
                         </p>
-                      )}
+                      ))}
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="upreferredbranch" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      {labels.branchLabel}
+                      {t("registerForm.branchLabel")}
                     </Label>
                     <Combobox
                       onValueChange={(val: string | null) => val && setValue("upreferredbranch", val, { shouldValidate: true })}
@@ -551,7 +562,7 @@ function RegisterPage() {
                       "text-[11px] font-medium transition-colors duration-200 mt-1.5",
                       errors["upreferredbranch"] ? "text-red-500" : "text-slate-400/90"
                     )}>
-                      {errors["upreferredbranch"] ? (errors["upreferredbranch"]?.message as string) : labels.branchDesc}
+                      {errors["upreferredbranch"] ? (errors["upreferredbranch"]?.message as string) : t("registerForm.branchDesc")}
                     </p>
                   </div>
 
@@ -565,12 +576,12 @@ function RegisterPage() {
                         {isLoading ? (
                           <div className="flex items-center gap-2">
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            {labels.submittingBtn}
+                            {t("registerForm.submittingBtn")}
                           </div>
                         ) : (
                           <div className="flex items-center gap-2">
                             <Send className="w-5 h-5" />
-                            {labels.submitBtn}
+                            {t("registerForm.submitBtn")}
                           </div>
                         )}
                       </Button>
@@ -578,11 +589,16 @@ function RegisterPage() {
 
                     <div className="space-y-3 text-[13px] text-left transition-all duration-300 text-slate-800">
                       <div className="flex items-start sm:items-center gap-3 font-medium text-slate-800">
-                        <input
-                          type="checkbox"
-                          id="newsletter"
-                          className="w-5 h-5 sm:w-4 sm:h-4 mt-0.5 sm:mt-0 shrink-0 rounded border-slate-300 focus:ring-blue-500 accent-blue-600 cursor-pointer"
-                          {...register("newsletter")}
+                        <Controller
+                          name="newsletter"
+                          control={control}
+                          render={({ field }) => (
+                            <Checkbox
+                              id="newsletter"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
                         />
                         <Label htmlFor="newsletter" className="cursor-pointer">
                           {t('registerPage.termsAndNewsletter')}
@@ -594,22 +610,9 @@ function RegisterPage() {
                           "overflow-hidden transition-all duration-500 ease-in-out relative text-[12px] sm:text-[13px] text-slate-500 leading-relaxed font-medium",
                           isTermsExpanded ? "max-h-[600px]" : "max-h-[2.6rem] sm:max-h-[3.2rem]"
                         )}>
-                          {isIndonesia ? (
-                            <p className="leading-relaxed">
-                              Dengan melanjutkan proses, saya menyetujui bahwa Public Gold Indonesia dapat mengumpulkan, menggunakan informasi yang telah saya bagikan sesuai dengan <a href="https://publicgold.co.id/index.php?route=information/information&information_id=41" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 hover:underline transition-all">kebijakan kerahasiaan data</a> dan saya menyetujui serta memenuhi <a href="https://publicgold.co.id/index.php?route=information/information&information_id=5" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 hover:underline transition-all">syarat dan ketentuan</a> yang telah saya baca dan pahami.
-                            </p>
-                          ) : (
-                            <div className="space-y-4">
-                              <p className="leading-relaxed">
-                                I hereby declare that the information given above is true, accurate and complete. I understand that my account registration application is subject to approval. In the event of my application has been approved, I hereby undertake and agree to be bound in all respects by the company's regulation.
-                              </p>
-                              <p className="leading-relaxed">
-                                By proceeding, I confirm that the information provided is true, accurate, and complete. I understand that this application is subject to approval by Public Gold. I agree to be bound by the company's regulations, <a href="https://publicgold.com.my/index.php?route=information/information&information_id=5" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:underline">Terms &amp; Conditions</a>, and <a href="https://publicgold.com.my/index.php?route=information/information&information_id=741" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:underline">Privacy Policy</a>.
-                                <br /><br />
-                                If this registration is completed with the assistance of an introducer, the introducer confirms that the registration is done with the full knowledge and consent of the customer, and that all information provided is accurate and authorized by the customer.
-                              </p>
-                            </div>
-                          )}
+                          <p className="leading-relaxed">
+                            {t("registerForm.termsText")} <a href={isIndonesia ? "https://publicgold.co.id/index.php?route=information/information&information_id=41" : "https://publicgold.com.my/index.php?route=information/information&information_id=741"} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 hover:underline transition-all">{t("registerForm.termsLink")}</a>
+                          </p>
 
                           <div className={cn(
                             "absolute inset-x-0 bottom-0 h-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-t from-white via-white/80 to-transparent",
