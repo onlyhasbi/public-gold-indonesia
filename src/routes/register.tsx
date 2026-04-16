@@ -501,7 +501,9 @@ function RegisterPage() {
                           </ComboboxTrigger>
                           <ComboboxContent>
                             <ComboboxInput placeholder="Cari kode negara..." />
-                            <ComboboxEmpty>Tidak ditemukan.</ComboboxEmpty>
+                            {filteredDialCodes.length === 0 && (
+                              <div className="py-6 text-center text-sm text-muted-foreground">Tidak ditemukan.</div>
+                            )}
                             {filteredDialCodes.map((opt) => (
                               <ComboboxItem key={opt.value} value={opt.value}>
                                 {opt.label}
@@ -546,10 +548,10 @@ function RegisterPage() {
                       </ComboboxTrigger>
                       <ComboboxContent>
                         {activeBranchOptions.length > 8 && (
-                          <>
-                            <ComboboxInput placeholder="Cari kantor cabang..." />
-                            <ComboboxEmpty>Tidak ditemukan.</ComboboxEmpty>
-                          </>
+                          <ComboboxInput placeholder="Cari kantor cabang..." />
+                        )}
+                        {filteredBranchOptions.length === 0 && (
+                          <div className="py-6 text-center text-sm text-muted-foreground">Tidak ditemukan.</div>
                         )}
                         {filteredBranchOptions.map((opt) => (
                           <ComboboxItem key={opt.value} value={opt.value}>
