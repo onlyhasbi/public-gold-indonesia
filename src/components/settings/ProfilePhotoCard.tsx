@@ -40,7 +40,7 @@ export function ProfilePhotoCard({
         <CardContent className="p-0">
           <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
             <div className="relative group flex-shrink-0">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden ring-3 ring-red-100 shadow-lg">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden ring-3 ring-red-100 shadow-lg">
                 {croppedPreview ? (
                   <img
                     src={croppedPreview}
@@ -62,7 +62,7 @@ export function ProfilePhotoCard({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute inset-0 rounded-2xl bg-black/0 group-hover:bg-black/40 flex items-center justify-center transition-all cursor-pointer"
+                className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 flex items-center justify-center transition-all cursor-pointer"
               >
                 <Camera className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
