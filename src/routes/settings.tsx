@@ -64,6 +64,18 @@ export const Route = createFileRoute('/settings')({
     if (!token || !userStr) {
       throw redirect({ to: '/', replace: true });
     }
+
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role !== 'pgbo') {
+        throw redirect({ to: '/', replace: true });
+      }
+      if (!user.is_active || user.is_active === 0) {
+        throw redirect({ to: '/', replace: true });
+      }
+    } catch {
+      throw redirect({ to: '/', replace: true });
+    }
   },
   loader: async () => {
     try {

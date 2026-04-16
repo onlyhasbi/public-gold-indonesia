@@ -32,7 +32,8 @@ export const Route = createFileRoute('/overview')({
       if (user.role !== 'pgbo') {
         throw redirect({ to: '/', replace: true });
       }
-      if (user.is_active === false) {
+      // is_active from SQLite is typically 1 or 0
+      if (!user.is_active || user.is_active === 0) {
         throw redirect({ to: '/', replace: true });
       }
     } catch {
