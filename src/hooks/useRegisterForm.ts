@@ -176,10 +176,11 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
         if (referralData?.pageid) {
           const dialCode = values['label-mobile-dialcode'] || '62';
           const fullPhone = formatPhoneForAPI(dialCode, values['label-mobile']);
+          const resolvedBranchLabel = branchLabelOptions[values.upreferredbranch as keyof typeof branchLabelOptions] || values.upreferredbranch || "-";
           api.post("/public/register-track", {
             pageid: referralData.pageid,
             nama: values['label-name'],
-            branch: values['upreferredbranch'],
+            branch: resolvedBranchLabel,
             no_telpon: `+${fullPhone}`
           }).catch((err: any) => console.warn("Track failed:", err));
         }
@@ -205,10 +206,11 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
       if (referralData?.pageid) {
         const dialCode = values['label-mobile-dialcode'] || '62';
         const fullPhone = formatPhoneForAPI(dialCode, values['label-mobile']);
+        const resolvedBranchLabel = branchLabelOptions[values.upreferredbranch as keyof typeof branchLabelOptions] || values.upreferredbranch || "-";
         api.post("/public/register-track", {
           pageid: referralData.pageid,
           nama: values['label-name'],
-          branch: values['upreferredbranch'],
+          branch: resolvedBranchLabel,
           no_telpon: `+${fullPhone}`
         }).catch((err: any) => console.warn("Track failed:", err));
       }
