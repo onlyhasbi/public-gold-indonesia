@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import { Check, Loader2, Trash2, Upload } from 'lucide-react'
+import { Check, Download, Loader2, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { api } from '../../lib/api'
 import { cn } from '../../lib/utils'
@@ -30,21 +30,28 @@ export function LeadsDataTable({ leads, serverSearchValue, onServerSearchChange 
   const { showToast } = useToast()
   const [leadToDelete, setLeadToDelete] = useState<string | null>(null)
 
-  const syncContactsMutation = useMutation({
+  const exportVcfMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      const res = await api.get('/google/status')
-      if (!res.data?.connected) {
-        throw new Error('Akun Google belum terhubung. Silakan hubungkan terlebih dahulu di halaman Pengaturan.')
-      }
-      const syncRes = await api.post('/overview/leads/sync-contacts', { ids })
-      return syncRes.data
+      const res = await api.post('/overview/leads/export-vcf', { ids }, {
+        responseType: 'blob'
+      })
+      return res.data
     },
-    onSuccess: (data) => {
-      showToast(data.message, 'success')
+    onSuccess: (blob) => {
+      const url = window.URL.createObjectURL(new Blob([blob]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'kontak-pendaftar.vcf')
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      showToast('Berhasil mendownload kontak (.vcf)', 'success')
       queryClient.invalidateQueries({ queryKey: ['overview'] })
     },
     onError: (error: any) => {
-      showToast(error.response?.data?.message || error.message || 'Gagal sinkronisasi kontak', 'error')
+      showToast(error.response?.data?.message || error.message || 'Gagal mengekspor kontak', 'error')
     }
   })
 
@@ -148,18 +155,18 @@ export function LeadsDataTable({ leads, serverSearchValue, onServerSearchChange 
             <Button
               onClick={() => {
                 const ids = selectedRows.map((r: any) => r.id)
-                syncContactsMutation.mutate(ids, { onSuccess: () => clearSelection() })
+                exportVcfMutation.mutate(ids, { onSuccess: () => clearSelection() })
               }}
-              disabled={count === 0 || syncContactsMutation.isPending}
+              disabled={count === 0 || exportVcfMutation.isPending}
               variant="outline"
               className="h-auto py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
             >
-              {syncContactsMutation.isPending ? (
+              {exportVcfMutation.isPending ? (
                 <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
               ) : (
-                <Upload className="w-3 h-3 mr-1.5" />
+                <Download className="w-3 h-3 mr-1.5" />
               )}
-              {syncContactsMutation.isPending ? 'Menyinkronkan...' : 'Sync ke Google Contacts'}
+              {exportVcfMutation.isPending ? 'Menyiapkan...' : 'Download Kontak (.vcf)'}
             </Button>
           </>
         )}

@@ -1,9 +1,8 @@
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, Globe, Link2, Mail, Phone, Save, Share2, ShieldCheck, User } from 'lucide-react'
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { GoogleSyncCard } from '../components/settings/GoogleSyncCard'
 import { PasswordCard } from '../components/settings/PasswordCard'
 import { ProfilePhotoCard } from '../components/settings/ProfilePhotoCard'
 import { SocialMediaCard } from '../components/settings/SocialMediaCard'
@@ -33,7 +32,7 @@ import { useSEO } from '../hooks/useSEO'
 import { api } from '../lib/api'
 import { formatPhoneForAPI } from '../lib/phone'
 import { queryClient } from '../lib/queryClient'
-import { googleStatusQueryOptions, settingsQueryOptions } from '../lib/queryOptions'
+import { settingsQueryOptions } from '../lib/queryOptions'
 import { cn } from '../lib/utils'
 import { clearAuthAndRedirect } from '../lib/auth'
 
@@ -132,9 +131,6 @@ function SettingsPage() {
     );
   }, [dialCodeSearch]);
 
-  const { data: googleData } = useQuery(googleStatusQueryOptions());
-  const isGoogleConnected = googleData?.connected || false;
-
   const mutation = useMutation({
     mutationFn: async (formData: SettingsFormValues) => {
       const data = new FormData()
@@ -199,43 +195,6 @@ function SettingsPage() {
     onError: (error: any) => showToast(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan pengaturan.', 'error')
   })
 
-  // Google Integration Logic
-  const saveGoogleTokenMutation = useMutation({
-    mutationFn: async (code: string) => {
-      const res = await api.post('/google/save-token', { code });
-      return res.data;
-    },
-    onSuccess: (data) => {
-      if (data.success) {
-        showToast('Google account connected!', 'success');
-        queryClient.invalidateQueries({ queryKey: ['googleStatus'] });
-      }
-    },
-    onError: (err: any) => showToast(err.response?.data?.message || 'Failed to connect Google account', 'error')
-  });
-
-  const disconnectGoogleMutation = useMutation({
-    mutationFn: async () => {
-      const res = await api.post('/google/disconnect');
-      return res.data;
-    },
-    onSuccess: (data) => {
-      if (data.success) {
-        showToast('Koneksi Google diputuskan', 'success');
-        queryClient.invalidateQueries({ queryKey: ['googleStatus'] });
-      }
-    },
-    onError: () => showToast('Gagal memutuskan koneksi', 'error')
-  });
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('google_code');
-    if (code) {
-      saveGoogleTokenMutation.mutate(code);
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -257,21 +216,6 @@ function SettingsPage() {
     const finalPhone = formatPhoneForAPI(data.country_code, data.no_telpon);
     const { country_code, ...submitData } = { ...data, no_telpon: finalPhone };
     mutation.mutate(submitData as any);
-  };
-
-  const handleGoogleConnect = async () => {
-    try {
-      const res = await api.get('/google/auth-url');
-      if (res.data.url) window.location.href = res.data.url;
-    } catch {
-      showToast('Gagal mendapatkan tautan otorisasi Google', 'error');
-    }
-  };
-
-  const handleGoogleDisconnect = () => {
-    if (confirm('Apakah Anda yakin ingin memutuskan koneksi Google? Sinkronisasi otomatis akan berhenti.')) {
-      disconnectGoogleMutation.mutate();
-    }
   };
 
   return (
@@ -331,13 +275,7 @@ function SettingsPage() {
                   <Share2 className="w-4 h-4" />
                   Sosial Media
                 </TabsTrigger>
-                <TabsTrigger
-                  value="google"
-                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
-                >
-                  <Globe className="w-4 h-4" />
-                  Integrasi Google
-                </TabsTrigger>
+
               </TabsList>
             </div>
 
@@ -439,13 +377,7 @@ function SettingsPage() {
               <SocialMediaCard register={register} />
             </TabsContent>
 
-            <TabsContent value="google" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <GoogleSyncCard
-                isConnected={isGoogleConnected}
-                onConnect={handleGoogleConnect}
-                onDisconnect={handleGoogleDisconnect}
-              />
-            </TabsContent>
+
           </Tabs>
         </form>
       </div>

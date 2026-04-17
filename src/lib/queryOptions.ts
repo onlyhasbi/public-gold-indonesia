@@ -58,15 +58,3 @@ export const settingsQueryOptions = () =>
     staleTime: 0,
   });
 
-/**
- * Query Options for Google Connection Status
- */
-export const googleStatusQueryOptions = () =>
-  queryOptions({
-    queryKey: ["googleStatus"],
-    queryFn: async () => {
-      const res = await api.get("/google/status");
-      return res.data;
-    },
-    staleTime: 0,
-  });
