@@ -8,21 +8,27 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PetunjukRouteImport } from './routes/petunjuk'
-import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as LegalRouteImport } from './routes/legal'
+import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as PgcodeRouteImport } from './routes/$pgcode'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminSignupRouteImport } from './routes/admin/signup'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminAdminRouteImport } from './routes/admin/_admin'
+import { Route as AuthSettingsRouteImport } from './routes/_auth.settings'
+import { Route as AuthOverviewRouteImport } from './routes/_auth.overview'
+import { Route as AdminAdminIndexRouteImport } from './routes/admin/_admin.index'
 
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AdminRouteImport = createFileRoute('/admin')()
+
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -35,14 +41,13 @@ const PetunjukRoute = PetunjukRouteImport.update({
   path: '/petunjuk',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OverviewRoute = OverviewRouteImport.update({
-  id: '/overview',
-  path: '/overview',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LegalRoute = LegalRouteImport.update({
   id: '/legal',
   path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PgcodeRoute = PgcodeRouteImport.update({
@@ -55,109 +60,132 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminSignupRoute = AdminSignupRouteImport.update({
-  id: '/admin/signup',
-  path: '/admin/signup',
-  getParentRoute: () => rootRouteImport,
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
-  getParentRoute: () => rootRouteImport,
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminRoute = AdminAdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AuthSettingsRoute = AuthSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthOverviewRoute = AuthOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$pgcode': typeof PgcodeRoute
+  '': typeof AuthRouteWithChildren
   '/legal': typeof LegalRoute
-  '/overview': typeof OverviewRoute
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
+  '/overview': typeof AuthOverviewRoute
+  '/settings': typeof AuthSettingsRoute
+  '/admin': typeof AdminAdminRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/signup': typeof AdminSignupRoute
-  '/admin': typeof AdminIndexRoute
+  '/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$pgcode': typeof PgcodeRoute
+  '': typeof AuthRouteWithChildren
   '/legal': typeof LegalRoute
-  '/overview': typeof OverviewRoute
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
+  '/overview': typeof AuthOverviewRoute
+  '/settings': typeof AuthSettingsRoute
+  '/admin': typeof AdminAdminIndexRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/signup': typeof AdminSignupRoute
-  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$pgcode': typeof PgcodeRoute
+  '/_auth': typeof AuthRouteWithChildren
   '/legal': typeof LegalRoute
-  '/overview': typeof OverviewRoute
   '/petunjuk': typeof PetunjukRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
+  '/_auth/overview': typeof AuthOverviewRoute
+  '/_auth/settings': typeof AuthSettingsRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/_admin': typeof AdminAdminRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/signup': typeof AdminSignupRoute
-  '/admin/': typeof AdminIndexRoute
+  '/admin/_admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/$pgcode'
+    | ''
     | '/legal'
-    | '/overview'
     | '/petunjuk'
     | '/register'
+    | '/overview'
     | '/settings'
+    | '/admin'
     | '/admin/login'
     | '/admin/signup'
-    | '/admin'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$pgcode'
+    | ''
     | '/legal'
-    | '/overview'
     | '/petunjuk'
     | '/register'
+    | '/overview'
     | '/settings'
+    | '/admin'
     | '/admin/login'
     | '/admin/signup'
-    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/$pgcode'
+    | '/_auth'
     | '/legal'
-    | '/overview'
     | '/petunjuk'
     | '/register'
-    | '/settings'
+    | '/_auth/overview'
+    | '/_auth/settings'
+    | '/admin'
+    | '/admin/_admin'
     | '/admin/login'
     | '/admin/signup'
-    | '/admin/'
+    | '/admin/_admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PgcodeRoute: typeof PgcodeRoute
+  AuthRoute: typeof AuthRouteWithChildren
   LegalRoute: typeof LegalRoute
-  OverviewRoute: typeof OverviewRoute
   PetunjukRoute: typeof PetunjukRoute
   RegisterRoute: typeof RegisterRoute
-  SettingsRoute: typeof SettingsRoute
-  AdminLoginRoute: typeof AdminLoginRoute
-  AdminSignupRoute: typeof AdminSignupRoute
-  AdminIndexRoute: typeof AdminIndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -176,18 +204,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PgcodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal': {
       id: '/legal'
       path: '/legal'
       fullPath: '/legal'
       preLoaderRoute: typeof LegalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/overview': {
-      id: '/overview'
-      path: '/overview'
-      fullPath: '/overview'
-      preLoaderRoute: typeof OverviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/petunjuk': {
@@ -204,48 +232,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings': {
-      id: '/settings'
+    '/_auth/overview': {
+      id: '/_auth/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof AuthOverviewRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/settings': {
+      id: '/_auth/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthSettingsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/admin/_admin': {
+      id: '/admin/_admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminAdminRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/login': {
       id: '/admin/login'
-      path: '/admin/login'
+      path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/signup': {
       id: '/admin/signup'
-      path: '/admin/signup'
+      path: '/signup'
       fullPath: '/admin/signup'
       preLoaderRoute: typeof AdminSignupRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/_admin/': {
+      id: '/admin/_admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
     }
   }
 }
 
+interface AuthRouteChildren {
+  AuthOverviewRoute: typeof AuthOverviewRoute
+  AuthSettingsRoute: typeof AuthSettingsRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthOverviewRoute: AuthOverviewRoute,
+  AuthSettingsRoute: AuthSettingsRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface AdminAdminRouteChildren {
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+}
+
+const AdminAdminRouteChildren: AdminAdminRouteChildren = {
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
+}
+
+const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
+  AdminAdminRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminAdminRoute: typeof AdminAdminRouteWithChildren
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminSignupRoute: typeof AdminSignupRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminRoute: AdminAdminRouteWithChildren,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminSignupRoute: AdminSignupRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PgcodeRoute: PgcodeRoute,
+  AuthRoute: AuthRouteWithChildren,
   LegalRoute: LegalRoute,
-  OverviewRoute: OverviewRoute,
   PetunjukRoute: PetunjukRoute,
   RegisterRoute: RegisterRoute,
-  SettingsRoute: SettingsRoute,
-  AdminLoginRoute: AdminLoginRoute,
-  AdminSignupRoute: AdminSignupRoute,
-  AdminIndexRoute: AdminIndexRoute,
+  AdminRoute: AdminRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

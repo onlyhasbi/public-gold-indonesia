@@ -1,43 +1,42 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Loader2, Send, ChevronDown, ChevronUp, AlertCircle, MessageCircle } from "lucide-react";
-import { Controller } from "react-hook-form";
-import { useState, useEffect, useRef, useMemo } from "react";
-import NotFound from "../components/not_found";
-import { branchOptionsId, branchOptionsMy } from "../constant/branches";
-import { dialCodeOptions } from "../constant/countries";
-import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
-import { useRegisterForm } from "../hooks/useRegisterForm";
-import { AlertMessage } from "../components/ui/form-elements";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "../components/ui/checkbox";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxTrigger,
-  ComboboxValue,
-} from "@/components/ui/combobox";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ConfirmationModal, AgeSwitchModal } from "../components/RegisterModals";
-import { NextStepModal } from "../components/NextStepModal";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxTrigger,
+  ComboboxValue
+} from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { api } from "@/lib/api";
-import { motion, AnimatePresence } from "motion/react";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { AlertCircle, ArrowLeft, ChevronDown, ChevronUp, Loader2, MessageCircle, Send } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { NextStepModal } from "../components/NextStepModal";
+import NotFound from "../components/not_found";
+import { AgeSwitchModal, ConfirmationModal } from "../components/RegisterModals";
+import { Checkbox } from "../components/ui/checkbox";
+import { AlertMessage } from "../components/ui/form-elements";
+import { branchOptionsId, branchOptionsMy } from "../constant/branches";
+import { dialCodeOptions } from "../constant/countries";
+import { useRegisterForm } from "../hooks/useRegisterForm";
 import { getWhatsAppLink } from "../lib/contact";
 
 type RegisterSearch = {

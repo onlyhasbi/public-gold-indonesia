@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 import { api } from '../../lib/api'
 import { useToast } from '../../components/toast'
 import { useForm } from 'react-hook-form'
+import { requireAdminGuest } from '@/lib/auth'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 export const Route = createFileRoute('/admin/signup')({
+  beforeLoad: () => requireAdminGuest(),
   component: AdminSignupPage,
 })
 
@@ -23,11 +25,8 @@ function AdminSignupPage() {
 
   // Redirect if already logged in as admin
   useEffect(() => {
-    const token = localStorage.getItem('admin_token')
-    if (token) {
-      navigate({ to: '/admin', replace: true })
-    }
-  }, [navigate])
+    // Component logic remains but redirection is handled by beforeLoad
+  }, [])
 
   const [showPassword, setShowPassword] = useState(false)
   const [showSecret, setShowSecret] = useState(false)

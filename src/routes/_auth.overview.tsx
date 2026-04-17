@@ -1,4 +1,4 @@
-import { redirect, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useState, Suspense } from 'react'
 import { overviewQueryOptions } from '../lib/queryOptions'
@@ -12,43 +12,21 @@ import { useSEO } from '../hooks/useSEO'
 import { StatsGrid } from '../components/overview/StatsGrid'
 import { LeadsDataTable } from '../components/overview/LeadsDataTable'
 import { useDebounce } from '../hooks/useDebounce'
+import { clearAuthAndRedirect } from '../lib/auth'
 
-export const Route = createFileRoute('/overview')({
+export const Route = createFileRoute('/_auth/overview')({
   component: () => (
     <Suspense fallback={<DashboardLoading />}>
       <OverviewPage />
     </Suspense>
   ),
-  beforeLoad: () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-
-    if (!token || !userStr) {
-      throw redirect({ to: '/', replace: true });
-    }
-
-    try {
-      const user = JSON.parse(userStr);
-      if (user.role !== 'pgbo') {
-        throw redirect({ to: '/', replace: true });
-      }
-      // is_active from SQLite is typically 1 or 0
-      if (!user.is_active || user.is_active === 0) {
-        throw redirect({ to: '/', replace: true });
-      }
-    } catch {
-      throw redirect({ to: '/', replace: true });
-    }
-  },
   loader: async () => {
     try {
       await queryClient.ensureQueryData(overviewQueryOptions());
     } catch {
       // Break redirect loop: clear session if data fails to load (e.g. 404 or profile missing)
       queryClient.clear();
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      throw redirect({ to: '/', replace: true });
+      clearAuthAndRedirect();
     }
   },
 });

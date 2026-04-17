@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, Link, redirect, useNavigate, useSearch } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate, useSearch } from '@tanstack/react-router'
 import {
   ArrowRight,
   Check,
@@ -30,6 +30,7 @@ import * as yup from 'yup'
 import { useToast } from '../components/toast'
 import { Spinner } from '../components/ui/spinner'
 import { api } from '../lib/api'
+import { requireGuest } from '../lib/auth'
 
 const MotionCard = motion.create(Card)
 
@@ -49,18 +50,7 @@ const signupSchema = yup.object().shape({
 
 // --- Route Definition ---
 export const Route = createFileRoute('/')({
-  beforeLoad: () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-    if (token) {
-      throw redirect({ to: '/overview', replace: true })
-    }
-
-    // throw redirect({
-    //   to: '/$pgcode',
-    //   params: { pgcode: 'hasbi' },
-    //   replace: true,
-    // })
-  },
+  beforeLoad: () => requireGuest(),
   validateSearch: (search: Record<string, unknown>): { mode?: 'signin' | 'signup' } => {
     return {
       mode: (search.mode as 'signin' | 'signup') || undefined,
@@ -157,8 +147,8 @@ function LandingAuthPage() {
           showToast('Akses ditolak. Akun ini bukan Dealer PGBO.', 'error')
           return
         }
-        if (data.user?.is_active === false) {
-          showToast('Akun Anda sedang dinonaktifkan. Silakan hubungi admin.', 'error')
+        if (data.user?.is_active === false || data.user?.is_active === 0 || !data.user?.is_active) {
+          showToast('Akun Anda sedang dinonaktifkan atau belum aktif. Silakan hubungi admin.', 'error')
           return
         }
         localStorage.setItem('token', data.token)
@@ -184,8 +174,10 @@ function LandingAuthPage() {
           showToast('Registrasi berhasil, namun akses portal ditolak.', 'error')
           return
         }
-        if (data.user?.is_active === false) {
-          showToast('Registrasi berhasil. Tunggu verifikasi admin untuk aktif.', 'error')
+        if (data.user?.is_active === false || data.user?.is_active === 0 || data.user?.is_active === undefined) {
+          showToast('Registrasi berhasil. Tunggu verifikasi admin untuk aktif.', 'success')
+          signupForm.reset()
+          setAuthMode('signin')
           return
         }
         localStorage.setItem('token', data.token)

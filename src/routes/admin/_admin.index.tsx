@@ -41,7 +41,7 @@ import {
 import { dialCodeOptions } from '@/constant/countries'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/admin/')({
+export const Route = createFileRoute('/admin/_admin/')({
   component: AdminDashboard,
 })
 
@@ -164,10 +164,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     document.title = "Dashboard Super Admin | Public Gold Indonesia";
-    if (!localStorage.getItem('admin_token')) {
-      navigate({ to: '/admin/login' })
-    }
-  }, [navigate])
+  }, [])
 
   const adminToken = localStorage.getItem('admin_token')
 

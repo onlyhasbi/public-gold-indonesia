@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 import { api } from '../../lib/api'
 import { useToast } from '../../components/toast'
 import { useForm } from 'react-hook-form'
+import { requireAdminGuest } from '@/lib/auth'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 export const Route = createFileRoute('/admin/login')({
+  beforeLoad: () => requireAdminGuest(),
   component: AdminLoginPage,
 })
 
@@ -23,11 +25,7 @@ function AdminLoginPage() {
   // Redirect if already logged in as admin
   useEffect(() => {
     document.title = "Login Super Admin | Public Gold Indonesia";
-    const token = localStorage.getItem('admin_token')
-    if (token) {
-      navigate({ to: '/admin', replace: true })
-    }
-  }, [navigate])
+  }, [])
 
   const [showPassword, setShowPassword] = useState(false)
 

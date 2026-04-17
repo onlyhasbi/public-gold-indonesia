@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, Globe, Link2, Mail, Phone, Save, Share2, ShieldCheck, User } from 'lucide-react'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -35,6 +35,7 @@ import { formatPhoneForAPI } from '../lib/phone'
 import { queryClient } from '../lib/queryClient'
 import { googleStatusQueryOptions, settingsQueryOptions } from '../lib/queryOptions'
 import { cn } from '../lib/utils'
+import { clearAuthAndRedirect } from '../lib/auth'
 
 export interface SettingsFormValues {
   nama_lengkap: string
@@ -51,41 +52,19 @@ export interface SettingsFormValues {
   konfirmasi_katasandi?: string
 }
 
-export const Route = createFileRoute('/settings')({
+export const Route = createFileRoute('/_auth/settings')({
   component: () => (
     <Suspense fallback={<SettingsLoading />}>
       <SettingsPage />
     </Suspense>
   ),
-  beforeLoad: () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-
-    if (!token || !userStr) {
-      throw redirect({ to: '/', replace: true });
-    }
-
-    try {
-      const user = JSON.parse(userStr);
-      if (user.role !== 'pgbo') {
-        throw redirect({ to: '/', replace: true });
-      }
-      if (!user.is_active || user.is_active === 0) {
-        throw redirect({ to: '/', replace: true });
-      }
-    } catch {
-      throw redirect({ to: '/', replace: true });
-    }
-  },
   loader: async () => {
     try {
       await queryClient.ensureQueryData(settingsQueryOptions());
     } catch {
       // Break redirect loop: clear session if data fails to load
       queryClient.clear();
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      throw redirect({ to: '/', replace: true });
+      clearAuthAndRedirect();
     }
   },
 });
@@ -315,7 +294,6 @@ function SettingsPage() {
           </div>
         </div>
       </div>
-
       <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-4 sm:-mt-6 pb-10">
         <form id="settings-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
           <ProfilePhotoCard
@@ -471,7 +449,6 @@ function SettingsPage() {
           </Tabs>
         </form>
       </div>
-
       {/* Sticky Save Button */}
       <div className="sticky bottom-0 z-40 bg-gradient-to-t from-white via-white/95 to-white/0 pt-6 pb-4 sm:pb-5 pointer-events-none">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 flex justify-center pointer-events-auto">
