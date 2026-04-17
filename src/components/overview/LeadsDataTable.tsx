@@ -71,6 +71,20 @@ export function LeadsDataTable({ leads, serverSearchValue, onServerSearchChange 
     }
   })
 
+  const bulkDeleteLeadMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const res = await api.post('/overview/leads/bulk-delete', { ids })
+      return res.data
+    },
+    onSuccess: (data) => {
+      showToast(data.message, 'success')
+      queryClient.invalidateQueries({ queryKey: ['overview'] })
+    },
+    onError: (error: any) => {
+      showToast(error.response?.data?.message || 'Gagal menghapus data', 'error')
+    }
+  })
+
   const columns = useMemo(() => [
     columnHelper.accessor('nama', {
       header: 'Nama',
@@ -116,17 +130,21 @@ export function LeadsDataTable({ leads, serverSearchValue, onServerSearchChange 
     columnHelper.display({
       id: 'aksi',
       header: '',
-      cell: (info) => (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setLeadToDelete(info.row.original.id)}
-          className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-          title="Hapus pendaftar"
-        >
-          <Trash2 size={15} />
-        </Button>
-      ),
+      cell: (info) => {
+        const hasSelection = info.table.getSelectedRowModel().rows.length > 0;
+        return (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setLeadToDelete(info.row.original.id)}
+            disabled={hasSelection}
+            className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400"
+            title="Hapus pendaftar"
+          >
+            <Trash2 size={15} />
+          </Button>
+        )
+      },
     }),
   ], [])
 
@@ -152,6 +170,24 @@ export function LeadsDataTable({ leads, serverSearchValue, onServerSearchChange 
             <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-md", count > 0 ? "text-red-600 bg-red-50" : "text-slate-400 bg-slate-100")}>
               {count} terpilih
             </span>
+            <Button
+              onClick={() => {
+                if(confirm(`Anda yakin ingin menghapus ${count} data pendaftar?`)) {
+                  const ids = selectedRows.map((r: any) => r.id)
+                  bulkDeleteLeadMutation.mutate(ids, { onSuccess: () => clearSelection() })
+                }
+              }}
+              disabled={count === 0 || bulkDeleteLeadMutation.isPending}
+              variant="outline"
+              className="h-auto py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border-red-200"
+            >
+              {bulkDeleteLeadMutation.isPending ? (
+                <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+              ) : (
+                <Trash2 className="w-3 h-3 mr-1.5" />
+              )}
+              {bulkDeleteLeadMutation.isPending ? 'Menghapus...' : 'Hapus Terpilih'}
+            </Button>
             <Button
               onClick={() => {
                 const ids = selectedRows.map((r: any) => r.id)
