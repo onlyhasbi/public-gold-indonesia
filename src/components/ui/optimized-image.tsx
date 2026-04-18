@@ -17,14 +17,16 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
  * - Optimal lazy loading
  */
 export function OptimizedImage(props: OptimizedImageProps) {
-  const { src, className, priority, width, height, aspectRatio, ...rest } = props;
+  const { src, className, priority, width, height, aspectRatio, ...rest } =
+    props;
   const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
   if (!src) return null;
 
   // Determine if it's an external URL that needs Cloudinary Fetch
-  const isExternal = src.startsWith("http") && !src.includes("res.cloudinary.com");
-  
+  const isExternal =
+    src.startsWith("http") && !src.includes("res.cloudinary.com");
+
   if (!isExternal) {
     return (
       <img
@@ -40,18 +42,20 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const getUrl = (w?: number) => {
     const transformations = ["f_auto", "q_auto", "c_limit"];
     if (w) transformations.push(`w_${w}`);
-    
+
     // Check if it's a YouTube URL
     const ytMatch = src.match(/(?:ytimg\.com|youtube\.com)\/vi\/([^/]+)/);
     if (ytMatch && ytMatch[1]) {
       return `https://res.cloudinary.com/${CLOUD_NAME}/image/youtube/${transformations.join(",")}/${ytMatch[1]}.jpg`;
     }
-    
+
     return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/${transformations.join(",")}/${encodeURIComponent(src)}`;
   };
 
   const defaultWidth = width || 800;
-  const srcset = [400, 800, 1200, 1600].map(w => `${getUrl(w)} ${w}w`).join(", ");
+  const srcset = [400, 800, 1200, 1600]
+    .map((w) => `${getUrl(w)} ${w}w`)
+    .join(", ");
 
   return (
     <img

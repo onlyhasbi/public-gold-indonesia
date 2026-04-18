@@ -213,7 +213,7 @@ function PriceList({ price, pgbo }: Props) {
   };
 
   const parsePriceToNumber = (
-    priceStr: string | null | undefined
+    priceStr: string | null | undefined,
   ): number | null => {
     if (!priceStr) return null;
     const cleaned = priceStr.replace(/[^0-9]/g, "");
@@ -223,7 +223,7 @@ function PriceList({ price, pgbo }: Props) {
 
   const perGramPrice = useMemo(
     () => parsePriceToNumber(price?.poe?.[1]?.price),
-    [price]
+    [price],
   );
   const budgetAmount = 300_000;
   const gramsFor300k = perGramPrice
@@ -239,7 +239,7 @@ function PriceList({ price, pgbo }: Props) {
         stopOnInteraction: false,
         stopOnMouseEnter: true,
       }),
-    ]
+    ],
   );
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<(HTMLElement | null)[]>([]);
@@ -254,7 +254,7 @@ function PriceList({ price, pgbo }: Props) {
   const setTweenNodes = useCallback((emblaApi: any) => {
     tweenNodes.current = emblaApi.slideNodes().map((slideNode: HTMLElement) => {
       return slideNode.querySelector(
-        ".embla__tween__node"
+        ".embla__tween__node",
       ) as HTMLElement | null;
     });
   }, []);
@@ -556,7 +556,7 @@ function PriceList({ price, pgbo }: Props) {
                   "px-8 py-2.5 rounded-full text-[11px] md:text-xs font-black transition-all duration-300 uppercase tracking-wide",
                   priceMode === "tabungan"
                     ? "bg-white text-red-600 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700",
                 )}
               >
                 {t("priceList.modeSaving")}
@@ -567,7 +567,7 @@ function PriceList({ price, pgbo }: Props) {
                   "px-8 py-2.5 rounded-full text-[11px] md:text-xs font-black transition-all duration-300 uppercase tracking-wide",
                   priceMode === "tunai"
                     ? "bg-white text-red-600 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700",
                 )}
               >
                 {t("priceList.modeCash")}
@@ -595,7 +595,7 @@ function PriceList({ price, pgbo }: Props) {
             "absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
             hoverSide === "left"
               ? "opacity-100"
-              : "opacity-0 pointer-events-none"
+              : "opacity-0 pointer-events-none",
           )}
         />
         <NextButton
@@ -605,7 +605,7 @@ function PriceList({ price, pgbo }: Props) {
             "absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
             hoverSide === "right"
               ? "opacity-100"
-              : "opacity-0 pointer-events-none"
+              : "opacity-0 pointer-events-none",
           )}
         />
 
@@ -634,7 +634,7 @@ function PriceList({ price, pgbo }: Props) {
                         })}
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
-                          "h-[380px] sm:h-[420px] md:h-[500px]"
+                          "h-[380px] sm:h-[420px] md:h-[500px]",
                         )}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
@@ -655,7 +655,9 @@ function PriceList({ price, pgbo }: Props) {
                         <div
                           className={cn(
                             "relative z-10 flex flex-1 w-full items-center justify-center py-2 h-[160px] sm:h-[200px] md:h-[240px] shrink-0",
-                            isPortraitBar ? "px-10 sm:px-12 md:px-14" : "px-8 sm:px-10 md:px-12"
+                            isPortraitBar
+                              ? "px-10 sm:px-12 md:px-14"
+                              : "px-8 sm:px-10 md:px-12",
                           )}
                         >
                           <OptimizedImage
