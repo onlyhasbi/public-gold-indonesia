@@ -90,7 +90,11 @@ export function OptimizedImage(props: OptimizedImageProps) {
         srcSet={srcset}
         sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
         className={`w-full h-full transition-opacity duration-700 ease-in-out ${
-          useCloudinary ? (isLoaded ? "opacity-100" : "opacity-0") : "opacity-100"
+          useCloudinary
+            ? isLoaded
+              ? "opacity-100"
+              : "opacity-0"
+            : "opacity-100"
         }`}
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}

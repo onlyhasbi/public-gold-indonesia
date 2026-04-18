@@ -54,7 +54,12 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           "vendor-react": ["react", "react-dom"],
-          "vendor-ui": ["lucide-react", "framer-motion", "clsx", "tailwind-merge"],
+          "vendor-ui": [
+            "lucide-react",
+            "framer-motion",
+            "clsx",
+            "tailwind-merge",
+          ],
           "vendor-utils": [
             "i18next",
             "react-i18next",
