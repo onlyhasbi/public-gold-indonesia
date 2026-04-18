@@ -22,7 +22,7 @@ i18n
     },
     fallbackLng: "id",
     load: "languageOnly", // only load 'id' instead of 'id-ID'
-    debug: true,
+    debug: false,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },

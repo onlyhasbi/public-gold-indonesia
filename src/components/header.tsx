@@ -135,10 +135,12 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
           {hasPhoto ? (
             <img
               className="w-full h-full object-cover"
-              src={optimizeImage(pgbo?.foto_profil_url, 600)}
+              src={optimizeImage(pgbo?.foto_profil_url, 400)}
               alt={`${displayName} - Authorized Public Gold Dealer`}
               loading="eager"
               fetchPriority="high"
+              width="320"
+              height="320"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
