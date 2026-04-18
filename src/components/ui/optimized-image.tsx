@@ -1,4 +1,3 @@
-import { cn } from "../../lib/utils";
 import { type ImgHTMLAttributes } from "react";
 
 export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
@@ -31,7 +30,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
     return (
       <img
         src={src}
-        className={cn("max-w-full h-auto", className)}
+        className={className}
         loading={priority ? "eager" : "lazy"}
         {...rest}
       />
@@ -62,7 +61,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
       src={getUrl(defaultWidth)}
       srcSet={srcset}
       sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
-      className={cn("max-w-full h-auto", className)}
+      className={className}
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : "auto"}
       decoding="async"

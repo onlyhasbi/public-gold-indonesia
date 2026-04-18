@@ -883,10 +883,11 @@ function RegisterPage() {
         {/* Right Column: Hero Image Banner */}
         <div className="hidden lg:block lg:w-1/2 relative bg-[#0c0c0e] overflow-hidden border-l border-slate-100 group">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-red-600/10 blur-[100px] pointer-events-none z-0 group-hover:bg-red-600/20 transition-all duration-1000" />
-          <img
+          <OptimizedImage
             src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg"
             alt="Investasi Emas Public Gold"
             className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80 group-hover:scale-105 group-hover:opacity-70 transition-all duration-1000"
+            priority
           />
 
           {/* Centered Logo */}
