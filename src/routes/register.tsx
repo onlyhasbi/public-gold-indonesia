@@ -34,6 +34,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { NextStepModal } from "../components/NextStepModal";
+import { OptimizedImage } from "../components/ui/optimized-image";
 import NotFound from "../components/not_found";
 import {
   AgeSwitchModal,
@@ -297,12 +298,12 @@ function RegisterPage() {
                   value="dewasa"
                   className="flex-1 flex items-center justify-center gap-2 pt-5 pb-4 rounded-none border-none data-[active]:bg-transparent data-[active]:text-slate-900 data-[active]:shadow-none transition-all"
                 >
-                  <img
+                  <OptimizedImage
                     src="/dewasa.webp"
                     alt=""
-                    loading="lazy"
-                    className="w-[22px] h-[22px] object-cover rounded-full"
-                    style={{ objectPosition: "center 10%" }}
+                    className="w-[22px] h-[22px] object-cover rounded-full object-[center_10%]"
+                    width={22}
+                    height={22}
                   />{" "}
                   {t("registerForm.tabDewasa")}
                 </TabsTrigger>
@@ -310,12 +311,12 @@ function RegisterPage() {
                   value="anak"
                   className="flex-1 flex items-center justify-center gap-2 pt-5 pb-4 rounded-none border-none data-[active]:bg-transparent data-[active]:text-slate-900 data-[active]:shadow-none transition-all"
                 >
-                  <img
+                  <OptimizedImage
                     src="/anak.webp"
                     alt=""
-                    loading="lazy"
-                    className="w-[22px] h-[22px] object-cover rounded-full"
-                    style={{ objectPosition: "center 10%" }}
+                    className="w-[22px] h-[22px] object-cover rounded-full object-[center_10%]"
+                    width={22}
+                    height={22}
                   />{" "}
                   {t("registerForm.tabAnak")}
                 </TabsTrigger>

@@ -152,23 +152,29 @@ const Description = ({ text, points }: { text: string; points: string[] }) => {
 
 const MediaSlider = ({ slides }: { slides: Slide[] }) => {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
 
   const next = useCallback(() => {
     setActive((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
+  const handleManualNavigate = (index: number) => {
+    setActive(index);
+    setIsAutoplayPaused(false);
+  };
+
   useEffect(() => {
-    if (paused) return;
+    if (hoverPaused || isAutoplayPaused) return;
     const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
-  }, [paused, next]);
+  }, [hoverPaused, isAutoplayPaused, next]);
 
   return (
     <div
       className="w-full"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => setHoverPaused(true)}
+      onMouseLeave={() => setHoverPaused(false)}
     >
       {/* Slider viewport */}
       <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-black">
@@ -189,7 +195,7 @@ const MediaSlider = ({ slides }: { slides: Slide[] }) => {
                     src={slide.src}
                     title={slide.label}
                     className="w-full h-full"
-                    onPlay={() => setPaused(true)}
+                    onPlay={() => setIsAutoplayPaused(true)}
                   />
                 ) : (
                   <OptimizedImage
@@ -212,7 +218,7 @@ const MediaSlider = ({ slides }: { slides: Slide[] }) => {
           ? slides.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setActive(i)}
+                onClick={() => handleManualNavigate(i)}
                 className={`rounded-full transition-all duration-300 ${
                   active === i
                     ? "w-6 h-2.5 bg-red-600 shadow-md"
@@ -223,7 +229,7 @@ const MediaSlider = ({ slides }: { slides: Slide[] }) => {
           : slides.map((slide, i) => (
               <button
                 key={i}
-                onClick={() => setActive(i)}
+                onClick={() => handleManualNavigate(i)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 ${
                   active === i
                     ? "bg-red-600 text-white shadow-md scale-105"

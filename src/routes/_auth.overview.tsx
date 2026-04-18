@@ -12,7 +12,7 @@ import {
   Check,
   Loader2,
 } from "lucide-react";
-import { optimizeImage } from "../lib/cloudinary";
+import { OptimizedImage } from "../components/ui/optimized-image";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useSEO } from "../hooks/useSEO";
@@ -74,11 +74,12 @@ function OverviewPage() {
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                 {user.foto_profil_url ? (
-                  <img
-                    src={optimizeImage(user.foto_profil_url)}
+                  <OptimizedImage
+                    src={user.foto_profil_url}
                     alt="Profile"
+                    width={56}
+                    height={56}
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 ) : (
                   <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />

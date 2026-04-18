@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronDown, Languages, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 function Topbar({ pgbo }: { pgbo?: any }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,12 +67,13 @@ function Topbar({ pgbo }: { pgbo?: any }) {
             }}
             className="group flex items-center gap-2 cursor-pointer"
           >
-            <img
-              src={`./logo.svg`}
+            <OptimizedImage
+              src="/logo.svg"
               alt="Public Gold"
-              loading="eager"
-              fetchPriority="high"
+              priority
               className="h-14 w-auto group-hover:scale-105 transition-transform"
+              width={200}
+              height={56}
             />
           </Link>
 
@@ -149,12 +151,12 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                       search={{ type: "dewasa", ref: pgbo?.pageid }}
                       className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
                     >
-                      <img
-                        src="./dewasa.webp"
+                      <OptimizedImage
+                        src="/dewasa.webp"
                         alt={t("nav.accountAdult")}
-                        loading="lazy"
-                        className="w-5 h-5 object-cover rounded-full"
-                        style={{ objectPosition: "center 10%" }}
+                        className="w-5 h-5 object-cover rounded-full object-[center_10%]"
+                        width={20}
+                        height={20}
                       />{" "}
                       {t("nav.accountAdult")}
                     </Link>
@@ -167,12 +169,12 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                       search={{ type: "anak", ref: pgbo?.pageid }}
                       className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
                     >
-                      <img
-                        src="./anak.webp"
+                      <OptimizedImage
+                        src="/anak.webp"
                         alt={t("nav.accountChild")}
-                        loading="lazy"
-                        className="w-5 h-5 object-cover rounded-full"
-                        style={{ objectPosition: "center 10%" }}
+                        className="w-5 h-5 object-cover rounded-full object-[center_10%]"
+                        width={20}
+                        height={20}
                       />{" "}
                       {t("nav.accountChild")}
                     </Link>
@@ -208,11 +210,12 @@ function Topbar({ pgbo }: { pgbo?: any }) {
         <div className="flex items-center justify-between h-20 px-6 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <Link to="/" onClick={() => setIsOpen(false)}>
-              <img
-                src={`./logo.svg`}
+              <OptimizedImage
+                src="/logo.svg"
                 alt="Public Gold"
-                loading="eager"
                 className="h-8 w-auto"
+                width={120}
+                height={32}
               />
             </Link>
           </div>

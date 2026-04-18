@@ -1,15 +1,12 @@
-import { useMemo } from "react";
-import {
-  Image as UnpicImage,
-  type ImageProps as UnpicImageProps,
-} from "@unpic/react";
 import { cn } from "../../lib/utils";
+import { type ImgHTMLAttributes } from "react";
 
-export type OptimizedImageProps = UnpicImageProps & {
-  /**
-   * Whether to prioritize this image (adds fetchpriority="high" and removes loading="lazy")
-   */
+export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
+  src: string;
   priority?: boolean;
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
 };
 
 /**
@@ -20,43 +17,54 @@ export type OptimizedImageProps = UnpicImageProps & {
  * - Optimal lazy loading
  */
 export function OptimizedImage(props: OptimizedImageProps) {
-  const { src, className, priority, ...unpicProps } = props;
+  const { src, className, priority, width, height, aspectRatio, ...rest } = props;
   const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
-  // Process the source URL
-  const processedSrc = useMemo(() => {
-    if (!src) return "";
+  if (!src) return null;
 
-    // If it's already a Cloudinary URL or local path, return as is
-    if (
-      src.includes("res.cloudinary.com") ||
-      src.startsWith("/") ||
-      src.startsWith(".") ||
-      src.startsWith("blob:") ||
-      src.startsWith("data:")
-    ) {
-      return src;
-    }
+  // Determine if it's an external URL that needs Cloudinary Fetch
+  const isExternal = src.startsWith("http") && !src.includes("res.cloudinary.com");
+  
+  if (!isExternal) {
+    return (
+      <img
+        src={src}
+        className={cn("max-w-full h-auto", className)}
+        loading={priority ? "eager" : "lazy"}
+        {...rest}
+      />
+    );
+  }
 
-    // Handle YouTube thumbnails via Cloudinary
+  // Construct Cloudinary Fetch URL with c_limit (NO CROPPING)
+  const getUrl = (w?: number) => {
+    const transformations = ["f_auto", "q_auto", "c_limit"];
+    if (w) transformations.push(`w_${w}`);
+    
+    // Check if it's a YouTube URL
     const ytMatch = src.match(/(?:ytimg\.com|youtube\.com)\/vi\/([^/]+)/);
     if (ytMatch && ytMatch[1]) {
-      const videoId = ytMatch[1];
-      return `https://res.cloudinary.com/${CLOUD_NAME}/image/youtube/f_auto,q_auto/${videoId}.jpg`;
+      return `https://res.cloudinary.com/${CLOUD_NAME}/image/youtube/${transformations.join(",")}/${ytMatch[1]}.jpg`;
     }
+    
+    return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/${transformations.join(",")}/${encodeURIComponent(src)}`;
+  };
 
-    // Wrap external URL in Cloudinary Fetch proxy
-    return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/f_auto,q_auto/${encodeURIComponent(src)}`;
-  }, [src, CLOUD_NAME]);
+  const defaultWidth = width || 800;
+  const srcset = [400, 800, 1200, 1600].map(w => `${getUrl(w)} ${w}w`).join(", ");
 
   return (
-    <UnpicImage
-      {...(unpicProps as UnpicImageProps)}
-      src={processedSrc}
+    <img
+      src={getUrl(defaultWidth)}
+      srcSet={srcset}
+      sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
       className={cn("max-w-full h-auto", className)}
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : "auto"}
       decoding="async"
+      width={width}
+      height={height}
+      {...rest}
     />
   );
 }
