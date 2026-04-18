@@ -12,6 +12,7 @@ import {
   Check,
   Loader2,
 } from "lucide-react";
+import { optimizeImage } from "../lib/cloudinary";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useSEO } from "../hooks/useSEO";
@@ -74,7 +75,7 @@ function OverviewPage() {
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                 {user.foto_profil_url ? (
                   <img
-                    src={user.foto_profil_url}
+                    src={optimizeImage(user.foto_profil_url)}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />

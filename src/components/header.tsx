@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
+import { optimizeImage } from "../lib/cloudinary";
 import {
   Popover,
   PopoverContent,
@@ -134,7 +135,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
           {hasPhoto ? (
             <img
               className="w-full h-full object-cover"
-              src={pgbo!.foto_profil_url!}
+              src={optimizeImage(pgbo?.foto_profil_url)}
               alt={`${displayName} - Authorized Public Gold Dealer`}
             />
           ) : (
