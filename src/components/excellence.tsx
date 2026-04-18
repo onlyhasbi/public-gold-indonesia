@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
+import { Card, CardContent } from "./ui/card";
+import { LiteYouTube } from "./ui/lite-youtube";
+import { optimizeImage } from "../lib/cloudinary";
 
 import {
   Check,
@@ -180,20 +182,23 @@ const MediaSlider = ({ slides }: { slides: Slide[] }) => {
               pointerEvents: active === i ? "auto" : "none",
             }}
           >
-            {slide.type === "video" ? (
-              <iframe
-                src={slide.src}
-                title={slide.label}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            ) : (
-              <img
-                src={slide.src}
-                alt={slide.label}
-                className="w-full h-full object-cover"
-              />
+            {active === i && (
+              <div className="w-full h-full">
+                {slide.type === "video" ? (
+                  <LiteYouTube
+                    src={slide.src}
+                    title={slide.label}
+                    className="w-full h-full"
+                    onPlay={() => setPaused(true)}
+                  />
+                ) : (
+                  <img
+                    src={optimizeImage(slide.src)}
+                    alt={slide.label}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
             )}
           </div>
         ))}

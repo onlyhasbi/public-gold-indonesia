@@ -2,6 +2,7 @@ import { info } from "../constant/baseInfo";
 import BaseLayout from "../layout/base";
 import GradientHighlight from "./ui/gradient_highlight";
 import { useTranslation } from "react-i18next";
+import { optimizeImage } from "../lib/cloudinary";
 import {
   ShieldCheck,
   Smartphone,
@@ -10,7 +11,7 @@ import {
   BadgeDollarSign,
   RefreshCcw,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "./ui/card";
 
 const MEDIA_LIST = [
   {
@@ -142,7 +143,7 @@ function PublicGold() {
                     title={group.name}
                   >
                     <img
-                      src={group.logo}
+                      src={optimizeImage(group.logo)}
                       alt={group.name}
                       className="w-[70px] h-[70px] lg:w-[60px] lg:h-[60px] object-contain"
                     />
