@@ -7,7 +7,7 @@ import Excellence from "../components/excellence";
 import Header from "../components/header";
 import PaymentMethods from "../components/payment_methods";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import PriceList from "../components/pricelist";
@@ -25,10 +25,7 @@ export const Route = createFileRoute("/$pgcode")({
   component: App,
   loader: async ({ params }) => {
     try {
-      await Promise.all([
-        queryClient.ensureQueryData(agentQueryOptions(params.pgcode)),
-        queryClient.ensureQueryData(goldPricesQueryOptions()),
-      ]);
+      await queryClient.ensureQueryData(agentQueryOptions(params.pgcode));
     } catch {
       throw notFound();
     }
@@ -38,7 +35,7 @@ export const Route = createFileRoute("/$pgcode")({
 function App() {
   const { pgcode } = Route.useParams();
   const { data: pgbo } = useSuspenseQuery(agentQueryOptions(pgcode));
-  const { data: goldPrices } = useSuspenseQuery(goldPricesQueryOptions());
+  const { data: goldPrices } = useQuery(goldPricesQueryOptions());
 
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
