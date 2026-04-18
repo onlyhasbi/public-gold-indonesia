@@ -16,27 +16,24 @@
     <meta name="author" content="A. Muh. Hasbi Haerurrijal" />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Prepreconnect for image host -->
     <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="preload" href="/logo.svg" as="image" />
-    <!-- Async Font Loading (Non-Blocking) -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
+    <link rel="preload" href="/5g.webp" as="image" />
+    
+    <!-- Smart Bypassing Script: Instantly unblock LCP for public pages -->
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var isDashboard = path.includes("/overview") || path.includes("/settings");
+        var isAdmin = path.includes("/admin");
+        if (!isDashboard && !isAdmin) {
+          var style = document.createElement("style");
+          style.innerHTML = "#initial-loader { display: none !important; }";
+          document.head.appendChild(style);
+        }
+      })();
+    </script>
 
     <!-- Open Graph -->
     <meta
@@ -112,19 +109,6 @@
       <div class="circle-spinner"></div>
     </div>
 
-    <!-- Smart Bypassing Script: Instantly unblock LCP for public pages -->
-    <script>
-      (function () {
-        var path = window.location.pathname;
-        var isDashboard =
-          path.startsWith("/overview") || path.startsWith("/settings");
-        var isAdmin = path.startsWith("/admin");
-        if (!isDashboard && !isAdmin) {
-          var loader = document.getElementById("initial-loader");
-          if (loader) loader.style.display = "none";
-        }
-      })();
-    </script>
 
     <!-- React app root -->
     <div id="app"></div>
