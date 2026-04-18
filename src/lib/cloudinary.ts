@@ -12,9 +12,13 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
  */
 export const optimizeImage = (url: string | null | undefined): string => {
   if (!url) return "";
-  
+
   // If it's already a Cloudinary URL or localized path, return as is
-  if (url.includes("res.cloudinary.com") || url.startsWith("/") || url.startsWith("blob:")) {
+  if (
+    url.includes("res.cloudinary.com") ||
+    url.startsWith("/") ||
+    url.startsWith("blob:")
+  ) {
     return url;
   }
 

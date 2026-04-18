@@ -12,11 +12,7 @@ import {
 import GradientHighlight from "./ui/gradient_highlight";
 import { Spinner } from "./ui/spinner";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "./ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 import BaseLayout from "../layout/base";
@@ -625,7 +621,10 @@ function PriceList({ price, pgbo }: Props) {
                     <div className="embla__tween__node w-full">
                       <Link
                         to="/register"
-                        search={(prev: any) => ({ ...prev, ref: pgbo?.pageid || undefined })}
+                        search={(prev: any) => ({
+                          ...prev,
+                          ref: pgbo?.pageid || undefined,
+                        })}
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
                           "h-[360px] sm:h-[400px] md:h-[460px]",
