@@ -350,3 +350,5 @@ export function SignUpForm({
     </motion.form>
   );
 }
+
+export default SignUpForm;

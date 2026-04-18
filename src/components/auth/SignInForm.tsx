@@ -119,3 +119,5 @@ export function SignInForm() {
     </motion.form>
   );
 }
+
+export default SignInForm;

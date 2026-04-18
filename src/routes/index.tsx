@@ -3,15 +3,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useAtomValue } from "jotai";
+import { Spinner } from "../components/ui/spinner";
 
 import { requireGuest } from "../lib/auth";
 import { PortalGate } from "../components/auth/PortalGate";
-import { SignInForm } from "../components/auth/SignInForm";
-import { SignUpForm } from "../components/auth/SignUpForm";
 import { isUnlockedAtom, lockoutExpiryAtom } from "../store/portalStore";
 import { optimizeImage } from "../lib/cloudinary";
+
+const SignInForm = lazy(() => import("../components/auth/SignInForm"));
+const SignUpForm = lazy(() => import("../components/auth/SignUpForm"));
 
 const MotionCard = motion.create(Card);
 
@@ -126,16 +128,24 @@ function LandingAuthPage() {
                     </TabsList>
                   </div>
                   <div className="p-6 sm:px-10 pb-8 pt-0">
-                    <AnimatePresence mode="wait">
-                      <TabsContent value="signin" className="mt-0 outline-none">
-                        <SignInForm />
-                      </TabsContent>
-                      <TabsContent value="signup" className="mt-0 outline-none">
-                        <SignUpForm
-                          onSignupSuccess={() => setAuthMode("signin")}
-                        />
-                      </TabsContent>
-                    </AnimatePresence>
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center p-12">
+                          <Spinner size={32} />
+                        </div>
+                      }
+                    >
+                      <AnimatePresence mode="wait">
+                        <TabsContent value="signin" className="mt-0 outline-none">
+                          <SignInForm />
+                        </TabsContent>
+                        <TabsContent value="signup" className="mt-0 outline-none">
+                          <SignUpForm
+                            onSignupSuccess={() => setAuthMode("signin")}
+                          />
+                        </TabsContent>
+                      </AnimatePresence>
+                    </Suspense>
                   </div>
                 </Tabs>
                 <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex flex-col items-center gap-3 bg-transparent">
