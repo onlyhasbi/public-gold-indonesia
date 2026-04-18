@@ -33,7 +33,7 @@ import { NextStepModal } from "../components/NextStepModal";
 import NotFound from "../components/not_found";
 import { AgeSwitchModal, ConfirmationModal } from "../components/RegisterModals";
 import { Checkbox } from "../components/ui/checkbox";
-import { AlertMessage } from "../components/ui/form-elements";
+import { InputField, AlertMessage } from "../components/ui/form-elements";
 import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
 import { useRegisterForm } from "../hooks/useRegisterForm";
@@ -296,22 +296,16 @@ function RegisterPage() {
                 )}
 
                 <form key={formKey} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="label-name" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      {isAnak ? t("registerForm.nameLabelAnak") : t("registerForm.nameLabelDewasa")}
-                    </Label>
-                    <Input
-                      id="label-name"
-                      placeholder={isAnak ? t("registerForm.namePlaceholderAnak") : t("registerForm.namePlaceholderDewasa")}
-                      {...register("label-name", {
-                        onChange: (e) => e.target.value = e.target.value.toUpperCase()
-                      })}
-                      className={cn(errors["label-name"] && "border-red-500 focus-visible:ring-red-500/30")}
-                    />
-                    {errors["label-name"] && (
-                      <p className="text-[11px] font-medium text-red-500">{errors["label-name"]?.message as string}</p>
-                    )}
-                  </div>
+                  <InputField
+                    id="label-name"
+                    required
+                    label={isAnak ? t("registerForm.nameLabelAnak") : t("registerForm.nameLabelDewasa")}
+                    placeholder={isAnak ? t("registerForm.namePlaceholderAnak") : t("registerForm.namePlaceholderDewasa")}
+                    {...register("label-name", {
+                      onChange: (e) => e.target.value = e.target.value.toUpperCase()
+                    })}
+                    error={errors["label-name"]?.message as string}
+                  />
 
                   <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
                     <div className="space-y-2">

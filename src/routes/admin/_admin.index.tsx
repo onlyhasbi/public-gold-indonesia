@@ -110,7 +110,7 @@ function AdminDashboard() {
     queryKey: ['admin_secret_code'],
     queryFn: async () => {
       const res = await api.get('/admin/settings/secret-code', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data?.data || { code: '', auto_rotate: false }
     },
@@ -127,7 +127,7 @@ function AdminDashboard() {
   const updateSecretMutation = useMutation({
     mutationFn: async (payload: { code: string; auto_rotate: boolean }) => {
       const res = await api.patch('/admin/settings/secret-code', payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },
@@ -154,7 +154,7 @@ function AdminDashboard() {
     if (!pageid || pageid.length < 3) return true;
     try {
       const res = await api.get(`/admin/pgbo/check-pageid?pageid=${pageid}${excludeId ? `&excludeId=${excludeId}` : ''}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data.isAvailable
     } catch {
@@ -166,7 +166,7 @@ function AdminDashboard() {
     document.title = "Dashboard Super Admin | Public Gold Indonesia";
   }, [])
 
-  const adminToken = localStorage.getItem('admin_token')
+  const adminToken = (localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')
 
   const [serverSearch, setServerSearch] = useState('')
   const debouncedSearch = useDebounce(serverSearch, 500)
@@ -176,7 +176,7 @@ function AdminDashboard() {
     queryFn: async () => {
       const res = await api.get(`/admin/pgbo${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ''}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('admin_token')}`
+          Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}`
         }
       })
       return res.data?.data || []
@@ -208,7 +208,7 @@ function AdminDashboard() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await api.delete(`/admin/pgbo/${id}`, {
-         headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+         headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },
@@ -227,7 +227,7 @@ function AdminDashboard() {
   const toggleMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await api.patch(`/admin/pgbo/${id}/toggle`, null, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },
@@ -244,7 +244,7 @@ function AdminDashboard() {
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       const res = await api.post('/admin/pgbo/bulk-delete', { ids }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },
@@ -263,7 +263,7 @@ function AdminDashboard() {
   const bulkToggleMutation = useMutation({
     mutationFn: async ({ ids, active }: { ids: string[]; active: boolean }) => {
       const res = await api.patch('/admin/pgbo/bulk-toggle', { ids, active }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },
@@ -293,7 +293,7 @@ function AdminDashboard() {
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       const res = await api.post('/admin/pgbo', data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },
@@ -342,7 +342,7 @@ function AdminDashboard() {
   const editMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
       const res = await api.put(`/admin/pgbo/${id}`, data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
+        headers: { Authorization: `Bearer ${(localStorage.getItem('admin_token')?.replace(/^"|"$/g, '') || '')}` }
       })
       return res.data
     },

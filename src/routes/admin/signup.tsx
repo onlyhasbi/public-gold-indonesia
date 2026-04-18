@@ -5,6 +5,8 @@ import { api } from '../../lib/api'
 import { useToast } from '../../components/toast'
 import { useForm } from 'react-hook-form'
 import { requireAdminGuest } from '@/lib/auth'
+import { adminTokenAtom, adminUserAtom } from '../../store/authStore'
+import { useSetAtom } from 'jotai'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
@@ -22,6 +24,9 @@ const schema = yup.object().shape({
 function AdminSignupPage() {
   const navigate = useNavigate()
   const { showToast } = useToast()
+
+  const setToken = useSetAtom(adminTokenAtom)
+  const setUser = useSetAtom(adminUserAtom)
 
   // Redirect if already logged in as admin
   useEffect(() => {
@@ -54,8 +59,8 @@ function AdminSignupPage() {
     },
     onSuccess: (data) => {
       if (data.success) {
-        localStorage.setItem('admin_token', data.token)
-        localStorage.setItem('admin_user', JSON.stringify(data.user))
+        setToken(data.token)
+        setUser(data.user)
         showToast(data.message, 'success')
         navigate({ to: '/admin' })
       } else {

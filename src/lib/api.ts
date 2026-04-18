@@ -11,7 +11,8 @@ export const api = axios.create({
 // Attach JWT token to every request
 // IMPORTANT: Don't overwrite Authorization if already explicitly set (e.g. admin routes)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const rawToken = localStorage.getItem("token");
+  const token = rawToken ? rawToken.replace(/^"|"$/g, '') : null;
   if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }

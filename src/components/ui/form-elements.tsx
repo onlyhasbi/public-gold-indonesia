@@ -1,5 +1,5 @@
-import { type ReactNode } from "react"
-import { AlertCircle, CheckCircle, X } from "lucide-react"
+import { type ReactNode, useState } from "react"
+import { AlertCircle, CheckCircle, X, Eye, EyeOff } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Alert, AlertDescription } from "./alert"
 
@@ -72,5 +72,39 @@ export function AlertMessage({ type, message, onClose }: { type: "success" | "er
         <X className="size-[15px]" />
       </button>
     </Alert>
+  );
+}
+
+export function PasswordInput({ label, id, required = false, description, error, className, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string | ReactNode; description?: ReactNode; error?: string | false; }) {
+  const [showPassword, setShowPassword] = useState(false);
+  
+  return (
+    <div className="relative pb-0.5">
+      <label htmlFor={id} className={labelClass}>
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <div className="relative">
+        <input 
+          id={id} 
+          name={id} 
+          type={showPassword ? 'text' : 'password'}
+          required={required} 
+          className={cn(inputClass, "pr-10", error && "border-red-500 focus:ring-red-500/30 focus:border-red-500", className)} 
+          {...props} 
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 p-0 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-transparent transition-colors"
+        >
+          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+        </button>
+      </div>
+      {error ? (
+        <div className="absolute top-full left-1 mt-1 text-[11px] font-medium text-red-500">{error}</div>
+      ) : description ? (
+        <div className="absolute top-full left-1 mt-1 text-[11px] font-medium text-slate-400/90">{description}</div>
+      ) : null}
+    </div>
   );
 }

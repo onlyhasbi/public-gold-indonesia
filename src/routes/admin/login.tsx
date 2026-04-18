@@ -5,6 +5,8 @@ import { api } from '../../lib/api'
 import { useToast } from '../../components/toast'
 import { useForm } from 'react-hook-form'
 import { requireAdminGuest } from '@/lib/auth'
+import { adminTokenAtom, adminUserAtom } from '../../store/authStore'
+import { useSetAtom } from 'jotai'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
@@ -21,6 +23,9 @@ const schema = yup.object().shape({
 function AdminLoginPage() {
   const navigate = useNavigate()
   const { showToast } = useToast()
+  
+  const setToken = useSetAtom(adminTokenAtom)
+  const setUser = useSetAtom(adminUserAtom)
 
   // Redirect if already logged in as admin
   useEffect(() => {
@@ -53,8 +58,8 @@ function AdminLoginPage() {
     },
     onSuccess: (data) => {
       if (data.success && data.user?.role === 'admin') {
-        localStorage.setItem('admin_token', data.token)
-        localStorage.setItem('admin_user', JSON.stringify(data.user))
+        setToken(data.token)
+        setUser(data.user)
         navigate({ to: '/admin' })
       } else if (data.success && data.user?.role !== 'admin') {
         showToast('Akses ditolak. Akun ini bukan admin.', 'error')
