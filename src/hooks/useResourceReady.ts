@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
  * Critical images that must load before showing the website.
  * These are above-the-fold / hero images.
  */
-const CRITICAL_IMAGES = ["/logo.svg", "/me.webp", "/5g.webp"];
+const CRITICAL_IMAGES = ["/logo.svg", "/5g.webp"];
 
 /**
  * Maximum time (ms) to wait for resources before forcing reveal.
