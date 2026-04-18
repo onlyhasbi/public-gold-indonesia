@@ -1,4 +1,4 @@
-import { type ImgHTMLAttributes } from "react";
+import { useState, type ImgHTMLAttributes } from "react";
 
 export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   src: string;
@@ -10,6 +10,7 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 
 /**
  * A high-performance image component that provides:
+ * - Blur-Up technique (placeholder transitions)
  * - Automatic srcset (responsive sizes)
  * - Modern format selection (WebP/AVIF)
  * - Layout shift prevention (CLS)
@@ -18,6 +19,7 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 export function OptimizedImage(props: OptimizedImageProps) {
   const { src, className, priority, width, height, aspectRatio, ...rest } =
     props;
+  const [isLoaded, setIsLoaded] = useState(false);
   const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
   if (!src) return null;
@@ -26,21 +28,14 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const isExternal =
     src.startsWith("http") && !src.includes("res.cloudinary.com");
 
-  if (!isExternal) {
-    return (
-      <img
-        src={src}
-        className={className}
-        loading={priority ? "eager" : "lazy"}
-        {...rest}
-      />
-    );
-  }
-
-  // Construct Cloudinary Fetch URL with c_limit (NO CROPPING)
-  const getUrl = (w?: number) => {
-    const transformations = ["f_auto", "q_auto", "c_limit"];
-    if (w) transformations.push(`w_${w}`);
+  // Construction helpers
+  const getUrl = (w?: number, blur?: boolean) => {
+    const transformations = ["f_auto", "q_auto"];
+    if (blur) {
+      transformations.push("e_blur:2000", "w_40", "q_auto:low");
+    } else if (w) {
+      transformations.push(`w_${w}`, "c_limit");
+    }
 
     // Check if it's a YouTube URL
     const ytMatch = src.match(/(?:ytimg\.com|youtube\.com)\/vi\/([^/]+)/);
@@ -52,22 +47,47 @@ export function OptimizedImage(props: OptimizedImageProps) {
   };
 
   const defaultWidth = width || 800;
-  const srcset = [400, 800, 1200, 1600]
-    .map((w) => `${getUrl(w)} ${w}w`)
-    .join(", ");
+  const srcset = isExternal
+    ? [400, 800, 1200, 1600]
+        .map((w) => `${getUrl(w)} ${w}w`)
+        .join(", ")
+    : undefined;
+
+  const placeholderUrl = isExternal ? getUrl(undefined, true) : undefined;
 
   return (
-    <img
-      src={getUrl(defaultWidth)}
-      srcSet={srcset}
-      sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
-      className={className}
-      loading={priority ? "eager" : "lazy"}
-      fetchPriority={priority ? "high" : "auto"}
-      decoding="async"
-      width={width}
-      height={height}
-      {...rest}
-    />
+    <div
+      className={`relative overflow-hidden ${className || ""}`}
+      style={{
+        aspectRatio: aspectRatio || (width && height ? width / height : undefined),
+      }}
+    >
+      {/* 1. Blurred Placeholder Layer */}
+      {isExternal && !isLoaded && (
+        <img
+          src={placeholderUrl}
+          className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 transition-opacity duration-500"
+          alt=""
+          aria-hidden="true"
+        />
+      )}
+
+      {/* 2. Main High-Res Image */}
+      <img
+        src={isExternal ? getUrl(defaultWidth) : src}
+        srcSet={srcset}
+        sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
+        className={`w-full h-full transition-opacity duration-700 ease-in-out ${
+          isExternal ? (isLoaded ? "opacity-100" : "opacity-0") : "opacity-100"
+        }`}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
+        width={width}
+        height={height}
+        onLoad={() => setIsLoaded(true)}
+        {...rest}
+      />
+    </div>
   );
 }
