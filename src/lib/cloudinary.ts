@@ -24,7 +24,15 @@ export const optimizeImage = (url: string | null | undefined): string => {
     return url;
   }
 
-  // Construct Cloudinary Fetch URL
+  // Handle YouTube thumbnails using Cloudinary's native YouTube support
+  // Patterns like i3.ytimg.com/vi/ID/... or img.youtube.com/vi/ID/...
+  const ytMatch = url.match(/(?:ytimg\.com|youtube\.com)\/vi\/([^/]+)/);
+  if (ytMatch && ytMatch[1]) {
+    const videoId = ytMatch[1];
+    return `https://res.cloudinary.com/${CLOUD_NAME}/image/youtube/f_auto,q_auto/${videoId}.jpg`;
+  }
+
+  // Construct Cloudinary Fetch URL with encoded target URL for safety
   // Format: https://res.cloudinary.com/<cloud_name>/image/fetch/f_auto,q_auto/<url>
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/f_auto,q_auto/${url}`;
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/f_auto,q_auto/${encodeURIComponent(url)}`;
 };
