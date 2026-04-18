@@ -26,8 +26,11 @@ export const goldPricesQueryOptions = () =>
   queryOptions({
     queryKey: ["goldPrices"],
     queryFn: getGoldPrices,
-    // USER REQUIREMENT: Always get fresh data
+    // USER REQUIREMENT: Always get fresh data on mount (refresh)
     staleTime: 0,
+    // Disable background updates to avoid excessive scraping
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     // Data remains in cache for 5 minutes during background refetch to avoid UI flicker
     gcTime: 5 * 60 * 1000,
   });
