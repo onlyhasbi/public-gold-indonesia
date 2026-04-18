@@ -300,6 +300,7 @@ function RegisterPage() {
                   <img
                     src="/dewasa.webp"
                     alt=""
+                    loading="lazy"
                     className="w-[22px] h-[22px] object-cover rounded-full"
                     style={{ objectPosition: "center 10%" }}
                   />{" "}
@@ -312,6 +313,7 @@ function RegisterPage() {
                   <img
                     src="/anak.webp"
                     alt=""
+                    loading="lazy"
                     className="w-[22px] h-[22px] object-cover rounded-full"
                     style={{ objectPosition: "center 10%" }}
                   />{" "}

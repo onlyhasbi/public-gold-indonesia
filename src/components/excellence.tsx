@@ -39,6 +39,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://my-cdn.publicgold.com.my/image/catalog/banner/674d39b1a3e800671364001733114289.jpeg",
+        1024,
       ),
       label: "Sertifikat Syariah",
     },
@@ -48,6 +49,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://cdn.visiteliti.com/article/2024-07/25/HM9UDkAptlxWkxBK36gx_1721869162.webp",
+        1024,
       ),
       label: "BCA",
     },
@@ -55,6 +57,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://infobanknews.com/wp-content/uploads/2023/11/WhatsApp-Image-2023-11-06-at-14.19.49-1-1.jpeg",
+        1024,
       ),
       label: "BCA",
     },
@@ -62,6 +65,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://asset.kompas.com/crops/ALvckg8qkwVaYTrgXU6ILDSgeuQ=/0x0:780x520/1200x800/data/photo/2025/06/18/6852356cf1adb.jpeg",
+        1024,
       ),
       label: "BRI",
     },
@@ -69,6 +73,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://securecms.neraca.co.id/gallery/202201/21377.jpg",
+        1024,
       ),
       label: "BNI",
     },
@@ -76,6 +81,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://www.madaninews.id/wp-content/uploads/2024/02/bsi-1-1140x570.jpg",
+        1024,
       ),
       label: "BSI",
     },
@@ -83,6 +89,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://awsimages.detik.net.id/visual/2025/04/29/bank-cimb-niaga-1745912369985_169.jpeg?w=900&q=80",
+        1024,
       ),
       label: "CIMB",
     },
@@ -90,6 +97,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://cdn.aptoide.com/imgs/a/2/1/a215786f2f2854e9e35e9153e1c10bcf_screen.png",
+        1024,
       ),
       label: "Doku",
     },
@@ -104,6 +112,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://s3-ap-southeast-1.amazonaws.com/paxelbucket/revamp/article-WSQPRAT-40VYLMD-HAWI2V1-BKJNBTY.webp",
+        1024,
       ),
       label: "Paxel",
     },
@@ -111,6 +120,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://foto.kontan.co.id/ULYc1SYKAE_CHGs1FzgckFKLkFM=/smart/filters:format(webp)/2020/08/07/313074817.jpg",
+        1024,
       ),
       label: "Anteraja",
     },
@@ -125,6 +135,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://instagram.fupg6-1.fna.fbcdn.net/v/t39.30808-6/506033940_24670834049173343_6287974762171629449_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InRocmVhZHMuQ0FST1VTRUxfSVRFTS5pbWFnZV91cmxnZW4uMTA4MHg4MTAuc2RyLmYzMDgwOC5kZWZhdWx0X2ltYWdlLmMyIn0&_nc_ht=instagram.fupg6-1.fna.fbcdn.net&_nc_cat=111&_nc_oc=Q6cZ2gGPf4j7qDOTGW-fQ_GMlDVumT3N8s8MfE1dBZJ0j7ODR4Xy61ptqfe5Iwp4TRXFcaG3Puwlmz3GDEENjPV3FSpA&_nc_ohc=T555t17xi7sQ7kNvwG9xSGs&_nc_gid=6KIEJj6EdmuHKXh4u8HhsQ&edm=AKr904kAAAAA&ccb=7-5&ig_cache_key=MzM5MTI1NDg3NDUzMTI0OTg5Ng%3D%3D.3-ccb7-5&oh=00_AfypobPUD19cB7LuiTU0-MBY6aYmKxt_cG_pnBz3e8eQGA&oe=69CF3692&_nc_sid=23467f",
+        1024,
       ),
       label: "Yogyakarta",
     },
@@ -132,6 +143,7 @@ const tabMedia: Record<number, Slide[]> = {
       type: "image",
       src: optimizeImage(
         "https://lh3.googleusercontent.com/gps-cs-s/AHVAwepR6E9YxiQJ1pTnW9f98CE0RzZqJRZJbt_hEKoGOFHQBzJI9cMbQM2zPWkaOhhdkkv5rOrauMlTEIKsdFil5B47mBtTxS9TShYD8UXn-qxlRv0p8zxNsc7XUEAPROpt4Ib2l-mV=s1360-w1360-h1020-rw",
+        1024,
       ),
       label: "Surabaya",
     },
@@ -221,8 +233,9 @@ const MediaSlider = ({ slides }: { slides: Slide[] }) => {
                   />
                 ) : (
                   <img
-                    src={optimizeImage(slide.src)}
+                    src={optimizeImage(slide.src, 1024)}
                     alt={slide.label}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 )}

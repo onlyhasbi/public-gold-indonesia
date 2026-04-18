@@ -68,6 +68,8 @@ function Topbar({ pgbo }: { pgbo?: any }) {
             <img
               src={`./logo.svg`}
               alt="Public Gold"
+              loading="eager"
+              fetchPriority="high"
               className="h-14 w-auto group-hover:scale-105 transition-transform"
             />
           </Link>
@@ -149,6 +151,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                       <img
                         src="./dewasa.webp"
                         alt={t("nav.accountAdult")}
+                        loading="lazy"
                         className="w-5 h-5 object-cover rounded-full"
                         style={{ objectPosition: "center 10%" }}
                       />{" "}
@@ -166,6 +169,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                       <img
                         src="./anak.webp"
                         alt={t("nav.accountChild")}
+                        loading="lazy"
                         className="w-5 h-5 object-cover rounded-full"
                         style={{ objectPosition: "center 10%" }}
                       />{" "}
@@ -206,6 +210,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
               <img
                 src={`./logo.svg`}
                 alt="Public Gold"
+                loading="eager"
                 className="h-8 w-auto"
               />
             </Link>

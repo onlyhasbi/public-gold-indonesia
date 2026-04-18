@@ -11,6 +11,7 @@ import { PortalGate } from "../components/auth/PortalGate";
 import { SignInForm } from "../components/auth/SignInForm";
 import { SignUpForm } from "../components/auth/SignUpForm";
 import { isUnlockedAtom, lockoutExpiryAtom } from "../store/portalStore";
+import { optimizeImage } from "../lib/cloudinary";
 
 const MotionCard = motion.create(Card);
 
@@ -75,8 +76,13 @@ function LandingAuthPage() {
                 className="p-3 bg-[#000856] rounded-2xl shadow-sm border border-slate-100"
               >
                 <img
-                  src="https://mypublicgold.com/5g/logo/logo_gold.png"
+                  src={optimizeImage(
+                    "https://mypublicgold.com/5g/logo/logo_gold.png",
+                    200,
+                  )}
                   alt="Logo"
+                  loading="eager"
+                  fetchPriority="high"
                   className="w-12 h-12 object-contain"
                 />
               </motion.div>

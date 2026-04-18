@@ -78,6 +78,7 @@ function OverviewPage() {
                     src={optimizeImage(user.foto_profil_url)}
                     alt="Profile"
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 ) : (
                   <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />

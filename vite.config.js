@@ -6,7 +6,7 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     tanstackRouter({ autoCodeSplitting: true }),
     viteReact(),
@@ -16,6 +16,22 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    target: "esnext",
+    assetsInlineLimit: 8192, // Inline assets smaller than 8KB
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
+  esbuild: {
+    drop: mode === "production" ? ["console", "debugger"] : [],
   },
   server: {
     proxy: {
@@ -55,4 +71,4 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
   },
-});
+}));

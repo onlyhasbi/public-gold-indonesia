@@ -53,6 +53,7 @@ export function ProfilePhotoCard({
                     src={optimizeImage(fotoProfilUrl)}
                     alt="Profile"
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-red-50 to-rose-100 flex items-center justify-center">

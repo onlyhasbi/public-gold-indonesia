@@ -89,7 +89,7 @@ export const dinar = [
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PDI0010.png",
     category: "dinar",
   },
-].map((p) => ({ ...p, url: optimizeImage(p.url) }));
+].map((p) => ({ ...p, url: optimizeImage(p.url, 400) }));
 
 export const goldbar = [
   {
@@ -200,7 +200,7 @@ export const goldbar = [
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PGI0100.png",
     category: "goldbar",
   },
-].map((p) => ({ ...p, url: optimizeImage(p.url) }));
+].map((p) => ({ ...p, url: optimizeImage(p.url, 400) }));
 
 const allProducts = [...dinar, ...goldbar];
 
@@ -650,6 +650,7 @@ function PriceList({ price, pgbo }: Props) {
                             className="h-full w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                             src={item.url}
                             alt={item.title}
+                            loading="lazy"
                           />
                         </div>
 

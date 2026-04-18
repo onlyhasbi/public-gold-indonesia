@@ -51,6 +51,7 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
                       src={optimizeImage(pgbo?.foto_profil_url)}
                       alt={`${displayName} - Dealer Public Gold`}
                       className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="relative w-full h-full rounded-full bg-gradient-to-br from-white/30 to-white/10 border-4 border-white shadow-2xl flex items-center justify-center">

@@ -135,8 +135,10 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
           {hasPhoto ? (
             <img
               className="w-full h-full object-cover"
-              src={optimizeImage(pgbo?.foto_profil_url)}
+              src={optimizeImage(pgbo?.foto_profil_url, 600)}
               alt={`${displayName} - Authorized Public Gold Dealer`}
+              loading="eager"
+              fetchPriority="high"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
@@ -153,6 +155,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-xl"
             src="./5g.webp"
             alt="Public Gold 5G Associates Team - Success Together"
+            loading="lazy"
           />
         </span>
       </div>

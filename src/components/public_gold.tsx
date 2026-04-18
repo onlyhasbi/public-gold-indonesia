@@ -85,6 +85,7 @@ function PublicGold() {
             <img
               src="./public_gold_hero.webp"
               alt="Public Gold Office"
+              loading="eager"
               className="rounded-2xl shadow-lg w-full h-full min-h-[280px] object-cover"
             />
           </div>
@@ -143,8 +144,9 @@ function PublicGold() {
                     title={group.name}
                   >
                     <img
-                      src={optimizeImage(group.logo)}
+                      src={optimizeImage(group.logo, 240)}
                       alt={group.name}
+                      loading="lazy"
                       className="w-[70px] h-[70px] lg:w-[60px] lg:h-[60px] object-contain"
                     />
                   </a>
