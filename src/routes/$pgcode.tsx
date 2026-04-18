@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
 import Benefit from "../components/benefit";
@@ -23,17 +23,10 @@ import { useSEO } from "../hooks/useSEO";
 
 export const Route = createFileRoute("/$pgcode")({
   component: App,
-  loader: async ({ params }) => {
-    try {
-      // START BOTH IN PARALLEL
-      // Prefetch gold prices in the background (no await)
-      queryClient.prefetchQuery(goldPricesQueryOptions());
-
-      // Ensure agent data is ready for the initial render (await)
-      await queryClient.ensureQueryData(agentQueryOptions(params.pgcode));
-    } catch {
-      throw notFound();
-    }
+  loader: ({ params }) => {
+    // PREFETCH BOTH IN BACKGROUND
+    queryClient.prefetchQuery(goldPricesQueryOptions());
+    queryClient.prefetchQuery(agentQueryOptions(params.pgcode));
   },
 });
 

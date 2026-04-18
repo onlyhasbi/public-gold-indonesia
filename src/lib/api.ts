@@ -1,11 +1,13 @@
 import axios from "axios";
 
 const url = import.meta.env.VITE_API_URL || "http://localhost:3000";
-const baseURL = url.endsWith("/api") ? url : `${url}/api`;
+// Carefully join the URL and /api segment, avoiding double slashes or missing ones
+const cleanUrl = url.replace(/\/+$/, "");
+const baseURL = cleanUrl.endsWith("/api") ? cleanUrl : `${cleanUrl}/api`;
 
 export const api = axios.create({
   baseURL,
-  timeout: 15000, // 15 second timeout — prevents hanging requests
+  timeout: 15000,
 });
 
 // Attach JWT token to every request

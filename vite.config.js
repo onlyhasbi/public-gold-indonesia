@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import compression from "vite-plugin-compression";
 
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
@@ -11,6 +12,20 @@ export default defineConfig(({ mode }) => ({
     tanstackRouter({ autoCodeSplitting: true }),
     viteReact(),
     tailwindcss(),
+    // Gzip compression for static assets
+    compression({
+      algorithm: "gzip",
+      ext: ".gz",
+      threshold: 1024,
+      deleteOriginFile: false,
+    }),
+    // Brotli compression for modern browsers
+    compression({
+      algorithm: "brotliCompress",
+      ext: ".br",
+      threshold: 1024,
+      deleteOriginFile: false,
+    }),
   ],
   resolve: {
     alias: {
@@ -19,10 +34,15 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     target: "esnext",
-    assetsInlineLimit: 8192, // Inline assets smaller than 8KB
-  },
-  esbuild: {
-    drop: mode === "production" ? ["console", "debugger"] : [],
+    assetsInlineLimit: 8192,
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: mode === "production",
+        drop_debugger: mode === "production",
+        pure_funcs: mode === "production" ? ["console.log"] : [],
+      },
+    },
   },
   server: {
     proxy: {

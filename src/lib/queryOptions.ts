@@ -14,7 +14,7 @@ export const agentQueryOptions = (pgcode: string) =>
       return res.data.data;
     },
     // USER REQUIREMENT: Always fresh data for previews
-    staleTime: 0,
+    staleTime: 60 * 1000,
   });
 
 /**
@@ -27,7 +27,7 @@ export const goldPricesQueryOptions = () =>
     queryKey: ["goldPrices"],
     queryFn: getGoldPrices,
     // USER REQUIREMENT: Always get fresh data on mount (refresh)
-    staleTime: 0,
+    staleTime: 60 * 1000,
     // Disable background updates to avoid excessive scraping
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
