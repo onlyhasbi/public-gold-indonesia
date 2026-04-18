@@ -4,11 +4,7 @@ import { useState, useEffect, useCallback } from "react";
  * Critical images that must load before showing the website.
  * These are above-the-fold / hero images.
  */
-const CRITICAL_IMAGES = [
-  "/logo.svg",
-  "/me.webp",
-  "/5g.webp",
-];
+const CRITICAL_IMAGES = ["/logo.svg", "/me.webp", "/5g.webp"];
 
 /**
  * Maximum time (ms) to wait for resources before forcing reveal.
@@ -37,7 +33,7 @@ export function useResourceReady() {
 
   useEffect(() => {
     // Admin pages don't need the landing page image preload — dismiss immediately
-    if (window.location.pathname.startsWith('/admin')) {
+    if (window.location.pathname.startsWith("/admin")) {
       setIsReady(true);
       dismissLoader();
       return;

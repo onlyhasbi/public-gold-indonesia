@@ -23,7 +23,7 @@ export const branchLabelOptions: Record<string, string> = {
   "22": "Kuching, Sarawak",
   "23": "Miri, Sarawak",
   "34": "Menara Public Gold, Kuala Lumpur",
-  "135": "Tawau, Sabah"
+  "135": "Tawau, Sabah",
 };
 
 export const branchOptionsId = [
@@ -33,7 +33,7 @@ export const branchOptionsId = [
   { value: "31", label: "Banjarmasin" },
   { value: "32", label: "Yogyakarta" },
   { value: "36", label: "Surabaya" },
-  { value: "265", label: "Bekasi" }
+  { value: "265", label: "Bekasi" },
 ];
 
 export const branchOptionsMy = [
@@ -54,5 +54,5 @@ export const branchOptionsMy = [
   { value: "22", label: "Kuching, Sarawak" },
   { value: "23", label: "Miri, Sarawak" },
   { value: "34", label: "Menara Public Gold, Kuala Lumpur" },
-  { value: "135", label: "Tawau, Sabah" }
+  { value: "135", label: "Tawau, Sabah" },
 ];

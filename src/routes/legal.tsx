@@ -121,14 +121,12 @@ function LegalPage() {
                     "flex items-center gap-2 px-4 sm:px-5 py-3.5 sm:py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-all duration-200",
                     isActive
                       ? "border-red-600 text-red-600"
-                      : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                      : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300",
                   )}
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
                   <span className="hidden sm:inline">{t.label}</span>
-                  <span className="sm:hidden">
-                    {t.label.split(" ").pop()}
-                  </span>
+                  <span className="sm:hidden">{t.label.split(" ").pop()}</span>
                 </button>
               );
             })}
@@ -224,7 +222,7 @@ function SectionCard({
         <div
           className={cn(
             "w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-lg",
-            accentMap[accent]
+            accentMap[accent],
           )}
         >
           <Icon className="w-5 h-5 text-white" />
@@ -262,9 +260,8 @@ function TermsContent() {
           Syarat dan ketentuan berikut mengatur penggunaan platform{" "}
           <strong>Public Gold Official (PGO)</strong>. Dengan mengakses atau
           menggunakan layanan kami, Anda dianggap telah membaca, memahami, dan
-          menyetujui seluruh ketentuan yang berlaku. Istilah "Kami" merujuk
-          pada pengelola platform, sedangkan "Anda" merujuk pada pengguna
-          layanan.
+          menyetujui seluruh ketentuan yang berlaku. Istilah "Kami" merujuk pada
+          pengelola platform, sedangkan "Anda" merujuk pada pengguna layanan.
         </p>
       </div>
 
@@ -293,10 +290,7 @@ function TermsContent() {
             "Dilarang menjual, menyewakan, atau mensublisensikan konten",
             "Dilarang memperbanyak atau mendistribusikan ulang konten",
           ].map((item, i) => (
-            <li
-              key={i}
-              className="flex items-start gap-2.5 text-slate-600"
-            >
+            <li key={i} className="flex items-start gap-2.5 text-slate-600">
               <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 flex-shrink-0" />
               {item}
             </li>
@@ -312,14 +306,14 @@ function TermsContent() {
         <p>
           Organisasi tertentu seperti lembaga pemerintah, mesin pencari, dan
           portal berita dapat menautkan ke situs kami tanpa persetujuan
-          tertulis. Tautan tersebut harus bersifat transparan, tidak
-          menyiratkan dukungan atau afiliasi palsu, serta relevan dengan
-          konteks situs penaut.
+          tertulis. Tautan tersebut harus bersifat transparan, tidak menyiratkan
+          dukungan atau afiliasi palsu, serta relevan dengan konteks situs
+          penaut.
         </p>
         <p>
           Kami tidak bertanggung jawab atas konten yang muncul di situs pihak
-          ketiga. Segala klaim yang timbul dari penggunaan tautan ke situs
-          kami menjadi tanggung jawab pihak penaut.
+          ketiga. Segala klaim yang timbul dari penggunaan tautan ke situs kami
+          menjadi tanggung jawab pihak penaut.
         </p>
       </SectionCard>
 
@@ -339,10 +333,7 @@ function TermsContent() {
             "Tanggung jawab atas penipuan atau misrepresentasi",
             "Kewajiban lain yang tidak dapat dikecualikan berdasarkan hukum",
           ].map((item, i) => (
-            <li
-              key={i}
-              className="flex items-start gap-2.5 text-slate-600"
-            >
+            <li key={i} className="flex items-start gap-2.5 text-slate-600">
               <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 flex-shrink-0" />
               {item}
             </li>
@@ -360,10 +351,10 @@ function TermsContent() {
         accent="violet"
       >
         <p>
-          Kami berhak mengubah syarat dan ketentuan ini kapan saja. Dengan
-          terus menggunakan platform setelah perubahan diberlakukan, Anda
-          dianggap menyetujui ketentuan yang diperbarui. Kami menyarankan
-          Anda untuk meninjau halaman ini secara berkala.
+          Kami berhak mengubah syarat dan ketentuan ini kapan saja. Dengan terus
+          menggunakan platform setelah perubahan diberlakukan, Anda dianggap
+          menyetujui ketentuan yang diperbarui. Kami menyarankan Anda untuk
+          meninjau halaman ini secara berkala.
         </p>
       </SectionCard>
     </div>
@@ -385,8 +376,8 @@ function PrivacyContent() {
         <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
           Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan,
           menggunakan, dan melindungi informasi pribadi Anda saat menggunakan
-          layanan kami. Kami berkomitmen untuk menjaga keamanan data Anda
-          sesuai dengan standar perlindungan data yang berlaku.
+          layanan kami. Kami berkomitmen untuk menjaga keamanan data Anda sesuai
+          dengan standar perlindungan data yang berlaku.
         </p>
       </div>
 
@@ -480,10 +471,7 @@ function PrivacyContent() {
             "Menyampaikan informasi promosi (dengan persetujuan Anda)",
             "Analisis data dan peningkatan kualitas layanan",
           ].map((item, i) => (
-            <li
-              key={i}
-              className="flex items-start gap-2.5 text-slate-600"
-            >
+            <li key={i} className="flex items-start gap-2.5 text-slate-600">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
               {item}
             </li>
@@ -495,8 +483,8 @@ function PrivacyContent() {
         <p>
           Kami menyimpan data pribadi Anda selama diperlukan untuk tujuan yang
           disebutkan dalam kebijakan ini, atau selama diwajibkan oleh hukum.
-          Kami menerapkan langkah-langkah keamanan yang wajar secara
-          komersial, namun tidak ada metode transmisi internet yang 100% aman.
+          Kami menerapkan langkah-langkah keamanan yang wajar secara komersial,
+          namun tidak ada metode transmisi internet yang 100% aman.
         </p>
         <p className="mt-3">
           Anda berhak untuk memperbarui, memperbaiki, atau menghapus data
@@ -511,10 +499,10 @@ function PrivacyContent() {
         accent="slate"
       >
         <p>
-          Layanan kami dapat berisi tautan ke situs web pihak ketiga. Kami
-          tidak memiliki kendali atas konten, kebijakan privasi, atau praktik
-          situs tersebut. Kami menyarankan Anda untuk meninjau kebijakan
-          privasi setiap situs yang Anda kunjungi.
+          Layanan kami dapat berisi tautan ke situs web pihak ketiga. Kami tidak
+          memiliki kendali atas konten, kebijakan privasi, atau praktik situs
+          tersebut. Kami menyarankan Anda untuk meninjau kebijakan privasi
+          setiap situs yang Anda kunjungi.
         </p>
       </SectionCard>
 
@@ -548,8 +536,7 @@ function CancellationContent() {
         </h2>
         <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
           Kami menghargai fleksibilitas Anda. Berikut adalah panduan lengkap
-          mengenai prosedur dan ketentuan pembatalan langganan di platform
-          kami.
+          mengenai prosedur dan ketentuan pembatalan langganan di platform kami.
         </p>
       </div>
 
@@ -568,9 +555,7 @@ function CancellationContent() {
               <p className="font-semibold text-slate-700 text-sm">Via Email</p>
               <p className="text-xs text-slate-500 mt-1">
                 Kirim email ke{" "}
-                <strong className="text-slate-700">
-                  beaveritmy@gmail.com
-                </strong>{" "}
+                <strong className="text-slate-700">beaveritmy@gmail.com</strong>{" "}
                 dengan subjek{" "}
                 <span className="font-medium italic">
                   "Permintaan Pembatalan Langganan"
@@ -588,8 +573,8 @@ function CancellationContent() {
               </p>
               <p className="text-xs text-slate-500 mt-1">
                 Hubungi kami di{" "}
-                <strong className="text-slate-700">0145134090</strong>{" "}
-                pada jam kerja
+                <strong className="text-slate-700">0145134090</strong> pada jam
+                kerja
               </p>
             </div>
           </div>
@@ -605,11 +590,7 @@ function CancellationContent() {
         </div>
       </SectionCard>
 
-      <SectionCard
-        icon={AlertTriangle}
-        title="Ketentuan Penting"
-        accent="red"
-      >
+      <SectionCard icon={AlertTriangle} title="Ketentuan Penting" accent="red">
         <p>
           Kami berhak membatalkan langganan yang terindikasi fraudulen atau
           melanggar ketentuan. Seluruh aktivitas mencurigakan akan dilaporkan
@@ -661,11 +642,7 @@ function RefundContent() {
         </div>
       </SectionCard>
 
-      <SectionCard
-        icon={Info}
-        title="Ketentuan Tambahan"
-        accent="amber"
-      >
+      <SectionCard icon={Info} title="Ketentuan Tambahan" accent="amber">
         <ul className="list-none space-y-3">
           {[
             "Jumlah refund sudah dipotong biaya payment gateway yang berlaku",

@@ -1,16 +1,21 @@
-import { redirect } from '@tanstack/react-router'
-import { getDefaultStore } from 'jotai'
-import { authUserAtom, authTokenAtom, adminUserAtom, adminTokenAtom } from '../store/authStore'
+import { redirect } from "@tanstack/react-router";
+import { getDefaultStore } from "jotai";
+import {
+  authUserAtom,
+  authTokenAtom,
+  adminUserAtom,
+  adminTokenAtom,
+} from "../store/authStore";
 
-const store = getDefaultStore()
+const store = getDefaultStore();
 
 /**
  * Clears session data and redirects to login.
  */
 export const clearAuthAndRedirect = () => {
-  store.set(authTokenAtom, null)
-  store.set(authUserAtom, null)
-  throw redirect({ to: '/', replace: true });
+  store.set(authTokenAtom, null);
+  store.set(authUserAtom, null);
+  throw redirect({ to: "/", replace: true });
 };
 
 /**
@@ -26,13 +31,13 @@ export function requireAuth() {
 
   try {
     // Check role and activation status
-    const isPGBO = user?.role === 'pgbo';
+    const isPGBO = user?.role === "pgbo";
     const isActive = user?.is_active === 1 || user?.is_active === true;
 
     if (!isPGBO || !isActive) {
       clearAuthAndRedirect();
     }
-    
+
     return { user, token };
   } catch (err) {
     clearAuthAndRedirect();
@@ -45,7 +50,7 @@ export function requireAuth() {
 export function requireGuest() {
   const token = store.get(authTokenAtom);
   if (token) {
-    throw redirect({ to: '/overview', replace: true });
+    throw redirect({ to: "/overview", replace: true });
   }
 }
 
@@ -54,9 +59,9 @@ export function requireGuest() {
  */
 
 export const clearAdminAndRedirect = () => {
-  store.set(adminTokenAtom, null)
-  store.set(adminUserAtom, null)
-  throw redirect({ to: '/admin/login', replace: true });
+  store.set(adminTokenAtom, null);
+  store.set(adminUserAtom, null);
+  throw redirect({ to: "/admin/login", replace: true });
 };
 
 export function requireAdminAuth() {
@@ -68,7 +73,7 @@ export function requireAdminAuth() {
   }
 
   try {
-    if (user?.role !== 'admin') {
+    if (user?.role !== "admin") {
       clearAdminAndRedirect();
     }
     return { user, token };
@@ -80,6 +85,6 @@ export function requireAdminAuth() {
 export function requireAdminGuest() {
   const token = store.get(adminTokenAtom);
   if (token) {
-    throw redirect({ to: '/admin', replace: true });
+    throw redirect({ to: "/admin", replace: true });
   }
 }

@@ -58,23 +58,38 @@ code {
   --animate-shine: shine 1.5s ease-in-out infinite;
 
   @keyframes move {
-    0% { transform: translateX(-200px); }
-    100% { transform: translateX(200px); }
+    0% {
+      transform: translateX(-200px);
+    }
+    100% {
+      transform: translateX(200px);
+    }
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 
   @keyframes shine {
-    0% { left: -100%; transition: left 0s; }
-    100% { left: 100%; transition: left 1.5s; }
+    0% {
+      left: -100%;
+      transition: left 0s;
+    }
+    100% {
+      left: 100%;
+      transition: left 1.5s;
+    }
   }
 
   --font-heading: var(--font-sans);
 
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-sans: "Geist Variable", sans-serif;
 
   --color-sidebar-ring: var(--sidebar-ring);
 
@@ -153,11 +168,12 @@ code {
 
   --radius-3xl: calc(var(--radius) * 2.2);
 
-  --radius-4xl: calc(var(--radius) * 2.6)
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @theme inline {
-  --animate-scroll: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+  --animate-scroll: scroll var(--animation-duration, 40s)
+    var(--animation-direction, forwards) linear infinite;
 
   @keyframes scroll {
     to {
@@ -167,7 +183,7 @@ code {
 }
 
 .font-handwritten {
-  font-family: 'Caveat', cursive;
+  font-family: "Caveat", cursive;
 }
 
 :root {

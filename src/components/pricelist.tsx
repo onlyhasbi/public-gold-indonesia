@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import Autoplay from 'embla-carousel-autoplay';
-import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-react";
 import { AlertCircle, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   NextButton,
   PrevButton,
   usePrevNextButtons,
-} from './ui/EmblaCarouselButtons';
+} from "./ui/EmblaCarouselButtons";
 import GradientHighlight from "./ui/gradient_highlight";
 import { Spinner } from "./ui/spinner";
 
@@ -22,10 +22,10 @@ import BaseLayout from "../layout/base";
 import type { GoldPricesResult } from "../types";
 
 // Embla Tween Logic Constants
-const TWEEN_FACTOR_BASE = 0.8 // Pronounced factor for 'Pop-out' effect
+const TWEEN_FACTOR_BASE = 0.8; // Pronounced factor for 'Pop-out' effect
 
 const numberWithinRange = (number: number, min: number, max: number): number =>
-  Math.min(Math.max(number, min), max)
+  Math.min(Math.max(number, min), max);
 
 const PRINTING_COSTS: Record<string, number> = {
   // Goldbar
@@ -213,127 +213,157 @@ function PriceList({ price, pgbo }: Props) {
   const [priceMode, setPriceMode] = useState<"tabungan" | "tunai">("tabungan");
 
   const getWeightNumber = (weightStr: string): number => {
-    return parseFloat(weightStr.replace(/[^\d.]/g, '')) || 0;
+    return parseFloat(weightStr.replace(/[^\d.]/g, "")) || 0;
   };
 
-  const parsePriceToNumber = (priceStr: string | null | undefined): number | null => {
+  const parsePriceToNumber = (
+    priceStr: string | null | undefined,
+  ): number | null => {
     if (!priceStr) return null;
     const cleaned = priceStr.replace(/[^0-9]/g, "");
     const num = parseInt(cleaned, 10);
     return isNaN(num) ? null : num;
   };
 
-  const perGramPrice = useMemo(() => parsePriceToNumber(price?.poe?.[1]?.price), [price]);
+  const perGramPrice = useMemo(
+    () => parsePriceToNumber(price?.poe?.[1]?.price),
+    [price],
+  );
   const budgetAmount = 300_000;
-  const gramsFor300k = perGramPrice ? (budgetAmount / perGramPrice).toFixed(4) : null;
+  const gramsFor300k = perGramPrice
+    ? (budgetAmount / perGramPrice).toFixed(4)
+    : null;
 
   // Embla Setup
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: 'center', skipSnaps: false },
-    [Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })]
-  )
-  const tweenFactor = useRef(0)
-  const tweenNodes = useRef<(HTMLElement | null)[]>([])
+    { loop: true, align: "center", skipSnaps: false },
+    [
+      Autoplay({
+        delay: 4000,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+      }),
+    ],
+  );
+  const tweenFactor = useRef(0);
+  const tweenNodes = useRef<(HTMLElement | null)[]>([]);
 
-  const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } = usePrevNextButtons(emblaApi)
+  const {
+    prevBtnDisabled,
+    nextBtnDisabled,
+    onPrevButtonClick,
+    onNextButtonClick,
+  } = usePrevNextButtons(emblaApi);
 
   const setTweenNodes = useCallback((emblaApi: any) => {
     tweenNodes.current = emblaApi.slideNodes().map((slideNode: HTMLElement) => {
-      return slideNode.querySelector('.embla__tween__node') as HTMLElement | null
-    })
-  }, [])
+      return slideNode.querySelector(
+        ".embla__tween__node",
+      ) as HTMLElement | null;
+    });
+  }, []);
 
   const setTweenFactor = useCallback((emblaApi: any) => {
-    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length
-  }, [])
+    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length;
+  }, []);
 
   const tweenScale = useCallback((emblaApi: any, event?: any) => {
-    const engine = emblaApi.internalEngine()
-    const scrollProgress = emblaApi.scrollProgress()
-    const slidesInView = emblaApi.slidesInView()
-    const isScrollEvent = event?.type === 'scroll'
-
-    emblaApi.scrollSnapList().forEach((scrollSnap: number, snapIndex: number) => {
-      let diffToTarget = scrollSnap - scrollProgress
-      const slideRegistry = engine.slideRegistry
-      if (!slideRegistry) return
-
-      const slidesInSnap = slideRegistry[snapIndex]
-
-      slidesInSnap.forEach((slideIndex: number) => {
-        if (isScrollEvent && !slidesInView.includes(slideIndex)) return
-
-        if (engine.options.loop) {
-          engine.slideLooper.loopPoints.forEach((loopItem: any) => {
-            const target = loopItem.target()
-
-            if (slideIndex === loopItem.index && target !== 0) {
-              const sign = Math.sign(target)
-              if (sign === -1) diffToTarget = scrollSnap - (1 + scrollProgress)
-              if (sign === 1) diffToTarget = scrollSnap + (1 - scrollProgress)
-            }
-          })
-        }
-
-        const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current)
-        const scale = numberWithinRange(tweenValue, 0.65, 1).toString()
-        const opacity = numberWithinRange(tweenValue, 0.4, 1).toString()
-        const tweenNode = tweenNodes.current[slideIndex]
-
-        if (tweenNode) {
-          tweenNode.style.transform = `scale(${scale})`
-          tweenNode.style.opacity = opacity
-        }
-      })
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!emblaApi) return
-
-    setTweenNodes(emblaApi)
-    setTweenFactor(emblaApi)
-    tweenScale(emblaApi)
+    const engine = emblaApi.internalEngine();
+    const scrollProgress = emblaApi.scrollProgress();
+    const slidesInView = emblaApi.slidesInView();
+    const isScrollEvent = event?.type === "scroll";
 
     emblaApi
-      .on('reInit', setTweenNodes)
-      .on('reInit', setTweenFactor)
-      .on('reInit', tweenScale)
-      .on('scroll', tweenScale)
-  }, [emblaApi, tweenScale, setTweenNodes, setTweenFactor])
+      .scrollSnapList()
+      .forEach((scrollSnap: number, snapIndex: number) => {
+        let diffToTarget = scrollSnap - scrollProgress;
+        const slideRegistry = engine.slideRegistry;
+        if (!slideRegistry) return;
 
+        const slidesInSnap = slideRegistry[snapIndex];
+
+        slidesInSnap.forEach((slideIndex: number) => {
+          if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
+
+          if (engine.options.loop) {
+            engine.slideLooper.loopPoints.forEach((loopItem: any) => {
+              const target = loopItem.target();
+
+              if (slideIndex === loopItem.index && target !== 0) {
+                const sign = Math.sign(target);
+                if (sign === -1)
+                  diffToTarget = scrollSnap - (1 + scrollProgress);
+                if (sign === 1)
+                  diffToTarget = scrollSnap + (1 - scrollProgress);
+              }
+            });
+          }
+
+          const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current);
+          const scale = numberWithinRange(tweenValue, 0.65, 1).toString();
+          const opacity = numberWithinRange(tweenValue, 0.4, 1).toString();
+          const tweenNode = tweenNodes.current[slideIndex];
+
+          if (tweenNode) {
+            tweenNode.style.transform = `scale(${scale})`;
+            tweenNode.style.opacity = opacity;
+          }
+        });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    setTweenNodes(emblaApi);
+    setTweenFactor(emblaApi);
+    tweenScale(emblaApi);
+
+    emblaApi
+      .on("reInit", setTweenNodes)
+      .on("reInit", setTweenFactor)
+      .on("reInit", tweenScale)
+      .on("scroll", tweenScale);
+  }, [emblaApi, tweenScale, setTweenNodes, setTweenFactor]);
 
   const formatPrice = (priceValue: string | number | null | undefined) => {
-    if (priceValue === null || priceValue === undefined) return (
-      <span className="flex items-center gap-2 text-slate-400">
-        <Spinner size={12} className="text-slate-400 opacity-100" />
-        {t("priceList.loading")}
-      </span>
-    );
+    if (priceValue === null || priceValue === undefined)
+      return (
+        <span className="flex items-center gap-2 text-slate-400">
+          <Spinner size={12} className="text-slate-400 opacity-100" />
+          {t("priceList.loading")}
+        </span>
+      );
 
-    const val = typeof priceValue === 'string' ? parsePriceToNumber(priceValue) : priceValue;
+    const val =
+      typeof priceValue === "string"
+        ? parsePriceToNumber(priceValue)
+        : priceValue;
     if (val === null) return "Rp ...";
 
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(val).replace('Rp', 'Rp ');
+    })
+      .format(val)
+      .replace("Rp", "Rp ");
   };
 
-  const getCalculatedPrice = (item: typeof allProducts[0]) => {
+  const getCalculatedPrice = (item: (typeof allProducts)[0]) => {
     const weight = getWeightNumber(item.weight);
     let printCost = PRINTING_COSTS[item.weight] || 0;
 
     if (priceMode === "tabungan") {
       if (!perGramPrice) return null;
       // Tabungan formula: (Weight * PerGramPrice) + Print Cost
-      return (perGramPrice * weight) + printCost;
+      return perGramPrice * weight + printCost;
     } else {
       // mode tunai: prices from unit endpoint with specific adjustments
-      const apiArray = item.category === "dinar" ? price?.dinar : price?.goldbar;
-      const apiItem = apiArray?.find(p => item.title.startsWith(p.label));
+      const apiArray =
+        item.category === "dinar" ? price?.dinar : price?.goldbar;
+      const apiItem = apiArray?.find((p) => item.title.startsWith(p.label));
       const apiPrice = parsePriceToNumber(apiItem?.price);
 
       if (!apiPrice) return null;
@@ -342,13 +372,13 @@ function PriceList({ price, pgbo }: Props) {
         // Goldbar 0.5g & 1g: print cost is 0
         if (weight <= 1) {
           printCost = 0;
-        } 
+        }
         // Goldbar 5g: print cost is fixed 15,000
         else if (weight === 5) {
           printCost = 15000;
         }
         // Goldbar 10g and above: use base printing cost from map
-        
+
         return apiPrice + printCost;
       } else {
         // category === "dinar"
@@ -411,9 +441,12 @@ function PriceList({ price, pgbo }: Props) {
 
       {/* Section Header */}
       <div className="text-center mb-12 relative z-10 flex flex-col items-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 drop-shadow-sm">
-              <GradientHighlight text={t("priceList.title")} highlight={t("ui.highlightPrice")} />
-            </h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 drop-shadow-sm">
+          <GradientHighlight
+            text={t("priceList.title")}
+            highlight={t("ui.highlightPrice")}
+          />
+        </h2>
         <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-3 px-4">
           <p className="text-slate-500 text-sm md:text-lg max-w-2xl leading-relaxed text-center">
             {(() => {
@@ -422,7 +455,10 @@ function PriceList({ price, pgbo }: Props) {
               if (parts.length > 1) {
                 return (
                   <>
-                    <span className="md:inline hidden">{parts[0]}{parts[1]}</span>
+                    <span className="md:inline hidden">
+                      {parts[0]}
+                      {parts[1]}
+                    </span>
                     <span className="inline md:hidden">{parts[0]}</span>
                   </>
                 );
@@ -442,7 +478,7 @@ function PriceList({ price, pgbo }: Props) {
               {new Intl.DateTimeFormat(i18n.language || "id-ID", {
                 day: "numeric",
                 month: "short",
-                year: "numeric"
+                year: "numeric",
               }).format(new Date())}
             </div>
           </div>
@@ -452,14 +488,15 @@ function PriceList({ price, pgbo }: Props) {
       {/* Price Stats Section - Minimalist Centered Layout with Divider */}
       <div className="w-full max-w-5xl mx-auto mb-12 md:mb-16 relative z-10 px-2 sm:px-4 md:px-0">
         <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-14 lg:gap-20 py-8 md:py-10">
-          
           {/* Pair of Prices */}
           <div className="flex flex-row items-center justify-center w-full md:w-auto gap-2 sm:gap-6 md:gap-14 lg:gap-20 px-1 sm:px-0">
             {/* Column 1: Saving Estimate */}
             <div className="flex-1 md:flex-none flex flex-col items-center justify-center group cursor-default min-w-0">
               <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
                 <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
-                  {t('priceList.pricePerWeight', { weight: gramsFor300k ?? "..." })}
+                  {t("priceList.pricePerWeight", {
+                    weight: gramsFor300k ?? "...",
+                  })}
                 </span>
               </div>
               <div className="text-[26px] sm:text-[32px] md:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600 whitespace-nowrap">
@@ -473,7 +510,7 @@ function PriceList({ price, pgbo }: Props) {
             <div className="flex-1 md:flex-none flex flex-col items-center justify-center group cursor-default min-w-0">
               <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
                 <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
-                  {t('priceList.currentPricePerGram')}
+                  {t("priceList.currentPricePerGram")}
                 </span>
               </div>
               <div className="text-[26px] sm:text-[32px] md:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:scale-105 group-hover:text-red-600 whitespace-nowrap">
@@ -489,7 +526,7 @@ function PriceList({ price, pgbo }: Props) {
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center gap-1.5">
                 <span className="text-[11px] md:text-xs font-semibold text-slate-400 uppercase leading-none">
-                  {t('priceList.priceOptions')}
+                  {t("priceList.priceOptions")}
                 </span>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -497,13 +534,18 @@ function PriceList({ price, pgbo }: Props) {
                       <Info className="w-3.5 h-3.5" />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent align="center" className="p-5 shadow-2xl border-slate-100 ring-1 ring-black/5 rounded-2xl">
+                  <PopoverContent
+                    align="center"
+                    className="p-5 shadow-2xl border-slate-100 ring-1 ring-black/5 rounded-2xl"
+                  >
                     <div className="flex gap-3">
                       <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                       <div className="space-y-1.5">
-                        <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-left">{t('priceList.infoTitle')}</h4>
+                        <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-left">
+                          {t("priceList.infoTitle")}
+                        </h4>
                         <p className="text-[11px] md:text-xs text-slate-500 leading-relaxed italic text-left">
-                          {t('priceList.infoDesc')}
+                          {t("priceList.infoDesc")}
                         </p>
                       </div>
                     </div>
@@ -518,10 +560,10 @@ function PriceList({ price, pgbo }: Props) {
                   "px-8 py-2.5 rounded-full text-[11px] md:text-xs font-black transition-all duration-300 uppercase tracking-wide",
                   priceMode === "tabungan"
                     ? "bg-white text-red-600 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700",
                 )}
               >
-                {t('priceList.modeSaving')}
+                {t("priceList.modeSaving")}
               </button>
               <button
                 onClick={() => setPriceMode("tunai")}
@@ -529,10 +571,10 @@ function PriceList({ price, pgbo }: Props) {
                   "px-8 py-2.5 rounded-full text-[11px] md:text-xs font-black transition-all duration-300 uppercase tracking-wide",
                   priceMode === "tunai"
                     ? "bg-white text-red-600 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700",
                 )}
               >
-                {t('priceList.modeCash')}
+                {t("priceList.modeCash")}
               </button>
             </div>
           </div>
@@ -555,7 +597,9 @@ function PriceList({ price, pgbo }: Props) {
           disabled={prevBtnDisabled}
           className={cn(
             "absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
-            hoverSide === "left" ? "opacity-100" : "opacity-0 pointer-events-none"
+            hoverSide === "left"
+              ? "opacity-100"
+              : "opacity-0 pointer-events-none",
           )}
         />
         <NextButton
@@ -563,7 +607,9 @@ function PriceList({ price, pgbo }: Props) {
           disabled={nextBtnDisabled}
           className={cn(
             "absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
-            hoverSide === "right" ? "opacity-100" : "opacity-0 pointer-events-none"
+            hoverSide === "right"
+              ? "opacity-100"
+              : "opacity-0 pointer-events-none",
           )}
         />
 
@@ -581,7 +627,7 @@ function PriceList({ price, pgbo }: Props) {
                         search={{ ref: pgbo?.pageid }}
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
-                          "h-[360px] sm:h-[400px] md:h-[460px]"
+                          "h-[360px] sm:h-[400px] md:h-[460px]",
                         )}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-red-50/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />

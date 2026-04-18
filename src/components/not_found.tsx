@@ -2,21 +2,19 @@ import { useRouter } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-
 export default function NotFound() {
   const { t } = useTranslation();
   const router = useRouter();
 
   // Memastikan history benar-benar ada. Beberapa browser menset history.length = 2 pada tab baru.
   // Pengecekan length > 2 memastikan user benar-benar telah bernavigasi lebih dari sekali.
-  const hasHistory = typeof window !== 'undefined' && window.history.length > 2;
+  const hasHistory = typeof window !== "undefined" && window.history.length > 2;
 
   const handleBack = () => {
     if (hasHistory) {
       router.history.back();
     }
   };
-
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 bg-white animate-in fade-in duration-700">
@@ -32,7 +30,10 @@ export default function NotFound() {
             {t("notFound.title", "Halaman Tidak Ditemukan")}
           </h2>
           <p className="text-slate-500 text-lg leading-relaxed max-w-sm mx-auto">
-            {t("notFound.desc", "Maaf, halaman yang Anda cari mungkin telah dipindahkan atau tidak ada.")}
+            {t(
+              "notFound.desc",
+              "Maaf, halaman yang Anda cari mungkin telah dipindahkan atau tidak ada.",
+            )}
           </p>
         </div>
 

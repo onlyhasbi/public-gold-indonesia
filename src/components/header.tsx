@@ -8,7 +8,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { MoreVertical, Facebook, Instagram, Music2, Share2 } from "lucide-react";
+import {
+  MoreVertical,
+  Facebook,
+  Instagram,
+  Music2,
+  Share2,
+} from "lucide-react";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -21,34 +27,42 @@ interface PgboData {
   [key: string]: any;
 }
 
-const formatSocialUrl = (url: string | null | undefined, platform: 'instagram' | 'tiktok' | 'facebook') => {
+const formatSocialUrl = (
+  url: string | null | undefined,
+  platform: "instagram" | "tiktok" | "facebook",
+) => {
   if (!url) return "#";
   let formatted = url.trim();
-  
+
   // Remove trailing slashes
-  formatted = formatted.replace(/\/+$/, '');
-  
+  formatted = formatted.replace(/\/+$/, "");
+
   // Check if it looks like a full URL by checking for standard domains
-  const isLikelyUrl = 
-    formatted.startsWith('http') || 
-    formatted.includes('instagram.com') || 
-    formatted.includes('tiktok.com') || 
-    formatted.includes('facebook.com') || 
-    formatted.includes('fb.com');
+  const isLikelyUrl =
+    formatted.startsWith("http") ||
+    formatted.includes("instagram.com") ||
+    formatted.includes("tiktok.com") ||
+    formatted.includes("facebook.com") ||
+    formatted.includes("fb.com");
 
   if (isLikelyUrl) {
-    if (!formatted.startsWith('http://') && !formatted.startsWith('https://')) {
+    if (!formatted.startsWith("http://") && !formatted.startsWith("https://")) {
       return `https://${formatted}`;
     }
     return formatted;
   }
-  
+
   // Fallback: it's highly likely just a username (even if it contains dots)
-  const username = formatted.startsWith('@') ? formatted.substring(1) : formatted;
-  switch(platform) {
-    case 'instagram': return `https://instagram.com/${username}`;
-    case 'tiktok': return `https://tiktok.com/@${username.replace(/^@/, '')}`;
-    case 'facebook': return `https://facebook.com/${username}`;
+  const username = formatted.startsWith("@")
+    ? formatted.substring(1)
+    : formatted;
+  switch (platform) {
+    case "instagram":
+      return `https://instagram.com/${username}`;
+    case "tiktok":
+      return `https://tiktok.com/@${username.replace(/^@/, "")}`;
+    case "facebook":
+      return `https://facebook.com/${username}`;
   }
 };
 
@@ -56,18 +70,18 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
 
   const handleWhatsAppClick = () => {
-    trackEvent(pgbo?.pageid, 'whatsapp_click');
+    trackEvent(pgbo?.pageid, "whatsapp_click");
   };
 
   const handleShare = async () => {
     const url = window.location.href;
     const plainTitle = `Public Gold - ${pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer"}`;
-    
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: plainTitle,
-          url: url
+          url: url,
         });
       } catch (err) {
         console.error("Error sharing", err);
@@ -83,19 +97,24 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
   };
 
   const hasPhoto = !!pgbo?.foto_profil_url;
-  const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
+  const displayName =
+    pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
   const whatsappLink = getWhatsAppLink(pgbo);
-  const hasSosmed = !!(pgbo?.sosmed_facebook || pgbo?.sosmed_instagram || pgbo?.sosmed_tiktok);
+  const hasSosmed = !!(
+    pgbo?.sosmed_facebook ||
+    pgbo?.sosmed_instagram ||
+    pgbo?.sosmed_tiktok
+  );
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0 overflow-hidden">
       {/* Background patterns */}
-      <div 
-        className="absolute inset-0 opacity-40 pointer-events-none" 
+      <div
+        className="absolute inset-0 opacity-40 pointer-events-none"
         style={{
-          backgroundSize: '20px 20px',
-          backgroundImage: 'radial-gradient(#9ca3af 1px, transparent 1px)'
-        }} 
+          backgroundSize: "20px 20px",
+          backgroundImage: "radial-gradient(#9ca3af 1px, transparent 1px)",
+        }}
       />
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent)]" />
 
@@ -104,12 +123,12 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
         {/* Pulse ripple rings */}
         <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-40 animate-[ripple_2s_ease-out_infinite]" />
         <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-30 animate-[ripple_2s_ease-out_0.8s_infinite]" />
-        
+
         <style>{`
           @keyframes ripple { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.15); opacity: 0; } }
           @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         `}</style>
-        
+
         {/* Profile Image with Card-like shadow */}
         <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl shadow-slate-200 border border-slate-100 bg-white">
           {hasPhoto ? (
@@ -120,7 +139,9 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-              <span className="text-slate-400 text-lg font-semibold tracking-wide uppercase">{t("ui.photo")}</span>
+              <span className="text-slate-400 text-lg font-semibold tracking-wide uppercase">
+                {t("ui.photo")}
+              </span>
             </div>
           )}
         </div>
@@ -138,13 +159,18 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
       {/* Hero Content Section */}
       <div className="max-w-[540px] space-y-6 z-10 text-center md:text-left px-4 md:px-0">
         <div className="space-y-4">
-          <h1 
+          <h1
             className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.2] tracking-tight text-slate-800"
-            dangerouslySetInnerHTML={{ __html: t('hero.headline', { name: displayName, interpolation: { escapeValue: false } }) }}
+            dangerouslySetInnerHTML={{
+              __html: t("hero.headline", {
+                name: displayName,
+                interpolation: { escapeValue: false },
+              }),
+            }}
           />
-          <p 
+          <p
             className="text-base sm:text-lg text-slate-500 max-w-[520px] leading-relaxed mx-auto md:mx-0 font-medium"
-            dangerouslySetInnerHTML={{ __html: t('hero.mission') }}
+            dangerouslySetInnerHTML={{ __html: t("hero.mission") }}
           />
         </div>
 
@@ -156,15 +182,19 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               rel="noopener noreferrer"
               onClick={handleWhatsAppClick}
               className={cn(
-                buttonVariants({ variant: "default", size: "default", rounded: "full" }),
-                "px-10 py-6 font-bold transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(220,38,38,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white no-underline ring-1 ring-white/10"
+                buttonVariants({
+                  variant: "default",
+                  size: "default",
+                  rounded: "full",
+                }),
+                "px-10 py-6 font-bold transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(220,38,38,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(220,38,38,0.5)] hover:-translate-y-1 active:scale-95 bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white no-underline ring-1 ring-white/10",
               )}
             >
               <span className="relative flex h-2 w-2 mr-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400 shadow-[0_0_10px_4px_rgba(74,222,128,0.8),0_0_20px_8px_rgba(74,222,128,0.4)]"></span>
               </span>
-              {t('hero.cta')}
+              {t("hero.cta")}
             </a>
           )}
 
@@ -179,10 +209,18 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
                   <MoreVertical className="w-5 h-5" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-[180px] p-2 shadow-xl border-slate-100 rounded-2xl mr-4 md:mr-0 z-50 bg-white">
+              <PopoverContent
+                align="end"
+                className="w-[180px] p-2 shadow-xl border-slate-100 rounded-2xl mr-4 md:mr-0 z-50 bg-white"
+              >
                 <div className="flex flex-col gap-1">
                   {pgbo?.sosmed_instagram && (
-                    <a href={formatSocialUrl(pgbo.sosmed_instagram, 'instagram')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-rose-600 font-medium text-sm no-underline group">
+                    <a
+                      href={formatSocialUrl(pgbo.sosmed_instagram, "instagram")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-rose-600 font-medium text-sm no-underline group"
+                    >
                       <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
                         <Instagram className="w-4 h-4 text-rose-500" />
                       </div>
@@ -190,7 +228,12 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
                     </a>
                   )}
                   {pgbo?.sosmed_tiktok && (
-                    <a href={formatSocialUrl(pgbo.sosmed_tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-slate-900 font-medium text-sm no-underline group">
+                    <a
+                      href={formatSocialUrl(pgbo.sosmed_tiktok, "tiktok")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-slate-900 font-medium text-sm no-underline group"
+                    >
                       <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
                         <Music2 className="w-4 h-4 text-slate-700" />
                       </div>
@@ -198,24 +241,29 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
                     </a>
                   )}
                   {pgbo?.sosmed_facebook && (
-                    <a href={formatSocialUrl(pgbo.sosmed_facebook, 'facebook')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-blue-600 font-medium text-sm no-underline group">
+                    <a
+                      href={formatSocialUrl(pgbo.sosmed_facebook, "facebook")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-blue-600 font-medium text-sm no-underline group"
+                    >
                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                         <Facebook className="w-4 h-4 text-blue-500" />
                       </div>
                       Facebook
                     </a>
                   )}
-                  
+
                   <div className="h-px bg-slate-100 my-1 mx-2" />
-                  
-                  <button 
-                    onClick={handleShare} 
+
+                  <button
+                    onClick={handleShare}
                     className="flex w-full text-left items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-700 hover:text-slate-900 font-medium text-sm group"
                   >
                     <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
                       <Share2 className="w-4 h-4 text-slate-500 group-hover:text-slate-700" />
                     </div>
-                    {t('nav.share')}
+                    {t("nav.share")}
                   </button>
                 </div>
               </PopoverContent>

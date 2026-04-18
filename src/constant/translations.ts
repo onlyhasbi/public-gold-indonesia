@@ -4,8 +4,8 @@ import { zh } from "./locales/zh";
 import { ta } from "./locales/ta";
 
 export const translations = {
-    id,
-    ms,
-    zh,
-    ta,
+  id,
+  ms,
+  zh,
+  ta,
 };

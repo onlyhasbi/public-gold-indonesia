@@ -43,7 +43,8 @@ function App() {
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const displayName = pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
+  const displayName =
+    pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
   const title = t("seo.title", { name: displayName });
   const description = t("seo.description", { name: displayName });
 
@@ -56,7 +57,7 @@ function App() {
   useEffect(() => {
     // Save referral info for registration flow (PageID only)
     if (pgbo) {
-      localStorage.setItem('ref_pageid', pgbo.pageid);
+      localStorage.setItem("ref_pageid", pgbo.pageid);
     }
   }, [pgbo]);
 
@@ -64,8 +65,8 @@ function App() {
     // Send visitor analytic only once per session
     const hasVisited = sessionStorage.getItem(`visited_${pgbo?.pageid}`);
     if (pgbo && !hasVisited) {
-      trackEvent(pgbo.pageid, 'visitor').then(() => {
-        sessionStorage.setItem(`visited_${pgbo.pageid}`, 'true');
+      trackEvent(pgbo.pageid, "visitor").then(() => {
+        sessionStorage.setItem(`visited_${pgbo.pageid}`, "true");
       });
     }
 
@@ -103,15 +104,20 @@ function App() {
         <div className="w-11/12 max-w-7xl mx-auto py-16">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-              <GradientHighlight text={t("testimonials.title")} highlight={t("ui.highlightTestimonials")} />
+              <GradientHighlight
+                text={t("testimonials.title")}
+                highlight={t("ui.highlightTestimonials")}
+              />
             </h2>
             <p className="text-slate-500 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              {(t("testimonials.desc") as string).split("{mbr}").map((part: string, i: number, arr: string[]) => (
-                <span key={i}>
-                  {part}
-                  {i < arr.length - 1 && <br className="block md:hidden" />}
-                </span>
-              ))}
+              {(t("testimonials.desc") as string)
+                .split("{mbr}")
+                .map((part: string, i: number, arr: string[]) => (
+                  <span key={i}>
+                    {part}
+                    {i < arr.length - 1 && <br className="block md:hidden" />}
+                  </span>
+                ))}
             </p>
           </div>
           <MovingCards
@@ -133,7 +139,7 @@ function App() {
           "md:hidden fixed right-6 bottom-8 w-12 h-12 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-50 transition-all duration-500 border border-slate-200/50 active:scale-95",
           showScrollTop
             ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-4 pointer-events-none"
+            : "opacity-0 translate-y-4 pointer-events-none",
         )}
         aria-label="Scroll to top"
       >

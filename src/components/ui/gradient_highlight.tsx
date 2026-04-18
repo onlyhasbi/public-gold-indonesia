@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type Props = {
   text: string;
@@ -30,12 +30,12 @@ export default function GradientHighlight({ text, highlight }: Props) {
 
 function TextWithBr({ text }: { text: string }) {
   if (!text) return null;
-  const mbrParts = text.split('{mbr}');
+  const mbrParts = text.split("{mbr}");
   return (
     <>
       {mbrParts.map((mbrPart, i) => (
         <React.Fragment key={`mbr-${i}`}>
-          {mbrPart.split('{br}').map((brPart, j, arr) => (
+          {mbrPart.split("{br}").map((brPart, j, arr) => (
             <React.Fragment key={`br-${j}`}>
               {brPart}
               {j < arr.length - 1 && <br />}

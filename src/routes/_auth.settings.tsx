@@ -1,19 +1,33 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Globe, Link2, Mail, Phone, Save, Share2, ShieldCheck, User } from 'lucide-react'
-import { Suspense, useMemo, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { PasswordCard } from '../components/settings/PasswordCard'
-import { ProfilePhotoCard } from '../components/settings/ProfilePhotoCard'
-import { SocialMediaCard } from '../components/settings/SocialMediaCard'
-import { useToast } from '../components/toast'
-import { Button } from "../components/ui/button"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  ArrowLeft,
+  Globe,
+  Link2,
+  Mail,
+  Phone,
+  Save,
+  Share2,
+  ShieldCheck,
+  User,
+} from "lucide-react";
+import { Suspense, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { PasswordCard } from "../components/settings/PasswordCard";
+import { ProfilePhotoCard } from "../components/settings/ProfilePhotoCard";
+import { SocialMediaCard } from "../components/settings/SocialMediaCard";
+import { useToast } from "../components/toast";
+import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../components/ui/card"
+} from "../components/ui/card";
 import {
   Combobox,
   ComboboxContent,
@@ -22,36 +36,41 @@ import {
   ComboboxItem,
   ComboboxTrigger,
   ComboboxValue,
-} from "../components/ui/combobox"
-import { Input } from "../components/ui/input"
-import { Label } from "../components/ui/label"
-import { Spinner } from '../components/ui/spinner'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
-import { dialCodeOptions } from '../constant/countries'
-import { useSEO } from '../hooks/useSEO'
-import { api } from '../lib/api'
-import { formatPhoneForAPI } from '../lib/phone'
-import { queryClient } from '../lib/queryClient'
-import { settingsQueryOptions } from '../lib/queryOptions'
-import { cn } from '../lib/utils'
-import { clearAuthAndRedirect } from '../lib/auth'
+} from "../components/ui/combobox";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Spinner } from "../components/ui/spinner";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import { dialCodeOptions } from "../constant/countries";
+import { useSEO } from "../hooks/useSEO";
+import { api } from "../lib/api";
+import { formatPhoneForAPI } from "../lib/phone";
+import { queryClient } from "../lib/queryClient";
+import { settingsQueryOptions } from "../lib/queryOptions";
+import { cn } from "../lib/utils";
+import { clearAuthAndRedirect } from "../lib/auth";
 
 export interface SettingsFormValues {
-  nama_lengkap: string
-  nama_panggilan: string
-  email: string
-  country_code: string
-  no_telpon: string
-  link_group_whatsapp: string
-  sosmed_facebook: string
-  sosmed_instagram: string
-  sosmed_tiktok: string
-  katasandi_lama?: string
-  katasandi_baru?: string
-  konfirmasi_katasandi?: string
+  nama_lengkap: string;
+  nama_panggilan: string;
+  email: string;
+  country_code: string;
+  no_telpon: string;
+  link_group_whatsapp: string;
+  sosmed_facebook: string;
+  sosmed_instagram: string;
+  sosmed_tiktok: string;
+  katasandi_lama?: string;
+  katasandi_baru?: string;
+  konfirmasi_katasandi?: string;
 }
 
-export const Route = createFileRoute('/_auth/settings')({
+export const Route = createFileRoute("/_auth/settings")({
   component: () => (
     <Suspense fallback={<SettingsLoading />}>
       <SettingsPage />
@@ -69,9 +88,9 @@ export const Route = createFileRoute('/_auth/settings')({
 });
 
 function SettingsPage() {
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const { showToast } = useToast()
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const { data: profileData } = useSuspenseQuery(settingsQueryOptions());
 
@@ -81,12 +100,12 @@ function SettingsPage() {
   const initialValues = useMemo(() => {
     if (!profileData) return {};
 
-    let formPhone = profileData.no_telpon || '';
-    let initialCountryCode = '62';
+    let formPhone = profileData.no_telpon || "";
+    let initialCountryCode = "62";
     let initialPhoneRest = formPhone;
 
     // Detect country code from phone number
-    ['62', '60', '65'].forEach(code => {
+    ["62", "60", "65"].forEach((code) => {
       if (formPhone.startsWith(code)) {
         initialCountryCode = code;
         initialPhoneRest = formPhone.substring(code.length);
@@ -94,15 +113,15 @@ function SettingsPage() {
     });
 
     return {
-      nama_lengkap: profileData.nama_lengkap || '',
-      nama_panggilan: profileData.nama_panggilan || '',
-      email: profileData.email || '',
+      nama_lengkap: profileData.nama_lengkap || "",
+      nama_panggilan: profileData.nama_panggilan || "",
+      email: profileData.email || "",
       country_code: initialCountryCode,
       no_telpon: initialPhoneRest,
-      link_group_whatsapp: profileData.link_group_whatsapp || '',
-      sosmed_facebook: profileData.sosmed_facebook || '',
-      sosmed_instagram: profileData.sosmed_instagram || '',
-      sosmed_tiktok: profileData.sosmed_tiktok || '',
+      link_group_whatsapp: profileData.link_group_whatsapp || "",
+      sosmed_facebook: profileData.sosmed_facebook || "",
+      sosmed_instagram: profileData.sosmed_instagram || "",
+      sosmed_tiktok: profileData.sosmed_tiktok || "",
     };
   }, [profileData]);
 
@@ -114,87 +133,120 @@ function SettingsPage() {
     formState: { errors, dirtyFields },
   } = useForm<SettingsFormValues>({
     values: initialValues as SettingsFormValues,
-  })
+  });
 
   // Profile Photo State & Logic
-  const [fotoFile, setFotoFile] = useState<File | null>(null)
-  const [croppedPreview, setCroppedPreview] = useState<string | null>(null)
-  const [cropperSrc, setCropperSrc] = useState<string | null>(null)
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [croppedPreview, setCroppedPreview] = useState<string | null>(null);
+  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
   const [dialCodeSearch, setDialCodeSearch] = useState("");
 
   const filteredDialCodes = useMemo(() => {
     if (!dialCodeSearch) return dialCodeOptions;
     const term = dialCodeSearch.toLowerCase();
-    return dialCodeOptions.filter(opt =>
-      opt.label.toLowerCase().includes(term) ||
-      opt.value.includes(term)
+    return dialCodeOptions.filter(
+      (opt) =>
+        opt.label.toLowerCase().includes(term) || opt.value.includes(term),
     );
   }, [dialCodeSearch]);
 
   const mutation = useMutation({
     mutationFn: async (formData: SettingsFormValues) => {
-      const data = new FormData()
-      if (fotoFile) data.append('foto_profil', fotoFile)
+      const data = new FormData();
+      if (fotoFile) data.append("foto_profil", fotoFile);
 
       // Separate password fields from profile fields
-      const { katasandi_lama, katasandi_baru, konfirmasi_katasandi, ...profileData } = formData;
+      const {
+        katasandi_lama,
+        katasandi_baru,
+        konfirmasi_katasandi,
+        ...profileData
+      } = formData;
 
       Object.keys(profileData).forEach((key) => {
         const value = profileData[key as keyof typeof profileData];
         if (value !== undefined) data.append(key, value);
-      })
+      });
 
-      const res = await api.put('/settings', data, { headers: { 'Content-Type': 'multipart/form-data' } })
-      return { profile: res.data, passwordFields: { katasandi_lama, katasandi_baru } }
+      const res = await api.put("/settings", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return {
+        profile: res.data,
+        passwordFields: { katasandi_lama, katasandi_baru },
+      };
     },
     onSuccess: async (data: any) => {
       if (data.profile.success) {
-        queryClient.invalidateQueries({ queryKey: ['settings'] })
-        const oldUser = JSON.parse(localStorage.getItem('user') || '{}')
-        localStorage.setItem('user', JSON.stringify({ ...oldUser, ...data.profile.data }))
+        queryClient.invalidateQueries({ queryKey: ["settings"] });
+        const oldUser = JSON.parse(localStorage.getItem("user") || "{}");
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ ...oldUser, ...data.profile.data }),
+        );
 
         // Check what actually changed
-        const profileFieldsChanged = Object.keys(dirtyFields).some(key => 
-          !['katasandi_lama', 'katasandi_baru', 'konfirmasi_katasandi', 'country_code'].includes(key)
-        ) || !!fotoFile;
+        const profileFieldsChanged =
+          Object.keys(dirtyFields).some(
+            (key) =>
+              ![
+                "katasandi_lama",
+                "katasandi_baru",
+                "konfirmasi_katasandi",
+                "country_code",
+              ].includes(key),
+          ) || !!fotoFile;
 
-        let passwordUpdated = false
-        if (data.passwordFields.katasandi_baru && data.passwordFields.katasandi_lama) {
+        let passwordUpdated = false;
+        if (
+          data.passwordFields.katasandi_baru &&
+          data.passwordFields.katasandi_lama
+        ) {
           try {
-            const pwdRes = await api.patch('/settings/password', {
+            const pwdRes = await api.patch("/settings/password", {
               katasandi_lama: data.passwordFields.katasandi_lama,
               katasandi_baru: data.passwordFields.katasandi_baru,
             });
             if (pwdRes.data.success) {
-              passwordUpdated = true
-              setValue('katasandi_lama', '');
-              setValue('katasandi_baru', '');
-              setValue('konfirmasi_katasandi', '');
+              passwordUpdated = true;
+              setValue("katasandi_lama", "");
+              setValue("katasandi_baru", "");
+              setValue("konfirmasi_katasandi", "");
             } else {
-              showToast(pwdRes.data.message || 'Gagal memperbarui kata sandi', 'warning');
+              showToast(
+                pwdRes.data.message || "Gagal memperbarui kata sandi",
+                "warning",
+              );
             }
           } catch (err: any) {
-            showToast(err.response?.data?.message || 'Gagal memperbarui kata sandi', 'error');
+            showToast(
+              err.response?.data?.message || "Gagal memperbarui kata sandi",
+              "error",
+            );
           }
         }
 
         if (profileFieldsChanged && passwordUpdated) {
-          showToast('Profil dan kata sandi berhasil diperbarui!', 'success')
+          showToast("Profil dan kata sandi berhasil diperbarui!", "success");
         } else if (passwordUpdated) {
-          showToast('Kata sandi berhasil diperbarui!', 'success')
+          showToast("Kata sandi berhasil diperbarui!", "success");
         } else if (profileFieldsChanged) {
-          showToast('Profil berhasil diperbarui!', 'success')
+          showToast("Profil berhasil diperbarui!", "success");
         } else {
           // Fallback if triggered without dirty fields but technically successful
-          showToast('Pengaturan berhasil diperbarui!', 'success')
+          showToast("Pengaturan berhasil diperbarui!", "success");
         }
       } else {
-        showToast(data.profile.message, 'error')
+        showToast(data.profile.message, "error");
       }
     },
-    onError: (error: any) => showToast(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan pengaturan.', 'error')
-  })
-
+    onError: (error: any) =>
+      showToast(
+        error.response?.data?.message ||
+          "Terjadi kesalahan saat menyimpan pengaturan.",
+        "error",
+      ),
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -205,7 +257,9 @@ function SettingsPage() {
   };
 
   const handleCropComplete = (croppedBlob: Blob) => {
-    setFotoFile(new File([croppedBlob], 'foto_profil.png', { type: 'image/png' }));
+    setFotoFile(
+      new File([croppedBlob], "foto_profil.png", { type: "image/png" }),
+    );
     setCroppedPreview(URL.createObjectURL(croppedBlob));
     setCropperSrc(null);
   };
@@ -226,20 +280,28 @@ function SettingsPage() {
           <div className="flex items-center gap-3 sm:gap-4">
             <button
               type="button"
-              onClick={() => navigate({ to: '/overview' })}
+              onClick={() => navigate({ to: "/overview" })}
               className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-sm flex items-center justify-center transition-all duration-200 border border-white/20 flex-shrink-0"
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">Pengaturan Profil</h1>
-              <p className="text-red-100 text-xs sm:text-sm">Kelola informasi landing page Anda</p>
+              <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                Pengaturan Profil
+              </h1>
+              <p className="text-red-100 text-xs sm:text-sm">
+                Kelola informasi landing page Anda
+              </p>
             </div>
           </div>
         </div>
       </div>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-4 sm:-mt-6 pb-10">
-        <form id="settings-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+        <form
+          id="settings-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5 sm:space-y-6"
+        >
           <ProfilePhotoCard
             fotoProfilUrl={profileData?.foto_profil_url}
             namaLengkap={profileData?.nama_lengkap}
@@ -253,7 +315,10 @@ function SettingsPage() {
 
           <Tabs defaultValue="informasi" className="w-full">
             <div className="flex justify-start sm:justify-center overflow-x-auto no-scrollbar mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
-              <TabsList variant="line" className="flex bg-transparent border-none h-auto p-0 gap-6 sm:gap-10 pb-2">
+              <TabsList
+                variant="line"
+                className="flex bg-transparent border-none h-auto p-0 gap-6 sm:gap-10 pb-2"
+              >
                 <TabsTrigger
                   value="informasi"
                   className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
@@ -275,14 +340,18 @@ function SettingsPage() {
                   <Share2 className="w-4 h-4" />
                   Sosial Media
                 </TabsTrigger>
-
               </TabsList>
             </div>
 
-            <TabsContent value="informasi" className="space-y-5 sm:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <TabsContent
+              value="informasi"
+              className="space-y-5 sm:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
+            >
               <Card className="rounded-2xl shadow-sm border-slate-100 overflow-hidden bg-white">
                 <CardHeader className="px-5 sm:px-6 py-4 border-b border-slate-100">
-                  <CardTitle className="text-sm sm:text-base font-bold text-slate-800">Informasi Dasar</CardTitle>
+                  <CardTitle className="text-sm sm:text-base font-bold text-slate-800">
+                    Informasi Dasar
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="p-5 sm:p-6 space-y-4 sm:space-y-5">
                   <div className="space-y-2">
@@ -290,34 +359,71 @@ function SettingsPage() {
                       <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                       PG Code
                     </Label>
-                    <Input type="text" disabled value={profileData?.pgcode || ''} className="bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed" />
+                    <Input
+                      type="text"
+                      disabled
+                      value={profileData?.pgcode || ""}
+                      className="bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed"
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <div className="space-y-2">
-                      <Label htmlFor="nama_lengkap" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                      <Label
+                        htmlFor="nama_lengkap"
+                        className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600"
+                      >
                         <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                         Nama Lengkap
                       </Label>
-                      <Input id="nama_lengkap" {...register('nama_lengkap', { required: 'Nama lengkap wajib diisi' })} type="text" className={cn(errors.nama_lengkap && "border-red-400 bg-red-50/50")} />
-                      {errors.nama_lengkap && <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.nama_lengkap.message as string}</p>}
+                      <Input
+                        id="nama_lengkap"
+                        {...register("nama_lengkap", {
+                          required: "Nama lengkap wajib diisi",
+                        })}
+                        type="text"
+                        className={cn(
+                          errors.nama_lengkap && "border-red-400 bg-red-50/50",
+                        )}
+                      />
+                      {errors.nama_lengkap && (
+                        <p className="mt-1.5 text-xs text-red-500 font-medium">
+                          {errors.nama_lengkap.message as string}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="nama_panggilan" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                      <Label
+                        htmlFor="nama_panggilan"
+                        className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600"
+                      >
                         <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                         Nama Panggilan
                       </Label>
-                      <Input id="nama_panggilan" {...register('nama_panggilan')} type="text" placeholder="Opsional" />
+                      <Input
+                        id="nama_panggilan"
+                        {...register("nama_panggilan")}
+                        type="text"
+                        placeholder="Opsional"
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                    <Label
+                      htmlFor="email"
+                      className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600"
+                    >
                       <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                       Email Publik
                     </Label>
-                    <Input id="email" {...register('email')} type="email" placeholder="contoh@email.com" />
+                    <Input
+                      id="email"
+                      {...register("email")}
+                      type="email"
+                      placeholder="contoh@email.com"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -328,14 +434,20 @@ function SettingsPage() {
                     <div className="flex bg-white rounded-xl overflow-hidden border border-slate-200 focus-within:ring-2 focus-within:ring-red-500/20 focus-within:border-red-500 transition-all">
                       <div className="w-[100px] border-r border-slate-200">
                         <Combobox
-                          onValueChange={(val: string | null) => val && setValue('country_code', val)}
-                          value={(watch('country_code') as string) || '62'}
+                          onValueChange={(val: string | null) =>
+                            val && setValue("country_code", val)
+                          }
+                          value={(watch("country_code") as string) || "62"}
                           inputValue={dialCodeSearch}
                           onInputValueChange={setDialCodeSearch}
                         >
                           <ComboboxTrigger className="border-none bg-slate-50 rounded-none h-full focus:ring-0">
                             <ComboboxValue className="truncate">
-                              {dialCodeOptions.find(opt => opt.value === watch('country_code'))?.label?.replace('+', '') || '62'}
+                              {dialCodeOptions
+                                .find(
+                                  (opt) => opt.value === watch("country_code"),
+                                )
+                                ?.label?.replace("+", "") || "62"}
                             </ComboboxValue>
                           </ComboboxTrigger>
                           <ComboboxContent>
@@ -350,7 +462,13 @@ function SettingsPage() {
                         </Combobox>
                       </div>
                       <Input
-                        {...register('no_telpon', { onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "") })}
+                        {...register("no_telpon", {
+                          onChange: (e) =>
+                            (e.target.value = e.target.value.replace(
+                              /\D/g,
+                              "",
+                            )),
+                        })}
                         type="text"
                         className="flex-1 border-none bg-transparent focus-visible:ring-0"
                         placeholder="8123456789"
@@ -359,25 +477,37 @@ function SettingsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="link_group_whatsapp" className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600">
+                    <Label
+                      htmlFor="link_group_whatsapp"
+                      className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600"
+                    >
                       <Link2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                       Link Grup WhatsApp
                     </Label>
-                    <Input id="link_group_whatsapp" {...register('link_group_whatsapp')} type="text" placeholder="https://chat.whatsapp.com/..." />
+                    <Input
+                      id="link_group_whatsapp"
+                      {...register("link_group_whatsapp")}
+                      type="text"
+                      placeholder="https://chat.whatsapp.com/..."
+                    />
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="password" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <TabsContent
+              value="password"
+              className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+            >
               <PasswordCard register={register} errors={errors} watch={watch} />
             </TabsContent>
 
-            <TabsContent value="sosmed" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <TabsContent
+              value="sosmed"
+              className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+            >
               <SocialMediaCard register={register} />
             </TabsContent>
-
-
           </Tabs>
         </form>
       </div>
@@ -391,12 +521,12 @@ function SettingsPage() {
             className="px-6 sm:px-8 h-auto py-2.5 sm:py-3 rounded-xl shadow-lg shadow-red-600/25 bg-red-600 hover:bg-red-700 transition-all text-white"
           >
             <Save className="w-4 h-4 mr-2" />
-            {mutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+            {mutation.isPending ? "Menyimpan..." : "Simpan Perubahan"}
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function SettingsLoading() {
@@ -404,7 +534,9 @@ function SettingsLoading() {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Spinner size={40} className="text-red-600 opacity-100" />
-        <p className="text-slate-500 text-sm font-medium">Memuat pengaturan...</p>
+        <p className="text-slate-500 text-sm font-medium">
+          Memuat pengaturan...
+        </p>
       </div>
     </div>
   );

@@ -125,17 +125,22 @@ const tabMedia: Record<number, Slide[]> = {
 const Description = ({ text, points }: { text: string; points: string[] }) => {
   return (
     <div className="space-y-3">
-      <p className="text-slate-600 leading-relaxed text-sm md:text-base">{text}</p>
+      <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+        {text}
+      </p>
       <ul className="mt-4 border-t border-slate-100 md:border-t-0">
         {points?.map((item, index) => (
-          <li 
-            key={index} 
+          <li
+            key={index}
             className="flex items-start gap-3 text-slate-600 py-4 border-b border-slate-100 last:border-b-0 md:py-1 md:border-b-0"
           >
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-50 flex items-center justify-center mt-0.5">
               <Check className="w-3 h-3 text-red-600" />
             </span>
-            <span className="text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: item }} />
+            <span
+              className="text-sm leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: item }}
+            />
           </li>
         ))}
       </ul>
@@ -198,32 +203,34 @@ const MediaSlider = ({ slides }: { slides: Slide[] }) => {
       <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
         {slides.length > 4
           ? slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`rounded-full transition-all duration-300 ${active === i
-                ? "w-6 h-2.5 bg-red-600 shadow-md"
-                : "w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400"
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                className={`rounded-full transition-all duration-300 ${
+                  active === i
+                    ? "w-6 h-2.5 bg-red-600 shadow-md"
+                    : "w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400"
                 }`}
-            />
-          ))
+              />
+            ))
           : slides.map((slide, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 ${active === i
-                ? "bg-red-600 text-white shadow-md scale-105"
-                : "bg-white text-slate-500 hover:bg-slate-100 ring-1 ring-slate-200"
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 ${
+                  active === i
+                    ? "bg-red-600 text-white shadow-md scale-105"
+                    : "bg-white text-slate-500 hover:bg-slate-100 ring-1 ring-slate-200"
                 }`}
-            >
-              {slide.type === "video" ? (
-                <Play className="w-3 h-3" />
-              ) : (
-                <ImageIcon className="w-3 h-3" />
-              )}
-              {slide.label}
-            </button>
-          ))}
+              >
+                {slide.type === "video" ? (
+                  <Play className="w-3 h-3" />
+                ) : (
+                  <ImageIcon className="w-3 h-3" />
+                )}
+                {slide.label}
+              </button>
+            ))}
       </div>
     </div>
   );
@@ -249,18 +256,20 @@ const Excellence = () => {
   ];
 
   const itemsData = t("excellence.items", { returnObjects: true });
-  const items = (Array.isArray(itemsData) ? itemsData : []).map((item: any, index: number) => ({
-    ...item,
-    icon: iconMap[index] || ShieldCheck,
-    color: colorMap[index] || "from-slate-400 to-slate-500",
-    bgColor: bgColorMap[index] || "bg-slate-500",
-    featureIcons: featureIcons[index] || [Check, Check, Check],
-    points: item.points || [],
-    features: (item.features || []).map((label: string, i: number) => ({
-      label,
-      icon: (featureIcons[index] || [Check, Check, Check])[i] || Check,
-    })),
-  }));
+  const items = (Array.isArray(itemsData) ? itemsData : []).map(
+    (item: any, index: number) => ({
+      ...item,
+      icon: iconMap[index] || ShieldCheck,
+      color: colorMap[index] || "from-slate-400 to-slate-500",
+      bgColor: bgColorMap[index] || "bg-slate-500",
+      featureIcons: featureIcons[index] || [Check, Check, Check],
+      points: item.points || [],
+      features: (item.features || []).map((label: string, i: number) => ({
+        label,
+        icon: (featureIcons[index] || [Check, Check, Check])[i] || Check,
+      })),
+    }),
+  );
 
   return (
     <BaseLayout className="flex-col">
@@ -273,22 +282,27 @@ const Excellence = () => {
 
         {/* Tabs and Content */}
         <Tabs defaultValue="0" className="w-full flex flex-col items-center">
-          <TabsList variant="line" className="inline-flex w-full md:w-auto h-auto p-0 flex-nowrap overflow-x-auto md:overflow-visible gap-8 border-b border-slate-100 justify-start md:justify-center scrollbar-hide mb-12">
+          <TabsList
+            variant="line"
+            className="inline-flex w-full md:w-auto h-auto p-0 flex-nowrap overflow-x-auto md:overflow-visible gap-8 border-b border-slate-100 justify-start md:justify-center scrollbar-hide mb-12"
+          >
             {items.map(({ title, icon: TabIcon }, index) => (
               <TabsTrigger
                 key={`title-excellence-${index}`}
                 value={index.toString()}
                 className={cn(
                   "group whitespace-nowrap flex items-center gap-2.5 px-2 pb-5 pt-2 rounded-none text-sm font-semibold transition-all duration-300",
-                  "data-[state=active]:text-slate-900 text-slate-400 hover:text-slate-600"
+                  "data-[state=active]:text-slate-900 text-slate-400 hover:text-slate-600",
                 )}
               >
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300",
-                  "bg-slate-50 text-slate-400 group-hover:bg-slate-100",
-                  "group-data-[active]:bg-transparent group-data-[active]:text-red-600",
-                  "group-data-[state=active]:bg-transparent group-data-[state=active]:text-red-600"
-                )}>
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300",
+                    "bg-slate-50 text-slate-400 group-hover:bg-slate-100",
+                    "group-data-[active]:bg-transparent group-data-[active]:text-red-600",
+                    "group-data-[state=active]:bg-transparent group-data-[state=active]:text-red-600",
+                  )}
+                >
                   <TabIcon className="w-4 h-4" />
                 </div>
                 {title}
@@ -302,86 +316,102 @@ const Excellence = () => {
             const hasMedia = tabMedia[index] !== undefined;
 
             return (
-              <TabsContent key={`desc-excellence-${index}`} value={index.toString()} className="mt-0 outline-none w-full">
+              <TabsContent
+                key={`desc-excellence-${index}`}
+                value={index.toString()}
+                className="mt-0 outline-none w-full"
+              >
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center px-4 md:px-0">
                   {/* Visual / Media */}
-                  <div className={hasMedia ? "lg:w-[55%] w-full" : "lg:w-1/2 flex justify-center"}>
-                      {hasMedia ? (
-                        <MediaSlider slides={tabMedia[index]} />
-                      ) : (
-                        <div className="relative">
-                          <div
-                            className={`absolute -inset-4 bg-gradient-to-r ${item.color} rounded-3xl opacity-20 blur-xl`}
-                          />
-                          <Card className="relative bg-white rounded-2xl shadow-2xl p-8 w-[320px] border-none">
-                            <CardContent className="p-0">
-                              <div
-                                className={`w-20 h-20 ${item.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}
-                              >
-                                <Icon className="w-10 h-10 text-white" />
-                              </div>
-                              <h4 className="text-xl font-bold text-slate-800 text-center mb-6">
-                                {item.title}
-                              </h4>
-                              <div className="space-y-3">
-                                {item.features.map((feature: any, i: number) => {
-                                  const FeatureIcon = feature.icon;
-                                  return (
+                  <div
+                    className={
+                      hasMedia
+                        ? "lg:w-[55%] w-full"
+                        : "lg:w-1/2 flex justify-center"
+                    }
+                  >
+                    {hasMedia ? (
+                      <MediaSlider slides={tabMedia[index]} />
+                    ) : (
+                      <div className="relative">
+                        <div
+                          className={`absolute -inset-4 bg-gradient-to-r ${item.color} rounded-3xl opacity-20 blur-xl`}
+                        />
+                        <Card className="relative bg-white rounded-2xl shadow-2xl p-8 w-[320px] border-none">
+                          <CardContent className="p-0">
+                            <div
+                              className={`w-20 h-20 ${item.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}
+                            >
+                              <Icon className="w-10 h-10 text-white" />
+                            </div>
+                            <h4 className="text-xl font-bold text-slate-800 text-center mb-6">
+                              {item.title}
+                            </h4>
+                            <div className="space-y-3">
+                              {item.features.map((feature: any, i: number) => {
+                                const FeatureIcon = feature.icon;
+                                return (
+                                  <div
+                                    key={i}
+                                    className="flex items-start gap-4 p-4 rounded-none lg:rounded-xl border-0 border-b border-slate-100 last:border-b-0 lg:border-b-0 transition-all duration-300 hover:bg-white hover:shadow-md group/item"
+                                  >
                                     <div
-                                      key={i}
-                                      className="flex items-start gap-4 p-4 rounded-none lg:rounded-xl border-0 border-b border-slate-100 last:border-b-0 lg:border-b-0 transition-all duration-300 hover:bg-white hover:shadow-md group/item"
+                                      className={`w-8 h-8 rounded-lg ${item.bgColor} bg-opacity-20 flex items-center justify-center`}
                                     >
-                                      <div
-                                        className={`w-8 h-8 rounded-lg ${item.bgColor} bg-opacity-20 flex items-center justify-center`}
-                                      >
-                                        <FeatureIcon
-                                          className={`w-4 h-4 ${item.bgColor.replace("bg-", "text-")}`}
-                                        />
-                                      </div>
-                                      <span className="text-sm font-medium text-slate-700">
-                                        {feature.label}
-                                      </span>
+                                      <FeatureIcon
+                                        className={`w-4 h-4 ${item.bgColor.replace("bg-", "text-")}`}
+                                      />
                                     </div>
-                                  );
-                                })}
-                              </div>
-                              <div
-                                className={`absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r ${item.color} rounded-full`}
-                              />
-                              <div
-                                className={`absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r ${item.color} rounded-full`}
-                              />
-                            </CardContent>
-                          </Card>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Text content */}
-                    <div className={hasMedia ? "lg:w-2/5 text-left" : "lg:w-1/2 text-left"}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-10 h-10 rounded-xl ${item.bgColor} flex items-center justify-center shadow-md`}>
-                          <Icon className="w-5 h-5 text-white" />
-                        </div>
-                        <h3 className="text-2xl font-bold text-slate-800">
-                          {item.title}
-                        </h3>
+                                    <span className="text-sm font-medium text-slate-700">
+                                      {feature.label}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            <div
+                              className={`absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r ${item.color} rounded-full`}
+                            />
+                            <div
+                              className={`absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r ${item.color} rounded-full`}
+                            />
+                          </CardContent>
+                        </Card>
                       </div>
-                      <Description text={item.text} points={item.points} />
+                    )}
+                  </div>
 
-                      {/* Feature tags */}
-                      <div className="flex flex-wrap gap-2 mt-6">
-                        {item.features.map((feature: any, i: number) => (
-                          <span
-                            key={i}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-xs font-medium text-slate-600"
-                          >
-                            <Check className="w-3 h-3 text-red-500" />
-                            {feature.label}
-                          </span>
-                        ))}
+                  {/* Text content */}
+                  <div
+                    className={
+                      hasMedia ? "lg:w-2/5 text-left" : "lg:w-1/2 text-left"
+                    }
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div
+                        className={`w-10 h-10 rounded-xl ${item.bgColor} flex items-center justify-center shadow-md`}
+                      >
+                        <Icon className="w-5 h-5 text-white" />
                       </div>
+                      <h3 className="text-2xl font-bold text-slate-800">
+                        {item.title}
+                      </h3>
                     </div>
+                    <Description text={item.text} points={item.points} />
+
+                    {/* Feature tags */}
+                    <div className="flex flex-wrap gap-2 mt-6">
+                      {item.features.map((feature: any, i: number) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-xs font-medium text-slate-600"
+                        >
+                          <Check className="w-3 h-3 text-red-500" />
+                          {feature.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
             );

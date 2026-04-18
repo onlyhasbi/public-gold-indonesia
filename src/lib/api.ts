@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const url = import.meta.env.VITE_API_URL || "http://localhost:3000";
-const baseURL = url.endsWith('/api') ? url : `${url}/api`;
+const baseURL = url.endsWith("/api") ? url : `${url}/api`;
 
 export const api = axios.create({
   baseURL,
@@ -12,7 +12,7 @@ export const api = axios.create({
 // IMPORTANT: Don't overwrite Authorization if already explicitly set (e.g. admin routes)
 api.interceptors.request.use((config) => {
   const rawToken = localStorage.getItem("token");
-  const token = rawToken ? rawToken.replace(/^"|"$/g, '') : null;
+  const token = rawToken ? rawToken.replace(/^"|"$/g, "") : null;
   if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -34,8 +34,8 @@ api.interceptors.response.use(
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      
-      // If we're on a protected route, the app should naturally 
+
+      // If we're on a protected route, the app should naturally
       // redirect on next navigation or route guard check.
     }
 
@@ -45,5 +45,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

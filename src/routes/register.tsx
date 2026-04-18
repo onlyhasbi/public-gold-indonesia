@@ -11,27 +11,34 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxTrigger,
-  ComboboxValue
+  ComboboxValue,
 } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, ChevronDown, ChevronUp, Loader2, MessageCircle, Send } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  MessageCircle,
+  Send,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { NextStepModal } from "../components/NextStepModal";
 import NotFound from "../components/not_found";
-import { AgeSwitchModal, ConfirmationModal } from "../components/RegisterModals";
+import {
+  AgeSwitchModal,
+  ConfirmationModal,
+} from "../components/RegisterModals";
 import { Checkbox } from "../components/ui/checkbox";
 import { InputField, AlertMessage } from "../components/ui/form-elements";
 import { branchOptionsId, branchOptionsMy } from "../constant/branches";
@@ -60,7 +67,7 @@ function RegisterPage() {
   const isAnak = type === "anak";
 
   const { data: referralData, isError: isReferralError } = useQuery({
-    queryKey: ['referral', ref],
+    queryKey: ["referral", ref],
     queryFn: async () => {
       if (!ref) return null;
       try {
@@ -68,7 +75,7 @@ function RegisterPage() {
         return res.data.data;
       } catch (err: any) {
         if (err.response?.status === 404) {
-          throw new Error('Agent not found');
+          throw new Error("Agent not found");
         }
         throw err;
       }
@@ -79,12 +86,12 @@ function RegisterPage() {
 
   useEffect(() => {
     if (!ref) {
-      const storedPageId = localStorage.getItem('ref_pageid');
+      const storedPageId = localStorage.getItem("ref_pageid");
       if (storedPageId) {
         navigate({
           to: "/register",
           search: (prev: any) => ({ ...prev, ref: storedPageId }),
-          replace: true
+          replace: true,
         });
       } else {
         navigate({ to: "/", replace: true });
@@ -93,7 +100,7 @@ function RegisterPage() {
     }
 
     if (referralData) {
-      localStorage.setItem('ref_pageid', referralData.pageid);
+      localStorage.setItem("ref_pageid", referralData.pageid);
     }
   }, [ref, referralData, navigate]);
 
@@ -117,7 +124,7 @@ function RegisterPage() {
   const activeBranchOptions = isIndonesia ? branchOptionsId : branchOptionsMy;
   const idTypeOptions = [
     { value: "newic", label: t("registerForm.idTypeKtp") },
-    { value: "passportforeign", label: t("registerForm.idTypePassport") }
+    { value: "passportforeign", label: t("registerForm.idTypePassport") },
   ];
 
   const {
@@ -154,9 +161,9 @@ function RegisterPage() {
   const filteredDialCodes = useMemo(() => {
     if (!dialCodeSearch) return dialCodeOptions;
     const term = dialCodeSearch.toLowerCase();
-    return dialCodeOptions.filter(opt =>
-      opt.label.toLowerCase().includes(term) ||
-      opt.value.includes(term)
+    return dialCodeOptions.filter(
+      (opt) =>
+        opt.label.toLowerCase().includes(term) || opt.value.includes(term),
     );
   }, [dialCodeSearch]);
 
@@ -164,14 +171,17 @@ function RegisterPage() {
   const filteredBranchOptions = useMemo(() => {
     if (!branchSearch) return activeBranchOptions;
     const term = branchSearch.toLowerCase();
-    return activeBranchOptions.filter(opt =>
-      opt.label.toLowerCase().includes(term)
+    return activeBranchOptions.filter((opt) =>
+      opt.label.toLowerCase().includes(term),
     );
   }, [branchSearch, activeBranchOptions]);
 
   useEffect(() => {
     if (status === "success") {
-      formContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      formContainerRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
       window.scrollTo({ top: 0, behavior: "smooth" });
 
       const timer = setTimeout(() => {
@@ -187,7 +197,9 @@ function RegisterPage() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
-          <p className="text-slate-500 font-medium animate-pulse">Memuat data...</p>
+          <p className="text-slate-500 font-medium animate-pulse">
+            Memuat data...
+          </p>
         </div>
       </div>
     );
@@ -198,21 +210,25 @@ function RegisterPage() {
   }
 
   return (
-    <div ref={formContainerRef} className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-3 sm:p-6 md:p-8">
-
+    <div
+      ref={formContainerRef}
+      className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-3 sm:p-6 md:p-8"
+    >
       <Card className="w-full max-w-[1320px] rounded-3xl sm:rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col lg:flex-row overflow-hidden border-white/50 bg-white p-0">
-
         {/* Left Column: Form */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 xl:p-16 xl:px-20 flex flex-col justify-center relative bg-white lg:min-h-[900px]">
           <div className="w-full max-w-lg mx-auto">
-
             <div className="flex justify-between items-center mb-6 lg:mb-8">
               <Link
                 to={referralData?.pageid ? "/$pgcode" : "/"}
-                params={referralData?.pageid ? { pgcode: referralData.pageid } : undefined}
+                params={
+                  referralData?.pageid
+                    ? { pgcode: referralData.pageid }
+                    : undefined
+                }
                 className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
               >
-                <ArrowLeft className="w-4 h-4" /> {t('nav.back')}
+                <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
               </Link>
 
               <Combobox
@@ -222,16 +238,23 @@ function RegisterPage() {
                     setCountryMode(val as "ID" | "MY" | "INTL");
                     // Delay language change slightly more to let the popup close and release scroll lock
                     setTimeout(() => {
-                      if (val === 'ID') i18n.changeLanguage('id');
-                      else if (val === 'MY') i18n.changeLanguage('ms');
-                      else i18n.changeLanguage('en');
+                      if (val === "ID") i18n.changeLanguage("id");
+                      else if (val === "MY") i18n.changeLanguage("ms");
+                      else i18n.changeLanguage("en");
                     }, 200);
                   }
                 }}
               >
                 <ComboboxTrigger className="w-fit min-w-[145px] bg-slate-50 border-slate-200">
-                  <ComboboxValue placeholder={t('registerPage.selectCountry')} className="truncate">
-                    {countryMode === 'ID' ? '🇮🇩 Indonesia' : countryMode === 'MY' ? '🇲🇾 Malaysia' : '🌏 International'}
+                  <ComboboxValue
+                    placeholder={t("registerPage.selectCountry")}
+                    className="truncate"
+                  >
+                    {countryMode === "ID"
+                      ? "🇮🇩 Indonesia"
+                      : countryMode === "MY"
+                        ? "🇲🇾 Malaysia"
+                        : "🌏 International"}
                   </ComboboxValue>
                 </ComboboxTrigger>
                 <ComboboxContent align="end">
@@ -244,10 +267,14 @@ function RegisterPage() {
 
             <CardHeader className="p-0 mb-6">
               <CardTitle className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                {isAnak ? t("registerForm.titleAnak") : t("registerForm.titleDewasa")}
+                {isAnak
+                  ? t("registerForm.titleAnak")
+                  : t("registerForm.titleDewasa")}
               </CardTitle>
               <CardDescription className="text-slate-500 text-sm">
-                {isAnak ? t("registerForm.descAnak") : t("registerForm.descDewasa")}
+                {isAnak
+                  ? t("registerForm.descAnak")
+                  : t("registerForm.descDewasa")}
               </CardDescription>
             </CardHeader>
 
@@ -255,22 +282,40 @@ function RegisterPage() {
               value={isAnak ? "anak" : "dewasa"}
               onValueChange={(val) => {
                 reset();
-                navigate({ to: "/register", search: { type: val as "dewasa" | "anak" } });
+                navigate({
+                  to: "/register",
+                  search: { type: val as "dewasa" | "anak" },
+                });
               }}
               className="mb-6"
             >
-              <TabsList variant="line" className="w-full bg-transparent p-0 flex gap-8 border-b border-slate-100">
+              <TabsList
+                variant="line"
+                className="w-full bg-transparent p-0 flex gap-8 border-b border-slate-100"
+              >
                 <TabsTrigger
                   value="dewasa"
                   className="flex-1 flex items-center justify-center gap-2 pt-5 pb-4 rounded-none border-none data-[active]:bg-transparent data-[active]:text-slate-900 data-[active]:shadow-none transition-all"
                 >
-                  <img src="/dewasa.webp" alt="" className="w-[22px] h-[22px] object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> {t("registerForm.tabDewasa")}
+                  <img
+                    src="/dewasa.webp"
+                    alt=""
+                    className="w-[22px] h-[22px] object-cover rounded-full"
+                    style={{ objectPosition: "center 10%" }}
+                  />{" "}
+                  {t("registerForm.tabDewasa")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="anak"
                   className="flex-1 flex items-center justify-center gap-2 pt-5 pb-4 rounded-none border-none data-[active]:bg-transparent data-[active]:text-slate-900 data-[active]:shadow-none transition-all"
                 >
-                  <img src="/anak.webp" alt="" className="w-[22px] h-[22px] object-cover rounded-full" style={{ objectPosition: "center 10%" }} /> {t("registerForm.tabAnak")}
+                  <img
+                    src="/anak.webp"
+                    alt=""
+                    className="w-[22px] h-[22px] object-cover rounded-full"
+                    style={{ objectPosition: "center 10%" }}
+                  />{" "}
+                  {t("registerForm.tabAnak")}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -292,32 +337,58 @@ function RegisterPage() {
                 )}
 
                 {status !== "idle" && (
-                  <AlertMessage type={status as "success" | "error"} message={message} onClose={() => setStatus("idle")} />
+                  <AlertMessage
+                    type={status as "success" | "error"}
+                    message={message}
+                    onClose={() => setStatus("idle")}
+                  />
                 )}
 
-                <form key={formKey} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form
+                  key={formKey}
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
                   <InputField
                     id="label-name"
                     required
-                    label={isAnak ? t("registerForm.nameLabelAnak") : t("registerForm.nameLabelDewasa")}
-                    placeholder={isAnak ? t("registerForm.namePlaceholderAnak") : t("registerForm.namePlaceholderDewasa")}
+                    label={
+                      isAnak
+                        ? t("registerForm.nameLabelAnak")
+                        : t("registerForm.nameLabelDewasa")
+                    }
+                    placeholder={
+                      isAnak
+                        ? t("registerForm.namePlaceholderAnak")
+                        : t("registerForm.namePlaceholderDewasa")
+                    }
                     {...register("label-name", {
-                      onChange: (e) => e.target.value = e.target.value.toUpperCase()
+                      onChange: (e) =>
+                        (e.target.value = e.target.value.toUpperCase()),
                     })}
                     error={errors["label-name"]?.message as string}
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="idselect">{t("registerForm.idTypeLabel")}</Label>
+                      <Label htmlFor="idselect">
+                        {t("registerForm.idTypeLabel")}
+                      </Label>
                       <Combobox
                         key={countryMode}
                         value={watch("idselect") || "newic"}
-                        onValueChange={(val: string | null) => val && setValue("idselect", val, { shouldValidate: true })}
+                        onValueChange={(val: string | null) =>
+                          val &&
+                          setValue("idselect", val, { shouldValidate: true })
+                        }
                       >
                         <ComboboxTrigger id="idselect">
                           <ComboboxValue className="truncate">
-                            {idTypeOptions.find(opt => opt.value === watch("idselect"))?.label}
+                            {
+                              idTypeOptions.find(
+                                (opt) => opt.value === watch("idselect"),
+                              )?.label
+                            }
                           </ComboboxValue>
                         </ComboboxTrigger>
                         <ComboboxContent>
@@ -329,26 +400,46 @@ function RegisterPage() {
                         </ComboboxContent>
                       </Combobox>
                       {errors["idselect"] && (
-                        <p className="text-[11px] font-medium text-red-500">{errors["idselect"]?.message as string}</p>
+                        <p className="text-[11px] font-medium text-red-500">
+                          {errors["idselect"]?.message as string}
+                        </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="label-ic" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                        {isAnak ? t("registerForm.icLabelAnak") : t("registerForm.icLabelDewasa")}
+                      <Label
+                        htmlFor="label-ic"
+                        className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                      >
+                        {isAnak
+                          ? t("registerForm.icLabelAnak")
+                          : t("registerForm.icLabelDewasa")}
                       </Label>
                       <Input
                         id="label-ic"
                         maxLength={20}
-                        placeholder={isAnak ? t("registerForm.icPlaceholderAnak") : t("registerForm.icPlaceholderDewasa")}
+                        placeholder={
+                          isAnak
+                            ? t("registerForm.icPlaceholderAnak")
+                            : t("registerForm.icPlaceholderDewasa")
+                        }
                         {...register("label-ic", {
-                          onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
+                          onChange: (e) =>
+                            (e.target.value = e.target.value.replace(
+                              /\D/g,
+                              "",
+                            )),
                         })}
                         onBlur={handleNikBlur}
-                        className={cn(errors["label-ic"] && "border-red-500 focus-visible:ring-red-500/30")}
+                        className={cn(
+                          errors["label-ic"] &&
+                            "border-red-500 focus-visible:ring-red-500/30",
+                        )}
                       />
                       {errors["label-ic"] && (
-                        <p className="text-[11px] font-medium text-red-500">{errors["label-ic"]?.message as string}</p>
+                        <p className="text-[11px] font-medium text-red-500">
+                          {errors["label-ic"]?.message as string}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -356,40 +447,67 @@ function RegisterPage() {
                   {isIndonesia && (
                     <div className="space-y-2">
                       <Label htmlFor="label-individualgstid">
-                        {t("registerForm.npwpLabel")} <span className="text-slate-400 font-normal">{t("registerForm.npwpDesc")}</span>
+                        {t("registerForm.npwpLabel")}{" "}
+                        <span className="text-slate-400 font-normal">
+                          {t("registerForm.npwpDesc")}
+                        </span>
                       </Label>
                       <Input
                         id="label-individualgstid"
                         placeholder={t("registerForm.npwpPlaceholder")}
                         {...register("label-individualgstid", {
-                          onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
+                          onChange: (e) =>
+                            (e.target.value = e.target.value.replace(
+                              /\D/g,
+                              "",
+                            )),
                         })}
-                        className={cn(errors["label-individualgstid"] && "border-red-500 focus-visible:ring-red-500/30")}
+                        className={cn(
+                          errors["label-individualgstid"] &&
+                            "border-red-500 focus-visible:ring-red-500/30",
+                        )}
                       />
                       {errors["label-individualgstid"] && (
-                        <p className="text-[11px] font-medium text-red-500">{errors["label-individualgstid"]?.message as string}</p>
+                        <p className="text-[11px] font-medium text-red-500">
+                          {errors["label-individualgstid"]?.message as string}
+                        </p>
                       )}
                     </div>
                   )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="label-dob" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                        {isAnak ? t("registerForm.dobLabelAnak") : t("registerForm.dobLabelDewasa")}
+                      <Label
+                        htmlFor="label-dob"
+                        className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                      >
+                        {isAnak
+                          ? t("registerForm.dobLabelAnak")
+                          : t("registerForm.dobLabelDewasa")}
                       </Label>
                       <Input
                         id="label-dob"
                         type="date"
                         {...register("label-dob")}
                         readOnly={isDobDisabled}
-                        className={cn(isDobDisabled && "bg-slate-100/80 text-slate-500 cursor-not-allowed opacity-90", errors["label-dob"] && "border-red-500 focus-visible:ring-red-500/30")}
+                        className={cn(
+                          isDobDisabled &&
+                            "bg-slate-100/80 text-slate-500 cursor-not-allowed opacity-90",
+                          errors["label-dob"] &&
+                            "border-red-500 focus-visible:ring-red-500/30",
+                        )}
                       />
                       {errors["label-dob"] && (
-                        <p className="text-[11px] font-medium text-red-500">{errors["label-dob"]?.message as string}</p>
+                        <p className="text-[11px] font-medium text-red-500">
+                          {errors["label-dob"]?.message as string}
+                        </p>
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="label-email" className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      <Label
+                        htmlFor="label-email"
+                        className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                      >
                         {t("registerForm.emailLabel")}
                       </Label>
                       <Input
@@ -397,10 +515,15 @@ function RegisterPage() {
                         type="email"
                         placeholder={t("registerForm.emailPlaceholder")}
                         {...register("label-email")}
-                        className={cn(errors["label-email"] && "border-red-500 focus-visible:ring-red-500/30")}
+                        className={cn(
+                          errors["label-email"] &&
+                            "border-red-500 focus-visible:ring-red-500/30",
+                        )}
                       />
                       {errors["label-email"] && (
-                        <p className="text-[11px] font-medium text-red-500">{errors["label-email"]?.message as string}</p>
+                        <p className="text-[11px] font-medium text-red-500">
+                          {errors["label-email"]?.message as string}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -408,38 +531,65 @@ function RegisterPage() {
                   {isAnak && (
                     <>
                       <div className="relative py-2 mt-2">
-                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200" /></div>
-                        <div className="relative flex justify-center"><span className="bg-white px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">{t("registerForm.parentSectionTitle")}</span></div>
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-slate-200" />
+                        </div>
+                        <div className="relative flex justify-center">
+                          <span className="bg-white px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            {t("registerForm.parentSectionTitle")}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="label-parent-name" className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                        <Label
+                          htmlFor="label-parent-name"
+                          className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                        >
                           {t("registerForm.parentNameLabel")}
                         </Label>
                         <Input
                           id="label-parent-name"
                           placeholder={t("registerForm.parentNamePlaceholder")}
                           {...register("label-parent-name", {
-                            onChange: (e) => e.target.value = e.target.value.toUpperCase()
+                            onChange: (e) =>
+                              (e.target.value = e.target.value.toUpperCase()),
                           })}
-                          className={cn(errors["label-parent-name"] && "border-red-500 focus-visible:ring-red-500/30")}
+                          className={cn(
+                            errors["label-parent-name"] &&
+                              "border-red-500 focus-visible:ring-red-500/30",
+                          )}
                         />
                         {errors["label-parent-name"] && (
-                          <p className="text-[11px] font-medium text-red-500">{errors["label-parent-name"]?.message as string}</p>
+                          <p className="text-[11px] font-medium text-red-500">
+                            {errors["label-parent-name"]?.message as string}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="parent_idselect">{t("registerForm.idTypeLabel")}</Label>
+                          <Label htmlFor="parent_idselect">
+                            {t("registerForm.idTypeLabel")}
+                          </Label>
                           <Combobox
                             key={countryMode}
                             value={watch("parent_idselect") || "newic"}
-                            onValueChange={(val: string | null) => val && setValue("parent_idselect", val, { shouldValidate: true })}
+                            onValueChange={(val: string | null) =>
+                              val &&
+                              setValue("parent_idselect", val, {
+                                shouldValidate: true,
+                              })
+                            }
                           >
                             <ComboboxTrigger id="parent_idselect">
                               <ComboboxValue className="truncate">
-                                {idTypeOptions.find(opt => opt.value === watch("parent_idselect"))?.label}
+                                {
+                                  idTypeOptions.find(
+                                    (opt) =>
+                                      opt.value === watch("parent_idselect"),
+                                  )?.label
+                                }
                               </ComboboxValue>
                             </ComboboxTrigger>
                             <ComboboxContent>
@@ -451,11 +601,16 @@ function RegisterPage() {
                             </ComboboxContent>
                           </Combobox>
                           {errors["parent_idselect"] && (
-                            <p className="text-[11px] font-medium text-red-500">{errors["parent_idselect"]?.message as string}</p>
+                            <p className="text-[11px] font-medium text-red-500">
+                              {errors["parent_idselect"]?.message as string}
+                            </p>
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="label-parent-ic" className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                          <Label
+                            htmlFor="label-parent-ic"
+                            className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                          >
                             {t("registerForm.parentIcLabel")}
                           </Label>
                           <Input
@@ -463,12 +618,21 @@ function RegisterPage() {
                             maxLength={20}
                             placeholder={t("registerForm.parentIcPlaceholder")}
                             {...register("label-parent-ic", {
-                              onChange: (e) => e.target.value = e.target.value.replace(/\D/g, "")
+                              onChange: (e) =>
+                                (e.target.value = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                )),
                             })}
-                            className={cn(errors["label-parent-ic"] && "border-red-500 focus-visible:ring-red-500/30")}
+                            className={cn(
+                              errors["label-parent-ic"] &&
+                                "border-red-500 focus-visible:ring-red-500/30",
+                            )}
                           />
                           {errors["label-parent-ic"] && (
-                            <p className="text-[11px] font-medium text-red-500">{errors["label-parent-ic"]?.message as string}</p>
+                            <p className="text-[11px] font-medium text-red-500">
+                              {errors["label-parent-ic"]?.message as string}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -476,26 +640,44 @@ function RegisterPage() {
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="label-mobile" className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      {isAnak ? t("registerForm.mobileLabelAnak") : t("registerForm.mobileLabelDewasa")}
+                    <Label
+                      htmlFor="label-mobile"
+                      className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                    >
+                      {isAnak
+                        ? t("registerForm.mobileLabelAnak")
+                        : t("registerForm.mobileLabelDewasa")}
                     </Label>
                     <div className="flex -space-x-px">
                       <div className="w-[100px] sm:w-[120px]">
                         <Combobox
-                          onValueChange={(val: string | null) => val && setValue("label-mobile-dialcode", val, { shouldValidate: true })}
+                          onValueChange={(val: string | null) =>
+                            val &&
+                            setValue("label-mobile-dialcode", val, {
+                              shouldValidate: true,
+                            })
+                          }
                           value={watch("label-mobile-dialcode") || "62"}
                           inputValue={dialCodeSearch}
                           onInputValueChange={setDialCodeSearch}
                         >
                           <ComboboxTrigger className="rounded-r-none border-r-0 focus:ring-0 focus:ring-offset-0 shadow-none">
                             <ComboboxValue className="truncate">
-                              {dialCodeOptions.find(opt => opt.value === watch("label-mobile-dialcode"))?.label?.replace('+', '')}
+                              {dialCodeOptions
+                                .find(
+                                  (opt) =>
+                                    opt.value ===
+                                    watch("label-mobile-dialcode"),
+                                )
+                                ?.label?.replace("+", "")}
                             </ComboboxValue>
                           </ComboboxTrigger>
                           <ComboboxContent>
                             <ComboboxInput placeholder="Cari kode negara..." />
                             {filteredDialCodes.length === 0 && (
-                              <div className="py-6 text-center text-sm text-muted-foreground">Tidak ditemukan.</div>
+                              <div className="py-6 text-center text-sm text-muted-foreground">
+                                Tidak ditemukan.
+                              </div>
                             )}
                             {filteredDialCodes.map((opt) => (
                               <ComboboxItem key={opt.value} value={opt.value}>
@@ -509,34 +691,60 @@ function RegisterPage() {
                         id="label-mobile"
                         type="tel"
                         placeholder={t("registerForm.mobilePlaceholder")}
-                        {...register("label-mobile", { onChange: handlePhoneInput })}
-                        className={cn("flex-1 rounded-l-none focus-visible:ring-offset-0", errors["label-mobile"] && "z-10 border-red-500")}
+                        {...register("label-mobile", {
+                          onChange: handlePhoneInput,
+                        })}
+                        className={cn(
+                          "flex-1 rounded-l-none focus-visible:ring-offset-0",
+                          errors["label-mobile"] && "z-10 border-red-500",
+                        )}
                       />
                     </div>
                     <div className="mt-1">
                       {errors["label-mobile"] ? (
-                        <p className="text-[11px] font-medium text-red-500">{errors["label-mobile"]?.message as string}</p>
-                      ) : (phoneWarning && (
-                        <p className="text-[11px] font-medium text-amber-600 flex items-center gap-1.5 animate-in fade-in duration-200">
-                          <AlertCircle className="w-3 h-3 shrink-0" /> {t("registerForm.mobileWarning")}
+                        <p className="text-[11px] font-medium text-red-500">
+                          {errors["label-mobile"]?.message as string}
                         </p>
-                      ))}
+                      ) : (
+                        phoneWarning && (
+                          <p className="text-[11px] font-medium text-amber-600 flex items-center gap-1.5 animate-in fade-in duration-200">
+                            <AlertCircle className="w-3 h-3 shrink-0" />{" "}
+                            {t("registerForm.mobileWarning")}
+                          </p>
+                        )
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="upreferredbranch" className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                    <Label
+                      htmlFor="upreferredbranch"
+                      className="after:content-['*'] after:ml-0.5 after:text-red-500"
+                    >
                       {t("registerForm.branchLabel")}
                     </Label>
                     <Combobox
-                      onValueChange={(val: string | null) => val && setValue("upreferredbranch", val, { shouldValidate: true })}
+                      onValueChange={(val: string | null) =>
+                        val &&
+                        setValue("upreferredbranch", val, {
+                          shouldValidate: true,
+                        })
+                      }
                       value={watch("upreferredbranch")}
                       inputValue={branchSearch}
                       onInputValueChange={setBranchSearch}
                     >
-                      <ComboboxTrigger id="upreferredbranch" className={cn(errors["upreferredbranch"] && "border-red-500 focus-visible:ring-red-500/30")}>
+                      <ComboboxTrigger
+                        id="upreferredbranch"
+                        className={cn(
+                          errors["upreferredbranch"] &&
+                            "border-red-500 focus-visible:ring-red-500/30",
+                        )}
+                      >
                         <ComboboxValue className="truncate">
-                          {activeBranchOptions.find(opt => opt.value === watch("upreferredbranch"))?.label || t('registerPage.selectBranch')}
+                          {activeBranchOptions.find(
+                            (opt) => opt.value === watch("upreferredbranch"),
+                          )?.label || t("registerPage.selectBranch")}
                         </ComboboxValue>
                       </ComboboxTrigger>
                       <ComboboxContent>
@@ -544,7 +752,9 @@ function RegisterPage() {
                           <ComboboxInput placeholder="Cari kantor cabang..." />
                         )}
                         {filteredBranchOptions.length === 0 && (
-                          <div className="py-6 text-center text-sm text-muted-foreground">Tidak ditemukan.</div>
+                          <div className="py-6 text-center text-sm text-muted-foreground">
+                            Tidak ditemukan.
+                          </div>
                         )}
                         {filteredBranchOptions.map((opt) => (
                           <ComboboxItem key={opt.value} value={opt.value}>
@@ -553,11 +763,17 @@ function RegisterPage() {
                         ))}
                       </ComboboxContent>
                     </Combobox>
-                    <p className={cn(
-                      "text-[11px] font-medium transition-colors duration-200 mt-1.5",
-                      errors["upreferredbranch"] ? "text-red-500" : "text-slate-400/90"
-                    )}>
-                      {errors["upreferredbranch"] ? (errors["upreferredbranch"]?.message as string) : t("registerForm.branchDesc")}
+                    <p
+                      className={cn(
+                        "text-[11px] font-medium transition-colors duration-200 mt-1.5",
+                        errors["upreferredbranch"]
+                          ? "text-red-500"
+                          : "text-slate-400/90",
+                      )}
+                    >
+                      {errors["upreferredbranch"]
+                        ? (errors["upreferredbranch"]?.message as string)
+                        : t("registerForm.branchDesc")}
                     </p>
                   </div>
 
@@ -596,30 +812,62 @@ function RegisterPage() {
                           )}
                         />
                         <Label htmlFor="newsletter" className="cursor-pointer">
-                          {t('registerPage.termsAndNewsletter')}
+                          {t("registerPage.termsAndNewsletter")}
                         </Label>
                       </div>
 
                       <div className="relative pt-1">
-                        <div className={cn(
-                          "overflow-hidden transition-all duration-500 ease-in-out relative text-[12px] sm:text-[13px] text-slate-500 leading-relaxed font-medium",
-                          isTermsExpanded ? "max-h-[600px]" : "max-h-[2.6rem] sm:max-h-[3.2rem]"
-                        )}>
+                        <div
+                          className={cn(
+                            "overflow-hidden transition-all duration-500 ease-in-out relative text-[12px] sm:text-[13px] text-slate-500 leading-relaxed font-medium",
+                            isTermsExpanded
+                              ? "max-h-[600px]"
+                              : "max-h-[2.6rem] sm:max-h-[3.2rem]",
+                          )}
+                        >
                           <p className="leading-relaxed">
-                            {t("registerForm.termsText")} <a href={isIndonesia ? "https://publicgold.co.id/index.php?route=information/information&information_id=41" : "https://publicgold.com.my/index.php?route=information/information&information_id=741"} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 hover:underline transition-all">{t("registerForm.termsLink")}</a>
+                            {t("registerForm.termsText")}{" "}
+                            <a
+                              href={
+                                isIndonesia
+                                  ? "https://publicgold.co.id/index.php?route=information/information&information_id=41"
+                                  : "https://publicgold.com.my/index.php?route=information/information&information_id=741"
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:text-blue-600 hover:underline transition-all"
+                            >
+                              {t("registerForm.termsLink")}
+                            </a>
                           </p>
 
-                          <div className={cn(
-                            "absolute inset-x-0 bottom-0 h-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-t from-white via-white/80 to-transparent",
-                            isTermsExpanded ? "opacity-0" : "opacity-100"
-                          )}>
-                            <div className="absolute inset-0 backdrop-blur-[1.5px] [mask-image:linear-gradient(to_top,black_20%,transparent_100%)]" style={{ WebkitMaskImage: 'linear-gradient(to top, black 20%, transparent 100%)' }}></div>
+                          <div
+                            className={cn(
+                              "absolute inset-x-0 bottom-0 h-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-t from-white via-white/80 to-transparent",
+                              isTermsExpanded ? "opacity-0" : "opacity-100",
+                            )}
+                          >
+                            <div
+                              className="absolute inset-0 backdrop-blur-[1.5px] [mask-image:linear-gradient(to_top,black_20%,transparent_100%)]"
+                              style={{
+                                WebkitMaskImage:
+                                  "linear-gradient(to top, black 20%, transparent 100%)",
+                              }}
+                            ></div>
                           </div>
                         </div>
                       </div>
 
-                      <button type="button" onClick={() => setIsTermsExpanded(!isTermsExpanded)} className="flex items-center justify-center w-full mt-0 text-slate-400 hover:text-slate-600 transition-colors py-1">
-                        {isTermsExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      <button
+                        type="button"
+                        onClick={() => setIsTermsExpanded(!isTermsExpanded)}
+                        className="flex items-center justify-center w-full mt-0 text-slate-400 hover:text-slate-600 transition-colors py-1"
+                      >
+                        {isTermsExpanded ? (
+                          <ChevronUp className="w-5 h-5" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -632,11 +880,19 @@ function RegisterPage() {
         {/* Right Column: Hero Image Banner */}
         <div className="hidden lg:block lg:w-1/2 relative bg-[#0c0c0e] overflow-hidden border-l border-slate-100 group">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-red-600/10 blur-[100px] pointer-events-none z-0 group-hover:bg-red-600/20 transition-all duration-1000" />
-          <img src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg" alt="Investasi Emas Public Gold" className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80 group-hover:scale-105 group-hover:opacity-70 transition-all duration-1000" />
+          <img
+            src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg"
+            alt="Investasi Emas Public Gold"
+            className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80 group-hover:scale-105 group-hover:opacity-70 transition-all duration-1000"
+          />
 
           {/* Centered Logo */}
           <div className="absolute top-[15%] inset-x-0 z-[15] flex justify-center pointer-events-none">
-            <img src="/logo.svg" alt="Public Gold Logo" className="w-64 sm:w-80 md:w-96 h-auto drop-shadow-2xl transition-transform duration-1000 group-hover:scale-105" />
+            <img
+              src="/logo.svg"
+              alt="Public Gold Logo"
+              className="w-64 sm:w-80 md:w-96 h-auto drop-shadow-2xl transition-transform duration-1000 group-hover:scale-105"
+            />
           </div>
 
           {/* Floating Help CTA */}
@@ -658,8 +914,12 @@ function RegisterPage() {
               </div>
 
               <div className="text-left relative z-10 transition-transform duration-300 group-hover:translate-x-1 flex flex-col justify-center">
-                <p className="text-[#25D366] text-xs font-medium mb-0.5 drop-shadow-sm">Perlu bantuan?</p>
-                <p className="text-white font-bold text-base leading-none drop-shadow-md">Konsultasi Sekarang</p>
+                <p className="text-[#25D366] text-xs font-medium mb-0.5 drop-shadow-sm">
+                  Perlu bantuan?
+                </p>
+                <p className="text-white font-bold text-base leading-none drop-shadow-md">
+                  Konsultasi Sekarang
+                </p>
               </div>
             </a>
           </div>
@@ -678,7 +938,6 @@ function RegisterPage() {
             <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-green-400 border-2 border-white"></span>
           </span>
         </a>
-
       </Card>
 
       {showConfirm && confirmItems.length > 0 && (
@@ -696,14 +955,20 @@ function RegisterPage() {
           onConfirm={() => {
             setShowAgeSwitch(null);
             reset();
-            navigate({ to: "/register", search: { type: showAgeSwitch as "dewasa" | "anak" } });
+            navigate({
+              to: "/register",
+              search: { type: showAgeSwitch as "dewasa" | "anak" },
+            });
           }}
           onCancel={() => setShowAgeSwitch(null)}
         />
       )}
 
       {showNextStepModal && (
-        <NextStepModal refId={ref || undefined} onClose={() => setShowNextStepModal(false)} />
+        <NextStepModal
+          refId={ref || undefined}
+          onClose={() => setShowNextStepModal(false)}
+        />
       )}
     </div>
   );

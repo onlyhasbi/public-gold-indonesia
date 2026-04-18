@@ -10,7 +10,10 @@ import { api } from "./api";
  * @param pageid The unique identifier for the agent's page
  * @param event The type of event (e.g., 'visitor', 'whatsapp_click')
  */
-export const trackEvent = async (pageid: string | undefined | null, event: string) => {
+export const trackEvent = async (
+  pageid: string | undefined | null,
+  event: string,
+) => {
   if (!pageid) return null;
 
   const payload = { pageid, event };

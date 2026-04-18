@@ -5,33 +5,44 @@ const nameErrMsg = "Hanya boleh huruf, spasi, titik (.), dan koma (,)";
 
 export const getValidationSchema = (isAnak: boolean, isIndonesia: boolean) => {
   const schemaShape: any = {
-    'label-name': yup.string()
+    "label-name": yup
+      .string()
       .matches(nameRegex, nameErrMsg)
       .required("Nama wajib diisi"),
-    'idselect': yup.string(),
-    'label-ic': yup.string()
+    idselect: yup.string(),
+    "label-ic": yup
+      .string()
       .matches(/^[0-9]+$/, "Hanya boleh berisi angka")
       .required("Nomor identitas wajib diisi")
       .max(20, "Maksimal 20 digit"),
-    'label-dob': yup.string().required("Tanggal lahir wajib diisi"),
-    'label-email': yup.string().email("Format email tidak valid").required("Email wajib diisi"),
-    'label-mobile': yup.string()
+    "label-dob": yup.string().required("Tanggal lahir wajib diisi"),
+    "label-email": yup
+      .string()
+      .email("Format email tidak valid")
+      .required("Email wajib diisi"),
+    "label-mobile": yup
+      .string()
       .matches(/^[0-9]+$/, "Nomor HP hanya boleh berisi angka")
       .required("Nomor handphone wajib diisi"),
-    'upreferredbranch': yup.string().required("Cabang wajib dipilih"),
-    ...(isAnak ? {
-      'label-parent-name': yup.string()
-        .matches(nameRegex, nameErrMsg)
-        .required("Nama orang tua wajib diisi"),
-      'label-parent-ic': yup.string()
-        .matches(/^[0-9]+$/, "Hanya boleh berisi angka")
-        .required("Nomor identitas orang tua wajib diisi")
-        .max(20, "Maksimal 20 digit"),
-    } : {})
+    upreferredbranch: yup.string().required("Cabang wajib dipilih"),
+    ...(isAnak
+      ? {
+          "label-parent-name": yup
+            .string()
+            .matches(nameRegex, nameErrMsg)
+            .required("Nama orang tua wajib diisi"),
+          "label-parent-ic": yup
+            .string()
+            .matches(/^[0-9]+$/, "Hanya boleh berisi angka")
+            .required("Nomor identitas orang tua wajib diisi")
+            .max(20, "Maksimal 20 digit"),
+        }
+      : {}),
   };
 
   if (isIndonesia) {
-    schemaShape['label-individualgstid'] = yup.string()
+    schemaShape["label-individualgstid"] = yup
+      .string()
       .matches(/^[0-9]*$/, "Hanya boleh berisi angka");
   }
 

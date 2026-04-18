@@ -1,88 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <meta name="theme-color" content="#dc2626" />
+    <meta
+      name="description"
+      content="Mulai investasi emas dengan mudah. Tersedia tabungan emas, cicilan syariah, dan buyback transparan. Aman & terpercaya."
+    />
+    <meta
+      name="keywords"
+      content="public gold, emas, investasi emas, dealer emas, emas murni, 24 karat, tabungan emas, POE, dinar, emas batangan, beli emas online, syariah"
+    />
+    <meta name="author" content="A. Muh. Hasbi Haerurrijal" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-  <meta name="theme-color" content="#dc2626" />
-  <meta name="description"
-    content="Mulai investasi emas dengan mudah. Tersedia tabungan emas, cicilan syariah, dan buyback transparan. Aman & terpercaya." />
-  <meta name="keywords"
-    content="public gold, emas, investasi emas, dealer emas, emas murni, 24 karat, tabungan emas, POE, dinar, emas batangan, beli emas online, syariah" />
-  <meta name="author" content="A. Muh. Hasbi Haerurrijal" />
-  <link rel="apple-touch-icon" href="/logo192.png" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+    <!-- Open Graph -->
+    <meta
+      property="og:title"
+      content="Beli Emas 24K Asli | Dealer Resmi Public Gold Indonesia"
+    />
+    <meta
+      property="og:description"
+      content="Mulai investasi emas dengan mudah. Tersedia tabungan emas, cicilan syariah, dan buyback transparan. Aman & terpercaya."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mypublicgold.id/" />
+    <meta property="og:image" content="https://mypublicgold.id/me.png" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Beli Emas 24K Asli | Dealer Resmi Public Gold Indonesia" />
-  <meta property="og:description"
-    content="Mulai investasi emas dengan mudah. Tersedia tabungan emas, cicilan syariah, dan buyback transparan. Aman & terpercaya." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://mypublicgold.id/" />
-  <meta property="og:image" content="https://mypublicgold.id/me.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Beli Emas 24K Asli | Public Gold Indonesia"
+    />
+    <meta
+      name="twitter:description"
+      content="Investasi emas fisik dengan sistem tabungan dan cicilan syariah. Mulai ringan, aman, dan terpercaya."
+    />
+    <meta name="twitter:image" content="https://mypublicgold.id/me.png" />
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Beli Emas 24K Asli | Public Gold Indonesia" />
-  <meta name="twitter:description"
-    content="Investasi emas fisik dengan sistem tabungan dan cicilan syariah. Mulai ringan, aman, dan terpercaya." />
-  <meta name="twitter:image" content="https://mypublicgold.id/me.png" />
+    <title>Beli Emas 24K Asli | Dealer Resmi Public Gold Indonesia</title>
 
-  <title>Beli Emas 24K Asli | Dealer Resmi Public Gold Indonesia</title>
-
-  <style>
-    #initial-loader {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #ffffff;
-      z-index: 99999;
-      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-        visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    #initial-loader.fade-out {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    #initial-loader.fade-out .circle-spinner {
-      display: none;
-    }
-
-    .circle-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #fecaca;
-      border-top-color: #dc2626;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
+    <style>
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        z-index: 99999;
+        transition:
+          opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
-    }
-  </style>
-</head>
 
-<body>
-  <!-- Loading Overlay — lives OUTSIDE #app so React won't destroy it -->
-  <div id="initial-loader">
-    <div class="circle-spinner"></div>
-  </div>
+      #initial-loader.fade-out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
 
-  <!-- React app root -->
-  <div id="app"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
+      #initial-loader.fade-out .circle-spinner {
+        display: none;
+      }
 
+      .circle-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #fecaca;
+        border-top-color: #dc2626;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Loading Overlay — lives OUTSIDE #app so React won't destroy it -->
+    <div id="initial-loader">
+      <div class="circle-spinner"></div>
+    </div>
+
+    <!-- React app root -->
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

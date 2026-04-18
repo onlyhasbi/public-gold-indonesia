@@ -39,7 +39,7 @@ if (rootElement) {
   root.render(
     <StrictMode>
       <RouterProvider router={router} />
-    </StrictMode>
+    </StrictMode>,
   );
 }
 

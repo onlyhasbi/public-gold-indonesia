@@ -6,7 +6,7 @@ import { getGoldPrices } from "../services/getGoldPrices";
  * Query Options for Agent Data (PGBO)
  * Used on the public landing page.
  */
-export const agentQueryOptions = (pgcode: string) => 
+export const agentQueryOptions = (pgcode: string) =>
   queryOptions({
     queryKey: ["agent", pgcode],
     queryFn: async () => {
@@ -27,7 +27,7 @@ export const goldPricesQueryOptions = () =>
     queryKey: ["goldPrices"],
     queryFn: getGoldPrices,
     // USER REQUIREMENT: Always get fresh data
-    staleTime: 0, 
+    staleTime: 0,
     // Data remains in cache for 5 minutes during background refetch to avoid UI flicker
     gcTime: 5 * 60 * 1000,
   });
@@ -39,7 +39,9 @@ export const overviewQueryOptions = (search?: string) =>
   queryOptions({
     queryKey: ["overview", search],
     queryFn: async () => {
-      const res = await api.get(`/overview${search ? `?search=${encodeURIComponent(search)}` : ''}`);
+      const res = await api.get(
+        `/overview${search ? `?search=${encodeURIComponent(search)}` : ""}`,
+      );
       return res.data?.data;
     },
     staleTime: 0,
@@ -57,4 +59,3 @@ export const settingsQueryOptions = () =>
     },
     staleTime: 0,
   });
-

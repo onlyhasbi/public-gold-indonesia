@@ -15,7 +15,11 @@ export type FormSummaryItem = {
   value: string;
 };
 
-export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INTL", referralData?: any) {
+export function useRegisterForm(
+  isAnak: boolean,
+  countryMode: "ID" | "MY" | "INTL",
+  referralData?: any,
+) {
   const { t } = useTranslation();
   const isIndonesia = countryMode === "ID";
   const [isDobDisabled, setIsDobDisabled] = useState(false);
@@ -23,7 +27,9 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
   const [confirmItems, setConfirmItems] = useState<FormSummaryItem[]>([]);
   const [phoneWarning, setPhoneWarning] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  const [showAgeSwitch, setShowAgeSwitch] = useState<"anak" | "dewasa" | null>(null);
+  const [showAgeSwitch, setShowAgeSwitch] = useState<"anak" | "dewasa" | null>(
+    null,
+  );
   const [showNextStepModal, setShowNextStepModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -39,33 +45,33 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     watch,
     reset,
     control,
-    formState: { errors, touchedFields }
+    formState: { errors, touchedFields },
   } = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     resolver: yupResolver(getValidationSchema(isAnak, isIndonesia)),
     defaultValues: {
-      'label-name': '',
-      'idselect': countryMode === 'INTL' ? 'passportforeign' : 'newic',
-      'label-ic': '',
-      'label-individualgstid': '',
-      'label-dob': '',
-      'label-email': '',
-      'label-mobile': '',
-      'label-mobile-dialcode': isIndonesia ? '62' : '60',
-      'upreferredbranch': '',
-      'label-parent-name': '',
-      'parent_idselect': countryMode === 'INTL' ? 'passportforeign' : 'newic',
-      'label-parent-ic': '',
-      'newsletter': true,
-    }
+      "label-name": "",
+      idselect: countryMode === "INTL" ? "passportforeign" : "newic",
+      "label-ic": "",
+      "label-individualgstid": "",
+      "label-dob": "",
+      "label-email": "",
+      "label-mobile": "",
+      "label-mobile-dialcode": isIndonesia ? "62" : "60",
+      upreferredbranch: "",
+      "label-parent-name": "",
+      parent_idselect: countryMode === "INTL" ? "passportforeign" : "newic",
+      "label-parent-ic": "",
+      newsletter: true,
+    },
   });
 
   const onSubmit = (values: any) => {
     setErrorMessage("");
     setSuccessMessage("");
 
-    const age = calculateAge(values['label-dob']);
+    const age = calculateAge(values["label-dob"]);
     if (isAnak && age >= 18) {
       setShowAgeSwitch("dewasa");
       return;
@@ -79,15 +85,16 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     payload.append("newsletter", values.newsletter ? "1" : "0");
     Object.entries(values).forEach(([key, val]) => {
       if (key === "newsletter") return;
-      if (!isAnak && (key.includes("parent") || key === "parent_idselect")) return;
+      if (!isAnak && (key.includes("parent") || key === "parent_idselect"))
+        return;
       if (!isIndonesia && key === "label-individualgstid") return;
-      
+
       payload.append(key, val as string);
     });
 
     // Referral Logic: URL-based referral data (Guaranteed by page guards)
     const refPgcode = referralData?.pgcode;
-    const refName = (referralData?.nama_lengkap);
+    const refName = referralData?.nama_lengkap;
 
     payload.append("label-intro-pgcode", refPgcode);
     payload.append("label-intro-name", refName);
@@ -98,39 +105,87 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     const baseUrl = `${proxyPrefix}/index.php?route=account/register&intro_pgcode=${refPgcode}&is_dealer=1`;
     pendingEndpoint.current = isAnak ? `${baseUrl}&form_type=ja` : baseUrl;
 
-    const branchLabel = branchLabelOptions[values.upreferredbranch as keyof typeof branchLabelOptions] || "-";
+    const branchLabel =
+      branchLabelOptions[
+        values.upreferredbranch as keyof typeof branchLabelOptions
+      ] || "-";
 
-    const dialOption = dialCodeOptions.find((o) => o.value === values['label-mobile-dialcode']);
-    const dialLabel = dialOption ? `+${dialOption.value}` : `+${values['label-mobile-dialcode']}`;
+    const dialOption = dialCodeOptions.find(
+      (o) => o.value === values["label-mobile-dialcode"],
+    );
+    const dialLabel = dialOption
+      ? `+${dialOption.value}`
+      : `+${values["label-mobile-dialcode"]}`;
 
-    const idTypeLabel = values.idselect === "passportforeign" ? t("registerForm.idTypePassport") : t("registerForm.idTypeKtp");
+    const idTypeLabel =
+      values.idselect === "passportforeign"
+        ? t("registerForm.idTypePassport")
+        : t("registerForm.idTypeKtp");
 
     const items: FormSummaryItem[] = [
-      { label: isAnak ? t("registerForm.nameLabelAnak") : t("registerForm.nameLabelDewasa"), value: values['label-name'] || "-" },
+      {
+        label: isAnak
+          ? t("registerForm.nameLabelAnak")
+          : t("registerForm.nameLabelDewasa"),
+        value: values["label-name"] || "-",
+      },
       { label: t("registerForm.idTypeLabel"), value: idTypeLabel },
-      { label: isAnak ? t("registerForm.icLabelAnak") : t("registerForm.icLabelDewasa"), value: values['label-ic'] || "-" },
+      {
+        label: isAnak
+          ? t("registerForm.icLabelAnak")
+          : t("registerForm.icLabelDewasa"),
+        value: values["label-ic"] || "-",
+      },
     ];
 
     if (isIndonesia) {
-      items.push({ label: t("registerForm.npwpLabel"), value: values['label-individualgstid'] || "-" });
+      items.push({
+        label: t("registerForm.npwpLabel"),
+        value: values["label-individualgstid"] || "-",
+      });
     }
 
     items.push(
-      { label: isAnak ? t("registerForm.dobLabelAnak") : t("registerForm.dobLabelDewasa"), value: values['label-dob'] || "-" },
-      { label: t("registerForm.emailLabel"), value: values['label-email'] || "-" },
+      {
+        label: isAnak
+          ? t("registerForm.dobLabelAnak")
+          : t("registerForm.dobLabelDewasa"),
+        value: values["label-dob"] || "-",
+      },
+      {
+        label: t("registerForm.emailLabel"),
+        value: values["label-email"] || "-",
+      },
     );
 
     if (isAnak) {
-      const parentIdTypeLabel = values.parent_idselect === "passportforeign" ? t("registerForm.idTypePassport") : t("registerForm.idTypeKtp");
+      const parentIdTypeLabel =
+        values.parent_idselect === "passportforeign"
+          ? t("registerForm.idTypePassport")
+          : t("registerForm.idTypeKtp");
       items.push(
-        { label: t("registerForm.parentNameLabel"), value: values['label-parent-name'] || "-" },
-        { label: t("registerForm.idTypeLabel") + " (Parent)", value: parentIdTypeLabel },
-        { label: t("registerForm.parentIcLabel"), value: values['label-parent-ic'] || "-" },
+        {
+          label: t("registerForm.parentNameLabel"),
+          value: values["label-parent-name"] || "-",
+        },
+        {
+          label: t("registerForm.idTypeLabel") + " (Parent)",
+          value: parentIdTypeLabel,
+        },
+        {
+          label: t("registerForm.parentIcLabel"),
+          value: values["label-parent-ic"] || "-",
+        },
       );
     }
 
     items.push(
-      { label: isAnak ? t("registerForm.mobileLabelAnak") : t("registerForm.mobileLabelDewasa"), value: `${dialLabel} ${values['label-mobile'] || "-"}` },
+      {
+        label: isAnak
+          ? t("registerForm.mobileLabelAnak")
+          : t("registerForm.mobileLabelDewasa"),
+        value: `${dialLabel} ${values["label-mobile"] || "-"}`,
+      },
       { label: t("registerForm.branchLabel"), value: branchLabel },
     );
 
@@ -144,7 +199,10 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     const { validFormat, dateOfBirth } = extractDataFromNIK(nik);
 
     if (validFormat && dateOfBirth) {
-      setValue("label-dob", dateOfBirth, { shouldValidate: false, shouldDirty: true });
+      setValue("label-dob", dateOfBirth, {
+        shouldValidate: false,
+        shouldDirty: true,
+      });
       setIsDobDisabled(true);
     } else {
       setIsDobDisabled(false);
@@ -170,21 +228,34 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
         redirect: "manual",
       });
 
-      if (response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400)) {
+      if (
+        response.type === "opaqueredirect" ||
+        (response.status >= 300 && response.status < 400)
+      ) {
         // Track locally
         const values = getValues();
         if (referralData?.pageid) {
-          const dialCode = values['label-mobile-dialcode'] || '62';
-          const fullPhone = formatPhoneForAPI(dialCode, values['label-mobile']);
-          const resolvedBranchLabel = branchLabelOptions[values.upreferredbranch as keyof typeof branchLabelOptions] || values.upreferredbranch || "-";
-          api.post("/public/register-track", {
-            pageid: referralData.pageid,
-            nama: values['label-name'],
-            branch: resolvedBranchLabel,
-            no_telpon: `+${fullPhone}`
-          }).catch((err: any) => console.warn("Track failed:", err));
+          const dialCode = values["label-mobile-dialcode"] || "62";
+          const fullPhone = formatPhoneForAPI(dialCode, values["label-mobile"]);
+          const resolvedBranchLabel =
+            branchLabelOptions[
+              values.upreferredbranch as keyof typeof branchLabelOptions
+            ] ||
+            values.upreferredbranch ||
+            "-";
+          api
+            .post("/public/register-track", {
+              pageid: referralData.pageid,
+              nama: values["label-name"],
+              branch: resolvedBranchLabel,
+              no_telpon: `+${fullPhone}`,
+            })
+            .catch((err: any) => console.warn("Track failed:", err));
         }
-        return { success: true, message: t("registerForm.submitBtn") + " Success" };
+        return {
+          success: true,
+          message: t("registerForm.submitBtn") + " Success",
+        };
       }
 
       const htmlText = await response.text();
@@ -204,20 +275,29 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
       // Track locally for success case
       const values = getValues();
       if (referralData?.pageid) {
-        const dialCode = values['label-mobile-dialcode'] || '62';
-        const fullPhone = formatPhoneForAPI(dialCode, values['label-mobile']);
-        const resolvedBranchLabel = branchLabelOptions[values.upreferredbranch as keyof typeof branchLabelOptions] || values.upreferredbranch || "-";
-        api.post("/public/register-track", {
-          pageid: referralData.pageid,
-          nama: values['label-name'],
-          branch: resolvedBranchLabel,
-          no_telpon: `+${fullPhone}`
-        }).catch((err: any) => console.warn("Track failed:", err));
+        const dialCode = values["label-mobile-dialcode"] || "62";
+        const fullPhone = formatPhoneForAPI(dialCode, values["label-mobile"]);
+        const resolvedBranchLabel =
+          branchLabelOptions[
+            values.upreferredbranch as keyof typeof branchLabelOptions
+          ] ||
+          values.upreferredbranch ||
+          "-";
+        api
+          .post("/public/register-track", {
+            pageid: referralData.pageid,
+            nama: values["label-name"],
+            branch: resolvedBranchLabel,
+            no_telpon: `+${fullPhone}`,
+          })
+          .catch((err: any) => console.warn("Track failed:", err));
       }
 
       return {
         success: true,
-        message: successAlert?.textContent?.trim() || "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya."
+        message:
+          successAlert?.textContent?.trim() ||
+          "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.",
       };
     },
     onSuccess: (data: any) => {
@@ -226,12 +306,15 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
         reset();
         setIsDobDisabled(false);
         setPhoneWarning(false);
-        setFormKey(prev => prev + 1);
+        setFormKey((prev) => prev + 1);
       }
     },
     onError: (error: any) => {
-      setErrorMessage(error.message || "Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
-    }
+      setErrorMessage(
+        error.message ||
+          "Terjadi kesalahan saat mengirim data. Silakan coba lagi.",
+      );
+    },
   });
 
   const confirmSubmit = async () => {
@@ -251,7 +334,11 @@ export function useRegisterForm(isAnak: boolean, countryMode: "ID" | "MY" | "INT
     reset,
     control,
     isLoading: registerMutation.isPending,
-    status: registerMutation.isSuccess ? ("success" as const) : registerMutation.isError ? ("error" as const) : ("idle" as const),
+    status: registerMutation.isSuccess
+      ? ("success" as const)
+      : registerMutation.isError
+        ? ("error" as const)
+        : ("idle" as const),
     message: registerMutation.isSuccess ? successMessage : errorMessage,
     isDobDisabled,
     showConfirm,

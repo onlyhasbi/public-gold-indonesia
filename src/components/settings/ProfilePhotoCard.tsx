@@ -1,17 +1,17 @@
-import { useRef } from 'react'
-import { Camera, User } from 'lucide-react'
-import { Card, CardContent } from '../ui/card'
-import { ImageCropper } from '../ui/image-cropper'
+import { useRef } from "react";
+import { Camera, User } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
+import { ImageCropper } from "../ui/image-cropper";
 
 interface ProfilePhotoCardProps {
-  fotoProfilUrl?: string
-  namaLengkap?: string
-  pgcode?: string
-  cropperSrc: string | null
-  croppedPreview: string | null
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onCropComplete: (blob: Blob) => void
-  onCropCancel: () => void
+  fotoProfilUrl?: string;
+  namaLengkap?: string;
+  pgcode?: string;
+  cropperSrc: string | null;
+  croppedPreview: string | null;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCropComplete: (blob: Blob) => void;
+  onCropCancel: () => void;
 }
 
 export function ProfilePhotoCard({
@@ -22,9 +22,9 @@ export function ProfilePhotoCard({
   croppedPreview,
   onFileChange,
   onCropComplete,
-  onCropCancel
+  onCropCancel,
 }: ProfilePhotoCardProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
@@ -69,8 +69,12 @@ export function ProfilePhotoCard({
             </div>
 
             <div className="text-center sm:text-left">
-              <p className="text-base sm:text-lg font-bold text-slate-800">{namaLengkap || 'Nama Anda'}</p>
-              <p className="text-xs sm:text-sm text-slate-400 mb-3">{pgcode || 'PGCODE'}</p>
+              <p className="text-base sm:text-lg font-bold text-slate-800">
+                {namaLengkap || "Nama Anda"}
+              </p>
+              <p className="text-xs sm:text-sm text-slate-400 mb-3">
+                {pgcode || "PGCODE"}
+              </p>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -86,11 +90,13 @@ export function ProfilePhotoCard({
                 onChange={onFileChange}
                 className="hidden"
               />
-              <p className="text-[11px] text-slate-400 mt-2">Pilih gambar, lalu atur posisi dan zoom.</p>
+              <p className="text-[11px] text-slate-400 mt-2">
+                Pilih gambar, lalu atur posisi dan zoom.
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
     </>
-  )
+  );
 }

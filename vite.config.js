@@ -7,7 +7,11 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tanstackRouter({ autoCodeSplitting: true }), viteReact(), tailwindcss()],
+  plugins: [
+    tanstackRouter({ autoCodeSplitting: true }),
+    viteReact(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -15,41 +19,40 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api-proxy-my': {
-        target: 'https://publicgold.com.my',
+      "/api-proxy-my": {
+        target: "https://publicgold.com.my",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy-my/, ''),
-        cookieDomainRewrite: "localhost"
+        rewrite: (path) => path.replace(/^\/api-proxy-my/, ""),
+        cookieDomainRewrite: "localhost",
       },
-      '/api-proxy': {
-        target: 'https://publicgold.co.id',
+      "/api-proxy": {
+        target: "https://publicgold.co.id",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy/, ''),
+        rewrite: (path) => path.replace(/^\/api-proxy/, ""),
         // This helps forward cookies during local dev
-        cookieDomainRewrite: "localhost"
-      }
-    }
+        cookieDomainRewrite: "localhost",
+      },
+    },
   },
   preview: {
     proxy: {
-      '/api-proxy-my': {
-        target: 'https://publicgold.com.my',
+      "/api-proxy-my": {
+        target: "https://publicgold.com.my",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy-my/, ''),
-        cookieDomainRewrite: "mypublicgold.id"
+        rewrite: (path) => path.replace(/^\/api-proxy-my/, ""),
+        cookieDomainRewrite: "mypublicgold.id",
       },
-      '/api-proxy': {
-        target: 'https://publicgold.co.id',
+      "/api-proxy": {
+        target: "https://publicgold.co.id",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy/, ''),
+        rewrite: (path) => path.replace(/^\/api-proxy/, ""),
         // Important: match this with your deploy domain to accept cookies
-        cookieDomainRewrite: "mypublicgold.id"
-      }
-    }
+        cookieDomainRewrite: "mypublicgold.id",
+      },
+    },
   },
   test: {
     globals: true,
     environment: "jsdom",
   },
-
 });

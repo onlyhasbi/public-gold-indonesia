@@ -1,5 +1,5 @@
-import React from 'react';
-import GradientHighlight from './gradient_highlight';
+import React from "react";
+import GradientHighlight from "./gradient_highlight";
 
 type Props = {
   title: string;
@@ -8,12 +8,17 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export default function SectionHeader({ title, highlight, subtitle, children }: Props) {
+export default function SectionHeader({
+  title,
+  highlight,
+  subtitle,
+  children,
+}: Props) {
   return (
     <div className="text-center mb-10">
       {children ?? (
         <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
-          <GradientHighlight text={title} highlight={highlight || ''} />
+          <GradientHighlight text={title} highlight={highlight || ""} />
         </h2>
       )}
       {subtitle && (

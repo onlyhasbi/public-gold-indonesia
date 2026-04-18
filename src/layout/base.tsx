@@ -9,7 +9,7 @@ function BaseLayout({
     <div
       className={clsx(
         "flex w-11/12 max-w-7xl mx-auto items-center text-center py-16",
-        className
+        className,
       )}
     >
       {children}

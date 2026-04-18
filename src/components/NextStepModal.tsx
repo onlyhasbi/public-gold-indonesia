@@ -1,15 +1,29 @@
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { Spinner } from "./ui/spinner";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "./ui/dialog";
 import { Button } from "./ui/button";
 
-export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () => void }) {
+export function NextStepModal({
+  refId,
+  onClose,
+}: {
+  refId?: string;
+  onClose: () => void;
+}) {
   const navigate = useNavigate();
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent showCloseButton={false} className="p-0 overflow-hidden border-none sm:max-w-md bg-white rounded-2xl shadow-2xl">
+      <DialogContent
+        showCloseButton={false}
+        className="p-0 overflow-hidden border-none sm:max-w-md bg-white rounded-2xl shadow-2xl"
+      >
         {/* Decorative top gradient */}
         <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 opacity-10 pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
@@ -21,12 +35,15 @@ export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () 
           <div className="relative inline-flex items-center justify-center mb-6">
             {/* Consistent Spinner Rings */}
             <div className="absolute w-24 h-24 rounded-full bg-emerald-100 animate-ping opacity-20" />
-            <Spinner size={84} className="absolute text-emerald-100/50 opacity-100" />
-            
+            <Spinner
+              size={84}
+              className="absolute text-emerald-100/50 opacity-100"
+            />
+
             {/* Icon circle */}
-            <div 
+            <div
               className="relative w-18 h-18 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl shadow-emerald-200/60"
-              style={{ width: '72px', height: '72px' }}
+              style={{ width: "72px", height: "72px" }}
             >
               <CheckCircle className="w-9 h-9 text-white" strokeWidth={2.5} />
             </div>
@@ -43,7 +60,8 @@ export function NextStepModal({ refId, onClose }: { refId?: string; onClose: () 
 
           {/* Description */}
           <DialogDescription className="text-slate-500 text-sm leading-relaxed mb-8 max-w-sm mx-auto">
-            Akun Anda sedang diproses. Ikuti langkah berikut agar Anda bisa mulai bertransaksi emas.
+            Akun Anda sedang diproses. Ikuti langkah berikut agar Anda bisa
+            mulai bertransaksi emas.
           </DialogDescription>
 
           {/* CTA Button */}

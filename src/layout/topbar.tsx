@@ -3,7 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
@@ -50,7 +50,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
           "fixed top-0 z-50 w-full transition-all duration-300",
           scrolled
             ? "h-16 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 shadow-sm"
-            : "h-20 bg-transparent"
+            : "h-20 bg-transparent",
         )}
       >
         <div className="flex items-center justify-between w-11/12 max-w-7xl mx-auto h-full">
@@ -94,7 +94,10 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                     </Button>
                   }
                 />
-                <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-48 rounded-2xl p-2"
+                >
                   {languages.map((l) => (
                     <DropdownMenuItem
                       key={l.id}
@@ -103,7 +106,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                         "flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer",
                         lang.startsWith(l.id)
                           ? "text-red-600 font-bold bg-red-50/50"
-                          : "text-slate-600"
+                          : "text-slate-600",
                       )}
                     >
                       <span className="flex items-center gap-3">
@@ -132,7 +135,10 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                   </Button>
                 }
               />
-              <DropdownMenuContent align="end" className="w-52 rounded-2xl p-2 z-50">
+              <DropdownMenuContent
+                align="end"
+                className="w-52 rounded-2xl p-2 z-50"
+              >
                 <DropdownMenuItem
                   render={
                     <Link
@@ -175,7 +181,11 @@ function Topbar({ pgbo }: { pgbo?: any }) {
               className="lg:hidden p-2.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -185,13 +195,19 @@ function Topbar({ pgbo }: { pgbo?: any }) {
       <div
         className={cn(
           "fixed inset-0 z-[60] bg-white transition-all duration-500 ease-in-out lg:hidden flex flex-col",
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none translate-y-4"
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none translate-y-4",
         )}
       >
         <div className="flex items-center justify-between h-20 px-6 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <Link to="/" onClick={() => setIsOpen(false)}>
-              <img src={`./logo.svg`} alt="Public Gold" className="h-8 w-auto" />
+              <img
+                src={`./logo.svg`}
+                alt="Public Gold"
+                className="h-8 w-auto"
+              />
             </Link>
           </div>
           <button
@@ -203,9 +219,10 @@ function Topbar({ pgbo }: { pgbo?: any }) {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-8">
-
           <div className="mb-8">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Language</h3>
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">
+              Language
+            </h3>
             <div className="grid grid-cols-2 gap-3">
               {languages.map((l) => (
                 <button
@@ -215,7 +232,7 @@ function Topbar({ pgbo }: { pgbo?: any }) {
                     "flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all",
                     lang.startsWith(l.id)
                       ? "bg-white border-red-600 text-red-600 shadow-md shadow-red-100"
-                      : "bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100"
+                      : "bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100",
                   )}
                 >
                   <span className="text-2xl">{l.emoji}</span>

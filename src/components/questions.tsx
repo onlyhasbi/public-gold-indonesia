@@ -2,8 +2,12 @@ import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { HelpCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 interface FAQItem {
   category: string;
@@ -21,11 +25,7 @@ export default function Questions() {
   const leftColumn = data.slice(0, midPoint);
   const rightColumn = data.slice(midPoint);
 
-  const FAQItemComponent = ({
-    item,
-  }: {
-    item: FAQItem;
-  }) => (
+  const FAQItemComponent = ({ item }: { item: FAQItem }) => (
     <AccordionItem
       value={item.ask}
       className="rounded-xl border-none bg-white shadow-[0_8px_15px_-3px_rgba(0,0,0,0.1)] md:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] hover:shadow-xl transition-all duration-300 overflow-hidden"
@@ -65,10 +65,7 @@ export default function Questions() {
         <div className="flex-1">
           <Accordion className="flex flex-col gap-4">
             {leftColumn.map((item, index) => (
-              <FAQItemComponent
-                key={`left-${index}`}
-                item={item}
-              />
+              <FAQItemComponent key={`left-${index}`} item={item} />
             ))}
           </Accordion>
         </div>
@@ -77,15 +74,11 @@ export default function Questions() {
         <div className="flex-1">
           <Accordion className="flex flex-col gap-4">
             {rightColumn.map((item, index) => (
-              <FAQItemComponent
-                key={`right-${index}`}
-                item={item}
-              />
+              <FAQItemComponent key={`right-${index}`} item={item} />
             ))}
           </Accordion>
         </div>
       </div>
     </BaseLayout>
-
   );
 }

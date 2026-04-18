@@ -17,7 +17,11 @@ export function useSEO({ title, description, image, url }: SEOOptions) {
     document.title = title;
 
     // 2. Helper to set/update meta tags
-    const setMetaTag = (attrName: string, attrValue: string, content: string) => {
+    const setMetaTag = (
+      attrName: string,
+      attrValue: string,
+      content: string,
+    ) => {
       let meta = document.querySelector(`meta[${attrName}="${attrValue}"]`);
       if (!meta) {
         meta = document.createElement("meta");
@@ -38,10 +42,9 @@ export function useSEO({ title, description, image, url }: SEOOptions) {
     }
 
     setMetaTag("property", "og:title", title);
-    
-    if (url || typeof window !== 'undefined') {
+
+    if (url || typeof window !== "undefined") {
       setMetaTag("property", "og:url", url || window.location.href);
     }
-
   }, [title, description, image, url]);
 }

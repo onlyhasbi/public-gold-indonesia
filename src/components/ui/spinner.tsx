@@ -10,17 +10,20 @@ interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
  * A consistent, professional circle spinner component.
  * Used to replace legacy pulse animations for loading states.
  */
-export function Spinner({ 
-  size = 16, 
+export function Spinner({
+  size = 16,
   show = true,
-  className, 
-  ...props 
+  className,
+  ...props
 }: SpinnerProps) {
   if (!show) return null;
-  
+
   return (
-    <div 
-      className={cn("animate-spin text-current opacity-70 inline-block", className)} 
+    <div
+      className={cn(
+        "animate-spin text-current opacity-70 inline-block",
+        className,
+      )}
       {...props}
     >
       <Loader2 size={size} strokeWidth={2.5} />
