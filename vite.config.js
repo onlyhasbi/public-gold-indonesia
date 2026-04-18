@@ -20,15 +20,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: "esnext",
     assetsInlineLimit: 8192, // Inline assets smaller than 8KB
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
-        },
-      },
-    },
   },
   esbuild: {
     drop: mode === "production" ? ["console", "debugger"] : [],
