@@ -48,9 +48,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
   const defaultWidth = width || 800;
   const srcset = isExternal
-    ? [400, 800, 1200, 1600]
-        .map((w) => `${getUrl(w)} ${w}w`)
-        .join(", ")
+    ? [400, 800, 1200, 1600].map((w) => `${getUrl(w)} ${w}w`).join(", ")
     : undefined;
 
   const placeholderUrl = isExternal ? getUrl(undefined, true) : undefined;
@@ -59,7 +57,8 @@ export function OptimizedImage(props: OptimizedImageProps) {
     <div
       className={`relative overflow-hidden ${className || ""}`}
       style={{
-        aspectRatio: aspectRatio || (width && height ? width / height : undefined),
+        aspectRatio:
+          aspectRatio || (width && height ? width / height : undefined),
       }}
     >
       {/* 1. Blurred Placeholder Layer */}
