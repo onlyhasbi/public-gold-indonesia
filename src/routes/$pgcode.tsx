@@ -25,6 +25,11 @@ export const Route = createFileRoute("/$pgcode")({
   component: App,
   loader: async ({ params }) => {
     try {
+      // START BOTH IN PARALLEL
+      // Prefetch gold prices in the background (no await)
+      queryClient.prefetchQuery(goldPricesQueryOptions());
+
+      // Ensure agent data is ready for the initial render (await)
       await queryClient.ensureQueryData(agentQueryOptions(params.pgcode));
     } catch {
       throw notFound();
