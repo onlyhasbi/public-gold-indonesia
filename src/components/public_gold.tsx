@@ -1,8 +1,9 @@
+import React from "react";
 import { info } from "../constant/baseInfo";
 import BaseLayout from "../layout/base";
 import GradientHighlight from "./ui/gradient_highlight";
 import { useTranslation } from "react-i18next";
-import { optimizeImage } from "../lib/cloudinary";
+import { OptimizedImage } from "./ui/optimized-image";
 import {
   ShieldCheck,
   Smartphone,
@@ -82,10 +83,12 @@ function PublicGold() {
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-center mb-10">
           {/* Left: HQ Image */}
           <div className="lg:w-[42%] shrink-0">
-            <img
-              src="./public_gold_hero.webp"
+            <OptimizedImage
+              src="/public_gold_hero.webp"
               alt="Public Gold Office"
-              loading="eager"
+              width={600}
+              height={400}
+              priority
               className="rounded-2xl shadow-lg w-full h-full min-h-[280px] object-cover"
             />
           </div>
@@ -143,10 +146,11 @@ function PublicGold() {
                     className="hover:scale-105 transition-transform duration-300 no-underline shrink-0"
                     title={group.name}
                   >
-                    <img
-                      src={optimizeImage(group.logo, 240)}
+                    <OptimizedImage
+                      src={group.logo}
                       alt={group.name}
-                      loading="lazy"
+                      width={120}
+                      height={120}
                       className="w-[70px] h-[70px] lg:w-[60px] lg:h-[60px] object-contain"
                     />
                   </a>
@@ -210,4 +214,4 @@ function PublicGold() {
   );
 }
 
-export default PublicGold;
+export default React.memo(PublicGold);

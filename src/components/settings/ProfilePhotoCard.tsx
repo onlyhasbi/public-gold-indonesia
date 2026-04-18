@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Camera, User } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { ImageCropper } from "../ui/image-cropper";
-import { optimizeImage } from "../../lib/cloudinary";
+import { OptimizedImage } from "../ui/optimized-image";
 
 interface ProfilePhotoCardProps {
   fotoProfilUrl?: string;
@@ -49,11 +49,12 @@ export function ProfilePhotoCard({
                     className="w-full h-full object-cover"
                   />
                 ) : fotoProfilUrl ? (
-                  <img
-                    src={optimizeImage(fotoProfilUrl)}
+                  <OptimizedImage
+                    src={fotoProfilUrl || ""}
                     alt="Profile"
+                    width={112}
+                    height={112}
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-red-50 to-rose-100 flex items-center justify-center">

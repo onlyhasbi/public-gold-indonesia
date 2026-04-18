@@ -1,3 +1,4 @@
+import React from "react";
 import {
   WalletMinimal,
   HandCoins,
@@ -61,4 +62,4 @@ function Benefit() {
   );
 }
 
-export default Benefit;
+export default React.memo(Benefit);

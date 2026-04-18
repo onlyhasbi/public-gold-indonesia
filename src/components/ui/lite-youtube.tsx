@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { optimizeImage } from "../../lib/cloudinary";
+import { OptimizedImage } from "./optimized-image";
 
 interface LiteYouTubeProps {
   src: string;
@@ -52,10 +52,11 @@ export function LiteYouTube({
       onClick={handlePlay}
     >
       {/* Optimized Thumbnail */}
-      <img
-        src={optimizeImage(thumbnailUrl)}
+      <OptimizedImage
+        src={thumbnailUrl}
         alt={title}
-        loading="lazy"
+        width={640}
+        height={360}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-90"
       />
 

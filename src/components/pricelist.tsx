@@ -1,9 +1,9 @@
-import { optimizeImage } from "../lib/cloudinary";
+import { OptimizedImage } from "./ui/optimized-image";
 import { Link } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { AlertCircle, Info } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   NextButton,
   PrevButton,
@@ -87,9 +87,8 @@ export const dinar = [
     title: "10 Dinar",
     weight: "42.5g",
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PDI0010.png",
-    category: "dinar",
   },
-].map((p) => ({ ...p, url: optimizeImage(p.url, 400) }));
+];
 
 export const goldbar = [
   {
@@ -196,11 +195,11 @@ export const goldbar = [
   },
   {
     title: "100 gram",
-    weight: "100g",
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PGI0100.png",
+    weight: "100g",
     category: "goldbar",
   },
-].map((p) => ({ ...p, url: optimizeImage(p.url, 400) }));
+];
 
 const allProducts = [...dinar, ...goldbar];
 
@@ -646,11 +645,13 @@ function PriceList({ price, pgbo }: Props) {
 
                         {/* Image Section - Locked Height Wrapper */}
                         <div className="relative z-10 flex flex-1 w-full items-center justify-center py-2 h-[120px] md:h-[180px] shrink-0 px-4">
-                          <img
-                            className="h-full w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
+                          <OptimizedImage
                             src={item.url}
                             alt={item.title}
-                            loading="lazy"
+                            width={400}
+                            height={400}
+                            priority={index < 2}
+                            className="h-full w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                           />
                         </div>
 
@@ -674,4 +675,4 @@ function PriceList({ price, pgbo }: Props) {
   );
 }
 
-export default PriceList;
+export default memo(PriceList);

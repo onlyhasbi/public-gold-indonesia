@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
-import { optimizeImage } from "../lib/cloudinary";
+import { OptimizedImage } from "./ui/optimized-image";
 import {
   Popover,
   PopoverContent,
@@ -133,14 +133,13 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
         {/* Profile Image with Card-like shadow */}
         <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl shadow-slate-200 border border-slate-100 bg-white">
           {hasPhoto ? (
-            <img
+            <OptimizedImage
               className="w-full h-full object-cover"
-              src={optimizeImage(pgbo?.foto_profil_url, 400)}
+              src={pgbo?.foto_profil_url || ""}
               alt={`${displayName} - Authorized Public Gold Dealer`}
-              loading="eager"
-              fetchPriority="high"
-              width="320"
-              height="320"
+              priority
+              width={320}
+              height={320}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
@@ -153,11 +152,12 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
 
         {/* Floating Badge (5G Team) */}
         <span className="w-20 h-20 md:w-24 md:h-24 absolute bottom-0 right-0 z-20 animate-[float_4s_ease-in-out_infinite]">
-          <img
+          <OptimizedImage
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-xl"
-            src="./5g.webp"
+            src="/5g.webp"
             alt="Public Gold 5G Associates Team - Success Together"
-            loading="lazy"
+            width={96}
+            height={96}
           />
         </span>
       </div>

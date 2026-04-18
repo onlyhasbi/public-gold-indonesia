@@ -6,7 +6,7 @@ import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
 import { Card, CardContent } from "@/components/ui/card";
-import { optimizeImage } from "../lib/cloudinary";
+import { OptimizedImage } from "./ui/optimized-image";
 
 interface PgboData {
   foto_profil_url?: string | null;
@@ -47,11 +47,12 @@ export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
 
                   {/* Photo */}
                   {hasPhoto ? (
-                    <img
-                      src={optimizeImage(pgbo?.foto_profil_url)}
+                    <OptimizedImage
+                      src={pgbo?.foto_profil_url || ""}
                       alt={`${displayName} - Dealer Public Gold`}
+                      width={192}
+                      height={192}
                       className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
-                      loading="lazy"
                     />
                   ) : (
                     <div className="relative w-full h-full rounded-full bg-gradient-to-br from-white/30 to-white/10 border-4 border-white shadow-2xl flex items-center justify-center">

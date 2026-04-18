@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import compression from "vite-plugin-compression";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
@@ -25,6 +26,12 @@ export default defineConfig(({ mode }) => ({
       ext: ".br",
       threshold: 1024,
       deleteOriginFile: false,
+    }),
+    ViteImageOptimizer({
+      webp: { quality: 80 },
+      avif: { quality: 70 },
+      png: { quality: 80 },
+      jpeg: { quality: 80 },
     }),
   ],
   resolve: {

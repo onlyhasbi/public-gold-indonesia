@@ -10,7 +10,7 @@ import { Spinner } from "../components/ui/spinner";
 import { requireGuest } from "../lib/auth";
 import { PortalGate } from "../components/auth/PortalGate";
 import { isUnlockedAtom, lockoutExpiryAtom } from "../store/portalStore";
-import { optimizeImage } from "../lib/cloudinary";
+import { OptimizedImage } from "../components/ui/optimized-image";
 
 const SignInForm = lazy(() => import("../components/auth/SignInForm"));
 const SignUpForm = lazy(() => import("../components/auth/SignUpForm"));
@@ -77,14 +77,12 @@ function LandingAuthPage() {
                 whileHover={{ scale: 1.05 }}
                 className="p-3 bg-[#000856] rounded-2xl shadow-sm border border-slate-100"
               >
-                <img
-                  src={optimizeImage(
-                    "https://mypublicgold.com/5g/logo/logo_gold.png",
-                    200,
-                  )}
+                <OptimizedImage
+                  src="https://mypublicgold.com/5g/logo/logo_gold.png"
                   alt="Logo"
-                  loading="eager"
-                  fetchPriority="high"
+                  width={48}
+                  height={48}
+                  priority
                   className="w-12 h-12 object-contain"
                 />
               </motion.div>

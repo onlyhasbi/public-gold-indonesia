@@ -1,3 +1,4 @@
+import React from "react";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { HelpCircle } from "lucide-react";
@@ -15,7 +16,7 @@ interface FAQItem {
   answer: string;
 }
 
-export default function Questions() {
+function Questions() {
   const { t } = useTranslation();
 
   const data = t("faq.items", { returnObjects: true }) as FAQItem[];
@@ -82,3 +83,6 @@ export default function Questions() {
     </BaseLayout>
   );
 }
+
+const QuestionsMemo = React.memo(Questions);
+export default QuestionsMemo;
