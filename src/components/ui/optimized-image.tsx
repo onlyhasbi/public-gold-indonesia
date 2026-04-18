@@ -1,5 +1,8 @@
 import { useMemo } from "react";
-import { Image as UnpicImage, type ImageProps as UnpicImageProps } from "@unpic/react";
+import {
+  Image as UnpicImage,
+  type ImageProps as UnpicImageProps,
+} from "@unpic/react";
 import { cn } from "../../lib/utils";
 
 export type OptimizedImageProps = UnpicImageProps & {
@@ -57,5 +60,3 @@ export function OptimizedImage(props: OptimizedImageProps) {
     />
   );
 }
-
-
