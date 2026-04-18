@@ -8,8 +8,32 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+.env.example.local
+.env.*
 
 # SQLite local database
 *.db
 *.db-journal
+*.db-wal
 local.db.backup
+*.backup
+
+# Keys and certificates
+*.pem
+*.key
+*.pub
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# Vercel
+.vercel
+
+# Misc
+.npmrc
+.netrc
+**/*.log
+**/*.zip
+**/*.tar.gz
+**/*.tgz
