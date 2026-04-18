@@ -1,3 +1,4 @@
+import { optimizeImage } from "../lib/cloudinary";
 import { Link } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
@@ -15,8 +16,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "./ui/popover";
+import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
 import BaseLayout from "../layout/base";
 import type { GoldPricesResult } from "../types";
@@ -92,7 +93,7 @@ export const dinar = [
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PDI0010.png",
     category: "dinar",
   },
-];
+].map((p) => ({ ...p, url: optimizeImage(p.url) }));
 
 export const goldbar = [
   {
@@ -203,7 +204,7 @@ export const goldbar = [
     url: "https://my-cdn.publicgold.com.my/image/catalog/product/PGI0100.png",
     category: "goldbar",
   },
-];
+].map((p) => ({ ...p, url: optimizeImage(p.url) }));
 
 const allProducts = [...dinar, ...goldbar];
 
@@ -624,7 +625,7 @@ function PriceList({ price, pgbo }: Props) {
                     <div className="embla__tween__node w-full">
                       <Link
                         to="/register"
-                        search={{ ref: pgbo?.pageid }}
+                        search={(prev: any) => ({ ...prev, ref: pgbo?.pageid || undefined })}
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
                           "h-[360px] sm:h-[400px] md:h-[460px]",
