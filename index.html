@@ -20,12 +20,13 @@
     <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="preload" href="/logo.svg" as="image" />
     <link rel="preload" href="/5g.webp" as="image" />
-    
+
     <!-- Smart Bypassing Script: Instantly unblock LCP for public pages -->
     <script>
       (function () {
         var path = window.location.pathname;
-        var isDashboard = path.includes("/overview") || path.includes("/settings");
+        var isDashboard =
+          path.includes("/overview") || path.includes("/settings");
         var isAdmin = path.includes("/admin");
         if (!isDashboard && !isAdmin) {
           var style = document.createElement("style");
@@ -108,7 +109,6 @@
     <div id="initial-loader">
       <div class="circle-spinner"></div>
     </div>
-
 
     <!-- React app root -->
     <div id="app"></div>
