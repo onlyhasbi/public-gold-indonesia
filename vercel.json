@@ -37,13 +37,6 @@
     },
     {
       "source": "/:pageid",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(googlebot|facebookexternalhit|whatsapp|twitterbot|linkedinbot|crawler|bot).*"
-        }
-      ],
       "destination": "https://be-public-gold-indonesia.vercel.app/api/public/render/:pageid"
     },
     {
