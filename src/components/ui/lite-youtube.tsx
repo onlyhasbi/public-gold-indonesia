@@ -10,12 +10,17 @@ interface LiteYouTubeProps {
   onPlay?: () => void;
 }
 
-export function LiteYouTube({ src, title, className, onPlay }: LiteYouTubeProps) {
+export function LiteYouTube({
+  src,
+  title,
+  className,
+  onPlay,
+}: LiteYouTubeProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   // Extract video ID from embed URL
   const videoId = src.split("/").pop()?.split("?")[0];
-  const thumbnailUrl = videoId 
+  const thumbnailUrl = videoId
     ? `https://i3.ytimg.com/vi/${videoId}/maxresdefault.jpg`
     : "";
 
@@ -39,8 +44,11 @@ export function LiteYouTube({ src, title, className, onPlay }: LiteYouTubeProps)
   }
 
   return (
-    <div 
-      className={cn("relative w-full h-full cursor-pointer group bg-slate-900", className)}
+    <div
+      className={cn(
+        "relative w-full h-full cursor-pointer group bg-slate-900",
+        className,
+      )}
       onClick={handlePlay}
     >
       {/* Optimized Thumbnail */}
@@ -56,7 +64,7 @@ export function LiteYouTube({ src, title, className, onPlay }: LiteYouTubeProps)
           {/* Animated rings */}
           <div className="absolute inset-0 bg-red-600 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity animate-pulse" />
           <div className="absolute -inset-4 border-2 border-white/30 rounded-full animate-[ping_3s_linear_infinite] opacity-0 group-hover:opacity-100" />
-          
+
           {/* The Button */}
           <div className="relative w-16 h-16 md:w-20 md:h-20 bg-red-600 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-red-500 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent" />
