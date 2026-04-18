@@ -86,9 +86,8 @@ function PublicGold() {
             <OptimizedImage
               src="/public_gold_hero.webp"
               alt="Public Gold Office"
-              width={600}
-              height={400}
-              priority
+              width={750}
+              height={500}
               className="rounded-2xl shadow-lg w-full h-full min-h-[280px] object-cover"
             />
           </div>
@@ -149,8 +148,8 @@ function PublicGold() {
                     <OptimizedImage
                       src={group.logo}
                       alt={group.name}
-                      width={120}
-                      height={120}
+                      width={100}
+                      height={100}
                       className="w-[70px] h-[70px] lg:w-[60px] lg:h-[60px] object-contain"
                     />
                   </a>

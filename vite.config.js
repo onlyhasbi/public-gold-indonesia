@@ -50,6 +50,20 @@ export default defineConfig(({ mode }) => ({
         pure_funcs: mode === "production" ? ["console.log"] : [],
       },
     },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom"],
+          "vendor-ui": ["lucide-react", "framer-motion", "clsx", "tailwind-merge"],
+          "vendor-utils": [
+            "i18next",
+            "react-i18next",
+            "@tanstack/react-query",
+            "@tanstack/react-router",
+          ],
+        },
+      },
+    },
   },
   server: {
     proxy: {

@@ -664,7 +664,7 @@ function PriceList({ price, pgbo }: Props) {
                             className="max-h-full w-auto object-contain transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                             src={item.url}
                             alt={item.title}
-                            width={isPortraitBar ? 400 : 700}
+                            width={isPortraitBar ? 400 : 540}
                             priority={index < 2}
                           />
                         </div>

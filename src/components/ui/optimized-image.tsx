@@ -24,9 +24,9 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
   if (!src) return null;
 
-  // Determine if it's an external URL that needs Cloudinary Fetch
-  const isExternal =
-    src.startsWith("http") && !src.includes("res.cloudinary.com");
+  // Determine if it's a Cloudinary URL
+  const isCloudinary = src.includes("res.cloudinary.com");
+  const isExternal = src.startsWith("http") && !isCloudinary;
 
   // Construction helpers
   const getUrl = (w?: number, blur?: boolean) => {
@@ -37,21 +37,34 @@ export function OptimizedImage(props: OptimizedImageProps) {
       transformations.push(`w_${w}`, "c_limit");
     }
 
-    // Check if it's a YouTube URL
+    // Case 1: YouTube URL
     const ytMatch = src.match(/(?:ytimg\.com|youtube\.com)\/vi\/([^/]+)/);
     if (ytMatch && ytMatch[1]) {
       return `https://res.cloudinary.com/${CLOUD_NAME}/image/youtube/${transformations.join(",")}/${ytMatch[1]}.jpg`;
     }
 
+    // Case 2: Existing Cloudinary URL - inject transformations
+    if (isCloudinary) {
+      // If it already has transformations (contains /upload/ followed by something then /), we might need to be careful
+      // But usually user provides a raw URL.
+      if (src.includes("/upload/")) {
+        const parts = src.split("/upload/");
+        return `${parts[0]}/upload/${transformations.join(",")}/${parts[1]}`;
+      }
+    }
+
+    // Case 3: External fetch
     return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/${transformations.join(",")}/${encodeURIComponent(src)}`;
   };
 
   const defaultWidth = width || 800;
-  const srcset = isExternal
+  const useCloudinary = isExternal || isCloudinary;
+
+  const srcset = useCloudinary
     ? [400, 800, 1200, 1600].map((w) => `${getUrl(w)} ${w}w`).join(", ")
     : undefined;
 
-  const placeholderUrl = isExternal ? getUrl(undefined, true) : undefined;
+  const placeholderUrl = useCloudinary ? getUrl(undefined, true) : undefined;
 
   return (
     <div
@@ -62,7 +75,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
       }}
     >
       {/* 1. Blurred Placeholder Layer */}
-      {isExternal && !isLoaded && (
+      {useCloudinary && !isLoaded && (
         <img
           src={placeholderUrl}
           className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 transition-opacity duration-500"
@@ -73,11 +86,11 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
       {/* 2. Main High-Res Image */}
       <img
-        src={isExternal ? getUrl(defaultWidth) : src}
+        src={useCloudinary ? getUrl(defaultWidth) : src}
         srcSet={srcset}
         sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
         className={`w-full h-full transition-opacity duration-700 ease-in-out ${
-          isExternal ? (isLoaded ? "opacity-100" : "opacity-0") : "opacity-100"
+          useCloudinary ? (isLoaded ? "opacity-100" : "opacity-0") : "opacity-100"
         }`}
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
