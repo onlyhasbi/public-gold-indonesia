@@ -6,6 +6,7 @@ import { en } from "./constant/locales/en";
 import { ms } from "./constant/locales/ms";
 import { zh } from "./constant/locales/zh";
 import { ta } from "./constant/locales/ta";
+import { ar } from "./constant/locales/ar";
 
 i18n
   .use(LanguageDetector)
@@ -17,6 +18,7 @@ i18n
       ms: { translation: ms },
       zh: { translation: zh },
       ta: { translation: ta },
+      ar: { translation: ar },
     },
     fallbackLng: "id",
     load: "languageOnly", // only load 'id' instead of 'id-ID'

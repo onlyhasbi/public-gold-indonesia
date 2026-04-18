@@ -32,9 +32,10 @@ function Topbar({ pgbo }: { pgbo?: any }) {
     { id: "ms", label: "Malaysia", emoji: "🇲🇾", code: "MS" },
     { id: "zh", label: "Chinese", emoji: "🇨🇳", code: "ZH" },
     { id: "ta", label: "Tamil", emoji: "🇮🇳", code: "TA" },
+    { id: "ar", label: "العربية", emoji: "🇸🇦", code: "AR" },
   ];
 
-  const toggleLang = (selected: "id" | "ms" | "zh" | "ta") => {
+  const toggleLang = (selected: string) => {
     i18n.changeLanguage(selected);
     setIsOpen(false);
   };

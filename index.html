@@ -97,6 +97,20 @@
       <div class="circle-spinner"></div>
     </div>
 
+    <!-- Smart Bypassing Script: Instantly unblock LCP for public pages -->
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var isDashboard =
+          path.startsWith("/overview") || path.startsWith("/settings");
+        var isAdmin = path.startsWith("/admin");
+        if (!isDashboard && !isAdmin) {
+          var loader = document.getElementById("initial-loader");
+          if (loader) loader.style.display = "none";
+        }
+      })();
+    </script>
+
     <!-- React app root -->
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>
