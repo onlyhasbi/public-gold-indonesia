@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   User,
 } from "lucide-react";
+import { useSetAtom } from "jotai";
 import { Suspense, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PasswordCard } from "../components/settings/PasswordCard";
@@ -51,6 +52,7 @@ import { useSEO } from "../hooks/useSEO";
 import { api } from "../lib/api";
 import { formatPhoneForAPI } from "../lib/phone";
 import { queryClient } from "../lib/queryClient";
+import { authUserAtom, type UserDataState } from "../store/authStore";
 import { settingsQueryOptions } from "../lib/queryOptions";
 import { cn } from "../lib/utils";
 import { clearAuthAndRedirect } from "../lib/auth";
@@ -91,6 +93,7 @@ function SettingsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const setUser = useSetAtom(authUserAtom);
 
   const { data: profileData } = useSuspenseQuery(settingsQueryOptions());
 
@@ -179,10 +182,8 @@ function SettingsPage() {
     onSuccess: async (data: any) => {
       if (data.profile.success) {
         queryClient.invalidateQueries({ queryKey: ["settings"] });
-        const oldUser = JSON.parse(localStorage.getItem("user") || "{}");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ ...oldUser, ...data.profile.data }),
+        setUser((prev: UserDataState) =>
+          prev ? { ...prev, ...data.profile.data } : data.profile.data,
         );
 
         // Check what actually changed
