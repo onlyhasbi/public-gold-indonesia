@@ -625,7 +625,9 @@ function AdminDashboard() {
           <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
           <div className="space-y-1">
             <p className="text-slate-900 font-bold">Memuat Dashboard</p>
-            <p className="text-slate-500 text-sm">Sedang mengambil data PGBO...</p>
+            <p className="text-slate-500 text-sm">
+              Sedang mengambil data PGBO...
+            </p>
           </div>
         </div>
       </div>
@@ -640,19 +642,24 @@ function AdminDashboard() {
             <RefreshCw className="w-8 h-8 animate-pulse text-red-500" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Koneksi Terputus</h2>
+            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+              Koneksi Terputus
+            </h2>
             <p className="text-slate-500 text-sm leading-relaxed">
-              Gagal memuat data dari server. Pastikan koneksi internet stabil atau coba muat ulang halaman.
+              Gagal memuat data dari server. Pastikan koneksi internet stabil
+              atau coba muat ulang halaman.
             </p>
           </div>
           <div className="pt-2 flex flex-col gap-3">
-            <Button 
-              onClick={() => queryClient.invalidateQueries({ queryKey: ["admin_pgbo"] })}
+            <Button
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: ["admin_pgbo"] })
+              }
               className="w-full py-6 rounded-2xl font-bold shadow-lg shadow-red-200"
             >
               Coba Lagi
             </Button>
-            <Button 
+            <Button
               variant="ghost"
               onClick={handleLogout}
               className="text-slate-400 hover:text-slate-600"

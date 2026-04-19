@@ -43,7 +43,7 @@ persistQueryClient({
   maxAge: 1000 * 60 * 60 * 24,
 });
 
-// Since we use createSyncStoragePersister (localStorage), 
+// Since we use createSyncStoragePersister (localStorage),
 // hydration happens synchronously during initialization.
 // We resolve on the next tick to ensure the internal state is updated.
 setTimeout(() => {
