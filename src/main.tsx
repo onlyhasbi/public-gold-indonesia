@@ -3,7 +3,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import NotFound from "./components/not_found";
-import { queryClient } from "./lib/queryClient";
+import { queryClient, hydrationPromise } from "./lib/queryClient";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -36,11 +36,16 @@ declare module "@tanstack/react-router" {
 const rootElement = document.getElementById("app");
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <RouterProvider router={router} />
-    </StrictMode>,
-  );
+
+  // CRITICAL: Wait for hydration before rendering the router
+  // This prevents race conditions where the auth guard runs with empty cache
+  hydrationPromise.then(() => {
+    root.render(
+      <StrictMode>
+        <RouterProvider router={router} />
+      </StrictMode>,
+    );
+  });
 }
 
 // If you want to start measuring performance in your app, pass a function

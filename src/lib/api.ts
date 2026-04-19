@@ -22,10 +22,15 @@ const getAuthData = (isAdmin: boolean) => {
 
 // Attach JWT token to every request
 api.interceptors.request.use((config) => {
-  const path = window.location.pathname;
-  const isAdminPath = path.startsWith("/admin");
+  const pagePath = window.location.pathname;
+  const requestUrl = config.url || "";
 
-  const authData = getAuthData(isAdminPath);
+  // DETERMINISTIC TOKEN SELECTION:
+  // If we are ON an admin page OR calling an admin endpoint, prioritize the admin token.
+  const isAdminRequest =
+    pagePath.startsWith("/admin") || requestUrl.startsWith("/admin");
+
+  const authData = getAuthData(isAdminRequest);
   const token = authData?.token;
 
   if (token && !config.headers.Authorization) {

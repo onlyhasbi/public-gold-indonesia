@@ -24,6 +24,11 @@ const persister = createSyncStoragePersister({
   key: "PUBLIC_GOLD_QUERY_CACHE",
 });
 
+let resolveHydration: (value: void) => void;
+export const hydrationPromise = new Promise<void>((resolve) => {
+  resolveHydration = resolve;
+});
+
 persistQueryClient({
   queryClient,
   persister,
@@ -37,3 +42,10 @@ persistQueryClient({
   // Ensure that old stale auth data is discarded if it's too old (e.g., 24h)
   maxAge: 1000 * 60 * 60 * 24,
 });
+
+// Since we use createSyncStoragePersister (localStorage), 
+// hydration happens synchronously during initialization.
+// We resolve on the next tick to ensure the internal state is updated.
+setTimeout(() => {
+  resolveHydration();
+}, 1);

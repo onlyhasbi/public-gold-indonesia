@@ -62,7 +62,7 @@ import {
 import { dialCodeOptions } from "@/constant/countries";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/admin/_admin/")({
+export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
@@ -620,12 +620,46 @@ function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-4 text-center">
           <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
-          <p className="text-slate-500 text-sm font-medium">
-            Memuat admin dashboard...
-          </p>
+          <div className="space-y-1">
+            <p className="text-slate-900 font-bold">Memuat Dashboard</p>
+            <p className="text-slate-500 text-sm">Sedang mengambil data PGBO...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 text-center space-y-6 border border-slate-100">
+          <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <RefreshCw className="w-8 h-8 animate-pulse text-red-500" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Koneksi Terputus</h2>
+            <p className="text-slate-500 text-sm leading-relaxed">
+              Gagal memuat data dari server. Pastikan koneksi internet stabil atau coba muat ulang halaman.
+            </p>
+          </div>
+          <div className="pt-2 flex flex-col gap-3">
+            <Button 
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["admin_pgbo"] })}
+              className="w-full py-6 rounded-2xl font-bold shadow-lg shadow-red-200"
+            >
+              Coba Lagi
+            </Button>
+            <Button 
+              variant="ghost"
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-slate-600"
+            >
+              Keluar Sesi
+            </Button>
+          </div>
         </div>
       </div>
     );
