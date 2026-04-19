@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
     base: "/",
     plugins: [
       // REQUIRED: Enable router transformations and route generation
-      tanstackRouter(),
+      tanstackRouter({ autoCodeSplitting: true }),
       viteReact(),
       tailwindcss(),
     ],
@@ -58,8 +58,14 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (id.includes("node_modules")) {
-              // CONSOLIDATED VENDOR STRATEGY:
-              // Group libraries into a single vendor chunk to prevent cross-module boundary React errors (Cannot read properties of undefined (setting 'Children')).
+              // PENGAMANAN: Pastikan HANYA module inti React yang masuk ke react-core.
+              if (
+                id.includes("/node_modules/react/") ||
+                id.includes("/node_modules/react-dom/") ||
+                id.includes("/node_modules/scheduler/")
+              ) {
+                return "react-core";
+              }
               return "vendor";
             }
           },
