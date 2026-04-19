@@ -92,7 +92,12 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("react-dom") || id.includes("react-router")) {
+            // Group core libraries together to ensure deterministic initialization
+            if (
+              id.match(
+                /node_modules\/(react|react-dom|@tanstack\/react-router|jotai|@tanstack\/react-query)/,
+              )
+            ) {
               return "vendor-core";
             }
             if (id.includes("lucide-react") || id.includes("motion")) {
