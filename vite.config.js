@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import viteCompression from "vite-plugin-compression";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -16,9 +17,14 @@ export default defineConfig(({ mode }) => {
     base: "/",
     plugins: [
       // REQUIRED: Enable router transformations and route generation
-      tanstackRouter({ codeSplittingOptions: true }),
+      tanstackRouter({ autoCodeSplitting: true }),
       viteReact(),
       tailwindcss(),
+      isProduction && viteCompression({
+        algorithm: "gzip",
+        ext: ".gz",
+        threshold: 10240,
+      }),
     ],
     resolve: {
       alias: {
@@ -35,29 +41,27 @@ export default defineConfig(({ mode }) => {
       },
       // REQUIRED: Maintain mobile compatibility fix
       target: ["es2020", "chrome61", "ios11"],
-      assetsInlineLimit: 8192,
-      // PERFORMANCE: Using Terser for superior bundle compression compared to esbuild
-      minify: "terser",
-      terserOptions: {
+      assetsInlineLimit: 4096,
+      // PERFORMANCE: Menggunakan ESBuild minifier menghasilkan proses build 10x-100x lebih cepat dibandingkan Terser
+      minify: isProduction ? "terser" : "esbuild",
+      terserOptions: isProduction ? {
         compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
-          pure_funcs: isProduction ? ["console.log"] : [],
-          passes: 2, // Two passes for maximum optimization
-          // IMPORTANT: toplevel must be false to prevent React 19 symbol crashes
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ["console.log", "console.info", "console.debug"],
+          passes: 2, 
           toplevel: false,
         },
-        format: {
-          comments: false,
-        },
-        mangle: {
-          safari10: true,
-        },
-      },
+        format: { comments: false },
+        mangle: { safari10: true },
+      } : undefined,
     },
     esbuild: {
       // Production logs removal
       drop: isProduction ? ["console", "debugger"] : [],
+      legalComments: "none",
+      // Mencegah crash simbol pada React 19 yang sebelumnya memerlukan 'toplevel: false' di Terser
+      keepNames: true,
     },
     server: {
       hmr: true,
@@ -73,30 +77,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: true,
           rewrite: (p) => p.replace(/^\/api-proxy/, ""),
-        },
-        "/hasbi": {
-          target: "https://mypublicgold.id",
-          changeOrigin: true,
-          secure: true,
-          headers: {
-            accept:
-              "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-            "accept-language": "id,en-US;q=0.9,en;q=0.8",
-            dnt: "1",
-            priority: "u=0, i",
-            "sec-ch-ua":
-              '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
-            "sec-ch-ua-mobile": "?1",
-            "sec-ch-ua-platform": '"Android"',
-            "sec-fetch-dest": "document",
-            "sec-fetch-mode": "navigate",
-            "sec-fetch-site": "none",
-            "sec-fetch-user": "?1",
-            "upgrade-insecure-requests": "1",
-            "user-agent":
-              "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
-          },
-        },
+        }
       },
     },
   };
