@@ -40,7 +40,9 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
     return src;
   }
 
-  const transformations = ["f_auto"];
+  // Force explicit AVIF format for extreme compression and speed
+  // SVGs are skipped to preserve vector elasticity
+  const transformations = isSvg ? [] : ["f_avif"];
 
   if (blur) {
     transformations.push("e_blur:2000", "w_20", "q_auto:low");
