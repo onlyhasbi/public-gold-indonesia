@@ -22,16 +22,14 @@ import { agentQueryOptions, goldPricesQueryOptions } from "../lib/queryOptions";
 import { cn } from "../lib/utils";
 import { useSEO } from "../hooks/useSEO";
 import { getCloudinaryUrl, getCloudinarySrcSet } from "../lib/images";
+import { useLazyInteraction } from "../hooks/useLazyInteraction";
 
 export const Route = createFileRoute("/$pgcode")({
   component: App,
   loader: async ({ params }) => {
-    // PREFETCH BOTH IN BACKGROUND
+    // PREFETCH AGENT ONLY FOR FAST LCP
     try {
-      await Promise.all([
-        queryClient.ensureQueryData(goldPricesQueryOptions()),
-        queryClient.ensureQueryData(agentQueryOptions(params.pgcode)),
-      ]);
+      await queryClient.ensureQueryData(agentQueryOptions(params.pgcode));
     } catch (err: any) {
       if (err.response?.status === 404) {
         throw notFound();
@@ -50,7 +48,13 @@ function App() {
   if (!pgcode) return null;
 
   const { data: pgbo } = useSuspenseQuery(agentQueryOptions(pgcode));
-  const { data: goldPrices } = useQuery(goldPricesQueryOptions());
+  
+  // LAZY FETCH: Trigger gold prices only after scroll or timeout for LCP Optimization
+  const shouldFetchPrices = useLazyInteraction(3000);
+  const { data: goldPrices } = useQuery({
+    ...goldPricesQueryOptions(),
+    enabled: shouldFetchPrices,
+  });
 
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
