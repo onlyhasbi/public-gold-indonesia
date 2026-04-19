@@ -1,34 +1,42 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { id } from "./constant/locales/id";
-import { en } from "./constant/locales/en";
-import { ms } from "./constant/locales/ms";
-import { zh } from "./constant/locales/zh";
-import { ta } from "./constant/locales/ta";
-import { ar } from "./constant/locales/ar";
+import resourcesToBackend from "i18next-resources-to-backend";
 
 i18n
   .use(LanguageDetector)
+  .use(
+    resourcesToBackend((language: string) => {
+      // Dynamic import locale files based on language name
+      switch (language) {
+        case "id":
+          return import("./constant/locales/id").then((m) => m.id);
+        case "en":
+          return import("./constant/locales/en").then((m) => m.en);
+        case "ms":
+          return import("./constant/locales/ms").then((m) => m.ms);
+        case "zh":
+          return import("./constant/locales/zh").then((m) => m.zh);
+        case "ta":
+          return import("./constant/locales/ta").then((m) => m.ta);
+        case "ar":
+          return import("./constant/locales/ar").then((m) => m.ar);
+        default:
+          return import("./constant/locales/id").then((m) => m.id);
+      }
+    }),
+  )
   .use(initReactI18next)
   .init({
-    resources: {
-      id: { translation: id },
-      en: { translation: en },
-      ms: { translation: ms },
-      zh: { translation: zh },
-      ta: { translation: ta },
-      ar: { translation: ar },
-    },
     fallbackLng: "id",
-    load: "languageOnly", // only load 'id' instead of 'id-ID'
+    load: "languageOnly",
     debug: false,
     interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
+      escapeValue: false,
     },
     detection: {
       order: ["localStorage", "navigator"],
-      lookupLocalStorage: "app_lang", // maintain compatibility with previous localStorage key if possible, or just let it use i18next-lng
+      lookupLocalStorage: "app_lang",
       caches: ["localStorage"],
     },
   });

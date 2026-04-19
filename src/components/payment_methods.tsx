@@ -1,8 +1,10 @@
 import { CreditCard, Clock, Wallet, Check, X } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { AppLink as Link } from "../lib/router-wrappers";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { activeDealerAtom } from "../store/dealerStore";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -17,8 +19,10 @@ import { cn } from "@/lib/utils";
 
 const DISABLED_INDEXES = [2]; // EPP card (index 2) is temporarily disabled
 
-export default function PaymentMethods({ pgbo }: { pgbo?: any }) {
+export default function PaymentMethods({ pgbo: propsPgbo }: { pgbo?: any }) {
   const { t } = useTranslation();
+  const atomPgbo = useAtomValue(activeDealerAtom);
+  const pgbo = propsPgbo || atomPgbo;
   const [isPrintCostModalOpen, setIsPrintCostModalOpen] = useState(false);
 
   const styleConfigs = [

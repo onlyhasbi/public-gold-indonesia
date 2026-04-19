@@ -35,17 +35,17 @@ const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
 const PetunjukRoute = PetunjukRouteImport.update({
   id: '/petunjuk',
   path: '/petunjuk',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/petunjuk.lazy').then((d) => d.Route))
 const LegalRoute = LegalRouteImport.update({
   id: '/legal',
   path: '/legal',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/legal.lazy').then((d) => d.Route))
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -78,7 +78,9 @@ const AuthSettingsRoute = AuthSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AuthRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/_auth.settings.lazy').then((d) => d.Route),
+)
 const AuthOverviewRoute = AuthOverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
@@ -232,6 +234,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/petunjuk': {
+      id: '/petunjuk'
+      path: '/petunjuk'
+      fullPath: '/petunjuk'
+      preLoaderRoute: typeof PetunjukLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/overview': {
       id: '/_auth/overview'
       path: '/overview'
@@ -266,6 +289,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/signup'
       preLoaderRoute: typeof AdminSignupRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/_auth/settings': {
+      id: '/_auth/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthSettingsLazyRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/admin/_admin/': {
       id: '/admin/_admin/'

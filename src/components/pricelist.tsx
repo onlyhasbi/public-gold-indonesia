@@ -1,5 +1,5 @@
 import { OptimizedImage } from "./ui/optimized-image";
-import { Link } from "@tanstack/react-router";
+import { AppLink as Link } from "../lib/router-wrappers";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { AlertCircle, Info } from "lucide-react";
@@ -15,6 +15,8 @@ import { Spinner } from "./ui/spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { activeDealerAtom } from "../store/dealerStore";
 import BaseLayout from "../layout/base";
 import type { GoldPricesResult } from "../types";
 
@@ -203,8 +205,11 @@ export const goldbar = [
 
 const allProducts = [...dinar, ...goldbar];
 
-function PriceList({ price, pgbo }: Props) {
+function PriceList({ price, pgbo: propsPgbo }: Props) {
   const { t, i18n } = useTranslation();
+  const atomPgbo = useAtomValue(activeDealerAtom);
+  const pgbo = propsPgbo || atomPgbo;
+
   const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
   const [priceMode, setPriceMode] = useState<"tabungan" | "tunai">("tabungan");
 
@@ -628,10 +633,9 @@ function PriceList({ price, pgbo }: Props) {
                     <div className="embla__tween__node w-full">
                       <Link
                         to="/register"
-                        search={(prev: any) => ({
-                          ...prev,
+                        search={{
                           ref: pgbo?.pageid || undefined,
-                        })}
+                        }}
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
                           "h-[380px] sm:h-[420px] md:h-[500px]",

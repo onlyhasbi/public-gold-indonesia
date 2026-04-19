@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import BaseLayout from "../layout/base";
 import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { activeDealerAtom } from "../store/dealerStore";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
@@ -17,8 +19,10 @@ interface PgboData {
   [key: string]: any;
 }
 
-export default function CallToAction({ pgbo }: { pgbo?: PgboData }) {
+export default function CallToAction({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
+  const atomPgbo = useAtomValue(activeDealerAtom);
+  const pgbo = propsPgbo || atomPgbo;
 
   const hasPhoto = !!pgbo?.foto_profil_url;
   const displayName = pgbo?.nama_lengkap || "Authorized Dealer";

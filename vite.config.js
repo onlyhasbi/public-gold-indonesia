@@ -3,6 +3,7 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import compression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import { visualizer } from "rollup-plugin-visualizer";
 
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
@@ -32,6 +33,33 @@ export default defineConfig(({ mode }) => ({
       avif: { quality: 70 },
       png: { quality: 80 },
       jpeg: { quality: 80 },
+      svg: {
+        multipass: true,
+        plugins: [
+          {
+            name: "preset-default",
+            params: {
+              overrides: {
+                cleanupIds: false,
+                removeViewBox: false,
+              },
+            },
+          },
+          "sortAttrs",
+          {
+            name: "addAttributesToSVGElement",
+            params: {
+              attributes: [{ xmlns: "http://www.w3.org/2000/svg" }],
+            },
+          },
+        ],
+      },
+    }),
+    visualizer({
+      filename: "stats.html",
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
     }),
   ],
   resolve: {
@@ -39,7 +67,14 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  css: {
+    transformer: "lightningcss",
+  },
   build: {
+    modulePreload: {
+      polyfill: false,
+    },
+    cssMinify: "lightningcss",
     target: "esnext",
     assetsInlineLimit: 8192,
     minify: "terser",
@@ -48,24 +83,32 @@ export default defineConfig(({ mode }) => ({
         drop_console: mode === "production",
         drop_debugger: mode === "production",
         pure_funcs: mode === "production" ? ["console.log"] : [],
+        passes: 2,
       },
+      toplevel: true,
+      module: true,
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom"],
-          "vendor-ui": [
-            "lucide-react",
-            "framer-motion",
-            "clsx",
-            "tailwind-merge",
-          ],
-          "vendor-utils": [
-            "i18next",
-            "react-i18next",
-            "@tanstack/react-query",
-            "@tanstack/react-router",
-          ],
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react-dom") || id.includes("react-router")) {
+              return "vendor-core";
+            }
+            if (id.includes("lucide-react") || id.includes("motion")) {
+              return "vendor-ui";
+            }
+            if (id.includes("@base-ui")) {
+              return "vendor-base-ui";
+            }
+            if (id.includes("yup") || id.includes("@hookform")) {
+              return "vendor-form";
+            }
+            if (id.includes("embla-carousel")) {
+              return "vendor-carousel";
+            }
+            return "vendor";
+          }
         },
       },
     },

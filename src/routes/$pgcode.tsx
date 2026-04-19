@@ -1,9 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useMatches, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSetAtom } from "jotai";
+import { activeDealerAtom, goldPricesAtom } from "../store/dealerStore";
 
 const Benefit = lazy(() => import("../components/benefit"));
 const CallToAction = lazy(() => import("../components/cta"));
@@ -24,17 +26,41 @@ import { useSEO } from "../hooks/useSEO";
 
 export const Route = createFileRoute("/$pgcode")({
   component: App,
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     // PREFETCH BOTH IN BACKGROUND
-    queryClient.prefetchQuery(goldPricesQueryOptions());
-    queryClient.prefetchQuery(agentQueryOptions(params.pgcode));
+    try {
+      await Promise.all([
+        queryClient.ensureQueryData(goldPricesQueryOptions()),
+        queryClient.ensureQueryData(agentQueryOptions(params.pgcode)),
+      ]);
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        throw notFound();
+      }
+      throw err;
+    }
   },
 });
 
 function App() {
-  const { pgcode } = Route.useParams();
+  const matches = useMatches();
+  const pgcode = (matches.find((m) => m.routeId === "/$pgcode")?.params as any)
+    ?.pgcode;
+
+  // Use atoms to keep data stable during unmounting
+  const setDealer = useSetAtom(activeDealerAtom);
+  const setGoldPrices = useSetAtom(goldPricesAtom);
+
+  // If we're transitioning out, pgcode might be undefined
+  if (!pgcode) return null;
+
   const { data: pgbo } = useSuspenseQuery(agentQueryOptions(pgcode));
   const { data: goldPrices } = useQuery(goldPricesQueryOptions());
+
+  useEffect(() => {
+    if (pgbo) setDealer(pgbo);
+    if (goldPrices) setGoldPrices(goldPrices);
+  }, [pgbo, goldPrices, setDealer, setGoldPrices]);
 
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);

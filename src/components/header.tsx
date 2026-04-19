@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { activeDealerAtom } from "../store/dealerStore";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
@@ -67,8 +69,10 @@ const formatSocialUrl = (
   }
 };
 
-function Header({ pgbo }: { pgbo?: PgboData }) {
+function Header({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
+  const atomPgbo = useAtomValue(activeDealerAtom);
+  const pgbo = propsPgbo || atomPgbo;
 
   const handleWhatsAppClick = () => {
     trackEvent(pgbo?.pageid, "whatsapp_click");

@@ -6,15 +6,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Link } from "@tanstack/react-router";
+import { AppLink as Link } from "@/lib/router-wrappers";
 import { ChevronDown, Languages, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { activeDealerAtom } from "@/store/dealerStore";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
-function Topbar({ pgbo }: { pgbo?: any }) {
+function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
+  const atomPgbo = useAtomValue(activeDealerAtom);
+  const pgbo = propsPgbo || atomPgbo;
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
