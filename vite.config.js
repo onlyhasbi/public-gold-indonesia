@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
         polyfill: true, // Ensures stable chunk loading across all browsers
       },
       // REQUIRED: Maintain mobile compatibility fix
-      target: ["es2017", "ios11"],
+      target: ["es2017"],
       assetsInlineLimit: 8192,
       // PERFORMANCE: Using Terser for superior bundle compression compared to esbuild
       minify: "terser",
