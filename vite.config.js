@@ -4,116 +4,83 @@ import tailwindcss from "@tailwindcss/vite";
 import compression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import { visualizer } from "rollup-plugin-visualizer";
-
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: "/",
-  plugins: [
-    tanstackRouter({ autoCodeSplitting: true }),
-    viteReact(),
-    tailwindcss(),
-    // Gzip compression for static assets
-    compression({
-      algorithm: "gzip",
-      ext: ".gz",
-      threshold: 1024,
-      deleteOriginFile: false,
-    }),
-    // Brotli compression for modern browsers
-    compression({
-      algorithm: "brotliCompress",
-      ext: ".br",
-      threshold: 1024,
-      deleteOriginFile: false,
-    }),
-    ViteImageOptimizer({
-      webp: { quality: 80 },
-      avif: { quality: 70 },
-      png: { quality: 80 },
-      jpeg: { quality: 80 },
-      svg: {
-        multipass: true,
-        plugins: [
-          {
-            name: "preset-default",
-            params: {
-              overrides: {
-                cleanupIds: false,
-                removeViewBox: false,
-              },
-            },
+export default defineConfig(({ mode }) => {
+  const isProduction = mode === "production";
+
+  return {
+    base: "/",
+    plugins: [
+      tanstackRouter({ autoCodeSplitting: true }),
+      viteReact(),
+      tailwindcss(),
+      isProduction && compression({ algorithm: "gzip", ext: ".gz" }),
+      isProduction && compression({ algorithm: "brotliCompress", ext: ".br" }),
+      isProduction && ViteImageOptimizer({
+        webp: { quality: 80 },
+        avif: { quality: 70 },
+        svg: {
+          multipass: true,
+          plugins: [
+            { name: "preset-default", params: { overrides: { cleanupIds: false, removeViewBox: false } } },
+          ],
+        },
+      }),
+      // Visualizer membantu melihat ukuran bundle saat menggunakan Bun
+      isProduction && visualizer({
+        filename: "stats.html",
+        gzipSize: true,
+      }),
+    ].filter(Boolean),
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+      // Bun sangat cepat dalam resolusi modul, pastikan ekstensi ini diprioritaskan
+      extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json']
+    },
+    build: {
+      emptyOutDir: true,
+      target: "esnext", // Bun mendukung fitur JS terbaru, esnext lebih optimal
+      minify: "esbuild",
+      sourcemap: !isProduction,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              if (id.includes("react")) return "vendor-core";
+              if (id.includes("@tanstack")) return "vendor-tanstack";
+              return "vendor-utils";
+            }
           },
-          "sortAttrs",
-          {
-            name: "addAttributesToSVGElement",
-            params: {
-              attributes: [{ xmlns: "http://www.w3.org/2000/svg" }],
-            },
-          },
-        ],
-      },
-    }),
-    visualizer({
-      filename: "stats.html",
-      open: false,
-      gzipSize: true,
-      brotliSize: true,
-    }),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  build: {
-    emptyOutDir: true,
-    manifest: true,
-    modulePreload: {
-      polyfill: true,
-    },
-    target: "es2022",
-    assetsInlineLimit: 8192,
-    minify: "esbuild",
-  },
-  server: {
-    proxy: {
-      "/api-proxy-my": {
-        target: "https://publicgold.com.my",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy-my/, ""),
-        cookieDomainRewrite: "localhost",
-      },
-      "/api-proxy": {
-        target: "https://publicgold.co.id",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy/, ""),
-        // This helps forward cookies during local dev
-        cookieDomainRewrite: "localhost",
+        },
       },
     },
-  },
-  preview: {
-    proxy: {
-      "/api-proxy-my": {
-        target: "https://publicgold.com.my",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy-my/, ""),
-        cookieDomainRewrite: "mypublicgold.id",
-      },
-      "/api-proxy": {
-        target: "https://publicgold.co.id",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-proxy/, ""),
-        // Important: match this with your deploy domain to accept cookies
-        cookieDomainRewrite: "mypublicgold.id",
+    esbuild: {
+      // Bun/Esbuild akan menghapus log di production
+      drop: isProduction ? ["console", "debugger"] : [],
+      // Mengoptimalkan JSX untuk Bun
+      jsxSideEffects: false,
+    },
+    server: {
+      // Bun sangat cepat dalam HMR (Hot Module Replacement)
+      hmr: true,
+      proxy: {
+        "/api-proxy-my": {
+          target: "https://publicgold.com.my",
+          changeOrigin: true,
+          secure: true,
+          rewrite: (p) => p.replace(/^\/api-proxy-my/, ""),
+        },
+        "/api-proxy": {
+          target: "https://publicgold.co.id",
+          changeOrigin: true,
+          secure: true,
+          rewrite: (p) => p.replace(/^\/api-proxy/, ""),
+        },
       },
     },
-  },
-  test: {
-    globals: true,
-    environment: "jsdom",
-  },
-}));
+  };
+});
