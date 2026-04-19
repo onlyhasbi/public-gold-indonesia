@@ -1,11 +1,6 @@
-import { defineConfig } from "vite";
-import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import compression from "vite-plugin-compression";
-import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import { visualizer } from "rollup-plugin-visualizer";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import path from "path";
+import viteReact from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -16,7 +11,8 @@ export default defineConfig(({ mode }) => {
     plugins: [
       // Enable router transformations with auto code splitting for routes
       viteReact(),
-      tailwindcss()],
+      tailwindcss(),
+    ],
     server: {
       hmr: true,
       proxy: {
