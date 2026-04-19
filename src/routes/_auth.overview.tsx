@@ -63,8 +63,6 @@ function OverviewPage() {
     navigate({ to: "/" });
   };
 
-
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}

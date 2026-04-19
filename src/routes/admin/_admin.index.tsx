@@ -227,8 +227,6 @@ function AdminDashboard() {
     document.title = "Dashboard Super Admin | Public Gold Indonesia";
   }, []);
 
-
-
   const [serverSearch, setServerSearch] = useState("");
   const debouncedSearch = useDebounce(serverSearch, 500);
 
@@ -244,7 +242,7 @@ function AdminDashboard() {
         `/admin/pgbo${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ""}`,
         {
           headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
+            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
@@ -327,7 +325,7 @@ function AdminDashboard() {
         { ids },
         {
           headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
+            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
@@ -355,7 +353,7 @@ function AdminDashboard() {
         { ids, active },
         {
           headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
+            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
