@@ -1,7 +1,12 @@
-import { createLink, Link, useNavigate, type NavigateOptions } from "@tanstack/react-router";
+import {
+  createLink,
+  Link,
+  useNavigate,
+  type NavigateOptions,
+} from "@tanstack/react-router";
 
-// We use createLink from TanStack Router which is the official way to create 
-// a type-safe wrapper for the Link component while preserving all generics 
+// We use createLink from TanStack Router which is the official way to create
+// a type-safe wrapper for the Link component while preserving all generics
 // and autocomplete features.
 const CreatedLink = createLink(Link);
 
