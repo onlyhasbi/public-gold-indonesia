@@ -49,10 +49,7 @@ export default defineConfig(({ mode }) => {
         },
         format: {
           comments: false,
-        },
-        mangle: {
-          safari10: true, // Compatibility for legacy mobile browsers
-        },
+        }
       },
     },
     esbuild: {
