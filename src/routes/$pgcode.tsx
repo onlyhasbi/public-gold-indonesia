@@ -131,20 +131,33 @@ function App() {
       <section id="about" className="scroll-mt-20">
         <Header pgbo={pgbo} />
       </section>
-      <Suspense fallback={<div className="min-h-[400px]" />}>
+
+      <Suspense fallback={<div className="h-48" />}>
         <section id="advantage" className="scroll-mt-20">
           <Benefit />
         </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="h-48" />}>
         <section id="public-gold" className="scroll-mt-20">
           <PublicGold />
         </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="min-h-[600px] flex items-center justify-center bg-slate-50/50 rounded-3xl animate-pulse" />}>
         <section id="products" className="scroll-mt-20">
           <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
         </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="h-48" />}>
         <section id="excellence" className="scroll-mt-20">
           <PaymentMethods pgbo={pgbo} />
           <Excellence />
         </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="h-64" />}>
         <section id="testimonials" className="scroll-mt-20">
           <div className="w-11/12 max-w-7xl mx-auto py-16">
             <div className="text-center mb-10">
@@ -172,7 +185,13 @@ function App() {
             />
           </div>
         </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="h-48" />}>
         <Questions />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-64" />}>
         <section id="contact" className="scroll-mt-20">
           <CallToAction pgbo={pgbo} />
         </section>

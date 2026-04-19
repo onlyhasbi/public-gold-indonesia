@@ -308,9 +308,9 @@ function RegisterPage() {
                   <OptimizedImage
                     src="/dewasa.webp"
                     alt=""
-                    className="w-[22px] h-[22px] object-cover rounded-full object-[center_10%]"
-                    width={22}
-                    height={22}
+                    className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-[center_10%]"
+                    width={28}
+                    height={28}
                   />{" "}
                   {t("registerForm.tabDewasa")}
                 </TabsTrigger>
@@ -321,9 +321,9 @@ function RegisterPage() {
                   <OptimizedImage
                     src="/anak.webp"
                     alt=""
-                    className="w-[22px] h-[22px] object-cover rounded-full object-[center_10%]"
-                    width={22}
-                    height={22}
+                    className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-[center_10%]"
+                    width={28}
+                    height={28}
                   />{" "}
                   {t("registerForm.tabAnak")}
                 </TabsTrigger>

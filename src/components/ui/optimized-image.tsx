@@ -41,9 +41,14 @@ export function OptimizedImage(props: OptimizedImageProps) {
     ? getCloudinaryUrl(src, { blur: true })
     : undefined;
 
+  // IMPORTANT FIX: Extract object-* classes to apply to the img tag, not the wrapper
+  const classNames = (className || "").split(" ");
+  const objectClasses = classNames.filter((c) => c.startsWith("object-"));
+  const wrapperClasses = classNames.filter((c) => !c.startsWith("object-"));
+
   return (
     <div
-      className={`relative overflow-hidden ${className || ""}`}
+      className={`relative overflow-hidden ${wrapperClasses.join(" ")}`}
       style={{
         aspectRatio:
           aspectRatio || (width && height ? width / height : undefined),
@@ -69,8 +74,10 @@ export function OptimizedImage(props: OptimizedImageProps) {
         srcSet={useCloudinary ? srcset : undefined}
         sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
         className={`w-full h-full ${
-          !priority ? "transition-opacity duration-700 ease-in-out" : ""
-        } ${
+          objectClasses.length > 0
+            ? objectClasses.join(" ")
+            : "object-cover object-center"
+        } ${!priority ? "transition-opacity duration-700 ease-in-out" : ""} ${
           useCloudinary
             ? isLoaded || priority
               ? "opacity-100"

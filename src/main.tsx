@@ -48,7 +48,20 @@ if (rootElement) {
   });
 }
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// OPTIMIZATION: Defer performance measuring to avoid blocking the main thread during initial load
+if (typeof window !== "undefined") {
+  // Use requestIdleCallback if available, fallback to 3s delay
+  const deferReport = () => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => reportWebVitals());
+    } else {
+      setTimeout(reportWebVitals, 3000);
+    }
+  };
+
+  if (document.readyState === "complete") {
+    deferReport();
+  } else {
+    window.addEventListener("load", deferReport);
+  }
+}

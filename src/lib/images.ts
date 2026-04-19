@@ -49,10 +49,13 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
     if (!priority) {
       transformations.push("dpr_auto");
     }
-    if (width) {
-      transformations.push(`w_${width}`);
+    // Only apply width and limit to non-SVG images to preserve vector proportions
+    if (!isSvg) {
+      if (width) {
+        transformations.push(`w_${width}`);
+      }
+      transformations.push("c_limit");
     }
-    transformations.push("c_limit");
   }
 
   // Case 1: YouTube

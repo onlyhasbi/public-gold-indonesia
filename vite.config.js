@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
         polyfill: true, // Ensures stable chunk loading across all browsers
       },
       // REQUIRED: Maintain mobile compatibility fix
-      target: ["es2020", "safari14"],
+      target: ["es2017", "chrome61", "ios11"],
       assetsInlineLimit: 8192,
       // PERFORMANCE: Using Terser for superior bundle compression compared to esbuild
       minify: "terser",
@@ -58,9 +58,24 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (id.includes("node_modules")) {
-              // CONSOLIDATED VENDOR STRATEGY:
-              // Group libraries into a vendor chunk to reduce mobile request count.
-              return "vendor";
+              if (id.includes("react") || id.includes("scheduler")) {
+                return "vendor-core";
+              }
+              if (id.includes("@tanstack")) {
+                return "vendor-tanstack";
+              }
+              if (id.includes("lucide")) {
+                return "vendor-icons";
+              }
+              if (
+                id.includes("motion") ||
+                id.includes("framer-motion") ||
+                id.includes("@radix-ui") ||
+                id.includes("embla-carousel")
+              ) {
+                return "vendor-ui";
+              }
+              return "vendor-utils";
             }
           },
         },

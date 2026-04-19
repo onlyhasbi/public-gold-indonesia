@@ -83,7 +83,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
               src="/logo.svg"
               alt="Public Gold"
               priority
-              className="h-14 w-auto group-hover:scale-105 transition-transform"
+              className="h-10 md:h-12 w-auto group-hover:scale-105 transition-transform object-contain shrink-0"
               width={200}
               height={56}
             />
@@ -162,15 +162,15 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
                       to="/register"
                       search={{ type: "dewasa", ref: pgbo?.pageid }}
                       preload="intent"
-                      className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
+                      className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-semibold no-underline"
                     >
                       <OptimizedImage
                         src="/dewasa.webp"
                         alt={t("nav.accountAdult")}
-                        className="w-5 h-5 object-cover rounded-full object-[center_10%]"
-                        width={20}
-                        height={20}
-                      />{" "}
+                        className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-[center_10%]"
+                        width={28}
+                        height={28}
+                      />
                       {t("nav.accountAdult")}
                     </Link>
                   }
@@ -181,15 +181,15 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
                       to="/register"
                       search={{ type: "anak", ref: pgbo?.pageid }}
                       preload="intent"
-                      className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
+                      className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-semibold no-underline"
                     >
                       <OptimizedImage
                         src="/anak.webp"
                         alt={t("nav.accountChild")}
-                        className="w-5 h-5 object-cover rounded-full object-[center_10%]"
-                        width={20}
-                        height={20}
-                      />{" "}
+                        className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-[center_10%]"
+                        width={28}
+                        height={28}
+                      />
                       {t("nav.accountChild")}
                     </Link>
                   }
