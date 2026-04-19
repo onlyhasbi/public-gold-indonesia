@@ -4,8 +4,6 @@ import { ArrowUp } from "lucide-react";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSetAtom } from "jotai";
-import { activeDealerAtom, goldPricesAtom } from "../store/dealerStore";
 
 const Benefit = lazy(() => import("../components/benefit"));
 const CallToAction = lazy(() => import("../components/cta"));
@@ -23,6 +21,7 @@ import { queryClient } from "../lib/queryClient";
 import { agentQueryOptions, goldPricesQueryOptions } from "../lib/queryOptions";
 import { cn } from "../lib/utils";
 import { useSEO } from "../hooks/useSEO";
+import { getCloudinaryUrl, getCloudinarySrcSet } from "../lib/images";
 
 export const Route = createFileRoute("/$pgcode")({
   component: App,
@@ -47,20 +46,11 @@ function App() {
   const pgcode = (matches.find((m) => m.routeId === "/$pgcode")?.params as any)
     ?.pgcode;
 
-  // Use atoms to keep data stable during unmounting
-  const setDealer = useSetAtom(activeDealerAtom);
-  const setGoldPrices = useSetAtom(goldPricesAtom);
-
   // If we're transitioning out, pgcode might be undefined
   if (!pgcode) return null;
 
   const { data: pgbo } = useSuspenseQuery(agentQueryOptions(pgcode));
   const { data: goldPrices } = useQuery(goldPricesQueryOptions());
-
-  useEffect(() => {
-    if (pgbo) setDealer(pgbo);
-    if (goldPrices) setGoldPrices(goldPrices);
-  }, [pgbo, goldPrices, setDealer, setGoldPrices]);
 
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -74,6 +64,38 @@ function App() {
     title,
     description,
     image: pgbo?.foto_profil_url,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "mainEntity": {
+        "@type": "Person",
+        "name": displayName,
+        "description": description,
+        "image": pgbo?.foto_profil_url,
+        "jobTitle": "Authorized Public Gold Dealer",
+        "identifier": pgbo?.pgcode,
+        "url": window.location.href,
+        "sameAs": [
+          pgbo?.sosmed_facebook,
+          pgbo?.sosmed_instagram,
+          pgbo?.sosmed_tiktok,
+        ].filter(Boolean),
+      },
+    },
+    preloadImages: pgbo?.foto_profil_url
+      ? [
+          {
+            src: getCloudinaryUrl(pgbo.foto_profil_url, {
+              width: 800,
+              priority: true,
+            }),
+            srcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
+              priority: true,
+            }),
+            sizes: "(max-width: 768px) 100vw, 800px",
+          },
+        ]
+      : undefined,
   });
 
   useEffect(() => {

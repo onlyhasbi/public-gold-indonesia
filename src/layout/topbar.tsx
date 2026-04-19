@@ -10,15 +10,23 @@ import { AppLink as Link } from "@/lib/router-wrappers";
 import { ChevronDown, Languages, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAtomValue } from "jotai";
-import { activeDealerAtom } from "@/store/dealerStore";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { agentQueryOptions } from "@/lib/queryOptions";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
 function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const atomPgbo = useAtomValue(activeDealerAtom);
-  const pgbo = propsPgbo || atomPgbo;
+  const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
+
+  const { data: pageid } = useQuery({
+    ...agentQueryOptions(pgcode || ""),
+    enabled: !!pgcode && !propsPgbo,
+    select: (data) => data?.pageid,
+  });
+
+  const pgbo = propsPgbo || { pageid };
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -153,6 +161,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
                     <Link
                       to="/register"
                       search={{ type: "dewasa", ref: pgbo?.pageid }}
+                      preload="intent"
                       className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
                     >
                       <OptimizedImage
@@ -171,6 +180,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
                     <Link
                       to="/register"
                       search={{ type: "anak", ref: pgbo?.pageid }}
+                      preload="intent"
                       className="flex items-center gap-3 px-3 py-3 text-sm text-slate-700 rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-600 transition-colors font-medium no-underline"
                     >
                       <OptimizedImage

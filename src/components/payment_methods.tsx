@@ -3,8 +3,9 @@ import { AppLink as Link } from "../lib/router-wrappers";
 import BaseLayout from "../layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
-import { useAtomValue } from "jotai";
-import { activeDealerAtom } from "../store/dealerStore";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { agentQueryOptions } from "../lib/queryOptions";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -21,8 +22,14 @@ const DISABLED_INDEXES = [2]; // EPP card (index 2) is temporarily disabled
 
 export default function PaymentMethods({ pgbo: propsPgbo }: { pgbo?: any }) {
   const { t } = useTranslation();
-  const atomPgbo = useAtomValue(activeDealerAtom);
-  const pgbo = propsPgbo || atomPgbo;
+  const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
+
+  const { data: qPgbo } = useQuery({
+    ...agentQueryOptions(pgcode || ""),
+    enabled: !!pgcode && !propsPgbo,
+  });
+
+  const pgbo = propsPgbo || qPgbo;
   const [isPrintCostModalOpen, setIsPrintCostModalOpen] = useState(false);
 
   const styleConfigs = [
@@ -141,6 +148,7 @@ export default function PaymentMethods({ pgbo: propsPgbo }: { pgbo?: any }) {
                       <Link
                         to="/register"
                         search={{ ref: pgbo?.pageid }}
+                        preload="intent"
                         className={cn(
                           buttonVariants({ variant: "outline" }),
                           "w-full h-12 rounded-xl font-bold transition-all duration-300 shadow-md",

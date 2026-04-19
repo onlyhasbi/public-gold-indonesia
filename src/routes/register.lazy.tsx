@@ -18,8 +18,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createLazyFileRoute, useSearch } from "@tanstack/react-router";
+import { agentQueryOptions } from "@/lib/queryOptions";
 import {
   AppLink as Link,
   useAppNavigate as useNavigate,
@@ -37,8 +38,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useAtomValue } from "jotai";
-import { activeDealerAtom } from "../store/dealerStore";
 import { NextStepModal } from "../components/NextStepModal";
 import { OptimizedImage } from "../components/ui/optimized-image";
 import NotFound from "../components/not_found";
@@ -63,8 +62,7 @@ function RegisterPage() {
   const { type, ref } = (search as unknown as RegisterSearch) || {};
   const navigate = useNavigate();
   const isAnak = type === "anak";
-  const atomDealer = useAtomValue(activeDealerAtom);
-
+  const queryClient = useQueryClient();
   const { data: referralData, isError: isReferralError } = useQuery({
     queryKey: ["referral", ref],
     queryFn: async () => {
@@ -81,8 +79,10 @@ function RegisterPage() {
     },
     enabled: !!ref,
     retry: false,
-    placeholderData:
-      atomDealer && atomDealer.pageid === ref ? atomDealer : undefined,
+    placeholderData: () => {
+      if (!ref) return undefined;
+      return queryClient.getQueryData(agentQueryOptions(ref).queryKey);
+    },
   });
 
   useEffect(() => {

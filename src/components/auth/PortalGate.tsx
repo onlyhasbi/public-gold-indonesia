@@ -1,20 +1,31 @@
 import { motion } from "motion/react";
 import { ArrowRight, ShieldAlert } from "lucide-react";
 import React, { useState } from "react";
-import { useAtom, useSetAtom } from "jotai";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import { api } from "../../lib/api";
 import {
-  isUnlockedAtom,
-  lockoutExpiryAtom,
-  attemptsAtom,
-} from "../../store/portalStore";
+  portalUnlockedOptions,
+  portalLockoutOptions,
+  portalAttemptsOptions,
+} from "../../lib/portalOptions";
 
 export function PortalGate() {
-  const setUnlocked = useSetAtom(isUnlockedAtom);
+  const queryClient = useQueryClient();
   const [lockoutTime, setLockoutTime] = useState<number>(0);
-  const [lockoutExpiry, setLockoutExpiry] = useAtom(lockoutExpiryAtom);
-  const [attempts, setAttempts] = useAtom(attemptsAtom);
+
+  const { data: lockoutExpiry } = useQuery(portalLockoutOptions());
+  const { data: attempts } = useQuery(portalAttemptsOptions());
+
+  const setUnlocked = (val: boolean) =>
+    queryClient.setQueryData(portalUnlockedOptions().queryKey, val);
+  const setLockoutExpiry = (val: number | null) =>
+    queryClient.setQueryData(portalLockoutOptions().queryKey, val);
+  const setAttempts = (val: number | ((prev: number) => number)) => {
+    queryClient.setQueryData(portalAttemptsOptions().queryKey, (old: any) =>
+      typeof val === "function" ? val(old ?? 0) : val,
+    );
+  };
 
   const [secretCode, setSecretCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -29,7 +40,7 @@ export function PortalGate() {
         setLockoutExpiry(null);
       }
     }
-  }, [lockoutExpiry, setLockoutExpiry]);
+  }, [lockoutExpiry]);
 
   React.useEffect(() => {
     if (lockoutTime > 0) {
@@ -47,7 +58,7 @@ export function PortalGate() {
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [lockoutTime, setLockoutExpiry, setAttempts]);
+  }, [lockoutTime]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -68,7 +79,7 @@ export function PortalGate() {
         setAttempts(0);
       }
     } catch (error: any) {
-      const newAttempts = attempts + 1;
+      const newAttempts = (attempts ?? 0) + 1;
       setAttempts(newAttempts);
       const isLockout = newAttempts >= 5;
       if (isLockout) {

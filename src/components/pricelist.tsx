@@ -15,8 +15,9 @@ import { Spinner } from "./ui/spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
-import { useAtomValue } from "jotai";
-import { activeDealerAtom } from "../store/dealerStore";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { agentQueryOptions } from "../lib/queryOptions";
 import BaseLayout from "../layout/base";
 import type { GoldPricesResult } from "../types";
 
@@ -207,8 +208,14 @@ const allProducts = [...dinar, ...goldbar];
 
 function PriceList({ price, pgbo: propsPgbo }: Props) {
   const { t, i18n } = useTranslation();
-  const atomPgbo = useAtomValue(activeDealerAtom);
-  const pgbo = propsPgbo || atomPgbo;
+  const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
+
+  const { data: qPgbo } = useQuery({
+    ...agentQueryOptions(pgcode || ""),
+    enabled: !!pgcode && !propsPgbo,
+  });
+
+  const pgbo = propsPgbo || qPgbo;
 
   const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
   const [priceMode, setPriceMode] = useState<"tabungan" | "tunai">("tabungan");
@@ -636,6 +643,7 @@ function PriceList({ price, pgbo: propsPgbo }: Props) {
                         search={{
                           ref: pgbo?.pageid || undefined,
                         }}
+                        preload="intent"
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
                           "h-[380px] sm:h-[420px] md:h-[500px]",

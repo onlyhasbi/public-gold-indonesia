@@ -9,13 +9,12 @@ import { AppLink as Link } from "../lib/router-wrappers";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState, lazy, Suspense } from "react";
-import { useAtomValue } from "jotai";
 import { Spinner } from "../components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 
 import { requireGuest } from "../lib/auth";
 import { PortalGate } from "../components/auth/PortalGate";
-import { isUnlockedAtom, lockoutExpiryAtom } from "../store/portalStore";
+import { portalUnlockedOptions, portalLockoutOptions } from "../lib/portalOptions";
 import { OptimizedImage } from "../components/ui/optimized-image";
 import { authDealerQueryOptions } from "../lib/queryOptions";
 
@@ -45,8 +44,8 @@ function LandingAuthPage() {
   const user = authData?.user;
   const token = authData?.token;
 
-  const isUnlocked = useAtomValue(isUnlockedAtom);
-  const lockoutExpiry = useAtomValue(lockoutExpiryAtom);
+  const { data: isUnlocked } = useQuery(portalUnlockedOptions());
+  const { data: lockoutExpiry } = useQuery(portalLockoutOptions());
   const lockoutTime =
     lockoutExpiry && lockoutExpiry > Date.now() ? lockoutExpiry : 0;
 

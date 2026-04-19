@@ -1,4 +1,5 @@
 import { useState, type ImgHTMLAttributes } from "react";
+import { getCloudinaryUrl, getCloudinarySrcSet } from "../../lib/images";
 
 export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   src: string;
@@ -8,109 +9,37 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   aspectRatio?: number;
 };
 
-/**
- * A high-performance image component that provides:
- * - Blur-Up technique (placeholder transitions)
- * - Automatic srcset (responsive sizes)
- * - Modern format selection (WebP/AVIF)
- * - Layout shift prevention (CLS)
- * - Optimal lazy loading
- */
 export function OptimizedImage(props: OptimizedImageProps) {
   const { src, className, priority, width, height, aspectRatio, ...rest } =
     props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
   if (!src) return null;
 
-  // Determine the type of the source
-  const isCloudinary = src.includes("res.cloudinary.com");
-  const isExternal =
-    (src.startsWith("http") || src.startsWith("//")) && !isCloudinary;
-  const isLocal = src.startsWith("/") && !src.startsWith("//");
   const isSvg = src.toLowerCase().endsWith(".svg");
+  const isLocal = src.startsWith("/") && !src.startsWith("//");
 
-  // Domains known to block Cloudinary fetch (hotlinking protection)
+  // Domains known to block Cloudinary fetch
   const BLOCKED_DOMAINS = ["chinapress.com.my"];
   const isBlockedDomain =
-    isExternal && BLOCKED_DOMAINS.some((domain) => src.includes(domain));
-
-  // If it's not a URL and not a local path, assume it's a Cloudinary Public ID
-  const isPublicId = [!isExternal, !isCloudinary, !isLocal, !isSvg].every(
-    Boolean,
-  );
-
-  // Construction helpers
-  const getUrl = (w?: number, blur?: boolean) => {
-    const transformations = ["f_auto"];
-
-    if (blur) {
-      // Extremely lightweight placeholder
-      transformations.push("e_blur:2000", "w_20", "q_auto:low");
-    } else {
-      // Use standard q_auto for better compatibility with preloads
-      transformations.push(priority ? "q_auto" : "q_auto:eco");
-
-      // dpr_auto can cause preload mismatches because HTML preloads don't know the DPR.
-      // We disable it for priority images to ensure URL consistency.
-      if (!priority) {
-        transformations.push("dpr_auto");
-      }
-
-      if (w) {
-        transformations.push(`w_${w}`);
-      }
-
-      // c_limit should be at the end to match Backend's optimizeImageUrl logic
-      transformations.push("c_limit");
-    }
-
-    // Case 1: YouTube URL
-    const ytMatch = src.match(/(?:ytimg\.com|youtube\.com)\/vi\/([^/]+)/);
-    if (ytMatch && ytMatch[1]) {
-      return `https://res.cloudinary.com/${CLOUD_NAME}/image/youtube/${transformations.join(",")}/${ytMatch[1]}.jpg`;
-    }
-
-    // Case 2: Existing Cloudinary URL - inject transformations
-    if (isCloudinary) {
-      const isUpload = src.includes("/upload/");
-      const isFetch = src.includes("/fetch/");
-      const token = isUpload ? "/upload/" : isFetch ? "/fetch/" : null;
-
-      if (token) {
-        const parts = src.split(token);
-        const resourcePath = parts[1];
-        return `${parts[0]}${token}${transformations.join(",")}/${resourcePath}`;
-      }
-    }
-
-    // Case 3: Local asset - fetch using full domain (Production only)
-    if (isLocal && !import.meta.env.DEV) {
-      const fullUrl = `${window.location.origin}${src}`;
-      return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/${transformations.join(",")}/${encodeURIComponent(fullUrl)}`;
-    }
-
-    // Case 4: Cloudinary Public ID or External fetch
-    const fetchType = isPublicId ? "upload" : "fetch";
-    return `https://res.cloudinary.com/${CLOUD_NAME}/image/${fetchType}/${transformations.join(",")}/${isPublicId ? src : encodeURIComponent(src)}`;
-  };
+    (src.startsWith("http") || src.startsWith("//")) &&
+    BLOCKED_DOMAINS.some((domain) => src.includes(domain));
 
   const defaultWidth = width || 800;
   // Optimize local assets via Cloudinary ONLY in production and if not an SVG
   const canOptimizeLocal = isLocal && !isSvg && !import.meta.env.DEV;
   // Disable Cloudinary if error occurred OR if domain is known to be blocked
   const useCloudinary =
-    !hasError &&
-    !isBlockedDomain &&
-    (isExternal || isCloudinary || canOptimizeLocal || isPublicId);
+    !hasError && !isBlockedDomain && (!isLocal || canOptimizeLocal || isSvg);
 
   const srcset = useCloudinary
-    ? [400, 800, 1200, 1600].map((w) => `${getUrl(w)} ${w}w`).join(", ")
+    ? getCloudinarySrcSet(src, { priority })
     : undefined;
 
-  const placeholderUrl = useCloudinary ? getUrl(undefined, true) : undefined;
+  const placeholderUrl = useCloudinary
+    ? getCloudinaryUrl(src, { blur: true })
+    : undefined;
 
   return (
     <div
@@ -132,7 +61,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
       {/* 2. Main High-Res Image */}
       <img
-        src={useCloudinary ? getUrl(defaultWidth) : src}
+        src={useCloudinary ? getCloudinaryUrl(src, { width: defaultWidth, priority }) : src}
         srcSet={useCloudinary ? srcset : undefined}
         sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
         className={`w-full h-full ${

@@ -2,8 +2,9 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import BaseLayout from "../layout/base";
 import { useTranslation } from "react-i18next";
-import { useAtomValue } from "jotai";
-import { activeDealerAtom } from "../store/dealerStore";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { agentQueryOptions } from "../lib/queryOptions";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
@@ -21,8 +22,21 @@ interface PgboData {
 
 export default function CallToAction({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
-  const atomPgbo = useAtomValue(activeDealerAtom);
-  const pgbo = propsPgbo || atomPgbo;
+  const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
+
+  const { data: qPgbo } = useQuery({
+    ...agentQueryOptions(pgcode || ""),
+    enabled: !!pgcode && !propsPgbo,
+    select: (data) => ({
+      pageid: data?.pageid,
+      nama_lengkap: data?.nama_lengkap,
+      foto_profil_url: data?.foto_profil_url,
+      no_telpon: data?.no_telpon,
+      link_group_whatsapp: data?.link_group_whatsapp,
+    }),
+  });
+
+  const pgbo = propsPgbo || qPgbo;
 
   const hasPhoto = !!pgbo?.foto_profil_url;
   const displayName = pgbo?.nama_lengkap || "Authorized Dealer";

@@ -36,7 +36,7 @@ persistQueryClient({
     // ONLY persist authentication queries.
     // This includes data under ['auth', 'dealer'] and ['auth', 'admin'].
     shouldDehydrateQuery: (query) => {
-      return query.queryKey[0] === "auth";
+      return query.queryKey[0] === "auth" || query.queryKey[0] === "portal";
     },
   },
   // Ensure that old stale auth data is discarded if it's too old (e.g., 24h)
@@ -49,3 +49,19 @@ persistQueryClient({
 setTimeout(() => {
   resolveHydration();
 }, 1);
+
+/**
+ * TAB SYNCHRONIZATION: Listen for cache updates from other tabs.
+ * This ensures that if the portal is unlocked in Tab A, Tab B updates instantly.
+ */
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key === "PUBLIC_GOLD_QUERY_CACHE") {
+      // Small delay to ensure localStorage is fully updated before invalidating
+      setTimeout(() => {
+        // We only invalidate 'portal' queries as they are the most critical for multi-tab consistency
+        queryClient.invalidateQueries({ queryKey: ["portal"] });
+      }, 100);
+    }
+  });
+}
