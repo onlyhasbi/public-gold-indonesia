@@ -7,6 +7,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
 
+// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === "production";
 
@@ -16,7 +17,9 @@ export default defineConfig(({ mode }) => {
       tanstackRouter({ autoCodeSplitting: true }),
       viteReact(),
       tailwindcss(),
+      // Gzip compression for static assets
       isProduction && compression({ algorithm: "gzip", ext: ".gz" }),
+      // Brotli compression for modern browsers
       isProduction && compression({ algorithm: "brotliCompress", ext: ".br" }),
       isProduction &&
         ViteImageOptimizer({
@@ -34,7 +37,7 @@ export default defineConfig(({ mode }) => {
             ],
           },
         }),
-      // Visualizer membantu melihat ukuran bundle saat menggunakan Bun
+      // Visualizer helps audit bundle sizes in production
       isProduction &&
         visualizer({
           filename: "stats.html",
@@ -45,20 +48,33 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
-      // Bun sangat cepat dalam resolusi modul, pastikan ekstensi ini diprioritaskan
       extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
     },
     build: {
       emptyOutDir: true,
-      target: "esnext", // Bun mendukung fitur JS terbaru, esnext lebih optimal
+      manifest: true, // Required for backend-frontend synchronization
+      modulePreload: {
+        polyfill: true, // Ensures stable chunk loading across all browsers
+      },
+      target: "es2022", // Vercel-Stable target (avoid esnext for better compatibility)
       minify: "esbuild",
       sourcemap: !isProduction,
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes("node_modules")) {
-              if (id.includes("react")) return "vendor-core";
-              if (id.includes("@tanstack")) return "vendor-tanstack";
+              // Group core libraries together for deterministic initialization
+              // This prevents 'undefined' reference crashes in production
+              if (
+                id.match(
+                  /node_modules\/(react|react-dom|@tanstack\/react-router|jotai|@tanstack\/react-query)/,
+                )
+              ) {
+                return "vendor-core";
+              }
+              if (id.includes("lucide-react") || id.includes("motion")) {
+                return "vendor-ui";
+              }
               return "vendor-utils";
             }
           },
@@ -66,13 +82,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     esbuild: {
-      // Bun/Esbuild akan menghapus log di production
+      // Production logs removal
       drop: isProduction ? ["console", "debugger"] : [],
-      // Mengoptimalkan JSX untuk Bun
-      jsxSideEffects: false,
     },
     server: {
-      // Bun sangat cepat dalam HMR (Hot Module Replacement)
       hmr: true,
       proxy: {
         "/api-proxy-my": {
