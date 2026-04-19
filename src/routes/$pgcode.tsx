@@ -144,7 +144,11 @@ function App() {
         </section>
       </Suspense>
 
-      <Suspense fallback={<div className="min-h-[600px] flex items-center justify-center bg-slate-50/50 rounded-3xl animate-pulse" />}>
+      <Suspense
+        fallback={
+          <div className="min-h-[600px] flex items-center justify-center bg-slate-50/50 rounded-3xl animate-pulse" />
+        }
+      >
         <section id="products" className="scroll-mt-20">
           <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
         </section>
