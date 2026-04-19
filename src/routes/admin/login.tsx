@@ -59,11 +59,11 @@ function AdminLoginPage() {
     onSuccess: (data) => {
       if (data.success && data.user?.role === "admin") {
         // UNIFIED PERSISTENCE: Just set query data.
-        // The persister handles synchronization with admin_ keys if needed, 
+        // The persister handles synchronization with admin_ keys if needed,
         // but here we use a single cache key 'auth' with 'admin' suffix.
         queryClient.setQueryData(authAdminQueryOptions().queryKey, {
           user: data.user,
-          token: data.token
+          token: data.token,
         });
 
         navigate({ to: "/admin" });

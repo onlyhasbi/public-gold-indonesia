@@ -29,7 +29,8 @@ api.interceptors.request.use((config) => {
   const token = authData?.token;
 
   if (token && !config.headers.Authorization) {
-    const cleanToken = typeof token === "string" ? token.replace(/^"|"$/g, "") : token;
+    const cleanToken =
+      typeof token === "string" ? token.replace(/^"|"$/g, "") : token;
     config.headers.Authorization = `Bearer ${cleanToken}`;
   }
   return config;

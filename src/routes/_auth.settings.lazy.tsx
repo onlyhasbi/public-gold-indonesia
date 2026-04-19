@@ -50,7 +50,10 @@ import { dialCodeOptions } from "../constant/countries";
 import { useSEO } from "../hooks/useSEO";
 import { api } from "../lib/api";
 import { formatPhoneForAPI } from "../lib/phone";
-import { authDealerQueryOptions, settingsQueryOptions } from "../lib/queryOptions";
+import {
+  authDealerQueryOptions,
+  settingsQueryOptions,
+} from "../lib/queryOptions";
 import { cn } from "../lib/utils";
 
 export interface SettingsFormValues {
@@ -164,13 +167,16 @@ function SettingsPage() {
     onSuccess: async (data: any) => {
       if (data.profile.success) {
         queryClient.invalidateQueries({ queryKey: ["settings"] });
-        
+
         // UNIFIED PERSISTENCE: Update the auth cache.
         // The persister handles synchronization with localStorage automatically.
-        queryClient.setQueryData(authDealerQueryOptions().queryKey, (prev: any) => {
-          if (!prev) return { user: data.profile.data, token: null };
-          return { ...prev, user: { ...prev.user, ...data.profile.data } };
-        });
+        queryClient.setQueryData(
+          authDealerQueryOptions().queryKey,
+          (prev: any) => {
+            if (!prev) return { user: data.profile.data, token: null };
+            return { ...prev, user: { ...prev.user, ...data.profile.data } };
+          },
+        );
 
         const profileFieldsChanged =
           Object.keys(dirtyFields).some(

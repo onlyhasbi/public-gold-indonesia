@@ -43,7 +43,7 @@ export const overviewQueryOptions = (search?: string) =>
     queryKey: ["overview", search],
     queryFn: async () => {
       const res = await api.get(
-         `/overview${search ? `?search=${encodeURIComponent(search)}` : ""}`,
+        `/overview${search ? `?search=${encodeURIComponent(search)}` : ""}`,
       );
       return res.data?.data;
     },
@@ -66,7 +66,7 @@ export const settingsQueryOptions = () =>
 /**
  * AUTH PROFILE QUERIES
  * We use staleTime: Infinity to ensure the profile is fetched once and cached.
- * Stride: These queries store { user, token }. 
+ * Stride: These queries store { user, token }.
  * If the cache is empty, we only fetch the user as the token is credentials.
  */
 

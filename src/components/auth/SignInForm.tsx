@@ -53,12 +53,12 @@ export function SignInForm() {
           );
           return;
         }
-        
-        // UNIFIED PERSISTENCE: Just set query data. 
+
+        // UNIFIED PERSISTENCE: Just set query data.
         // persistQueryClient handles the localStorage automatically now.
         queryClient.setQueryData(authDealerQueryOptions().queryKey, {
           user: data.user,
-          token: data.token
+          token: data.token,
         });
 
         navigate({ to: "/overview" });

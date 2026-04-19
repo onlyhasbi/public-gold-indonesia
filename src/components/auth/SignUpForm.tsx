@@ -63,7 +63,7 @@ export function SignUpForm({
           );
           return;
         }
-        
+
         // Check if user is active (waiting for admin)
         if (
           data.user?.is_active === false ||
@@ -96,9 +96,9 @@ export function SignUpForm({
               // UNIFIED PERSISTENCE: Just set query data.
               queryClient.setQueryData(authDealerQueryOptions().queryKey, {
                 user: loginData.user,
-                token: loginData.token
+                token: loginData.token,
               });
-              
+
               showToast("Registrasi berhasil dan Anda telah masuk!", "success");
               navigate({ to: "/overview" });
             } else {

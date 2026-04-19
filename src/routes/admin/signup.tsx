@@ -78,7 +78,7 @@ function AdminSignupPage() {
               // UNIFIED PERSISTENCE: Just set query data.
               queryClient.setQueryData(authAdminQueryOptions().queryKey, {
                 user: loginData.user,
-                token: loginData.token
+                token: loginData.token,
               });
 
               showToast("Admin account created and logged in!", "success");

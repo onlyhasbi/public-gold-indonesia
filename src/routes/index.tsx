@@ -1,6 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createFileRoute, useSearch, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useSearch,
+  useNavigate,
+} from "@tanstack/react-router";
 import { AppLink as Link } from "../lib/router-wrappers";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -35,7 +39,7 @@ export const Route = createFileRoute("/")({
 function LandingAuthPage() {
   const { mode } = useSearch({ from: "/" });
   const navigate = useNavigate();
-  
+
   // Use React Query for session detection (Unified Persistence)
   const { data: authData } = useQuery(authDealerQueryOptions());
   const user = authData?.user;

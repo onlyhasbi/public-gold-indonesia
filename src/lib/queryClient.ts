@@ -8,7 +8,7 @@ import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persist
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Ensuring stale state doesn't trigger unexpected background refetches 
+      // Ensuring stale state doesn't trigger unexpected background refetches
       // during initial hydration of sensitive auth data.
       staleTime: 1000 * 60 * 5, // 5 minutes default
     },

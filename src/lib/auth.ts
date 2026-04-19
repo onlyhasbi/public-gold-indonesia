@@ -10,7 +10,7 @@ export const purgeAllSessions = () => {
   // Clear React Query Cache and persist to storage
   queryClient.removeQueries({ queryKey: ["auth"] });
   queryClient.clear();
-  
+
   // Explicitly clear specific raw keys just in case of any legacy residuals
   if (typeof window !== "undefined") {
     localStorage.removeItem("PUBLIC_GOLD_QUERY_CACHE");
@@ -35,7 +35,9 @@ export const clearAuthAndRedirect = () => {
 export async function requireAuth() {
   try {
     // Ensure we have the latest user data (hydrated from cache or fetched)
-    const authData = await queryClient.ensureQueryData(authDealerQueryOptions());
+    const authData = await queryClient.ensureQueryData(
+      authDealerQueryOptions(),
+    );
 
     if (!authData || !authData.token || !authData.user) {
       clearAuthAndRedirect();
