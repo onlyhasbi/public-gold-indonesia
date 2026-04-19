@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => {
         },
         format: {
           comments: false,
-        }
+        },
       },
     },
     esbuild: {
