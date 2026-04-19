@@ -1,4 +1,9 @@
-import { Link, type LinkProps, useNavigate, type NavigateOptions } from "@tanstack/react-router";
+import {
+  Link,
+  type LinkProps,
+  useNavigate,
+  type NavigateOptions,
+} from "@tanstack/react-router";
 import React from "react";
 
 /**
@@ -7,8 +12,10 @@ import React from "react";
  * from the absolute root and prevents 'Could not find match for from' warnings
  * during route transitions.
  */
-export function AppLink(props: LinkProps & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  return <Link from="/" { ...props } />;
+export function AppLink(
+  props: LinkProps & React.AnchorHTMLAttributes<HTMLAnchorElement>,
+) {
+  return <Link from="/" {...props} />;
 }
 
 /**

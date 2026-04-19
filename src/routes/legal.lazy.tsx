@@ -1,5 +1,8 @@
 import { createLazyFileRoute, useSearch } from "@tanstack/react-router";
-import { AppLink as Link, useAppNavigate as useNavigate } from "../lib/router-wrappers";
+import {
+  AppLink as Link,
+  useAppNavigate as useNavigate,
+} from "../lib/router-wrappers";
 import { useSEO } from "../hooks/useSEO";
 import {
   FileText,

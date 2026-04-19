@@ -22,21 +22,25 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  
+
   if (!src) return null;
 
   // Determine the type of the source
   const isCloudinary = src.includes("res.cloudinary.com");
-  const isExternal = (src.startsWith("http") || src.startsWith("//")) && !isCloudinary;
+  const isExternal =
+    (src.startsWith("http") || src.startsWith("//")) && !isCloudinary;
   const isLocal = src.startsWith("/") && !src.startsWith("//");
   const isSvg = src.toLowerCase().endsWith(".svg");
 
   // Domains known to block Cloudinary fetch (hotlinking protection)
   const BLOCKED_DOMAINS = ["chinapress.com.my"];
-  const isBlockedDomain = isExternal && BLOCKED_DOMAINS.some(domain => src.includes(domain));
+  const isBlockedDomain =
+    isExternal && BLOCKED_DOMAINS.some((domain) => src.includes(domain));
 
   // If it's not a URL and not a local path, assume it's a Cloudinary Public ID
-  const isPublicId = [!isExternal , !isCloudinary , !isLocal , !isSvg].every(Boolean);
+  const isPublicId = [!isExternal, !isCloudinary, !isLocal, !isSvg].every(
+    Boolean,
+  );
 
   // Construction helpers
   const getUrl = (w?: number, blur?: boolean) => {
@@ -86,7 +90,10 @@ export function OptimizedImage(props: OptimizedImageProps) {
   // Optimize local assets via Cloudinary ONLY in production and if not an SVG
   const canOptimizeLocal = isLocal && !isSvg && !import.meta.env.DEV;
   // Disable Cloudinary if error occurred OR if domain is known to be blocked
-  const useCloudinary = !hasError && !isBlockedDomain && (isExternal || isCloudinary || canOptimizeLocal || isPublicId);
+  const useCloudinary =
+    !hasError &&
+    !isBlockedDomain &&
+    (isExternal || isCloudinary || canOptimizeLocal || isPublicId);
 
   const srcset = useCloudinary
     ? [400, 800, 1200, 1600].map((w) => `${getUrl(w)} ${w}w`).join(", ")

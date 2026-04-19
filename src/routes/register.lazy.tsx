@@ -19,11 +19,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { createLazyFileRoute, useSearch } from "@tanstack/react-router";
 import {
-  createLazyFileRoute,
-  useSearch,
-} from "@tanstack/react-router";
-import { AppLink as Link, useAppNavigate as useNavigate } from "../lib/router-wrappers";
+  AppLink as Link,
+  useAppNavigate as useNavigate,
+} from "../lib/router-wrappers";
 import {
   AlertCircle,
   ArrowLeft,
@@ -79,7 +79,8 @@ function RegisterPage() {
     },
     enabled: !!ref,
     retry: false,
-    placeholderData: atomDealer && atomDealer.pageid === ref ? atomDealer : undefined,
+    placeholderData:
+      atomDealer && atomDealer.pageid === ref ? atomDealer : undefined,
   });
 
   useEffect(() => {
