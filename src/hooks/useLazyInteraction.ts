@@ -20,11 +20,17 @@ export function useLazyInteraction() {
       window.removeEventListener("keydown", handleInitialInteraction);
     };
 
-    // Listen to real human behavior 
+    // Listen to real human behavior
     window.addEventListener("scroll", handleInitialInteraction, { once: true });
-    window.addEventListener("mousemove", handleInitialInteraction, { once: true });
-    window.addEventListener("touchstart", handleInitialInteraction, { once: true });
-    window.addEventListener("keydown", handleInitialInteraction, { once: true });
+    window.addEventListener("mousemove", handleInitialInteraction, {
+      once: true,
+    });
+    window.addEventListener("touchstart", handleInitialInteraction, {
+      once: true,
+    });
+    window.addEventListener("keydown", handleInitialInteraction, {
+      once: true,
+    });
 
     return () => {
       window.removeEventListener("scroll", handleInitialInteraction);
