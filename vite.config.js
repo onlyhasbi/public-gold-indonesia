@@ -20,11 +20,12 @@ export default defineConfig(({ mode }) => {
       tanstackRouter({ autoCodeSplitting: true }),
       viteReact(),
       tailwindcss(),
-      isProduction && viteCompression({
-        algorithm: "gzip",
-        ext: ".gz",
-        threshold: 10240,
-      }),
+      isProduction &&
+        viteCompression({
+          algorithm: "gzip",
+          ext: ".gz",
+          threshold: 10240,
+        }),
     ],
     resolve: {
       alias: {
@@ -44,17 +45,19 @@ export default defineConfig(({ mode }) => {
       assetsInlineLimit: 4096,
       // PERFORMANCE: Menggunakan ESBuild minifier menghasilkan proses build 10x-100x lebih cepat dibandingkan Terser
       minify: isProduction ? "terser" : "esbuild",
-      terserOptions: isProduction ? {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-          pure_funcs: ["console.log", "console.info", "console.debug"],
-          passes: 2, 
-          toplevel: false,
-        },
-        format: { comments: false },
-        mangle: { safari10: true },
-      } : undefined,
+      terserOptions: isProduction
+        ? {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ["console.log", "console.info", "console.debug"],
+              passes: 2,
+              toplevel: false,
+            },
+            format: { comments: false },
+            mangle: { safari10: true },
+          }
+        : undefined,
     },
     esbuild: {
       // Production logs removal
@@ -77,7 +80,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: true,
           rewrite: (p) => p.replace(/^\/api-proxy/, ""),
-        }
+        },
       },
     },
   };
