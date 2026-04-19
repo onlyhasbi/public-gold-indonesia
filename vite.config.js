@@ -80,46 +80,7 @@ export default defineConfig(({ mode }) => ({
     cssMinify: "lightningcss",
     target: "es2022",
     assetsInlineLimit: 8192,
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: mode === "production",
-        drop_debugger: mode === "production",
-        pure_funcs: mode === "production" ? ["console.log"] : [],
-        passes: 1,
-      },
-      toplevel: false,
-      module: true,
-    },
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            // Group core libraries together to ensure deterministic initialization
-            if (
-              id.match(
-                /node_modules\/(react|react-dom|@tanstack\/react-router|jotai|@tanstack\/react-query)/,
-              )
-            ) {
-              return "vendor-core";
-            }
-            if (id.includes("lucide-react") || id.includes("motion")) {
-              return "vendor-ui";
-            }
-            if (id.includes("@base-ui")) {
-              return "vendor-base-ui";
-            }
-            if (id.includes("yup") || id.includes("@hookform")) {
-              return "vendor-form";
-            }
-            if (id.includes("embla-carousel")) {
-              return "vendor-carousel";
-            }
-            return "vendor";
-          }
-        },
-      },
-    },
+    minify: "esbuild",
   },
   server: {
     proxy: {
