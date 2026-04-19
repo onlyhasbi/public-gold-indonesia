@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { authTokenAtom, authUserAtom } from "../store/authStore";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState, Suspense } from "react";
 import { overviewQueryOptions } from "../lib/queryOptions";
@@ -40,6 +42,10 @@ export const Route = createFileRoute("/_auth/overview")({
 
 function OverviewPage() {
   const navigate = useNavigate();
+  const setToken = useSetAtom(authTokenAtom);
+  const setUser = useSetAtom(authUserAtom);
+  const user = useAtomValue(authUserAtom) || ({} as any);
+
   const [serverSearch, setServerSearch] = useState("");
   const debouncedSearch = useDebounce(serverSearch, 500);
   const { data: overviewData } = useSuspenseQuery(
@@ -52,18 +58,12 @@ function OverviewPage() {
 
   const handleLogout = () => {
     queryClient.clear();
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    setToken(null);
+    setUser(null);
     navigate({ to: "/" });
   };
 
-  const user = (() => {
-    try {
-      return JSON.parse(localStorage.getItem("user") || "{}");
-    } catch {
-      return {};
-    }
-  })();
+
 
   return (
     <div className="min-h-screen bg-slate-50">

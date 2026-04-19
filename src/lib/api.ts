@@ -1,5 +1,15 @@
 import axios from "axios";
 
+import { getDefaultStore } from "jotai";
+import {
+  authTokenAtom,
+  adminTokenAtom,
+  authUserAtom,
+  adminUserAtom,
+} from "../store/authStore";
+
+const store = getDefaultStore();
+
 const url = import.meta.env.VITE_API_URL || "http://localhost:3000";
 // Carefully join the URL and /api segment, avoiding double slashes or missing ones
 const cleanUrl = url.replace(/\/+$/, "");
@@ -11,12 +21,17 @@ export const api = axios.create({
 });
 
 // Attach JWT token to every request
-// IMPORTANT: Don't overwrite Authorization if already explicitly set (e.g. admin routes)
 api.interceptors.request.use((config) => {
-  const rawToken = localStorage.getItem("token");
-  const token = rawToken ? rawToken.replace(/^"|"$/g, "") : null;
+  const path = window.location.pathname;
+
+  // Choose token based on route
+  const token = path.startsWith("/admin")
+    ? store.get(adminTokenAtom)
+    : store.get(authTokenAtom);
+
   if (token && !config.headers.Authorization) {
-    config.headers.Authorization = `Bearer ${token}`;
+    const cleanToken = token.replace(/^"|"$/g, "");
+    config.headers.Authorization = `Bearer ${cleanToken}`;
   }
   return config;
 });
@@ -31,11 +46,13 @@ api.interceptors.response.use(
 
       // Admin pages handle their own auth flow — don't interfere
       if (path.startsWith("/admin")) {
+        store.set(adminTokenAtom, null);
+        store.set(adminUserAtom, null);
         return Promise.reject(error);
       }
 
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      store.set(authTokenAtom, null);
+      store.set(authUserAtom, null);
 
       // If we're on a protected route, the app should naturally
       // redirect on next navigation or route guard check.

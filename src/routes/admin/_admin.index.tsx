@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { adminTokenAtom, adminUserAtom } from "../../store/authStore";
 import {
   useQuery,
   useMutation,
@@ -106,6 +108,10 @@ function AdminDashboard() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
+  const adminToken = useAtomValue(adminTokenAtom);
+  const setAdminToken = useSetAtom(adminTokenAtom);
+  const setAdminUser = useSetAtom(adminUserAtom);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pgboToDelete, setPgboToDelete] = useState<string | null>(null);
   const [pgboToEdit, setPgboToEdit] = useState<any | null>(null);
@@ -150,7 +156,7 @@ function AdminDashboard() {
     queryFn: async () => {
       const res = await api.get("/admin/settings/secret-code", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
         },
       });
       return res.data?.data || { code: "", auto_rotate: false };
@@ -169,7 +175,7 @@ function AdminDashboard() {
     mutationFn: async (payload: { code: string; auto_rotate: boolean }) => {
       const res = await api.patch("/admin/settings/secret-code", payload, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
         },
       });
       return res.data;
@@ -207,7 +213,7 @@ function AdminDashboard() {
         `/admin/pgbo/check-pageid?pageid=${pageid}${excludeId ? `&excludeId=${excludeId}` : ""}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
@@ -221,8 +227,7 @@ function AdminDashboard() {
     document.title = "Dashboard Super Admin | Public Gold Indonesia";
   }, []);
 
-  const adminToken =
-    localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || "";
+
 
   const [serverSearch, setServerSearch] = useState("");
   const debouncedSearch = useDebounce(serverSearch, 500);
@@ -239,7 +244,7 @@ function AdminDashboard() {
         `/admin/pgbo${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ""}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
@@ -254,17 +259,17 @@ function AdminDashboard() {
   useEffect(() => {
     if (isError) {
       if ((error as any).response?.status === 401) {
-        localStorage.removeItem("admin_token");
-        localStorage.removeItem("admin_user");
+        setAdminToken(null);
+        setAdminUser(null);
         navigate({ to: "/admin/login" });
       }
     }
-  }, [isError, error, navigate]);
+  }, [isError, error, navigate, setAdminToken, setAdminUser]);
 
   const handleLogout = () => {
     queryClient.clear();
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_user");
+    setAdminToken(null);
+    setAdminUser(null);
     navigate({ to: "/admin/login" });
   };
 
@@ -273,7 +278,7 @@ function AdminDashboard() {
     mutationFn: async (id: string) => {
       const res = await api.delete(`/admin/pgbo/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
         },
       });
       return res.data;
@@ -297,7 +302,7 @@ function AdminDashboard() {
     mutationFn: async (id: string) => {
       const res = await api.patch(`/admin/pgbo/${id}/toggle`, null, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
         },
       });
       return res.data;
@@ -322,7 +327,7 @@ function AdminDashboard() {
         { ids },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
@@ -350,7 +355,7 @@ function AdminDashboard() {
         { ids, active },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
           },
         },
       );
@@ -393,7 +398,7 @@ function AdminDashboard() {
     mutationFn: async (data: any) => {
       const res = await api.post("/admin/pgbo", data, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
         },
       });
       return res.data;
@@ -447,7 +452,7 @@ function AdminDashboard() {
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
       const res = await api.put(`/admin/pgbo/${id}`, data, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("admin_token")?.replace(/^"|"$/g, "") || ""}`,
+          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
         },
       });
       return res.data;
