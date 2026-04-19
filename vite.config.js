@@ -18,28 +18,35 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       isProduction && compression({ algorithm: "gzip", ext: ".gz" }),
       isProduction && compression({ algorithm: "brotliCompress", ext: ".br" }),
-      isProduction && ViteImageOptimizer({
-        webp: { quality: 80 },
-        avif: { quality: 70 },
-        svg: {
-          multipass: true,
-          plugins: [
-            { name: "preset-default", params: { overrides: { cleanupIds: false, removeViewBox: false } } },
-          ],
-        },
-      }),
+      isProduction &&
+        ViteImageOptimizer({
+          webp: { quality: 80 },
+          avif: { quality: 70 },
+          svg: {
+            multipass: true,
+            plugins: [
+              {
+                name: "preset-default",
+                params: {
+                  overrides: { cleanupIds: false, removeViewBox: false },
+                },
+              },
+            ],
+          },
+        }),
       // Visualizer membantu melihat ukuran bundle saat menggunakan Bun
-      isProduction && visualizer({
-        filename: "stats.html",
-        gzipSize: true,
-      }),
+      isProduction &&
+        visualizer({
+          filename: "stats.html",
+          gzipSize: true,
+        }),
     ].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
       // Bun sangat cepat dalam resolusi modul, pastikan ekstensi ini diprioritaskan
-      extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json']
+      extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
     },
     build: {
       emptyOutDir: true,
