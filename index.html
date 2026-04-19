@@ -28,14 +28,15 @@
         var path = window.location.pathname;
         // PUBLIC PAGES: Bypass loader immediately to maximize LCP
         var isAuth =
-          path.includes("/overview") || 
-          path.includes("/settings") || 
+          path.includes("/overview") ||
+          path.includes("/settings") ||
           path.includes("/admin");
-          
+
         if (!isAuth) {
           var style = document.createElement("style");
           style.id = "lcp-bypass";
-          style.innerHTML = "#initial-loader { display: none !important; opacity: 0; visibility: hidden; }";
+          style.innerHTML =
+            "#initial-loader { display: none !important; opacity: 0; visibility: hidden; }";
           document.head.appendChild(style);
         }
       })();
