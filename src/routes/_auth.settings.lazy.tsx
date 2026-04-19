@@ -194,13 +194,14 @@ function SettingsPage() {
             });
             if (pwdRes.data.success) {
               passwordUpdated = true;
+              // Reset password fields only after confirmed success
               setValue("katasandi_lama", "");
               setValue("katasandi_baru", "");
               setValue("konfirmasi_katasandi", "");
             } else {
               showToast(
                 pwdRes.data.message || "Gagal memperbarui kata sandi",
-                "warning",
+                "error",
               );
             }
           } catch (err: any) {

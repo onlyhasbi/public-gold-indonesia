@@ -39,7 +39,12 @@ export function PasswordCard({ register, errors, watch }: PasswordCardProps) {
           <div className="relative">
             <Input
               type={showOld ? "text" : "password"}
-              {...register("katasandi_lama")}
+              {...register("katasandi_lama", {
+                validate: (val) => {
+                  if (passwordBaru && !val) return "Kata sandi lama wajib diisi";
+                  return true;
+                },
+              })}
               className={cn(
                 "pr-10",
                 errors.katasandi_lama && "border-red-400 bg-red-50/50",
