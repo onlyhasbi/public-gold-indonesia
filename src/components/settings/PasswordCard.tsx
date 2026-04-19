@@ -41,7 +41,8 @@ export function PasswordCard({ register, errors, watch }: PasswordCardProps) {
               type={showOld ? "text" : "password"}
               {...register("katasandi_lama", {
                 validate: (val) => {
-                  if (passwordBaru && !val) return "Kata sandi lama wajib diisi";
+                  if (passwordBaru && !val)
+                    return "Kata sandi lama wajib diisi";
                   return true;
                 },
               })}
