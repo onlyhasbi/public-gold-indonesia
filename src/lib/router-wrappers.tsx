@@ -1,10 +1,9 @@
-import {
-  Link,
-  type LinkProps,
-  useNavigate,
-  type NavigateOptions,
-} from "@tanstack/react-router";
-import React from "react";
+import { createLink, Link, useNavigate, type NavigateOptions } from "@tanstack/react-router";
+
+// We use createLink from TanStack Router which is the official way to create 
+// a type-safe wrapper for the Link component while preserving all generics 
+// and autocomplete features.
+const CreatedLink = createLink(Link);
 
 /**
  * AppLink is a wrapper around the standard Link component that defaults
@@ -12,11 +11,9 @@ import React from "react";
  * from the absolute root and prevents 'Could not find match for from' warnings
  * during route transitions.
  */
-export function AppLink(
-  props: LinkProps & React.AnchorHTMLAttributes<HTMLAnchorElement>,
-) {
-  return <Link from="/" {...props} />;
-}
+export const AppLink: typeof CreatedLink = (props) => {
+  return <CreatedLink from="/" {...(props as any)} />;
+};
 
 /**
  * useAppNavigate is a custom hook that wraps useNavigate and ensures

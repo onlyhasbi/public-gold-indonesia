@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { getWhatsAppLink } from "../lib/contact";
 import NotFound from "../components/not_found";
+import { Route as PetunjukRoute } from "./petunjuk";
 
 export const Route = createLazyFileRoute("/petunjuk")({
   component: PetunjukPage,
@@ -69,7 +70,9 @@ function PetunjukPage() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const { ref } = useSearch({ strict: false }) as any;
+  const search = useSearch({ strict: false });
+  const { ref } =
+    (search as unknown as typeof PetunjukRoute.types.searchSchema) || {};
 
   const [pageId, setPageId] = useState<string | null>(null);
 

@@ -4,6 +4,7 @@ import {
   useAppNavigate as useNavigate,
 } from "../lib/router-wrappers";
 import { useSEO } from "../hooks/useSEO";
+import { Route as LegalRoute } from "./legal";
 import {
   FileText,
   Shield,
@@ -38,7 +39,9 @@ const tabs = [
 
 // ─── Main Component ─────────────────────────────────────────────────
 function LegalPage() {
-  const { tab } = useSearch({ strict: false }) as any;
+  const search = useSearch({ strict: false });
+  const { tab } =
+    (search as unknown as typeof LegalRoute.types.searchSchema) || {};
   const navigate = useNavigate();
   const activeTab = tab || "terms";
 

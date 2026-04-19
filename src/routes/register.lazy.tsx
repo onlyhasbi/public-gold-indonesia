@@ -52,13 +52,16 @@ import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { getWhatsAppLink } from "../lib/contact";
+import { Route as RegisterRoute } from "./register";
 
 export const Route = createLazyFileRoute("/register")({
   component: RegisterPage,
 });
 
 function RegisterPage() {
-  const { type, ref } = useSearch({ strict: false }) as any;
+  const search = useSearch({ strict: false });
+  const { type, ref } =
+    (search as unknown as typeof RegisterRoute.types.searchSchema) || {};
   const navigate = useNavigate();
   const isAnak = type === "anak";
   const atomDealer = useAtomValue(activeDealerAtom);
@@ -218,17 +221,22 @@ function RegisterPage() {
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 xl:p-16 xl:px-20 flex flex-col justify-center relative bg-white lg:min-h-[900px]">
           <div className="w-full max-w-lg mx-auto">
             <div className="flex justify-between items-center mb-6 lg:mb-8">
-              <Link
-                to={referralData?.pageid ? "/$pgcode" : "/"}
-                params={
-                  referralData?.pageid
-                    ? { pgcode: referralData.pageid }
-                    : undefined
-                }
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
-              >
-                <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
-              </Link>
+              {referralData?.pageid ? (
+                <Link
+                  to="/$pgcode"
+                  params={{ pgcode: referralData.pageid }}
+                  className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
+                >
+                  <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
+                </Link>
+              ) : (
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
+                >
+                  <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
+                </Link>
+              )}
 
               <Combobox
                 value={countryMode}
