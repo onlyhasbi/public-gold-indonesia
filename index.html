@@ -26,12 +26,16 @@
     <script>
       (function () {
         var path = window.location.pathname;
-        var isDashboard =
-          path.includes("/overview") || path.includes("/settings");
-        var isAdmin = path.includes("/admin");
-        if (!isDashboard && !isAdmin) {
+        // PUBLIC PAGES: Bypass loader immediately to maximize LCP
+        var isAuth =
+          path.includes("/overview") || 
+          path.includes("/settings") || 
+          path.includes("/admin");
+          
+        if (!isAuth) {
           var style = document.createElement("style");
-          style.innerHTML = "#initial-loader { display: none !important; }";
+          style.id = "lcp-bypass";
+          style.innerHTML = "#initial-loader { display: none !important; opacity: 0; visibility: hidden; }";
           document.head.appendChild(style);
         }
       })();

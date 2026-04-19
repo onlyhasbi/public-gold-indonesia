@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => {
       modulePreload: {
         polyfill: true, // Ensures stable chunk loading across all browsers
       },
-      target: "es2022", // Stable modern target
+      target: ["es2020", "safari14"], // Improved baseline for broader mobile compatibility
       assetsInlineLimit: 8192,
       // PERFORMANCE: Using Terser for superior bundle compression compared to esbuild
       minify: "terser",
