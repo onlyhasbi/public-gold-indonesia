@@ -21,15 +21,22 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
   const isCloudinary = src.includes("res.cloudinary.com");
   const isLocal = src.startsWith("/") && !src.startsWith("//");
   const isSvg = src.toLowerCase().endsWith(".svg");
-  const isExternal = (src.startsWith("http") || src.startsWith("//")) && !isCloudinary;
-  
+  const isExternal =
+    (src.startsWith("http") || src.startsWith("//")) && !isCloudinary;
+
   // Domains known to block Cloudinary fetch
   const BLOCKED_DOMAINS = ["chinapress.com.my"];
-  const isBlockedDomain = isExternal && BLOCKED_DOMAINS.some((domain) => src.includes(domain));
-  
-  const isPublicId = [!isExternal, !isCloudinary, !isLocal, !isSvg].every(Boolean);
+  const isBlockedDomain =
+    isExternal && BLOCKED_DOMAINS.some((domain) => src.includes(domain));
 
-  if (isBlockedDomain || (!isExternal && !isCloudinary && !isLocal && !isPublicId)) {
+  const isPublicId = [!isExternal, !isCloudinary, !isLocal, !isSvg].every(
+    Boolean,
+  );
+
+  if (
+    isBlockedDomain ||
+    (!isExternal && !isCloudinary && !isLocal && !isPublicId)
+  ) {
     return src;
   }
 
@@ -80,7 +87,10 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
 /**
  * Generates a standard srcset for responsive images.
  */
-export function getCloudinarySrcSet(src: string, options: Pick<CloudinaryOptions, "priority"> = {}) {
+export function getCloudinarySrcSet(
+  src: string,
+  options: Pick<CloudinaryOptions, "priority"> = {},
+) {
   return [400, 800, 1200, 1600]
     .map((w) => `${getCloudinaryUrl(src, { ...options, width: w })} ${w}w`)
     .join(", ");

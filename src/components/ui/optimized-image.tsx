@@ -61,7 +61,11 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
       {/* 2. Main High-Res Image */}
       <img
-        src={useCloudinary ? getCloudinaryUrl(src, { width: defaultWidth, priority }) : src}
+        src={
+          useCloudinary
+            ? getCloudinaryUrl(src, { width: defaultWidth, priority })
+            : src
+        }
         srcSet={useCloudinary ? srcset : undefined}
         sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
         className={`w-full h-full ${

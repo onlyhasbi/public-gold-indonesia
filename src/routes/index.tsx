@@ -14,7 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { requireGuest } from "../lib/auth";
 import { PortalGate } from "../components/auth/PortalGate";
-import { portalUnlockedOptions, portalLockoutOptions } from "../lib/portalOptions";
+import {
+  portalUnlockedOptions,
+  portalLockoutOptions,
+} from "../lib/portalOptions";
 import { OptimizedImage } from "../components/ui/optimized-image";
 import { authDealerQueryOptions } from "../lib/queryOptions";
 

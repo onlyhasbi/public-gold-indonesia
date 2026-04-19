@@ -67,15 +67,15 @@ function App() {
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "ProfilePage",
-      "mainEntity": {
+      mainEntity: {
         "@type": "Person",
-        "name": displayName,
-        "description": description,
-        "image": pgbo?.foto_profil_url,
-        "jobTitle": "Authorized Public Gold Dealer",
-        "identifier": pgbo?.pgcode,
-        "url": window.location.href,
-        "sameAs": [
+        name: displayName,
+        description: description,
+        image: pgbo?.foto_profil_url,
+        jobTitle: "Authorized Public Gold Dealer",
+        identifier: pgbo?.pgcode,
+        url: window.location.href,
+        sameAs: [
           pgbo?.sosmed_facebook,
           pgbo?.sosmed_instagram,
           pgbo?.sosmed_tiktok,

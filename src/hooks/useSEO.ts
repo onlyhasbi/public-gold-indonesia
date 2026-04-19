@@ -98,7 +98,9 @@ export function useSEO({
     return () => {
       // Cleanup on unmount or dependency change
       document
-        .querySelectorAll('link[rel="preload"][as="image"][data-dynamic="true"]')
+        .querySelectorAll(
+          'link[rel="preload"][as="image"][data-dynamic="true"]',
+        )
         .forEach((link) => link.remove());
     };
   }, [title, description, image, url, jsonLd, preloadImages]);
