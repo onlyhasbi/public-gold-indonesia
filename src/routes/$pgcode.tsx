@@ -49,8 +49,8 @@ function App() {
 
   const { data: pgbo } = useSuspenseQuery(agentQueryOptions(pgcode));
 
-  // LAZY FETCH: Trigger gold prices only after scroll or timeout for LCP Optimization
-  const shouldFetchPrices = useLazyInteraction(3000);
+  // LAZY FETCH: Trigger gold prices only after human interaction for LCP Optimization
+  const shouldFetchPrices = useLazyInteraction();
   const { data: goldPrices } = useQuery({
     ...goldPricesQueryOptions(),
     enabled: shouldFetchPrices,

@@ -308,7 +308,7 @@ function RegisterPage() {
                   <OptimizedImage
                     src="/dewasa.webp"
                     alt=""
-                    className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-[center_10%]"
+                    className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-top"
                     width={28}
                     height={28}
                   />{" "}
@@ -321,7 +321,7 @@ function RegisterPage() {
                   <OptimizedImage
                     src="/anak.webp"
                     alt=""
-                    className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-[center_10%]"
+                    className="w-7 h-7 rounded-full object-cover shrink-0 aspect-square object-top"
                     width={28}
                     height={28}
                   />{" "}
