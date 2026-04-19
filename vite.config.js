@@ -72,10 +72,10 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     modulePreload: {
-      polyfill: false,
+      polyfill: true,
     },
     cssMinify: "lightningcss",
-    target: "esnext",
+    target: "es2022",
     assetsInlineLimit: 8192,
     minify: "terser",
     terserOptions: {
@@ -83,9 +83,9 @@ export default defineConfig(({ mode }) => ({
         drop_console: mode === "production",
         drop_debugger: mode === "production",
         pure_funcs: mode === "production" ? ["console.log"] : [],
-        passes: 2,
+        passes: 1,
       },
-      toplevel: true,
+      toplevel: false,
       module: true,
     },
     rollupOptions: {

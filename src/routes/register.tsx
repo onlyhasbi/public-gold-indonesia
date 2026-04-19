@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-type RegisterSearch = {
+export type RegisterSearch = {
   type?: "dewasa" | "anak";
   ref?: string;
 };

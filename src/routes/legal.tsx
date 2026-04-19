@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-type LegalSearch = {
+export type LegalSearch = {
   tab?: string;
 };
 

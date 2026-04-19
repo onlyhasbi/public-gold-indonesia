@@ -15,9 +15,11 @@ const CreatedLink = createLink(Link);
  * the 'from' prop to '/' (root). This ensures that all navigations resolve
  * from the absolute root and prevents 'Could not find match for from' warnings
  * during route transitions.
+ *
+ * We force 'from="/"' to ensure absolute character for all links.
  */
 export const AppLink: typeof CreatedLink = (props) => {
-  return <CreatedLink from="/" {...(props as any)} />;
+  return <CreatedLink from="/" {...props} />;
 };
 
 /**

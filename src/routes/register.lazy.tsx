@@ -52,7 +52,7 @@ import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { getWhatsAppLink } from "../lib/contact";
-import { Route as RegisterRoute } from "./register";
+import type { RegisterSearch } from "./register";
 
 export const Route = createLazyFileRoute("/register")({
   component: RegisterPage,
@@ -60,8 +60,7 @@ export const Route = createLazyFileRoute("/register")({
 
 function RegisterPage() {
   const search = useSearch({ strict: false });
-  const { type, ref } =
-    (search as unknown as typeof RegisterRoute.types.searchSchema) || {};
+  const { type, ref } = (search as unknown as RegisterSearch) || {};
   const navigate = useNavigate();
   const isAnak = type === "anak";
   const atomDealer = useAtomValue(activeDealerAtom);
