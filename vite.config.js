@@ -10,6 +10,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "/",
   plugins: [
     tanstackRouter({ autoCodeSplitting: true }),
     viteReact(),
@@ -71,6 +72,8 @@ export default defineConfig(({ mode }) => ({
     transformer: "lightningcss",
   },
   build: {
+    emptyOutDir: true,
+    manifest: true,
     modulePreload: {
       polyfill: true,
     },
