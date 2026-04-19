@@ -36,14 +36,14 @@ export const goldPricesQueryOptions = () =>
   });
 
 /**
- * Query Options for Dashboard Overview (Admin)
+ * Query Options for Dashboard Overview (Dealer)
  */
 export const overviewQueryOptions = (search?: string) =>
   queryOptions({
     queryKey: ["overview", search],
     queryFn: async () => {
       const res = await api.get(
-        `/overview${search ? `?search=${encodeURIComponent(search)}` : ""}`,
+         `/overview${search ? `?search=${encodeURIComponent(search)}` : ""}`,
       );
       return res.data?.data;
     },
@@ -51,7 +51,7 @@ export const overviewQueryOptions = (search?: string) =>
   });
 
 /**
- * Query Options for User Settings (Admin)
+ * Query Options for User Settings (Dealer)
  */
 export const settingsQueryOptions = () =>
   queryOptions({
@@ -61,4 +61,31 @@ export const settingsQueryOptions = () =>
       return res.data?.data;
     },
     staleTime: 0,
+  });
+
+/**
+ * AUTH PROFILE QUERIES
+ * We use staleTime: Infinity to ensure the profile is fetched once and cached.
+ * Stride: These queries store { user, token }. 
+ * If the cache is empty, we only fetch the user as the token is credentials.
+ */
+
+export const authDealerQueryOptions = () =>
+  queryOptions({
+    queryKey: ["auth", "dealer"],
+    queryFn: async () => {
+      const res = await api.get("/settings");
+      return { user: res.data?.data, token: null }; // Token is usually primed via setQueryData
+    },
+    staleTime: Infinity,
+  });
+
+export const authAdminQueryOptions = () =>
+  queryOptions({
+    queryKey: ["auth", "admin"],
+    queryFn: async () => {
+      const res = await api.get("/admin/profile");
+      return { user: res.data?.data, token: null };
+    },
+    staleTime: Infinity,
   });

@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { Check } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
@@ -12,7 +11,8 @@ import { PasswordInput } from "../ui/form-elements";
 import { signupSchema } from "../../schemas/auth.schema";
 import { api } from "../../lib/api";
 import { useToast } from "../toast";
-import { authTokenAtom, authUserAtom } from "../../store/authStore";
+import { queryClient } from "../../lib/queryClient";
+import { authDealerQueryOptions } from "../../lib/queryOptions";
 import { cn } from "../../lib/utils";
 
 const formVariants = {
@@ -28,9 +28,6 @@ export function SignUpForm({
 }) {
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  const setToken = useSetAtom(authTokenAtom);
-  const setUser = useSetAtom(authUserAtom);
 
   const [namaLengkap, setNamaLengkap] = useState<string | null>(null);
   const [isPgcodeValid, setIsPgcodeValid] = useState(false);
@@ -66,6 +63,8 @@ export function SignUpForm({
           );
           return;
         }
+        
+        // Check if user is active (waiting for admin)
         if (
           data.user?.is_active === false ||
           data.user?.is_active === 0 ||
@@ -79,10 +78,41 @@ export function SignUpForm({
           onSignupSuccess();
           return;
         }
-        setToken(data.token);
-        setUser(data.user);
-        showToast(data.message, "success");
-        navigate({ to: "/overview" });
+
+        /**
+         * USER REQUIREMENT: Post-register login fetch
+         * We immediately call the login endpoint to ensure the session is correctly
+         * initialized and persistent through the standard auth pipeline.
+         */
+        const performAutoLogin = async () => {
+          try {
+            const loginRes = await api.post("/auth/login", {
+              identifier: signupForm.getValues("pgcode"),
+              katasandi: signupForm.getValues("katasandi"),
+            });
+            const loginData = loginRes.data;
+
+            if (loginData.success) {
+              // UNIFIED PERSISTENCE: Just set query data.
+              queryClient.setQueryData(authDealerQueryOptions().queryKey, {
+                user: loginData.user,
+                token: loginData.token
+              });
+              
+              showToast("Registrasi berhasil dan Anda telah masuk!", "success");
+              navigate({ to: "/overview" });
+            } else {
+              showToast("Registrasi berhasil, silakan login manual.", "info");
+              onSignupSuccess();
+            }
+          } catch (err) {
+            console.error("Auto login failure:", err);
+            showToast("Registrasi berhasil, silakan login manual.", "info");
+            onSignupSuccess();
+          }
+        };
+
+        performAutoLogin();
       } else {
         showToast(data.message, "error");
       }
@@ -92,7 +122,6 @@ export function SignUpForm({
     },
   });
 
-  // --- External Logic Check ---
   const fetchIntroducerName = async (pgcode: string) => {
     if (isPgcodeValid || !pgcode || pgcode.length < 6) {
       if (!pgcode || pgcode.length < 6) {

@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   User,
 } from "lucide-react";
-import { useSetAtom } from "jotai";
 import { Suspense, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PasswordCard } from "../components/settings/PasswordCard";
@@ -51,8 +50,7 @@ import { dialCodeOptions } from "../constant/countries";
 import { useSEO } from "../hooks/useSEO";
 import { api } from "../lib/api";
 import { formatPhoneForAPI } from "../lib/phone";
-import { authUserAtom, type UserDataState } from "../store/authStore";
-import { settingsQueryOptions } from "../lib/queryOptions";
+import { authDealerQueryOptions, settingsQueryOptions } from "../lib/queryOptions";
 import { cn } from "../lib/utils";
 
 export interface SettingsFormValues {
@@ -82,7 +80,6 @@ function SettingsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const setUser = useSetAtom(authUserAtom);
 
   const { data: profileData } = useSuspenseQuery(settingsQueryOptions());
 
@@ -167,9 +164,13 @@ function SettingsPage() {
     onSuccess: async (data: any) => {
       if (data.profile.success) {
         queryClient.invalidateQueries({ queryKey: ["settings"] });
-        setUser((prev: UserDataState) =>
-          prev ? { ...prev, ...data.profile.data } : data.profile.data,
-        );
+        
+        // UNIFIED PERSISTENCE: Update the auth cache.
+        // The persister handles synchronization with localStorage automatically.
+        queryClient.setQueryData(authDealerQueryOptions().queryKey, (prev: any) => {
+          if (!prev) return { user: data.profile.data, token: null };
+          return { ...prev, user: { ...prev.user, ...data.profile.data } };
+        });
 
         const profileFieldsChanged =
           Object.keys(dirtyFields).some(

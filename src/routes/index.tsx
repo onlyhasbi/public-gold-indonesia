@@ -1,17 +1,19 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, useNavigate } from "@tanstack/react-router";
 import { AppLink as Link } from "../lib/router-wrappers";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { useAtomValue } from "jotai";
 import { Spinner } from "../components/ui/spinner";
+import { useQuery } from "@tanstack/react-query";
 
 import { requireGuest } from "../lib/auth";
 import { PortalGate } from "../components/auth/PortalGate";
 import { isUnlockedAtom, lockoutExpiryAtom } from "../store/portalStore";
 import { OptimizedImage } from "../components/ui/optimized-image";
+import { authDealerQueryOptions } from "../lib/queryOptions";
 
 const SignInForm = lazy(() => import("../components/auth/SignInForm"));
 const SignUpForm = lazy(() => import("../components/auth/SignUpForm"));
@@ -32,6 +34,12 @@ export const Route = createFileRoute("/")({
 
 function LandingAuthPage() {
   const { mode } = useSearch({ from: "/" });
+  const navigate = useNavigate();
+  
+  // Use React Query for session detection (Unified Persistence)
+  const { data: authData } = useQuery(authDealerQueryOptions());
+  const user = authData?.user;
+  const token = authData?.token;
 
   const isUnlocked = useAtomValue(isUnlockedAtom);
   const lockoutExpiry = useAtomValue(lockoutExpiryAtom);
@@ -43,8 +51,19 @@ function LandingAuthPage() {
   );
 
   useEffect(() => {
+    if (token && user) {
+      navigate({ to: "/overview", replace: true });
+    }
+  }, [token, user, navigate]);
+
+  useEffect(() => {
     if (mode) setAuthMode(mode);
   }, [mode]);
+
+  // Prevent UI flickering by not rendering anything if we're about to redirect
+  if (token && user) {
+    return null;
+  }
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -226,3 +245,5 @@ function LandingAuthPage() {
     </div>
   );
 }
+
+export default LandingAuthPage;

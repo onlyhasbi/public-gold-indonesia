@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { adminTokenAtom, adminUserAtom } from "../../store/authStore";
+import { purgeAllSessions } from "@/lib/auth";
 import {
   useQuery,
   useMutation,
@@ -108,10 +107,6 @@ function AdminDashboard() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  const adminToken = useAtomValue(adminTokenAtom);
-  const setAdminToken = useSetAtom(adminTokenAtom);
-  const setAdminUser = useSetAtom(adminUserAtom);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pgboToDelete, setPgboToDelete] = useState<string | null>(null);
   const [pgboToEdit, setPgboToEdit] = useState<any | null>(null);
@@ -154,11 +149,7 @@ function AdminDashboard() {
   const { data: currentSecret } = useQuery({
     queryKey: ["admin_secret_code"],
     queryFn: async () => {
-      const res = await api.get("/admin/settings/secret-code", {
-        headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-        },
-      });
+      const res = await api.get("/admin/settings/secret-code");
       return res.data?.data || { code: "", auto_rotate: false };
     },
     enabled: isSecretModalOpen,
@@ -173,11 +164,7 @@ function AdminDashboard() {
 
   const updateSecretMutation = useMutation({
     mutationFn: async (payload: { code: string; auto_rotate: boolean }) => {
-      const res = await api.patch("/admin/settings/secret-code", payload, {
-        headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-        },
-      });
+      const res = await api.patch("/admin/settings/secret-code", payload);
       return res.data;
     },
     onSuccess: (data) => {
@@ -211,11 +198,6 @@ function AdminDashboard() {
     try {
       const res = await api.get(
         `/admin/pgbo/check-pageid?pageid=${pageid}${excludeId ? `&excludeId=${excludeId}` : ""}`,
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-          },
-        },
       );
       return res.data.isAvailable;
     } catch {
@@ -240,45 +222,33 @@ function AdminDashboard() {
     queryFn: async () => {
       const res = await api.get(
         `/admin/pgbo${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ""}`,
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-          },
-        },
       );
       return res.data?.data || [];
     },
     placeholderData: keepPreviousData,
     retry: 1,
-    enabled: !!adminToken,
   });
 
   // Auth interceptor
+  // Auth interceptor redirect is mostly handled by api.ts but we can add safety here if needed
   useEffect(() => {
     if (isError) {
       if ((error as any).response?.status === 401) {
-        setAdminToken(null);
-        setAdminUser(null);
+        purgeAllSessions();
         navigate({ to: "/admin/login" });
       }
     }
-  }, [isError, error, navigate, setAdminToken, setAdminUser]);
+  }, [isError, error, navigate]);
 
   const handleLogout = () => {
-    queryClient.clear();
-    setAdminToken(null);
-    setAdminUser(null);
+    purgeAllSessions();
     navigate({ to: "/admin/login" });
   };
 
   // --- DELETE MUTATION ---
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await api.delete(`/admin/pgbo/${id}`, {
-        headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-        },
-      });
+      const res = await api.delete(`/admin/pgbo/${id}`);
       return res.data;
     },
     onSuccess: (data) => {
@@ -298,11 +268,7 @@ function AdminDashboard() {
   // --- TOGGLE ACTIVE MUTATION ---
   const toggleMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await api.patch(`/admin/pgbo/${id}/toggle`, null, {
-        headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-        },
-      });
+      const res = await api.patch(`/admin/pgbo/${id}/toggle`, null);
       return res.data;
     },
     onSuccess: (data) => {
@@ -320,15 +286,7 @@ function AdminDashboard() {
   // --- BULK DELETE MUTATION ---
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      const res = await api.post(
-        "/admin/pgbo/bulk-delete",
-        { ids },
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-          },
-        },
-      );
+      const res = await api.post("/admin/pgbo/bulk-delete", { ids });
       return res.data;
     },
     onSuccess: (data) => {
@@ -348,15 +306,7 @@ function AdminDashboard() {
   // --- BULK TOGGLE MUTATION ---
   const bulkToggleMutation = useMutation({
     mutationFn: async ({ ids, active }: { ids: string[]; active: boolean }) => {
-      const res = await api.patch(
-        "/admin/pgbo/bulk-toggle",
-        { ids, active },
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-          },
-        },
-      );
+      const res = await api.patch("/admin/pgbo/bulk-toggle", { ids, active });
       return res.data;
     },
     onSuccess: (data) => {
@@ -394,11 +344,7 @@ function AdminDashboard() {
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await api.post("/admin/pgbo", data, {
-        headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-        },
-      });
+      const res = await api.post("/admin/pgbo", data);
       return res.data;
     },
     onSuccess: (data) => {
@@ -448,11 +394,7 @@ function AdminDashboard() {
 
   const editMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      const res = await api.put(`/admin/pgbo/${id}`, data, {
-        headers: {
-          Authorization: `Bearer ${adminToken?.replace(/^"|"$/g, "") || ""}`,
-        },
-      });
+      const res = await api.put(`/admin/pgbo/${id}`, data);
       return res.data;
     },
     onSuccess: (data) => {

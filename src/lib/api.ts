@@ -1,17 +1,7 @@
 import axios from "axios";
-
-import { getDefaultStore } from "jotai";
-import {
-  authTokenAtom,
-  adminTokenAtom,
-  authUserAtom,
-  adminUserAtom,
-} from "../store/authStore";
-
-const store = getDefaultStore();
+import { queryClient } from "./queryClient";
 
 const url = import.meta.env.VITE_API_URL || "http://localhost:3000";
-// Carefully join the URL and /api segment, avoiding double slashes or missing ones
 const cleanUrl = url.replace(/\/+$/, "");
 const baseURL = cleanUrl.endsWith("/api") ? cleanUrl : `${cleanUrl}/api`;
 
@@ -20,17 +10,26 @@ export const api = axios.create({
   timeout: 15000,
 });
 
+/**
+ * UTILITY: Extract token independently of localStorage.
+ * Reads directly from the hydrated TanStack Query cache.
+ */
+const getAuthData = (isAdmin: boolean) => {
+  const key = isAdmin ? ["auth", "admin"] : ["auth", "dealer"];
+  // getQueryData is synchronous and will find the data if hydrated by the persister
+  return queryClient.getQueryData<any>(key);
+};
+
 // Attach JWT token to every request
 api.interceptors.request.use((config) => {
   const path = window.location.pathname;
+  const isAdminPath = path.startsWith("/admin");
 
-  // Choose token based on route
-  const token = path.startsWith("/admin")
-    ? store.get(adminTokenAtom)
-    : store.get(authTokenAtom);
+  const authData = getAuthData(isAdminPath);
+  const token = authData?.token;
 
   if (token && !config.headers.Authorization) {
-    const cleanToken = token.replace(/^"|"$/g, "");
+    const cleanToken = typeof token === "string" ? token.replace(/^"|"$/g, "") : token;
     config.headers.Authorization = `Bearer ${cleanToken}`;
   }
   return config;
@@ -40,25 +39,18 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Token expired or unauthorized — force re-login
     if (error.response?.status === 401) {
       const path = window.location.pathname;
 
-      // Admin pages handle their own auth flow — don't interfere
+      // Wipe absolutely all auth states
+      queryClient.removeQueries({ queryKey: ["auth"] });
+      queryClient.clear();
+
       if (path.startsWith("/admin")) {
-        store.set(adminTokenAtom, null);
-        store.set(adminUserAtom, null);
         return Promise.reject(error);
       }
-
-      store.set(authTokenAtom, null);
-      store.set(authUserAtom, null);
-
-      // If we're on a protected route, the app should naturally
-      // redirect on next navigation or route guard check.
     }
 
-    // Rate limited
     if (error.response?.status === 429) {
       console.warn("Rate limited. Silakan tunggu beberapa saat.");
     }

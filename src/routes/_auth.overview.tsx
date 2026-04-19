@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
-import { authTokenAtom, authUserAtom } from "../store/authStore";
+import { authDealerQueryOptions } from "../lib/queryOptions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState, Suspense } from "react";
 import { overviewQueryOptions } from "../lib/queryOptions";
@@ -21,7 +20,7 @@ import { useSEO } from "../hooks/useSEO";
 import { StatsGrid } from "../components/overview/StatsGrid";
 import { LeadsDataTable } from "../components/overview/LeadsDataTable";
 import { useDebounce } from "../hooks/useDebounce";
-import { clearAuthAndRedirect } from "../lib/auth";
+import { purgeAllSessions } from "../lib/auth";
 
 export const Route = createFileRoute("/_auth/overview")({
   component: () => (
@@ -33,18 +32,16 @@ export const Route = createFileRoute("/_auth/overview")({
     try {
       await queryClient.ensureQueryData(overviewQueryOptions());
     } catch {
-      // Break redirect loop: clear session if data fails to load (e.g. 404 or profile missing)
-      queryClient.clear();
-      clearAuthAndRedirect();
+      // Break redirect loop: clear session if data fails to load
+      purgeAllSessions();
     }
   },
 });
 
 function OverviewPage() {
   const navigate = useNavigate();
-  const setToken = useSetAtom(authTokenAtom);
-  const setUser = useSetAtom(authUserAtom);
-  const user = useAtomValue(authUserAtom) || ({} as any);
+  const { data: authData } = useSuspenseQuery(authDealerQueryOptions());
+  const user = authData?.user;
 
   const [serverSearch, setServerSearch] = useState("");
   const debouncedSearch = useDebounce(serverSearch, 500);
@@ -57,9 +54,7 @@ function OverviewPage() {
   const [copied, setCopied] = useState(false);
 
   const handleLogout = () => {
-    queryClient.clear();
-    setToken(null);
-    setUser(null);
+    purgeAllSessions();
     navigate({ to: "/" });
   };
 

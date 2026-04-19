@@ -5,8 +5,8 @@ import { api } from "../../lib/api";
 import { useToast } from "../../components/toast";
 import { useForm } from "react-hook-form";
 import { requireAdminGuest } from "@/lib/auth";
-import { adminTokenAtom, adminUserAtom } from "../../store/authStore";
-import { useSetAtom } from "jotai";
+import { queryClient } from "../../lib/queryClient";
+import { authAdminQueryOptions } from "../../lib/queryOptions";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -26,9 +26,6 @@ const schema = yup.object().shape({
 function AdminLoginPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  const setToken = useSetAtom(adminTokenAtom);
-  const setUser = useSetAtom(adminUserAtom);
 
   // Redirect if already logged in as admin
   useEffect(() => {
@@ -61,8 +58,14 @@ function AdminLoginPage() {
     },
     onSuccess: (data) => {
       if (data.success && data.user?.role === "admin") {
-        setToken(data.token);
-        setUser(data.user);
+        // UNIFIED PERSISTENCE: Just set query data.
+        // The persister handles synchronization with admin_ keys if needed, 
+        // but here we use a single cache key 'auth' with 'admin' suffix.
+        queryClient.setQueryData(authAdminQueryOptions().queryKey, {
+          user: data.user,
+          token: data.token
+        });
+
         navigate({ to: "/admin" });
       } else if (data.success && data.user?.role !== "admin") {
         showToast("Akses ditolak. Akun ini bukan admin.", "error");
@@ -207,3 +210,5 @@ function AdminLoginPage() {
     </div>
   );
 }
+
+export default AdminLoginPage;

@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useSetAtom } from "jotai";
 import { motion } from "motion/react";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
@@ -10,7 +9,8 @@ import { InputField, PasswordInput } from "../ui/form-elements";
 import { signinSchema } from "../../schemas/auth.schema";
 import { api } from "../../lib/api";
 import { useToast } from "../toast";
-import { authTokenAtom, authUserAtom } from "../../store/authStore";
+import { queryClient } from "../../lib/queryClient";
+import { authDealerQueryOptions } from "../../lib/queryOptions";
 
 const formVariants = {
   initial: { opacity: 0, x: 20 },
@@ -21,9 +21,6 @@ const formVariants = {
 export function SignInForm() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  const setToken = useSetAtom(authTokenAtom);
-  const setUser = useSetAtom(authUserAtom);
 
   const signinForm = useForm({
     resolver: yupResolver(signinSchema),
@@ -56,8 +53,14 @@ export function SignInForm() {
           );
           return;
         }
-        setToken(data.token);
-        setUser(data.user);
+        
+        // UNIFIED PERSISTENCE: Just set query data. 
+        // persistQueryClient handles the localStorage automatically now.
+        queryClient.setQueryData(authDealerQueryOptions().queryKey, {
+          user: data.user,
+          token: data.token
+        });
+
         navigate({ to: "/overview" });
       } else {
         showToast(data.message, "error");

@@ -5,8 +5,8 @@ import { api } from "../../lib/api";
 import { useToast } from "../../components/toast";
 import { useForm } from "react-hook-form";
 import { requireAdminGuest } from "@/lib/auth";
-import { adminTokenAtom, adminUserAtom } from "../../store/authStore";
-import { useSetAtom } from "jotai";
+import { queryClient } from "../../lib/queryClient";
+import { authAdminQueryOptions } from "../../lib/queryOptions";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -31,12 +31,8 @@ function AdminSignupPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const setToken = useSetAtom(adminTokenAtom);
-  const setUser = useSetAtom(adminUserAtom);
-
-  // Redirect if already logged in as admin
   useEffect(() => {
-    // Component logic remains but redirection is handled by beforeLoad
+    document.title = "Daftar Super Admin | Public Gold Indonesia";
   }, []);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +42,7 @@ function AdminSignupPage() {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    getValues,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -56,7 +53,6 @@ function AdminSignupPage() {
     },
   });
 
-  // TargetLintErrorIds: c9149def-e5ab-4cc9-af20-a490d4a0b885
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       // Pass role as admin to backend auth registration
@@ -65,10 +61,40 @@ function AdminSignupPage() {
     },
     onSuccess: (data) => {
       if (data.success) {
-        setToken(data.token);
-        setUser(data.user);
-        showToast(data.message, "success");
-        navigate({ to: "/admin" });
+        /**
+         * USER REQUIREMENT: Post-register login fetch
+         * After successful admin registration, we trigger a login fetch
+         * to fully initialize the admin session and prime the cache.
+         */
+        const performAdminAutoLogin = async () => {
+          try {
+            const loginRes = await api.post("/auth/login", {
+              identifier: getValues("email"),
+              katasandi: getValues("katasandi"),
+            });
+            const loginData = loginRes.data;
+
+            if (loginData.success && loginData.user?.role === "admin") {
+              // UNIFIED PERSISTENCE: Just set query data.
+              queryClient.setQueryData(authAdminQueryOptions().queryKey, {
+                user: loginData.user,
+                token: loginData.token
+              });
+
+              showToast("Admin account created and logged in!", "success");
+              navigate({ to: "/admin" });
+            } else {
+              showToast("Account created, please login manually.", "info");
+              navigate({ to: "/admin/login" });
+            }
+          } catch (err) {
+            console.error("Admin auto login failed:", err);
+            showToast("Account created, please login manually.", "info");
+            navigate({ to: "/admin/login" });
+          }
+        };
+
+        performAdminAutoLogin();
       } else {
         showToast(data.message, "error");
       }
@@ -275,3 +301,5 @@ function AdminSignupPage() {
     </div>
   );
 }
+
+export default AdminSignupPage;
