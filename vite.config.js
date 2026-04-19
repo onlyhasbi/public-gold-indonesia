@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
     base: "/",
     plugins: [
       // Enable router transformations with auto code splitting for routes
-      tanstackRouter({ autoCodeSplitting: true }),
+      tanstackRouter({ autoCodeSplitting: false }),
       viteReact(),
       tailwindcss(),
       // Gzip compression for static assets
