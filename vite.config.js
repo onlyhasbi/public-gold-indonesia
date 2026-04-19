@@ -4,103 +4,116 @@ import tailwindcss from "@tailwindcss/vite";
 import compression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import { visualizer } from "rollup-plugin-visualizer";
+
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
-  const isProduction = mode === "production";
-
-  return {
-    base: "/",
-    plugins: [
-      tanstackRouter({ autoCodeSplitting: true }),
-      viteReact(),
-      tailwindcss(),
-      // Gzip compression for static assets
-      isProduction && compression({ algorithm: "gzip", ext: ".gz" }),
-      // Brotli compression for modern browsers
-      isProduction && compression({ algorithm: "brotliCompress", ext: ".br" }),
-      isProduction &&
-        ViteImageOptimizer({
-          webp: { quality: 80 },
-          avif: { quality: 70 },
-          svg: {
-            multipass: true,
-            plugins: [
-              {
-                name: "preset-default",
-                params: {
-                  overrides: { cleanupIds: false, removeViewBox: false },
-                },
+export default defineConfig(({ mode }) => ({
+  base: "/",
+  plugins: [
+    tanstackRouter({ autoCodeSplitting: true }),
+    viteReact(),
+    tailwindcss(),
+    // Gzip compression for static assets
+    compression({
+      algorithm: "gzip",
+      ext: ".gz",
+      threshold: 1024,
+      deleteOriginFile: false,
+    }),
+    // Brotli compression for modern browsers
+    compression({
+      algorithm: "brotliCompress",
+      ext: ".br",
+      threshold: 1024,
+      deleteOriginFile: false,
+    }),
+    ViteImageOptimizer({
+      webp: { quality: 80 },
+      avif: { quality: 70 },
+      png: { quality: 80 },
+      jpeg: { quality: 80 },
+      svg: {
+        multipass: true,
+        plugins: [
+          {
+            name: "preset-default",
+            params: {
+              overrides: {
+                cleanupIds: false,
+                removeViewBox: false,
               },
-            ],
+            },
           },
-        }),
-      // Visualizer helps audit bundle sizes in production
-      isProduction &&
-        visualizer({
-          filename: "stats.html",
-          gzipSize: true,
-        }),
-    ].filter(Boolean),
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
-      },
-      extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
-    },
-    build: {
-      emptyOutDir: true,
-      manifest: true, // Required for backend-frontend synchronization
-      modulePreload: {
-        polyfill: true, // Ensures stable chunk loading across all browsers
-      },
-      target: "es2022", // Vercel-Stable target (avoid esnext for better compatibility)
-      minify: "esbuild",
-      sourcemap: !isProduction,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes("node_modules")) {
-              // Group core libraries together for deterministic initialization
-              // This prevents 'undefined' reference crashes in production
-              if (
-                id.match(
-                  /node_modules\/(react|react-dom|@tanstack\/react-router|jotai|@tanstack\/react-query)/,
-                )
-              ) {
-                return "vendor-core";
-              }
-              if (id.includes("lucide-react") || id.includes("motion")) {
-                return "vendor-ui";
-              }
-              return "vendor-utils";
-            }
+          "sortAttrs",
+          {
+            name: "addAttributesToSVGElement",
+            params: {
+              attributes: [{ xmlns: "http://www.w3.org/2000/svg" }],
+            },
           },
-        },
+        ],
+      },
+    }),
+    visualizer({
+      filename: "stats.html",
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    emptyOutDir: true,
+    manifest: true,
+    modulePreload: {
+      polyfill: true,
+    },
+    target: "es2022",
+    assetsInlineLimit: 8192,
+    minify: "esbuild",
+  },
+  server: {
+    proxy: {
+      "/api-proxy-my": {
+        target: "https://publicgold.com.my",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy-my/, ""),
+        cookieDomainRewrite: "localhost",
+      },
+      "/api-proxy": {
+        target: "https://publicgold.co.id",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy/, ""),
+        // This helps forward cookies during local dev
+        cookieDomainRewrite: "localhost",
       },
     },
-    esbuild: {
-      // Production logs removal
-      drop: isProduction ? ["console", "debugger"] : [],
-    },
-    server: {
-      hmr: true,
-      proxy: {
-        "/api-proxy-my": {
-          target: "https://publicgold.com.my",
-          changeOrigin: true,
-          secure: true,
-          rewrite: (p) => p.replace(/^\/api-proxy-my/, ""),
-        },
-        "/api-proxy": {
-          target: "https://publicgold.co.id",
-          changeOrigin: true,
-          secure: true,
-          rewrite: (p) => p.replace(/^\/api-proxy/, ""),
-        },
+  },
+  preview: {
+    proxy: {
+      "/api-proxy-my": {
+        target: "https://publicgold.com.my",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy-my/, ""),
+        cookieDomainRewrite: "mypublicgold.id",
+      },
+      "/api-proxy": {
+        target: "https://publicgold.co.id",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy/, ""),
+        // Important: match this with your deploy domain to accept cookies
+        cookieDomainRewrite: "mypublicgold.id",
       },
     },
-  };
-});
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+  },
+}));
