@@ -142,8 +142,8 @@ function Header({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
               src={pgbo?.foto_profil_url || ""}
               alt={`${displayName} - Authorized Public Gold Dealer`}
               priority
-              width={320}
-              height={320}
+              width={400}
+              height={400}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">

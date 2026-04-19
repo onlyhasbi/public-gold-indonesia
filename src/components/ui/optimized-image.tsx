@@ -44,16 +44,27 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
   // Construction helpers
   const getUrl = (w?: number, blur?: boolean) => {
-    const transformations = ["f_auto", "fl_strip_profile"];
+    const transformations = ["f_auto"];
 
     if (blur) {
       // Extremely lightweight placeholder
       transformations.push("e_blur:2000", "w_20", "q_auto:low");
     } else {
-      transformations.push("q_auto:eco", "dpr_auto");
-      if (w) {
-        transformations.push(`w_${w}`, "c_limit");
+      // Use standard q_auto for better compatibility with preloads
+      transformations.push(priority ? "q_auto" : "q_auto:eco");
+      
+      // dpr_auto can cause preload mismatches because HTML preloads don't know the DPR.
+      // We disable it for priority images to ensure URL consistency.
+      if (!priority) {
+        transformations.push("dpr_auto");
       }
+
+      if (w) {
+        transformations.push(`w_${w}`);
+      }
+      
+      // c_limit should be at the end to match Backend's optimizeImageUrl logic
+      transformations.push("c_limit");
     }
 
     // Case 1: YouTube URL
@@ -109,8 +120,8 @@ export function OptimizedImage(props: OptimizedImageProps) {
           aspectRatio || (width && height ? width / height : undefined),
       }}
     >
-      {/* 1. Blurred Placeholder Layer */}
-      {useCloudinary && !isLoaded && (
+      {/* 1. Blurred Placeholder Layer - Skipped for priority images to optimize LCP */}
+      {useCloudinary && !isLoaded && !priority && (
         <img
           src={placeholderUrl}
           className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 transition-opacity duration-500"
@@ -124,9 +135,11 @@ export function OptimizedImage(props: OptimizedImageProps) {
         src={useCloudinary ? getUrl(defaultWidth) : src}
         srcSet={useCloudinary ? srcset : undefined}
         sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
-        className={`w-full h-full transition-opacity duration-700 ease-in-out ${
+        className={`w-full h-full ${
+          !priority ? "transition-opacity duration-700 ease-in-out" : ""
+        } ${
           useCloudinary
-            ? isLoaded
+            ? isLoaded || priority
               ? "opacity-100"
               : "opacity-0"
             : "opacity-100"
