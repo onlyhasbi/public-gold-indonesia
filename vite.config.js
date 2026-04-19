@@ -68,16 +68,12 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  css: {
-    transformer: "lightningcss",
-  },
   build: {
     emptyOutDir: true,
     manifest: true,
     modulePreload: {
       polyfill: true,
     },
-    cssMinify: "lightningcss",
     target: "es2022",
     assetsInlineLimit: 8192,
     minify: "esbuild",
