@@ -8,8 +8,6 @@ import {
 } from "@tanstack/react-router";
 import React from "react";
 import Topbar from "../layout/topbar";
-import { useIPLanguage } from "../hooks/useIPLanguage";
-import { useResourceReady } from "../hooks/useResourceReady";
 import { ToastProvider } from "../components/toast";
 import { queryClient } from "../lib/queryClient";
 import NotFound from "../components/not_found";
@@ -30,8 +28,6 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  useIPLanguage();
-  useResourceReady();
   const location = useLocation();
   const matches = useMatches();
   const routerState = useRouterState();

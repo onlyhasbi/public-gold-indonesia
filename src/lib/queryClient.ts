@@ -24,7 +24,7 @@ const persister = createSyncStoragePersister({
   key: "PUBLIC_GOLD_QUERY_CACHE",
 });
 
-let resolveHydration: (value: void) => void;
+let resolveHydration: () => void = () => {};
 export const hydrationPromise = new Promise<void>((resolve) => {
   resolveHydration = resolve;
 });
@@ -45,10 +45,7 @@ persistQueryClient({
 
 // Since we use createSyncStoragePersister (localStorage),
 // hydration happens synchronously during initialization.
-// We resolve on the next tick to ensure the internal state is updated.
-setTimeout(() => {
-  resolveHydration();
-}, 1);
+resolveHydration();
 
 /**
  * TAB SYNCHRONIZATION: Listen for cache updates from other tabs.

@@ -3,14 +3,16 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import resourcesToBackend from "i18next-resources-to-backend";
 
+// Eagerly pre-load ID locale to prevent React Suspense waterfall on initial mount
+import { id } from "./constant/locales/id";
+
 i18n
   .use(LanguageDetector)
   .use(
     resourcesToBackend((language: string) => {
-      // Dynamic import locale files based on language name
+      // Dynamic import locale files based on language name for non-default languages
+      if (language === "id") return Promise.resolve(id);
       switch (language) {
-        case "id":
-          return import("./constant/locales/id").then((m) => m.id);
         case "en":
           return import("./constant/locales/en").then((m) => m.en);
         case "ms":
@@ -22,7 +24,7 @@ i18n
         case "ar":
           return import("./constant/locales/ar").then((m) => m.ar);
         default:
-          return import("./constant/locales/id").then((m) => m.id);
+          return Promise.resolve(id);
       }
     }),
   )
@@ -39,6 +41,11 @@ i18n
       lookupLocalStorage: "app_lang",
       caches: ["localStorage"],
     },
+    // Populate cache with eager loaded locales immediately
+    resources: {
+      id: { translation: id },
+    },
+    partialBundledLanguages: true,
   });
 
 export default i18n;

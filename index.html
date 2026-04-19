@@ -18,9 +18,9 @@
     <link rel="manifest" href="/manifest.json" />
     <!-- Resource Prioritization -->
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-    <link rel="preconnect" href="https://get.geojs.io" crossorigin />
+    <link rel="preconnect" href="https://be-public-gold-indonesia.vercel.app" crossorigin />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
     <link rel="dns-prefetch" href="https://my-cdn.publicgold.com.my" />
-    <link rel="dns-prefetch" href="https://mypublicgold.com" />
 
     <!-- Open Graph -->
     <meta
@@ -54,52 +54,10 @@
         margin: 0;
         background-color: #f8fafc;
       }
-      #initial-loader {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: #f8fafc;
-        z-index: 99999;
-        transition:
-          opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-          visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      #initial-loader.fade-out {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
-
-      .logo-pulse {
-        width: 180px;
-        height: auto;
-        animation: pulseLogo 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-
-      @keyframes pulseLogo {
-        0%,
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.6;
-          transform: scale(0.95);
-        }
-      }
     </style>
   </head>
 
   <body>
-    <!-- FCP/LCP Hack: A real image guarantees Lighthouse records paint instantly -->
-    <div id="initial-loader">
-      <img src="/logo.svg" alt="Public Gold Loading" class="logo-pulse" />
-    </div>
-
     <!-- React app root -->
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>

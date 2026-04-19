@@ -86,20 +86,25 @@ function App() {
         ].filter(Boolean),
       },
     },
-    preloadImages: pgbo?.foto_profil_url
-      ? [
-          {
-            src: getCloudinaryUrl(pgbo.foto_profil_url, {
-              width: 800,
-              priority: true,
-            }),
-            srcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
-              priority: true,
-            }),
-            sizes: "(max-width: 768px) 100vw, 800px",
-          },
-        ]
-      : undefined,
+    preloadImages: [
+      ...(pgbo?.foto_profil_url
+        ? [
+            {
+              src: getCloudinaryUrl(pgbo.foto_profil_url, {
+                width: 400,
+                priority: true,
+              }),
+              srcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
+                priority: true,
+              }),
+              sizes: "(max-width: 768px) 100vw, 400px",
+            },
+          ]
+        : []),
+      {
+        src: getCloudinaryUrl("/5g.webp", { width: 96, priority: true }),
+      },
+    ],
   });
 
   useEffect(() => {

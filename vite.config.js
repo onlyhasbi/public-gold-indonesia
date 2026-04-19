@@ -54,23 +54,6 @@ export default defineConfig(({ mode }) => {
           safari10: true, // Compatibility for legacy mobile browsers
         },
       },
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes("node_modules")) {
-              // PENGAMANAN: Pastikan HANYA module inti React yang masuk ke react-core.
-              if (
-                id.includes("/node_modules/react/") ||
-                id.includes("/node_modules/react-dom/") ||
-                id.includes("/node_modules/scheduler/")
-              ) {
-                return "react-core";
-              }
-              return "vendor";
-            }
-          },
-        },
-      },
     },
     esbuild: {
       // Production logs removal
@@ -90,6 +73,26 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: true,
           rewrite: (p) => p.replace(/^\/api-proxy/, ""),
+        },
+        "/hasbi": {
+          target: "https://mypublicgold.id",
+          changeOrigin: true,
+          secure: true,
+          headers: {
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "accept-language": "id,en-US;q=0.9,en;q=0.8",
+            "dnt": "1",
+            "priority": "u=0, i",
+            "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+            "sec-ch-ua-mobile": "?1",
+            "sec-ch-ua-platform": '"Android"',
+            "sec-fetch-dest": "document",
+            "sec-fetch-mode": "navigate",
+            "sec-fetch-site": "none",
+            "sec-fetch-user": "?1",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
+          },
         },
       },
     },

@@ -1,8 +1,5 @@
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { agentQueryOptions } from "../lib/queryOptions";
 import { trackEvent } from "../lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "../lib/contact";
@@ -70,27 +67,8 @@ const formatSocialUrl = (
   }
 };
 
-function Header({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
+function Header({ pgbo }: { pgbo?: PgboData }) {
   const { t } = useTranslation();
-  const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
-
-  const { data: qPgbo } = useQuery({
-    ...agentQueryOptions(pgcode || ""),
-    enabled: !!pgcode && !propsPgbo,
-    select: (data) => ({
-      pageid: data?.pageid,
-      nama_lengkap: data?.nama_lengkap,
-      nama_panggilan: data?.nama_panggilan,
-      foto_profil_url: data?.foto_profil_url,
-      no_telpon: data?.no_telpon,
-      link_group_whatsapp: data?.link_group_whatsapp,
-      sosmed_facebook: data?.sosmed_facebook,
-      sosmed_instagram: data?.sosmed_instagram,
-      sosmed_tiktok: data?.sosmed_tiktok,
-    }),
-  });
-
-  const pgbo = propsPgbo || qPgbo;
 
   const handleWhatsAppClick = () => {
     trackEvent(pgbo?.pageid, "whatsapp_click");
@@ -130,7 +108,7 @@ function Header({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
   );
 
   return (
-    <div className="relative flex flex-col md:flex-row min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0 overflow-hidden">
+    <div className="relative flex flex-col md:flex-row min-h-[40rem] lg:min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0 overflow-hidden">
       {/* Background patterns */}
       <div
         className="absolute inset-0 opacity-40 pointer-events-none"
@@ -178,6 +156,7 @@ function Header({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-xl"
             src="/5g.webp"
             alt="Public Gold 5G Associates Team - Success Together"
+            priority
             width={96}
             height={96}
           />
