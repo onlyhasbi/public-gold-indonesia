@@ -289,8 +289,10 @@ function RegisterPage() {
               onValueChange={(val) => {
                 reset();
                 navigate({
-                  to: "/register",
-                  search: { type: val as "dewasa" | "anak" },
+                  search: (prev: any) => ({
+                    ...prev,
+                    type: val as "dewasa" | "anak",
+                  }),
                 });
               }}
               className="mb-6"
