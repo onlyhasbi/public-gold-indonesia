@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
     base: "/",
     plugins: [
       // REQUIRED: Enable router transformations and route generation
-      tanstackRouter({ autoCodeSplitting: true }),
+      tanstackRouter(),
       viteReact(),
       tailwindcss(),
     ],
