@@ -52,7 +52,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
     } else {
       // Use standard q_auto for better compatibility with preloads
       transformations.push(priority ? "q_auto" : "q_auto:eco");
-      
+
       // dpr_auto can cause preload mismatches because HTML preloads don't know the DPR.
       // We disable it for priority images to ensure URL consistency.
       if (!priority) {
@@ -62,7 +62,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
       if (w) {
         transformations.push(`w_${w}`);
       }
-      
+
       // c_limit should be at the end to match Backend's optimizeImageUrl logic
       transformations.push("c_limit");
     }
