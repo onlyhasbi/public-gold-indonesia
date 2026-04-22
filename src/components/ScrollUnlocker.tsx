@@ -18,24 +18,29 @@ export function ScrollUnlocker() {
       // Remove inline styles possibly added by scroll-locking libraries
       document.body.style.removeProperty("overflow");
       document.body.style.removeProperty("pointer-events");
-      document.body.style.removeProperty("padding-right"); // Usually added to prevent layout shift
+      document.body.style.removeProperty("padding-right");
 
       document.documentElement.style.removeProperty("overflow");
       document.documentElement.style.removeProperty("pointer-events");
       document.documentElement.style.removeProperty("padding-right");
 
-      // Some libraries use data attributes
+      // Some libraries use data attributes or specific classes
       document.body.removeAttribute("data-scroll-locked");
+      document.body.classList.remove("scroll-locked");
     };
 
     // Immediate unlock
     unlock();
 
-    // Secondary unlock after a short delay to account for exit animations/portal unmounts
-    const timer = setTimeout(unlock, 300);
+    // Multiple safety triggers to account for different library timings
+    const timers = [
+      setTimeout(unlock, 100),
+      setTimeout(unlock, 300),
+      setTimeout(unlock, 600),
+    ];
 
-    return () => clearTimeout(timer);
-  }, [location.pathname, i18n.language]);
+    return () => timers.forEach(clearTimeout);
+  }, [location.pathname, location.search, i18n.language]);
 
   return null;
 }

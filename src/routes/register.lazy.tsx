@@ -16,15 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createLazyFileRoute, useSearch } from "@tanstack/react-router";
-import { agentQueryOptions } from "@/lib/queryOptions";
-import {
-  AppLink as Link,
-  useAppNavigate as useNavigate,
-} from "../lib/router-wrappers";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { AppLink as Link } from "../lib/router-wrappers";
 import {
   AlertCircle,
   ArrowLeft,
@@ -35,12 +29,12 @@ import {
   Send,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Controller } from "react-hook-form";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { NextStepModal } from "../components/NextStepModal";
 import { OptimizedImage } from "../components/ui/optimized-image";
-import NotFound from "../components/not_found";
+// import NotFound from "../components/not_found";
 import {
   AgeSwitchModal,
   ConfirmationModal,
@@ -51,41 +45,272 @@ import { branchOptionsId, branchOptionsMy } from "../constant/branches";
 import { dialCodeOptions } from "../constant/countries";
 import { useRegisterForm } from "../hooks/useRegisterForm";
 import { getWhatsAppLink } from "../lib/contact";
-import type { RegisterSearch } from "./register";
 
 export const Route = createLazyFileRoute("/register")({
   component: RegisterPage,
 });
 
+// --- SUB-COMPONENTS TO ISOLATE RE-RENDERS ---
+
+const RightBanner = React.memo(({ referralData }: { referralData: any }) => {
+  return (
+    <div className="hidden lg:block lg:w-1/2 relative bg-[#0c0c0e] overflow-hidden border-l border-slate-100 group">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-red-600/10 blur-[100px] pointer-events-none z-0 group-hover:bg-red-600/20 transition-all duration-1000" />
+      <OptimizedImage
+        src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg"
+        alt="Investasi Emas Public Gold"
+        className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80 group-hover:scale-105 group-hover:opacity-70 transition-all duration-1000"
+        priority
+      />
+      <div className="absolute top-[15%] inset-x-0 z-[15] flex justify-center pointer-events-none">
+        <img
+          src="/logo.svg"
+          alt="Public Gold Logo"
+          className="w-64 sm:w-80 md:w-96 h-auto drop-shadow-2xl transition-transform duration-1000 group-hover:scale-105"
+        />
+      </div>
+      <div className="absolute bottom-10 right-10 z-20">
+        <a
+          href={getWhatsAppLink(referralData)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative flex items-center gap-4 bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/10 hover:border-white/20 p-4 pr-7 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(37,211,102,0.2)] cursor-pointer overflow-hidden"
+        >
+          <div className="relative z-10">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] flex items-center justify-center shadow-lg shadow-[#25D366]/30 group-hover:shadow-[#25D366]/60 group-hover:scale-110 transition-all duration-500 ease-out">
+              <MessageCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+          <div className="text-left relative z-10 transition-transform duration-300 group-hover:translate-x-1 flex flex-col justify-center">
+            <p className="text-[#25D366] text-xs font-medium mb-0.5 drop-shadow-sm">
+              Perlu bantuan?
+            </p>
+            <p className="text-white font-bold text-base leading-none drop-shadow-md">
+              Konsultasi Sekarang
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+  );
+});
+
+const CountrySelector = React.memo(
+  ({
+    countryMode,
+    onCountryChange,
+  }: {
+    countryMode: string;
+    onCountryChange: (val: any) => void;
+  }) => {
+    const { t } = useTranslation();
+    return (
+      <Combobox value={countryMode} onValueChange={onCountryChange}>
+        <ComboboxTrigger className="w-fit min-w-[145px] bg-slate-50 border-slate-200">
+          <ComboboxValue
+            placeholder={t("registerPage.selectCountry")}
+            className="truncate"
+          >
+            {countryMode === "ID"
+              ? "🇮🇩 Indonesia"
+              : countryMode === "MY"
+                ? "🇲🇾 Malaysia"
+                : "🌏 International"}
+          </ComboboxValue>
+        </ComboboxTrigger>
+        <ComboboxContent align="end">
+          <ComboboxItem value="ID">🇮🇩 Indonesia</ComboboxItem>
+          <ComboboxItem value="MY">🇲🇾 Malaysia</ComboboxItem>
+          <ComboboxItem value="INTL">🌏 International</ComboboxItem>
+        </ComboboxContent>
+      </Combobox>
+    );
+  },
+);
+
+const PhoneSection = React.memo(
+  ({
+    register,
+    setValue,
+    watch,
+    errors,
+    phoneWarning,
+    handlePhoneInput,
+    isAnak,
+  }: any) => {
+    const { t } = useTranslation();
+    const [dialCodeSearch, setDialCodeSearch] = useState("");
+    const filteredDialCodes = useMemo(() => {
+      if (!dialCodeSearch) return dialCodeOptions;
+      const term = dialCodeSearch.toLowerCase();
+      return dialCodeOptions.filter(
+        (opt) =>
+          opt.label.toLowerCase().includes(term) || opt.value.includes(term),
+      );
+    }, [dialCodeSearch]);
+
+    return (
+      <div className="space-y-2">
+        <Label
+          htmlFor="label-mobile"
+          className="after:content-['*'] after:ml-0.5 after:text-red-500"
+        >
+          {isAnak
+            ? t("registerForm.mobileLabelAnak")
+            : t("registerForm.mobileLabelDewasa")}
+        </Label>
+        <div className="flex -space-x-px">
+          <div className="w-[100px] sm:w-[120px]">
+            <Combobox
+              onValueChange={(val: string | null) =>
+                val &&
+                setValue("label-mobile-dialcode", val, {
+                  shouldValidate: true,
+                })
+              }
+              value={watch("label-mobile-dialcode") || "62"}
+              inputValue={dialCodeSearch}
+              onInputValueChange={setDialCodeSearch}
+            >
+              <ComboboxTrigger className="rounded-r-none border-r-0 focus:ring-0 focus:ring-offset-0 shadow-none">
+                <ComboboxValue className="truncate">
+                  {dialCodeOptions
+                    .find((opt) => opt.value === watch("label-mobile-dialcode"))
+                    ?.label?.replace("+", "")}
+                </ComboboxValue>
+              </ComboboxTrigger>
+              <ComboboxContent>
+                <ComboboxInput placeholder="Cari kode negara..." />
+                {filteredDialCodes.length === 0 && (
+                  <div className="py-6 text-center text-sm text-muted-foreground">
+                    Tidak ditemukan.
+                  </div>
+                )}
+                {filteredDialCodes.map((opt) => (
+                  <ComboboxItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </ComboboxItem>
+                ))}
+              </ComboboxContent>
+            </Combobox>
+          </div>
+          <Input
+            id="label-mobile"
+            type="tel"
+            placeholder={t("registerForm.mobilePlaceholder")}
+            {...register("label-mobile", {
+              onChange: handlePhoneInput,
+            })}
+            className={cn(
+              "flex-1 rounded-l-none focus-visible:ring-offset-0",
+              errors["label-mobile"] && "z-10 border-red-500",
+            )}
+          />
+        </div>
+        <div className="mt-1">
+          {errors["label-mobile"] ? (
+            <p className="text-[11px] font-medium text-red-500">
+              {errors["label-mobile"]?.message as string}
+            </p>
+          ) : (
+            phoneWarning && (
+              <p className="text-[11px] font-medium text-amber-600 flex items-center gap-1.5 animate-in fade-in duration-200">
+                <AlertCircle className="w-3 h-3 shrink-0" />{" "}
+                {t("registerForm.mobileWarning")}
+              </p>
+            )
+          )}
+        </div>
+      </div>
+    );
+  },
+);
+
+const BranchSection = React.memo(
+  ({ setValue, control, errors, activeBranchOptions }: any) => {
+    const { t } = useTranslation();
+    const branchValue = useWatch({ control, name: "upreferredbranch" });
+    const [branchSearch, setBranchSearch] = useState("");
+    const filteredBranchOptions = useMemo(() => {
+      if (!branchSearch) return activeBranchOptions;
+      const term = branchSearch.toLowerCase();
+      return activeBranchOptions.filter((opt: any) =>
+        opt.label.toLowerCase().includes(term),
+      );
+    }, [branchSearch, activeBranchOptions]);
+
+    return (
+      <div className="space-y-2">
+        <Label
+          htmlFor="upreferredbranch"
+          className="after:content-['*'] after:ml-0.5 after:text-red-500"
+        >
+          {t("registerForm.branchLabel")}
+        </Label>
+        <Combobox
+          onValueChange={(val: string | null) =>
+            val &&
+            setValue("upreferredbranch", val, {
+              shouldValidate: true,
+            })
+          }
+          value={branchValue}
+          inputValue={branchSearch}
+          onInputValueChange={setBranchSearch}
+        >
+          <ComboboxTrigger
+            id="upreferredbranch"
+            className={cn(
+              errors["upreferredbranch"] &&
+                "border-red-500 focus-visible:ring-red-500/30",
+            )}
+          >
+            <ComboboxValue className="truncate">
+              {activeBranchOptions.find((opt: any) => opt.value === branchValue)
+                ?.label || t("registerPage.selectBranch")}
+            </ComboboxValue>
+          </ComboboxTrigger>
+          <ComboboxContent>
+            {activeBranchOptions.length > 8 && (
+              <ComboboxInput placeholder="Cari kantor cabang..." />
+            )}
+            {filteredBranchOptions.length === 0 && (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Tidak ditemukan.
+              </div>
+            )}
+            {filteredBranchOptions.map((opt: any) => (
+              <ComboboxItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </ComboboxItem>
+            ))}
+          </ComboboxContent>
+        </Combobox>
+        <p
+          className={cn(
+            "text-[11px] font-medium transition-colors duration-200 mt-1.5",
+            errors["upreferredbranch"] ? "text-red-500" : "text-slate-400/90",
+          )}
+        >
+          {errors["upreferredbranch"]
+            ? (errors["upreferredbranch"]?.message as string)
+            : t("registerForm.branchDesc")}
+        </p>
+      </div>
+    );
+  },
+);
+
 function RegisterPage() {
-  const search = useSearch({ strict: false });
-  const { type, ref } = (search as unknown as RegisterSearch) || {};
+  const search = Route.useSearch();
+  const { type, ref } = search;
   const navigate = useNavigate();
   const isAnak = type === "anak";
-  const queryClient = useQueryClient();
-  const { data: referralData, isError: isReferralError } = useQuery({
-    queryKey: ["referral", ref],
-    queryFn: async () => {
-      if (!ref) return null;
-      try {
-        const res = await api.get(`/public/pgbo/${ref}`);
-        return res.data.data;
-      } catch (err: any) {
-        if (err.response?.status === 404) {
-          throw new Error("Agent not found");
-        }
-        throw err;
-      }
-    },
-    enabled: !!ref,
-    retry: false,
-    placeholderData: () => {
-      if (!ref) return undefined;
-      return queryClient.getQueryData(agentQueryOptions(ref).queryKey);
-    },
-  });
+  const referralData = Route.useLoaderData();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (!ref) {
       const storedPageId = localStorage.getItem("ref_pageid");
       if (storedPageId) {
@@ -103,12 +328,16 @@ function RegisterPage() {
     if (referralData) {
       localStorage.setItem("ref_pageid", referralData.pageid);
     }
+
+    document.body.style.removeProperty("overflow");
+    document.body.removeAttribute("data-scroll-locked");
   }, [ref, referralData, navigate]);
 
   const { t, i18n } = useTranslation();
   const [countryMode, setCountryMode] = useState<"ID" | "MY" | "INTL">("ID");
 
   useEffect(() => {
+    if (!isMounted) return;
     const lang = i18n.language || "";
     if (lang.startsWith("id")) {
       setCountryMode("ID");
@@ -117,7 +346,7 @@ function RegisterPage() {
     } else {
       setCountryMode("INTL");
     }
-  }, [i18n.language]);
+  }, [i18n.language, isMounted]);
 
   const isIndonesia = countryMode === "ID";
   const [isTermsExpanded, setIsTermsExpanded] = useState(false);
@@ -135,6 +364,7 @@ function RegisterPage() {
     errors,
     setValue,
     watch,
+    control,
     reset,
     isLoading,
     status,
@@ -153,29 +383,9 @@ function RegisterPage() {
     handleNikBlur,
     handlePhoneInput,
     confirmSubmit,
-    control,
   } = useRegisterForm(isAnak, countryMode, referralData);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
-
-  const [dialCodeSearch, setDialCodeSearch] = useState("");
-  const filteredDialCodes = useMemo(() => {
-    if (!dialCodeSearch) return dialCodeOptions;
-    const term = dialCodeSearch.toLowerCase();
-    return dialCodeOptions.filter(
-      (opt) =>
-        opt.label.toLowerCase().includes(term) || opt.value.includes(term),
-    );
-  }, [dialCodeSearch]);
-
-  const [branchSearch, setBranchSearch] = useState("");
-  const filteredBranchOptions = useMemo(() => {
-    if (!branchSearch) return activeBranchOptions;
-    const term = branchSearch.toLowerCase();
-    return activeBranchOptions.filter((opt) =>
-      opt.label.toLowerCase().includes(term),
-    );
-  }, [branchSearch, activeBranchOptions]);
 
   useEffect(() => {
     if (status === "success") {
@@ -191,23 +401,15 @@ function RegisterPage() {
 
       return () => clearTimeout(timer);
     }
-  }, [status, setShowNextStepModal, formContainerRef]);
+  }, [status, setShowNextStepModal]);
 
-  if (referralData === undefined && !isReferralError && ref) {
+  // Prevent hydration mismatch by waiting for mount
+  if (!isMounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
-          <p className="text-slate-500 font-medium animate-pulse">
-            Memuat data...
-          </p>
-        </div>
+      <div className="min-h-[100dvh] w-full bg-slate-50 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-red-600" />
       </div>
     );
-  }
-
-  if (isReferralError) {
-    return <NotFound />;
   }
 
   return (
@@ -216,59 +418,37 @@ function RegisterPage() {
       className="min-h-[100dvh] w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-3 sm:p-6 md:p-8"
     >
       <Card className="w-full max-w-[1320px] rounded-3xl sm:rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col lg:flex-row overflow-hidden border-white/50 bg-white p-0">
-        {/* Left Column: Form */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 xl:p-16 xl:px-20 flex flex-col justify-center relative bg-white lg:min-h-[900px]">
           <div className="w-full max-w-lg mx-auto">
             <div className="flex justify-between items-center mb-6 lg:mb-8">
-              {referralData?.pageid ? (
-                <Link
-                  to="/$pgcode"
-                  params={{ pgcode: referralData.pageid }}
-                  className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
-                >
-                  <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
-                </Link>
-              ) : (
-                <Link
-                  to="/"
-                  className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
-                >
-                  <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
-                </Link>
-              )}
+              <Link
+                to={referralData?.pageid ? "/$pgcode" : "/"}
+                params={
+                  referralData?.pageid
+                    ? { pgcode: referralData.pageid }
+                    : undefined
+                }
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors font-medium text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" /> {t("nav.back")}
+              </Link>
 
-              <Combobox
-                value={countryMode}
-                onValueChange={(val: string | null) => {
+              <CountrySelector
+                countryMode={countryMode}
+                onCountryChange={(val) => {
                   if (val) {
                     setCountryMode(val as "ID" | "MY" | "INTL");
-                    // Delay language change slightly more to let the popup close and release scroll lock
-                    setTimeout(() => {
-                      if (val === "ID") i18n.changeLanguage("id");
-                      else if (val === "MY") i18n.changeLanguage("ms");
-                      else i18n.changeLanguage("en");
-                    }, 200);
+                    setTimeout(
+                      () => {
+                        if (val === "ID") i18n.changeLanguage("id");
+                        else if (val === "MY") i18n.changeLanguage("ms");
+                        else i18n.changeLanguage("en");
+                      },
+                      i18n.language === val.toLowerCase() ? 0 : 200,
+                    );
                   }
                 }}
-              >
-                <ComboboxTrigger className="w-fit min-w-[145px] bg-slate-50 border-slate-200">
-                  <ComboboxValue
-                    placeholder={t("registerPage.selectCountry")}
-                    className="truncate"
-                  >
-                    {countryMode === "ID"
-                      ? "🇮🇩 Indonesia"
-                      : countryMode === "MY"
-                        ? "🇲🇾 Malaysia"
-                        : "🌏 International"}
-                  </ComboboxValue>
-                </ComboboxTrigger>
-                <ComboboxContent align="end">
-                  <ComboboxItem value="ID">🇮🇩 Indonesia</ComboboxItem>
-                  <ComboboxItem value="MY">🇲🇾 Malaysia</ComboboxItem>
-                  <ComboboxItem value="INTL">🌏 International</ComboboxItem>
-                </ComboboxContent>
-              </Combobox>
+              />
             </div>
 
             <CardHeader className="p-0 mb-6">
@@ -289,6 +469,7 @@ function RegisterPage() {
               onValueChange={(val) => {
                 reset();
                 navigate({
+                  to: "/register",
                   search: (prev: any) => ({
                     ...prev,
                     type: val as "dewasa" | "anak",
@@ -649,143 +830,24 @@ function RegisterPage() {
                     </>
                   )}
 
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="label-mobile"
-                      className="after:content-['*'] after:ml-0.5 after:text-red-500"
-                    >
-                      {isAnak
-                        ? t("registerForm.mobileLabelAnak")
-                        : t("registerForm.mobileLabelDewasa")}
-                    </Label>
-                    <div className="flex -space-x-px">
-                      <div className="w-[100px] sm:w-[120px]">
-                        <Combobox
-                          onValueChange={(val: string | null) =>
-                            val &&
-                            setValue("label-mobile-dialcode", val, {
-                              shouldValidate: true,
-                            })
-                          }
-                          value={watch("label-mobile-dialcode") || "62"}
-                          inputValue={dialCodeSearch}
-                          onInputValueChange={setDialCodeSearch}
-                        >
-                          <ComboboxTrigger className="rounded-r-none border-r-0 focus:ring-0 focus:ring-offset-0 shadow-none">
-                            <ComboboxValue className="truncate">
-                              {dialCodeOptions
-                                .find(
-                                  (opt) =>
-                                    opt.value ===
-                                    watch("label-mobile-dialcode"),
-                                )
-                                ?.label?.replace("+", "")}
-                            </ComboboxValue>
-                          </ComboboxTrigger>
-                          <ComboboxContent>
-                            <ComboboxInput placeholder="Cari kode negara..." />
-                            {filteredDialCodes.length === 0 && (
-                              <div className="py-6 text-center text-sm text-muted-foreground">
-                                Tidak ditemukan.
-                              </div>
-                            )}
-                            {filteredDialCodes.map((opt) => (
-                              <ComboboxItem key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </ComboboxItem>
-                            ))}
-                          </ComboboxContent>
-                        </Combobox>
-                      </div>
-                      <Input
-                        id="label-mobile"
-                        type="tel"
-                        placeholder={t("registerForm.mobilePlaceholder")}
-                        {...register("label-mobile", {
-                          onChange: handlePhoneInput,
-                        })}
-                        className={cn(
-                          "flex-1 rounded-l-none focus-visible:ring-offset-0",
-                          errors["label-mobile"] && "z-10 border-red-500",
-                        )}
-                      />
-                    </div>
-                    <div className="mt-1">
-                      {errors["label-mobile"] ? (
-                        <p className="text-[11px] font-medium text-red-500">
-                          {errors["label-mobile"]?.message as string}
-                        </p>
-                      ) : (
-                        phoneWarning && (
-                          <p className="text-[11px] font-medium text-amber-600 flex items-center gap-1.5 animate-in fade-in duration-200">
-                            <AlertCircle className="w-3 h-3 shrink-0" />{" "}
-                            {t("registerForm.mobileWarning")}
-                          </p>
-                        )
-                      )}
-                    </div>
-                  </div>
+                  <PhoneSection
+                    register={register}
+                    setValue={setValue}
+                    watch={watch}
+                    control={control}
+                    errors={errors}
+                    phoneWarning={phoneWarning}
+                    handlePhoneInput={handlePhoneInput}
+                    isAnak={isAnak}
+                  />
 
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="upreferredbranch"
-                      className="after:content-['*'] after:ml-0.5 after:text-red-500"
-                    >
-                      {t("registerForm.branchLabel")}
-                    </Label>
-                    <Combobox
-                      onValueChange={(val: string | null) =>
-                        val &&
-                        setValue("upreferredbranch", val, {
-                          shouldValidate: true,
-                        })
-                      }
-                      value={watch("upreferredbranch")}
-                      inputValue={branchSearch}
-                      onInputValueChange={setBranchSearch}
-                    >
-                      <ComboboxTrigger
-                        id="upreferredbranch"
-                        className={cn(
-                          errors["upreferredbranch"] &&
-                            "border-red-500 focus-visible:ring-red-500/30",
-                        )}
-                      >
-                        <ComboboxValue className="truncate">
-                          {activeBranchOptions.find(
-                            (opt) => opt.value === watch("upreferredbranch"),
-                          )?.label || t("registerPage.selectBranch")}
-                        </ComboboxValue>
-                      </ComboboxTrigger>
-                      <ComboboxContent>
-                        {activeBranchOptions.length > 8 && (
-                          <ComboboxInput placeholder="Cari kantor cabang..." />
-                        )}
-                        {filteredBranchOptions.length === 0 && (
-                          <div className="py-6 text-center text-sm text-muted-foreground">
-                            Tidak ditemukan.
-                          </div>
-                        )}
-                        {filteredBranchOptions.map((opt) => (
-                          <ComboboxItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </ComboboxItem>
-                        ))}
-                      </ComboboxContent>
-                    </Combobox>
-                    <p
-                      className={cn(
-                        "text-[11px] font-medium transition-colors duration-200 mt-1.5",
-                        errors["upreferredbranch"]
-                          ? "text-red-500"
-                          : "text-slate-400/90",
-                      )}
-                    >
-                      {errors["upreferredbranch"]
-                        ? (errors["upreferredbranch"]?.message as string)
-                        : t("registerForm.branchDesc")}
-                    </p>
-                  </div>
+                  <BranchSection
+                    register={register}
+                    setValue={setValue}
+                    control={control}
+                    errors={errors}
+                    activeBranchOptions={activeBranchOptions}
+                  />
 
                   <div className="pt-1 pb-1 space-y-4">
                     <div className="space-y-3">
@@ -887,56 +949,8 @@ function RegisterPage() {
           </div>
         </div>
 
-        {/* Right Column: Hero Image Banner */}
-        <div className="hidden lg:block lg:w-1/2 relative bg-[#0c0c0e] overflow-hidden border-l border-slate-100 group">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-red-600/10 blur-[100px] pointer-events-none z-0 group-hover:bg-red-600/20 transition-all duration-1000" />
-          <OptimizedImage
-            src="https://penang.chinapress.com.my/wp-content/uploads/2023/05/Public-Gold-1.jpg"
-            alt="Investasi Emas Public Gold"
-            className="absolute inset-0 z-10 w-full h-full object-cover object-left grayscale opacity-80 group-hover:scale-105 group-hover:opacity-70 transition-all duration-1000"
-            priority
-          />
+        <RightBanner referralData={referralData} />
 
-          {/* Centered Logo */}
-          <div className="absolute top-[15%] inset-x-0 z-[15] flex justify-center pointer-events-none">
-            <img
-              src="/logo.svg"
-              alt="Public Gold Logo"
-              className="w-64 sm:w-80 md:w-96 h-auto drop-shadow-2xl transition-transform duration-1000 group-hover:scale-105"
-            />
-          </div>
-
-          {/* Floating Help CTA */}
-          <div className="absolute bottom-10 right-10 z-20">
-            <a
-              href={getWhatsAppLink(referralData)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative flex items-center gap-4 bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/10 hover:border-white/20 p-4 pr-7 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(37,211,102,0.2)] cursor-pointer overflow-hidden"
-            >
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#25D366] to-[#1da851] flex items-center justify-center shadow-lg shadow-[#25D366]/30 group-hover:shadow-[#25D366]/60 group-hover:scale-110 transition-all duration-500 ease-out">
-                  <MessageCircle className="w-6 h-6 text-white" />
-                </div>
-                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#25D366] border-2 border-[#121212]"></span>
-                </span>
-              </div>
-
-              <div className="text-left relative z-10 transition-transform duration-300 group-hover:translate-x-1 flex flex-col justify-center">
-                <p className="text-[#25D366] text-xs font-medium mb-0.5 drop-shadow-sm">
-                  Perlu bantuan?
-                </p>
-                <p className="text-white font-bold text-base leading-none drop-shadow-md">
-                  Konsultasi Sekarang
-                </p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* Mobile-only Floating WA Button */}
         <a
           href={getWhatsAppLink(referralData)}
           target="_blank"
@@ -968,7 +982,10 @@ function RegisterPage() {
             reset();
             navigate({
               to: "/register",
-              search: { type: showAgeSwitch as "dewasa" | "anak" },
+              search: (prev: any) => ({
+                ...prev,
+                type: showAgeSwitch as "dewasa" | "anak",
+              }),
             });
           }}
           onCancel={() => setShowAgeSwitch(null)}

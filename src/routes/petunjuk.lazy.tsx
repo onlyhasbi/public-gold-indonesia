@@ -77,17 +77,9 @@ function PetunjukPage() {
 
   useEffect(() => {
     document.title = "Petunjuk Pendaftaran | Public Gold Indonesia";
-    // Scroll to top on mount
     window.scrollTo({ top: 0 });
-
-    const effectivePageId = ref || localStorage.getItem("ref_pageid");
-
-    if (effectivePageId) {
-      setPageId(effectivePageId);
-      // Ensure localStorage is synced if it came from URL
-      if (ref) {
-        localStorage.setItem("ref_pageid", ref);
-      }
+    if (ref) {
+      setPageId(ref);
     }
   }, [ref]);
 

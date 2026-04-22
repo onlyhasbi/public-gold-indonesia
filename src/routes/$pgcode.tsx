@@ -1,47 +1,36 @@
-import { createFileRoute, useMatches, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
+import {
+  createFileRoute,
+  useMatches,
+  notFound,
+} from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
-import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const Benefit = lazy(() => import("../components/benefit"));
-const CallToAction = lazy(() => import("../components/cta"));
-const Excellence = lazy(() => import("../components/excellence"));
-const PaymentMethods = lazy(() => import("../components/payment_methods"));
-const PriceList = lazy(() => import("../components/pricelist"));
-const PublicGold = lazy(() => import("../components/public_gold"));
-const Questions = lazy(() => import("../components/questions"));
+import Benefit from "../components/benefit";
+import CallToAction from "../components/cta";
+import Excellence from "../components/excellence";
+import PaymentMethods from "../components/payment_methods";
+import PriceList from "../components/pricelist";
+import PublicGold from "../components/public_gold";
+import Questions from "../components/questions";
 
 import Header from "../components/header";
+import NotFound from "../components/not_found";
 import GradientHighlight from "../components/ui/gradient_highlight";
 import { MovingCards } from "../components/ui/moving_card";
 import { trackEvent } from "../lib/analytics";
-import { queryClient } from "../lib/queryClient";
 import { agentQueryOptions, goldPricesQueryOptions } from "../lib/queryOptions";
 import { cn } from "../lib/utils";
-import { useSEO } from "../hooks/useSEO";
+
 import { getCloudinaryUrl, getCloudinarySrcSet } from "../lib/images";
 import { useLazyInteraction } from "../hooks/useLazyInteraction";
 
-export const Route = createFileRoute("/$pgcode")({
-  component: App,
-  loader: async ({ params }) => {
-    // PREFETCH AGENT ONLY FOR FAST LCP
-    try {
-      await queryClient.ensureQueryData(agentQueryOptions(params.pgcode));
-    } catch (err: any) {
-      if (err.response?.status === 404) {
-        throw notFound();
-      }
-      throw err;
-    }
-  },
-});
-
 function App() {
   const matches = useMatches();
-  const pgcode = (matches.find((m) => m.routeId === "/$pgcode")?.params as any)
+  const pgcode = (matches.find((m: any) => m.routeId === "/$pgcode")?.params as any)
     ?.pgcode;
 
   // If we're transitioning out, pgcode might be undefined
@@ -58,54 +47,6 @@ function App() {
 
   const { t } = useTranslation();
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  const displayName =
-    pgbo?.nama_panggilan || pgbo?.nama_lengkap || "Authorized Dealer";
-  const title = t("seo.title", { name: displayName });
-  const description = t("seo.description", { name: displayName });
-
-  useSEO({
-    title,
-    description,
-    image: pgbo?.foto_profil_url,
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "ProfilePage",
-      mainEntity: {
-        "@type": "Person",
-        name: displayName,
-        description: description,
-        image: pgbo?.foto_profil_url,
-        jobTitle: "Authorized Public Gold Dealer",
-        identifier: pgbo?.pgcode,
-        url: window.location.href,
-        sameAs: [
-          pgbo?.sosmed_facebook,
-          pgbo?.sosmed_instagram,
-          pgbo?.sosmed_tiktok,
-        ].filter(Boolean),
-      },
-    },
-    preloadImages: [
-      ...(pgbo?.foto_profil_url
-        ? [
-            {
-              src: getCloudinaryUrl(pgbo.foto_profil_url, {
-                width: 400,
-                priority: true,
-              }),
-              srcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
-                priority: true,
-              }),
-              sizes: "(max-width: 768px) 100vw, 400px",
-            },
-          ]
-        : []),
-      {
-        src: getCloudinaryUrl("/5g.webp", { width: 96, priority: true }),
-      },
-    ],
-  });
 
   useEffect(() => {
     // Save referral info for registration flow (PageID only)
@@ -124,15 +65,17 @@ function App() {
     }
 
     const handleScroll = () => {
-      if (window.scrollY > 1000) {
+      if (typeof window !== "undefined" && window.scrollY > 1000) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
   }, [pgbo]);
 
   return (
@@ -141,34 +84,22 @@ function App() {
         <Header pgbo={pgbo} />
       </section>
 
-      <Suspense fallback={<div className="h-48" />}>
-        <section id="advantage" className="scroll-mt-20">
-          <Benefit />
-        </section>
-      </Suspense>
+      <section id="advantage" className="scroll-mt-20">
+        <Benefit />
+      </section>
 
-      <Suspense fallback={<div className="h-48" />}>
-        <section id="public-gold" className="scroll-mt-20">
-          <PublicGold />
-        </section>
-      </Suspense>
+      <section id="public-gold" className="scroll-mt-20">
+        <PublicGold />
+      </section>
 
-      <Suspense
-        fallback={
-          <div className="min-h-[600px] flex items-center justify-center bg-slate-50/50 rounded-3xl animate-pulse" />
-        }
-      >
-        <section id="products" className="scroll-mt-20">
-          <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
-        </section>
-      </Suspense>
+      <section id="products" className="scroll-mt-20">
+        <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
+      </section>
 
-      <Suspense fallback={<div className="h-48" />}>
-        <section id="excellence" className="scroll-mt-20">
-          <PaymentMethods pgbo={pgbo} />
-          <Excellence />
-        </section>
-      </Suspense>
+      <section id="excellence" className="scroll-mt-20">
+        <PaymentMethods pgbo={pgbo} />
+        <Excellence />
+      </section>
 
       <Suspense fallback={<div className="h-64" />}>
         <section id="testimonials" className="scroll-mt-20">
@@ -200,19 +131,19 @@ function App() {
         </section>
       </Suspense>
 
-      <Suspense fallback={<div className="h-48" />}>
-        <Questions />
-      </Suspense>
+      <Questions />
 
-      <Suspense fallback={<div className="h-64" />}>
-        <section id="contact" className="scroll-mt-20">
-          <CallToAction pgbo={pgbo} />
-        </section>
-      </Suspense>
+      <section id="contact" className="scroll-mt-20">
+        <CallToAction pgbo={pgbo} />
+      </section>
 
       {/* Scroll To Top - Hanya Mobile */}
       <button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onClick={() => {
+          if (typeof window !== "undefined") {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
         className={cn(
           "md:hidden fixed right-6 bottom-8 w-12 h-12 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-50 transition-all duration-500 border border-slate-200/50 active:scale-95",
           showScrollTop
@@ -226,3 +157,106 @@ function App() {
     </div>
   );
 }
+
+export const Route = createFileRoute("/$pgcode")({
+  component: App,
+  loader: async ({ params, context }) => {
+    try {
+      const data = await context.queryClient.ensureQueryData(
+        agentQueryOptions(params.pgcode),
+      );
+      return { pgbo: data };
+    } catch (err: any) {
+      if (err.status === 404 || err.response?.status === 404) {
+        throw notFound();
+      }
+      throw err;
+    }
+  },
+  head: ({ loaderData }) => {
+    const pgbo = (loaderData as any)?.pgbo;
+    if (!pgbo) return {};
+
+    const displayName = pgbo.nama_panggilan || "Authorized Dealer";
+    const title = `${displayName} - Konsultan Emas Public Gold Indonesia`;
+    const description = `Amankan masa depan keluarga dengan tabungan emas bersama Public Gold Indonesia`;
+    const image = pgbo.foto_profil_url;
+    const url = `https://mypublicgold.id/${pgbo.pageid}`;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:image", content: image },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: image },
+      ],
+      links: [
+        ...(pgbo.foto_profil_url
+          ? [{
+              rel: "preload",
+              as: "image",
+              href: getCloudinaryUrl(pgbo.foto_profil_url, { width: 400, priority: true }),
+              imageSrcset: getCloudinarySrcSet(pgbo.foto_profil_url, { priority: true }),
+              imageSizes: "(max-width: 768px) 100vw, 400px",
+              fetchpriority: "high",
+            }]
+          : []),
+        {
+          rel: "preload",
+          as: "image",
+          href: getCloudinaryUrl("/5g.webp", { width: 96, priority: true }),
+          fetchpriority: "high",
+        }
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            mainEntity: {
+              "@type": "Person",
+              name: displayName,
+              description: description,
+              image: image,
+              jobTitle: "Authorized Public Gold Dealer",
+              identifier: pgbo.pgcode,
+              url: url,
+              sameAs: [
+                pgbo.sosmed_facebook,
+                pgbo.sosmed_instagram,
+                pgbo.sosmed_tiktok,
+              ].filter(Boolean),
+            },
+          }),
+        }
+      ]
+    };
+  },
+  errorComponent: ({ error }) => {
+    return (
+      <div className="min-h-[50vh] flex flex-col items-center justify-center p-10 text-center gap-4">
+        <h2 className="text-2xl font-bold text-slate-800">
+          Terjadi Kesalahan
+        </h2>
+        <p className="text-slate-500 max-w-md">
+          {error.message || "Gagal memuat profil konsultan."}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 bg-red-600 text-white rounded-xl font-semibold shadow-lg hover:bg-red-700 transition-all"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    );
+  },
+  notFoundComponent: () => <NotFound />,
+});

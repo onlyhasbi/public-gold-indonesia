@@ -32,10 +32,6 @@
       "destination": "https://be-public-gold-indonesia.vercel.app/api/public/sitemap.xml"
     },
     {
-      "source": "/:pageid",
-      "destination": "https://be-public-gold-indonesia.vercel.app/api/public/render/:pageid"
-    },
-    {
       "source": "/api-proxy/:match*",
       "destination": "https://publicgold.co.id/:match*"
     },
@@ -44,7 +40,11 @@
       "destination": "https://publicgold.com.my/:match*"
     },
     {
-      "source": "/((?!api-proxy|assets|.*\\..*).*)",
+      "source": "/:pageid",
+      "destination": "https://be-public-gold-indonesia.vercel.app/api/public/render/:pageid"
+    },
+    {
+      "source": "/((?!api-proxy|assets|.*\\\\..*).*)",
       "destination": "/index.html"
     }
   ]

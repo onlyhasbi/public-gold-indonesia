@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { useTranslation } from "react-i18next";
 
 export function NextStepModal({
   refId,
@@ -17,6 +18,7 @@ export function NextStepModal({
   onClose: () => void;
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -53,15 +55,14 @@ export function NextStepModal({
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
             <DialogTitle className="text-2xl font-bold text-slate-800">
-              Pendaftaran Berhasil!
+              {t("registerForm.successTitle")}
             </DialogTitle>
             <Sparkles className="w-5 h-5 text-amber-400" />
           </div>
 
           {/* Description */}
           <DialogDescription className="text-slate-500 text-sm leading-relaxed mb-8 max-w-sm mx-auto">
-            Akun Anda sedang diproses. Ikuti langkah berikut agar Anda bisa
-            mulai bertransaksi emas.
+            {t("registerForm.successDesc")}
           </DialogDescription>
 
           {/* CTA Button */}
@@ -75,7 +76,7 @@ export function NextStepModal({
             }}
             className="group w-full gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold h-16 shadow-xl shadow-emerald-200/50 hover:shadow-emerald-300/60 border-none"
           >
-            Lihat Petunjuk Selanjutnya
+            {t("registerForm.successCta")}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
 
@@ -85,7 +86,7 @@ export function NextStepModal({
             onClick={onClose}
             className="mt-4 text-sm text-slate-400 hover:text-slate-600 transition-colors cursor-pointer font-medium"
           >
-            Lewati untuk sekarang
+            {t("registerForm.successSkip")}
           </button>
         </div>
       </DialogContent>

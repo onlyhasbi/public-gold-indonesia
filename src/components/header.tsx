@@ -108,7 +108,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
   );
 
   return (
-    <div className="relative flex flex-col md:flex-row min-h-[40rem] lg:min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 p-6 md:p-0 overflow-hidden">
+    <div className="relative flex flex-col md:flex-row min-h-[40rem] lg:min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 px-6 pt-28 pb-12 md:p-0 overflow-hidden">
       {/* Background patterns */}
       <div
         className="absolute inset-0 opacity-40 pointer-events-none"

@@ -259,5 +259,30 @@ export interface TranslationKeys {
     submittingBtn: string;
     termsText: string;
     termsLink: string;
+    confirmTitle: string;
+    confirmDesc: string;
+    confirmDescAnak: string;
+    backBtn: string;
+    confirmBtn: string;
+    ageValidationTitle: string;
+    ageValidationToDewasa: string;
+    ageValidationToAnak: string;
+    ageValidationQuestion: string;
+    ageValidationSwitchBtn: string;
+    ageValidationCancelBtn: string;
+    successTitle: string;
+    successDesc: string;
+    successCta: string;
+    successSkip: string;
+    validation: {
+      nameRegex: string;
+      icDigits: string;
+      mobileDigits: string;
+      max20: string;
+      required: string;
+      email: string;
+      dob: string;
+      branch: string;
+    };
   };
 }

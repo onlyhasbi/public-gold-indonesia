@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { purgeAllSessions } from "@/lib/auth";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
+import { logout } from "@/lib/auth";
 import {
   useQuery,
   useMutation,
@@ -11,8 +11,8 @@ import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import { useToast } from "../../components/toast";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import * as v from "valibot";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "../../components/ui/data-table";
 import {
@@ -63,41 +63,53 @@ import { dialCodeOptions } from "@/constant/countries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/")({
+  beforeLoad: ({ context }) => {
+    if (!context.auth?.adminToken) {
+      throw redirect({
+        to: "/admin/login",
+      });
+    }
+  },
   component: AdminDashboard,
 });
 
-const createSchema = yup.object().shape({
-  pgcode: yup
-    .string()
-    .min(3, "Minimal 3 karakter")
-    .required("PGCode wajib diisi"),
-  pageid: yup
-    .string()
-    .min(3, "Minimal 3 karakter")
-    .required("Page ID wajib diisi"),
-  katasandi: yup
-    .string()
-    .min(6, "Minimal 6 karakter")
-    .required("Password wajib diisi"),
-  nama_lengkap: yup.string().optional(),
-  country_code: yup.string().default("62"),
-  no_telpon: yup.string().required("No. Telepon wajib diisi"),
-  foto_profil: yup.mixed().optional(),
+const createSchema = v.object({
+  pgcode: v.pipe(
+    v.string(),
+    v.minLength(3, "Minimal 3 karakter"),
+    v.nonEmpty("PGCode wajib diisi"),
+  ),
+  pageid: v.pipe(
+    v.string(),
+    v.minLength(3, "Minimal 3 karakter"),
+    v.nonEmpty("Page ID wajib diisi"),
+  ),
+  katasandi: v.pipe(
+    v.string(),
+    v.minLength(6, "Minimal 6 karakter"),
+    v.nonEmpty("Password wajib diisi"),
+  ),
+  nama_lengkap: v.optional(v.string()),
+  country_code: v.optional(v.string(), "62"),
+  no_telpon: v.pipe(v.string(), v.nonEmpty("No. Telepon wajib diisi")),
+  foto_profil: v.optional(v.any()),
 });
 
-const editSchema = yup.object().shape({
-  nama_lengkap: yup.string().optional(),
-  pgcode: yup
-    .string()
-    .min(3, "Minimal 3 karakter")
-    .required("PGCode wajib diisi"),
-  pageid: yup
-    .string()
-    .min(3, "Minimal 3 karakter")
-    .required("Page ID wajib diisi"),
-  country_code: yup.string().default("62"),
-  no_telpon: yup.string().required("No. Telepon wajib diisi"),
-  foto_profil: yup.mixed().optional(),
+const editSchema = v.object({
+  nama_lengkap: v.optional(v.string()),
+  pgcode: v.pipe(
+    v.string(),
+    v.minLength(3, "Minimal 3 karakter"),
+    v.nonEmpty("PGCode wajib diisi"),
+  ),
+  pageid: v.pipe(
+    v.string(),
+    v.minLength(3, "Minimal 3 karakter"),
+    v.nonEmpty("Page ID wajib diisi"),
+  ),
+  country_code: v.optional(v.string(), "62"),
+  no_telpon: v.pipe(v.string(), v.nonEmpty("No. Telepon wajib diisi")),
+  foto_profil: v.optional(v.any()),
 });
 
 const columnHelper = createColumnHelper<any>();
@@ -234,14 +246,14 @@ function AdminDashboard() {
   useEffect(() => {
     if (isError) {
       if ((error as any).response?.status === 401) {
-        purgeAllSessions();
+        logout();
         navigate({ to: "/admin/login" });
       }
     }
   }, [isError, error, navigate]);
 
   const handleLogout = () => {
-    purgeAllSessions();
+    logout();
     navigate({ to: "/admin/login" });
   };
 
@@ -330,7 +342,7 @@ function AdminDashboard() {
     watch: watchCreate,
     formState: { errors: createErrors, isValid: isValidCreate },
   } = useForm({
-    resolver: yupResolver(createSchema),
+    resolver: valibotResolver(createSchema),
     mode: "onChange",
     defaultValues: {
       pgcode: "",
@@ -388,7 +400,7 @@ function AdminDashboard() {
     watch: watchEdit,
     formState: { errors: editErrors, isValid: isValidEdit },
   } = useForm({
-    resolver: yupResolver(editSchema),
+    resolver: valibotResolver(editSchema),
     mode: "onChange",
   });
 

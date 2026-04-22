@@ -1,66 +1,90 @@
-import axios from "axios";
-import { queryClient } from "./queryClient";
+import { parse } from "cookie";
+import { API_URL } from "./config";
 
-const url = import.meta.env.VITE_API_URL || "http://localhost:3000";
-const cleanUrl = url.replace(/\/+$/, "");
-const baseURL = cleanUrl.endsWith("/api") ? cleanUrl : `${cleanUrl}/api`;
+function getToken(isAdmin = false): string | null {
+  if (typeof window === "undefined") return null;
+  const cookies = parse(document.cookie);
+  const key = isAdmin ? "pg_admin_token" : "pg_auth_token";
+  return cookies[key]?.replace(/^"|"$/g, "") || null;
+}
 
-export const api = axios.create({
-  baseURL,
-  timeout: 15000,
-});
+interface RequestConfig {
+  headers?: Record<string, string>;
+  responseType?: string;
+}
 
-/**
- * UTILITY: Extract token independently of localStorage.
- * Reads directly from the hydrated TanStack Query cache.
- */
-const getAuthData = (isAdmin: boolean) => {
-  const key = isAdmin ? ["auth", "admin"] : ["auth", "dealer"];
-  // getQueryData is synchronous and will find the data if hydrated by the persister
-  return queryClient.getQueryData<any>(key);
-};
+interface ApiResponse<T = any> {
+  data: T;
+  status: number;
+}
 
-// Attach JWT token to every request
-api.interceptors.request.use((config) => {
-  const pagePath = window.location.pathname;
-  const requestUrl = config.url || "";
+async function request<T = any>(
+  method: string,
+  endpoint: string,
+  data?: any,
+  config: RequestConfig = {}
+): Promise<ApiResponse<T>> {
+  const url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
 
-  // DETERMINISTIC TOKEN SELECTION:
-  // If we are ON an admin page OR calling an admin endpoint, prioritize the admin token.
-  const isAdminRequest =
-    pagePath.startsWith("/admin") || requestUrl.startsWith("/admin");
+  const isAdmin = endpoint.startsWith("/admin");
+  const token = getToken(isAdmin);
 
-  const authData = getAuthData(isAdminRequest);
-  const token = authData?.token;
+  const headers: Record<string, string> = {
+    ...config.headers,
+  };
 
-  if (token && !config.headers.Authorization) {
-    const cleanToken =
-      typeof token === "string" ? token.replace(/^"|"$/g, "") : token;
-    config.headers.Authorization = `Bearer ${cleanToken}`;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
-  return config;
-});
 
-// Handle expired tokens and server errors globally
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const path = window.location.pathname;
+  const isFormData = data instanceof FormData;
+  if (isFormData) {
+    // Let the browser set the Content-Type with the correct boundary
+    delete headers["Content-Type"];
+  } else if (!headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
 
-      // Wipe absolutely all auth states
-      queryClient.removeQueries({ queryKey: ["auth"] });
-      queryClient.clear();
+  const fetchOptions: RequestInit = {
+    method: method.toUpperCase(),
+    headers,
+  };
 
-      if (path.startsWith("/admin")) {
-        return Promise.reject(error);
-      }
-    }
+  if (data !== undefined && data !== null) {
+    fetchOptions.body = isFormData ? data : JSON.stringify(data);
+  }
 
-    if (error.response?.status === 429) {
-      console.warn("Rate limited. Silakan tunggu beberapa saat.");
-    }
+  const response = await fetch(url, fetchOptions);
 
-    return Promise.reject(error);
-  },
-);
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const error: any = new Error(errorData.message || `API Error: ${response.status}`);
+    error.response = { data: errorData, status: response.status };
+    throw error;
+  }
+
+  if (config.responseType === "blob") {
+    const blob = await response.blob();
+    return { data: blob as any, status: response.status };
+  }
+
+  const json = await response.json();
+  return { data: json, status: response.status };
+}
+
+export const api = {
+  get: <T = any>(endpoint: string, config?: RequestConfig) =>
+    request<T>("GET", endpoint, undefined, config),
+
+  post: <T = any>(endpoint: string, data?: any, config?: RequestConfig) =>
+    request<T>("POST", endpoint, data, config),
+
+  put: <T = any>(endpoint: string, data?: any, config?: RequestConfig) =>
+    request<T>("PUT", endpoint, data, config),
+
+  patch: <T = any>(endpoint: string, data?: any, config?: RequestConfig) =>
+    request<T>("PATCH", endpoint, data, config),
+
+  delete: <T = any>(endpoint: string, config?: RequestConfig) =>
+    request<T>("DELETE", endpoint, undefined, config),
+};

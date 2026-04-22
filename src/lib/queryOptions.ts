@@ -1,6 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
-import { api } from "./api";
-import { getGoldPrices } from "../services/getGoldPrices";
+import {
+  getAdminProfileFn,
+  getAgentData,
+  getGoldPricesFn,
+  getOverviewFn,
+  getSettingsFn,
+} from "../services/api.functions";
 
 /**
  * Query Options for Agent Data (PGBO)
@@ -10,11 +15,12 @@ export const agentQueryOptions = (pgcode: string) =>
   queryOptions({
     queryKey: ["agent", pgcode],
     queryFn: async () => {
-      const res = await api.get(`/public/pgbo/${pgcode}`);
-      return res.data.data;
+      const res = await getAgentData({ data: pgcode });
+      return res.data;
     },
-    // USER REQUIREMENT: Always fresh data for previews
-    staleTime: 60 * 1000,
+    // Standardized: Agent profile data rarely changes, 5m is optimal.
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000, // Keep in memory for 30m
   });
 
 /**
@@ -25,42 +31,43 @@ export const agentQueryOptions = (pgcode: string) =>
 export const goldPricesQueryOptions = () =>
   queryOptions({
     queryKey: ["goldPrices"],
-    queryFn: getGoldPrices,
-    // USER REQUIREMENT: Always get fresh data on mount (refresh)
-    staleTime: 60 * 1000,
+    queryFn: async () => {
+      const res = await getGoldPricesFn();
+      return res.data;
+    },
+    // Standardized: Market data needs revalidation but can be stale for a short bit during nav.
+    staleTime: 2 * 60 * 1000,
     // Disable background updates to avoid excessive scraping
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    // Data remains in cache for 5 minutes during background refetch to avoid UI flicker
-    gcTime: 5 * 60 * 1000,
+    // Data remains in cache for 10 minutes (GC)
+    gcTime: 10 * 60 * 1000,
   });
 
 /**
  * Query Options for Dashboard Overview (Dealer)
  */
-export const overviewQueryOptions = (search?: string) =>
+export const overviewQueryOptions = (search?: string, cookieStr?: string) =>
   queryOptions({
     queryKey: ["overview", search],
     queryFn: async () => {
-      const res = await api.get(
-        `/overview${search ? `?search=${encodeURIComponent(search)}` : ""}`,
-      );
-      return res.data?.data;
+      const res = await getOverviewFn({ data: { search, cookieStr } });
+      return res.data;
     },
-    staleTime: 0,
+    staleTime: 2 * 60 * 1000,
   });
 
 /**
  * Query Options for User Settings (Dealer)
  */
-export const settingsQueryOptions = () =>
+export const settingsQueryOptions = (cookieStr?: string) =>
   queryOptions({
     queryKey: ["settings"],
     queryFn: async () => {
-      const res = await api.get("/settings");
-      return res.data?.data;
+      const res = await getSettingsFn({ data: { cookieStr } });
+      return res.data;
     },
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
   });
 
 /**
@@ -70,22 +77,22 @@ export const settingsQueryOptions = () =>
  * If the cache is empty, we only fetch the user as the token is credentials.
  */
 
-export const authDealerQueryOptions = () =>
+export const authDealerQueryOptions = (cookieStr?: string) =>
   queryOptions({
     queryKey: ["auth", "dealer"],
     queryFn: async () => {
-      const res = await api.get("/settings");
-      return { user: res.data?.data, token: null }; // Token is usually primed via setQueryData
+      const res = await getSettingsFn({ data: { cookieStr } });
+      return { user: res.data, token: null }; // Token is usually primed via setQueryData
     },
     staleTime: Infinity,
   });
 
-export const authAdminQueryOptions = () =>
+export const authAdminQueryOptions = (cookieStr?: string) =>
   queryOptions({
     queryKey: ["auth", "admin"],
     queryFn: async () => {
-      const res = await api.get("/admin/profile");
-      return { user: res.data?.data, token: null };
+      const res = await getAdminProfileFn({ data: { cookieStr } });
+      return { user: res.data, token: null };
     },
     staleTime: Infinity,
   });

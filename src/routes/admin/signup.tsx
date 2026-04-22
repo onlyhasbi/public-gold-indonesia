@@ -7,24 +7,26 @@ import { useForm } from "react-hook-form";
 import { requireAdminGuest } from "@/lib/auth";
 import { queryClient } from "../../lib/queryClient";
 import { authAdminQueryOptions } from "../../lib/queryOptions";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import * as v from "valibot";
 
 export const Route = createFileRoute("/admin/signup")({
   beforeLoad: () => requireAdminGuest(),
   component: AdminSignupPage,
 });
 
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Format email tidak valid")
-    .required("Email wajib diisi"),
-  katasandi: yup
-    .string()
-    .min(6, "Password minimal 6 karakter")
-    .required("Password wajib diisi"),
-  secretCode: yup.string().required("Secret code wajib diisi untuk keamanan"),
+const schema = v.object({
+  email: v.pipe(
+    v.string(),
+    v.email("Format email tidak valid"),
+    v.nonEmpty("Email wajib diisi"),
+  ),
+  katasandi: v.pipe(
+    v.string(),
+    v.minLength(6, "Password minimal 6 karakter"),
+    v.nonEmpty("Password wajib diisi"),
+  ),
+  secretCode: v.pipe(v.string(), v.nonEmpty("Secret code wajib diisi untuk keamanan")),
 });
 
 function AdminSignupPage() {
@@ -44,7 +46,7 @@ function AdminSignupPage() {
     formState: { errors, isValid },
     getValues,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: valibotResolver(schema),
     mode: "onChange",
     defaultValues: {
       email: "",

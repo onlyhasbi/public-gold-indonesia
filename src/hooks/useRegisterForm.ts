@@ -1,12 +1,12 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import { dialCodeOptions } from "../constant/countries";
 import { branchLabelOptions } from "../constant/branches";
 import { extractDataFromNIK, calculateAge } from "../lib/utils";
 import { formatPhoneForAPI } from "../lib/phone";
-import { getValidationSchema } from "../lib/validations";
-import { api } from "../lib/api";
+import { getValidationSchema, type RegisterFormData } from "../lib/validations";
+import { registerTrackFn } from "../services/api.functions";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
@@ -37,6 +37,11 @@ export function useRegisterForm(
   const pendingFormData = useRef<string | null>(null);
   const pendingEndpoint = useRef<string | null>(null);
 
+  const schema = useMemo(
+    () => getValidationSchema(isAnak, isIndonesia, t),
+    [isAnak, isIndonesia, t],
+  );
+
   const {
     register,
     handleSubmit,
@@ -46,10 +51,10 @@ export function useRegisterForm(
     reset,
     control,
     formState: { errors, touchedFields },
-  } = useForm({
+  } = useForm<RegisterFormData>({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    resolver: yupResolver(getValidationSchema(isAnak, isIndonesia)),
+    resolver: valibotResolver(schema) as any,
     defaultValues: {
       "label-name": "",
       idselect: countryMode === "INTL" ? "passportforeign" : "newic",
@@ -243,18 +248,20 @@ export function useRegisterForm(
             ] ||
             values.upreferredbranch ||
             "-";
-          api
-            .post("/public/register-track", {
+          
+          // MIGRATION: Using TanStack Server Function
+          registerTrackFn({
+            data: {
               pageid: referralData.pageid,
               nama: values["label-name"],
               branch: resolvedBranchLabel,
               no_telpon: `+${fullPhone}`,
-            })
-            .catch((err: any) => console.warn("Track failed:", err));
+            }
+          }).catch((err: any) => console.warn("Track failed:", err));
         }
         return {
           success: true,
-          message: t("registerForm.submitBtn") + " Success",
+          message: t("registerForm.successTitle"),
         };
       }
 
@@ -268,8 +275,12 @@ export function useRegisterForm(
         throw new Error(errorAlert.textContent.trim());
       }
 
+      const genericError = isIndonesia
+        ? "Terjadi kesalahan pada jaringan."
+        : "A network error occurred.";
+
       if (!response.ok) {
-        throw new Error("Terjadi kesalahan pada jaringan.");
+        throw new Error(genericError);
       }
 
       // Track locally for success case
@@ -283,21 +294,22 @@ export function useRegisterForm(
           ] ||
           values.upreferredbranch ||
           "-";
-        api
-          .post("/public/register-track", {
+        
+        // MIGRATION: Using TanStack Server Function
+        registerTrackFn({
+          data: {
             pageid: referralData.pageid,
             nama: values["label-name"],
             branch: resolvedBranchLabel,
             no_telpon: `+${fullPhone}`,
-          })
-          .catch((err: any) => console.warn("Track failed:", err));
+          }
+        }).catch((err: any) => console.warn("Track failed:", err));
       }
 
       return {
         success: true,
         message:
-          successAlert?.textContent?.trim() ||
-          "Pendaftaran berhasil! Silakan cek email Anda untuk langkah selanjutnya.",
+          successAlert?.textContent?.trim() || t("registerForm.successDesc"),
       };
     },
     onSuccess: (data: any) => {
@@ -310,10 +322,10 @@ export function useRegisterForm(
       }
     },
     onError: (error: any) => {
-      setErrorMessage(
-        error.message ||
-          "Terjadi kesalahan saat mengirim data. Silakan coba lagi.",
-      );
+      const defaultError = isIndonesia
+        ? "Terjadi kesalahan saat mengirim data. Silakan coba lagi."
+        : "An error occurred while sending data. Please try again.";
+      setErrorMessage(error.message || defaultError);
     },
   });
 

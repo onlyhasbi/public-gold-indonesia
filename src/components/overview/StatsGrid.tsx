@@ -68,7 +68,7 @@ export function StatsGrid({
 
           <CardContent className="p-0 relative z-10">
             <p className="text-2xl sm:text-4xl font-bold text-slate-800 tracking-tight">
-              {stat.value.toLocaleString()}
+              {(stat.value ?? 0).toLocaleString()}
             </p>
             <p className="text-slate-500 text-[10px] sm:text-sm font-medium mt-1 sm:mt-1.5 leading-tight">
               {stat.label}

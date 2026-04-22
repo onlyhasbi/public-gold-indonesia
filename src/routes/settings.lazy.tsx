@@ -71,7 +71,7 @@ export interface SettingsFormValues {
   konfirmasi_katasandi?: string;
 }
 
-export const Route = createLazyFileRoute("/_auth/settings")({
+export const Route = createLazyFileRoute("/settings")({
   component: () => (
     <Suspense fallback={<SettingsLoading />}>
       <SettingsPage />
@@ -156,9 +156,7 @@ function SettingsPage() {
         if (value !== undefined) data.append(key, value);
       });
 
-      const res = await api.put("/settings", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await api.put("/settings", data);
       return {
         profile: res.data,
         passwordFields: { katasandi_lama, katasandi_baru },
@@ -166,17 +164,12 @@ function SettingsPage() {
     },
     onSuccess: async (data: any) => {
       if (data.profile.success) {
-        queryClient.invalidateQueries({ queryKey: ["settings"] });
-
-        // UNIFIED PERSISTENCE: Update the auth cache.
-        // The persister handles synchronization with localStorage automatically.
-        queryClient.setQueryData(
-          authDealerQueryOptions().queryKey,
-          (prev: any) => {
-            if (!prev) return { user: data.profile.data, token: null };
-            return { ...prev, user: { ...prev.user, ...data.profile.data } };
-          },
-        );
+        // Invalidate all relevant user data queries to force fresh fetch from DB
+        await Promise.all([
+          queryClient.invalidateQueries(settingsQueryOptions()),
+          queryClient.invalidateQueries(authDealerQueryOptions()),
+          queryClient.invalidateQueries({ queryKey: ["agent"] }),
+        ]);
 
         const profileFieldsChanged =
           Object.keys(dirtyFields).some(

@@ -5,22 +5,24 @@ import { api } from "../../lib/api";
 import { useToast } from "../../components/toast";
 import { useForm } from "react-hook-form";
 import { requireAdminGuest } from "@/lib/auth";
+import { setAuthToken } from "@/lib/auth";
 import { queryClient } from "../../lib/queryClient";
 import { authAdminQueryOptions } from "../../lib/queryOptions";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import * as v from "valibot";
 
 export const Route = createFileRoute("/admin/login")({
   beforeLoad: () => requireAdminGuest(),
   component: AdminLoginPage,
 });
 
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Format email tidak valid")
-    .required("Email wajib diisi"),
-  katasandi: yup.string().required("Password wajib diisi"),
+const schema = v.object({
+  email: v.pipe(
+    v.string(),
+    v.email("Format email tidak valid"),
+    v.nonEmpty("Email wajib diisi"),
+  ),
+  katasandi: v.pipe(v.string(), v.nonEmpty("Password wajib diisi")),
 });
 
 function AdminLoginPage() {
@@ -39,7 +41,7 @@ function AdminLoginPage() {
     handleSubmit,
     formState: { errors, isValid },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: valibotResolver(schema),
     mode: "onChange",
     defaultValues: {
       email: "",
@@ -58,9 +60,7 @@ function AdminLoginPage() {
     },
     onSuccess: (data) => {
       if (data.success && data.user?.role === "admin") {
-        // UNIFIED PERSISTENCE: Just set query data.
-        // The persister handles synchronization with admin_ keys if needed,
-        // but here we use a single cache key 'auth' with 'admin' suffix.
+        setAuthToken(data.token, true);
         queryClient.setQueryData(authAdminQueryOptions().queryKey, {
           user: data.user,
           token: data.token,

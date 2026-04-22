@@ -2,15 +2,24 @@ import { queryOptions } from "@tanstack/react-query";
 
 /**
  * Local State for Portal Security
- * Managed via React Query cache and persisted to localStorage.
+ * Persisted to localStorage to survive reloads.
  */
+
+const IS_UNLOCKED_KEY = "pg_portal_unlocked";
 
 export const portalUnlockedOptions = () =>
   queryOptions({
     queryKey: ["portal", "unlocked"],
-    initialData: false,
+    initialData: () => {
+      if (typeof window === "undefined") return false;
+      return localStorage.getItem(IS_UNLOCKED_KEY) === "true";
+    },
     staleTime: Infinity,
     gcTime: Infinity,
+    queryFn: () => {
+      if (typeof window === "undefined") return false;
+      return localStorage.getItem(IS_UNLOCKED_KEY) === "true";
+    },
   });
 
 export const portalLockoutOptions = () =>
@@ -19,6 +28,7 @@ export const portalLockoutOptions = () =>
     initialData: null as number | null,
     staleTime: Infinity,
     gcTime: Infinity,
+    queryFn: () => null,
   });
 
 export const portalAttemptsOptions = () =>
@@ -27,4 +37,5 @@ export const portalAttemptsOptions = () =>
     initialData: 0,
     staleTime: Infinity,
     gcTime: Infinity,
+    queryFn: () => 0,
   });

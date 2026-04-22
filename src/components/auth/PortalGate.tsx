@@ -3,7 +3,7 @@ import { ArrowRight, ShieldAlert } from "lucide-react";
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
-import { api } from "../../lib/api";
+import { verifyPortalFn } from "../../services/api.functions";
 import {
   portalUnlockedOptions,
   portalLockoutOptions,
@@ -17,8 +17,12 @@ export function PortalGate() {
   const { data: lockoutExpiry } = useQuery(portalLockoutOptions());
   const { data: attempts } = useQuery(portalAttemptsOptions());
 
-  const setUnlocked = (val: boolean) =>
+  const setUnlocked = (val: boolean) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pg_portal_unlocked", val.toString());
+    }
     queryClient.setQueryData(portalUnlockedOptions().queryKey, val);
+  };
   const setLockoutExpiry = (val: number | null) =>
     queryClient.setQueryData(portalLockoutOptions().queryKey, val);
   const setAttempts = (val: number | ((prev: number) => number)) => {
@@ -72,8 +76,9 @@ export function PortalGate() {
     setIsVerifying(true);
     setErrorMsg("");
     try {
-      const res = await api.post("/public/portal/verify", { code: secretCode });
-      if (res.data.success) {
+      // MIGRATION: Using TanStack Server Function
+      const res = await verifyPortalFn({ data: secretCode });
+      if (res.success) {
         setUnlocked(true);
         setErrorMsg("");
         setAttempts(0);
@@ -90,7 +95,7 @@ export function PortalGate() {
       setErrorMsg(
         isLockout
           ? "Banyak percobaan yang salah"
-          : error.response?.data?.message || "Secret code salah.",
+          : error.message || "Secret code salah.",
       );
     } finally {
       setIsVerifying(false);
@@ -136,7 +141,7 @@ export function PortalGate() {
           onSubmit={handleSecretSubmit}
           className="relative group max-w-xs mx-auto space-y-5"
         >
-          <div className="relative flex items-center bg-slate-50/50 border border-slate-100 rounded-lg h-11 p-0.5 focus-within:bg-white focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all duration-300">
+          <div className="relative flex items-center bg-white border border-slate-200 shadow-sm rounded-xl h-12 p-1 focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all duration-300">
             <input
               type="password"
               value={secretCode}
@@ -169,7 +174,7 @@ export function PortalGate() {
             >
               <ShieldAlert className="w-3 h-3" />
               {errorMsg}{" "}
-              {attempts > 0 && attempts < 5 && (
+              {attempts > 0 && (attempts ?? 0) < 5 && (
                 <span className="opacity-60">({attempts}/5)</span>
               )}
             </motion.div>
@@ -179,3 +184,5 @@ export function PortalGate() {
     </motion.div>
   );
 }
+
+export default PortalGate;

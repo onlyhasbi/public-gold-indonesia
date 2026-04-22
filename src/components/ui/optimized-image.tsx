@@ -1,4 +1,4 @@
-import { useState, type ImgHTMLAttributes } from "react";
+import { useState, useEffect, useRef, type ImgHTMLAttributes } from "react";
 import { getCloudinaryUrl, getCloudinarySrcSet } from "../../lib/images";
 
 export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
@@ -10,10 +10,18 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 };
 
 export function OptimizedImage(props: OptimizedImageProps) {
-  const { src, className, priority, width, height, aspectRatio, ...rest } =
-    props;
+  const { src, className, priority, width, height, aspectRatio, ...rest } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+    if (imgRef.current?.complete) {
+      setIsLoaded(true);
+    }
+  }, [src]);
 
   if (!src) return null;
 
@@ -29,9 +37,9 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const defaultWidth = width || 800;
   // Optimize local assets via Cloudinary ONLY in production and if not an SVG
   const canOptimizeLocal = isLocal && !isSvg && !import.meta.env.DEV;
-  // Disable Cloudinary if error occurred OR if domain is known to be blocked
+  // Disable Cloudinary if error occurred, domain is blocked, or it's an SVG
   const useCloudinary =
-    !hasError && !isBlockedDomain && (!isLocal || canOptimizeLocal || isSvg);
+    !hasError && !isBlockedDomain && !isSvg && (!isLocal || canOptimizeLocal);
 
   const srcset = useCloudinary
     ? getCloudinarySrcSet(src, { priority })
@@ -55,7 +63,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
       }}
     >
       {/* 1. Blurred Placeholder Layer - Skipped for priority images to optimize LCP */}
-      {useCloudinary && !isLoaded && !priority && (
+      {useCloudinary && !isLoaded && !priority && isClient && (
         <img
           src={placeholderUrl}
           className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 transition-opacity duration-500"
@@ -66,6 +74,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
 
       {/* 2. Main High-Res Image */}
       <img
+        ref={imgRef}
         src={
           useCloudinary
             ? getCloudinaryUrl(src, { width: defaultWidth, priority })
@@ -77,9 +86,9 @@ export function OptimizedImage(props: OptimizedImageProps) {
           objectClasses.length > 0
             ? objectClasses.join(" ")
             : "object-cover object-center"
-        } ${!priority ? "transition-opacity duration-700 ease-in-out" : ""} ${
+        } ${!priority && isClient ? "transition-opacity duration-700 ease-in-out" : ""} ${
           useCloudinary
-            ? isLoaded || priority
+            ? isLoaded || priority || !isClient
               ? "opacity-100"
               : "opacity-0"
             : "opacity-100"

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Check } from "lucide-react";
@@ -9,7 +9,8 @@ import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { PasswordInput } from "../ui/form-elements";
 import { signupSchema } from "../../schemas/auth.schema";
-import { api } from "../../lib/api";
+import { signupFn, loginFn, checkPageIdFn } from "../../services/api.functions";
+import { setAuthToken } from "../../lib/auth";
 import { useToast } from "../toast";
 import { queryClient } from "../../lib/queryClient";
 import { authDealerQueryOptions } from "../../lib/queryOptions";
@@ -38,7 +39,7 @@ export function SignUpForm({
   const [isVerifyingPageId, setIsVerifyingPageId] = useState(false);
 
   const signupForm = useForm({
-    resolver: yupResolver(signupSchema),
+    resolver: valibotResolver(signupSchema),
     mode: "onChange",
     defaultValues: {
       pgcode: "",
@@ -51,8 +52,8 @@ export function SignUpForm({
 
   const registerMutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await api.post("/auth/register", data);
-      return res.data;
+      // MIGRATION: Using TanStack Server Function
+      return signupFn({ data });
     },
     onSuccess: (data) => {
       if (data.success) {
@@ -81,19 +82,21 @@ export function SignUpForm({
 
         /**
          * USER REQUIREMENT: Post-register login fetch
-         * We immediately call the login endpoint to ensure the session is correctly
-         * initialized and persistent through the standard auth pipeline.
          */
         const performAutoLogin = async () => {
           try {
-            const loginRes = await api.post("/auth/login", {
-              identifier: signupForm.getValues("pgcode"),
-              katasandi: signupForm.getValues("katasandi"),
+            const loginData = await loginFn({
+              data: {
+                pgcode: signupForm.getValues("pgcode"),
+                katasandi: signupForm.getValues("katasandi"),
+              },
             });
-            const loginData = loginRes.data;
 
             if (loginData.success) {
-              // UNIFIED PERSISTENCE: Just set query data.
+              // 1. SET COOKIE
+              setAuthToken(loginData.token);
+
+              // 2. SET QUERY DATA
               queryClient.setQueryData(authDealerQueryOptions().queryKey, {
                 user: loginData.user,
                 token: loginData.token,
@@ -118,13 +121,13 @@ export function SignUpForm({
       }
     },
     onError: (error: any) => {
-      showToast(error.response?.data?.message || "Registrasi gagal", "error");
+      showToast(error.message || "Registrasi gagal", "error");
     },
   });
 
   const fetchIntroducerName = async (pgcode: string) => {
-    if (isPgcodeValid || !pgcode || pgcode.length < 6) {
-      if (!pgcode || pgcode.length < 6) {
+    if (isPgcodeValid || !pgcode || pgcode.length < 5) {
+      if (!pgcode || pgcode.length < 5) {
         setNamaLengkap(null);
         setIsPgcodeValid(false);
       }
@@ -163,8 +166,9 @@ export function SignUpForm({
   const checkPageId = async (pageid: string): Promise<boolean> => {
     if (!pageid || pageid.length < 3) return true;
     try {
-      const res = await api.get(`/auth/check-pageid?pageid=${pageid}`);
-      return res.data.isAvailable;
+      // MIGRATION: Using TanStack Server Function
+      const data = await checkPageIdFn({ data: pageid });
+      return data.isAvailable;
     } catch {
       return true;
     }

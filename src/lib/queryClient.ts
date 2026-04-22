@@ -3,62 +3,80 @@ import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
 /**
- * Shared QueryClient instance.
+ * FACTORY FUNCTION: Creates a fresh QueryClient instance.
+ * Mandatory for SSR per-request isolation.
  */
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Ensuring stale state doesn't trigger unexpected background refetches
-      // during initial hydration of sensitive auth data.
-      staleTime: 1000 * 60 * 5, // 5 minutes default
+export const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5, // 5 minutes default
+      },
     },
-  },
-});
+  });
 
 /**
- * PERSISTENCE LAYER: Automated Synchronization with localStorage.
- * Configured specifically for Auth data to act as the single source of truth.
+ * SINGLETON INSTANCE: Shared instance for browser-side utilities.
+ * Restored to fix broken imports in api.ts, auth.ts, and UI components.
  */
-const persister = createSyncStoragePersister({
-  storage: typeof window !== "undefined" ? window.localStorage : undefined,
-  key: "PUBLIC_GOLD_QUERY_CACHE",
-});
-
-let resolveHydration: () => void = () => {};
-export const hydrationPromise = new Promise<void>((resolve) => {
-  resolveHydration = resolve;
-});
-
-persistQueryClient({
-  queryClient,
-  persister,
-  dehydrateOptions: {
-    // ONLY persist authentication queries.
-    // This includes data under ['auth', 'dealer'] and ['auth', 'admin'].
-    shouldDehydrateQuery: (query) => {
-      return query.queryKey[0] === "auth" || query.queryKey[0] === "portal";
-    },
-  },
-  // Ensure that old stale auth data is discarded if it's too old (e.g., 24h)
-  maxAge: 1000 * 60 * 60 * 24,
-});
-
-// Since we use createSyncStoragePersister (localStorage),
-// hydration happens synchronously during initialization.
-resolveHydration();
+export const queryClient = createQueryClient();
 
 /**
- * TAB SYNCHRONIZATION: Listen for cache updates from other tabs.
- * This ensures that if the portal is unlocked in Tab A, Tab B updates instantly.
+ * PERSISTENCE & TAB SYNC
  */
 if (typeof window !== "undefined") {
-  window.addEventListener("storage", (event) => {
-    if (event.key === "PUBLIC_GOLD_QUERY_CACHE") {
-      // Small delay to ensure localStorage is fully updated before invalidating
-      setTimeout(() => {
-        // We only invalidate 'portal' queries as they are the most critical for multi-tab consistency
-        queryClient.invalidateQueries({ queryKey: ["portal"] });
-      }, 100);
-    }
+  // Sync the singleton instance on the browser
+  const persister = createSyncStoragePersister({
+    storage: window.localStorage,
+    key: "PUBLIC_GOLD_QUERY_CACHE",
   });
+
+  // One-time migration: remove stale portal entries from old persisted cache
+  try {
+    const raw = localStorage.getItem("PUBLIC_GOLD_QUERY_CACHE");
+    if (raw) {
+      const cache = JSON.parse(raw);
+      if (cache?.clientState?.queries?.some((q: { queryKey: unknown[] }) => q.queryKey[0] === "portal")) {
+        cache.clientState.queries = cache.clientState.queries.filter(
+          (q: { queryKey: unknown[] }) => q.queryKey[0] !== "portal"
+        );
+        localStorage.setItem("PUBLIC_GOLD_QUERY_CACHE", JSON.stringify(cache));
+      }
+    }
+  } catch {}
+
+  persistQueryClient({
+    queryClient,
+    persister,
+    dehydrateOptions: {
+      shouldDehydrateQuery: (query) => {
+        const key = query.queryKey[0];
+        return key === "auth" || key === "agent";
+      },
+    },
+    maxAge: 1000 * 60 * 60 * 24,
+  });
+
 }
+
+// Helper to initialize persistence on a specific client instance (if needed)
+export const setupPersistence = (targetClient: QueryClient) => {
+  if (typeof window === "undefined" || targetClient === queryClient) return;
+
+  const persister = createSyncStoragePersister({
+    storage: window.localStorage,
+    key: "PUBLIC_GOLD_QUERY_CACHE",
+  });
+
+  persistQueryClient({
+    queryClient: targetClient,
+    persister,
+    dehydrateOptions: {
+      shouldDehydrateQuery: (query) => {
+        const key = query.queryKey[0];
+        return key === "auth" || key === "agent";
+      },
+    },
+    maxAge: 1000 * 60 * 60 * 24,
+  });
+};

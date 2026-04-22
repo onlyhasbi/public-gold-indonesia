@@ -1,14 +1,10 @@
-import { api } from "./api";
+import { trackEventFn } from "../services/api.functions";
 
 /**
  * Tracks a public analytic event for a specific agent page.
  * Uses navigator.sendBeacon as primary method for reliability —
- * it guarantees delivery even when the page is being navigated away
- * or backgrounded (e.g., after clicking a WhatsApp link on mobile).
- * Falls back to axios if sendBeacon is unavailable.
- *
- * @param pageid The unique identifier for the agent's page
- * @param event The type of event (e.g., 'visitor', 'whatsapp_click')
+ * it guarantees delivery even when the page is being navigated away.
+ * Falls back to TanStack Server Function if sendBeacon is unavailable.
  */
 export const trackEvent = async (
   pageid: string | undefined | null,
@@ -21,22 +17,21 @@ export const trackEvent = async (
   // Primary: sendBeacon — reliable even during page navigation/backgrounding
   if (typeof navigator !== "undefined" && navigator.sendBeacon) {
     try {
-      const baseURL = api.defaults.baseURL;
-      const url = `${baseURL}/public/analytics`;
-      // Use text/plain to avoid CORS preflight (sendBeacon can't handle preflight)
-      // Backend must parse JSON from text/plain body
+      // NOTE: Using the hardcoded Vercel API URL directly for Beacon as we can't easily 
+      // get the dynamic VITE_API_URL in a compiled client-side file without imports 
+      // that might trigger unwanted bundles.
+      const url = "https://be-public-gold-indonesia.vercel.app/api/public/analytics";
       const blob = new Blob([JSON.stringify(payload)], { type: "text/plain" });
       const queued = navigator.sendBeacon(url, blob);
       if (queued) return { success: true };
     } catch {
-      // sendBeacon failed, fall through to axios
+      // sendBeacon failed, fall through
     }
   }
 
-  // Fallback: axios — for environments without sendBeacon support
+  // Fallback: TanStack Server Function (Native Fetch)
   try {
-    const res = await api.post("/public/analytics", payload);
-    return res.data;
+    return await trackEventFn({ data: payload });
   } catch (error) {
     console.error(`[Analytics] Failed to track ${event}:`, error);
     return null;

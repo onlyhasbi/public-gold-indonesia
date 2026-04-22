@@ -1,112 +1,171 @@
+import { parse, serialize } from "cookie";
 import { redirect } from "@tanstack/react-router";
 import { queryClient } from "./queryClient";
-import { authDealerQueryOptions, authAdminQueryOptions } from "./queryOptions";
+import { authAdminQueryOptions, authDealerQueryOptions } from "./queryOptions";
+import { portalUnlockedOptions } from "./portalOptions";
+
+interface ProtectedLoaderOptions {
+  queryClient: any;
+  extraQueries?: Array<(cookieStr?: string) => any>;
+  isAdmin?: boolean;
+}
+
+const TOKEN_KEY = "pg_auth_token";
+const ADMIN_TOKEN_KEY = "pg_admin_token";
 
 /**
- * DEEP LOGOUT: Purges absolutely all sensitive data from memory and storage.
- * Since we use persistQueryClient, clearing the client will also wipe the storage.
+ * UTILITY: Handle authentication tokens in Cookies.
+ * Client-side only. SSR awareness is handled in .server files.
  */
-export const purgeAllSessions = () => {
-  // Clear React Query Cache and persist to storage
+
+export function getAuthCookieString(cookieStr?: string) {
+  if (cookieStr) return cookieStr;
+  if (typeof document !== "undefined") {
+    return document.cookie;
+  }
+  try {
+    const { getRequest } = require("@tanstack/react-start/server");
+    return getRequest()?.headers.get("cookie") || "";
+  } catch {
+    return "";
+  }
+}
+
+export function getAuthToken(isAdmin = false, cookieStr?: string) {
+  const cookieName = isAdmin ? ADMIN_TOKEN_KEY : TOKEN_KEY;
+  const rawCookies = cookieStr ?? getAuthCookieString();
+  const cookies = parse(rawCookies);
+  const token = cookies[cookieName] || null;
+  return token ? token.replace(/^"|"$/g, "") : null;
+}
+
+export const setAuthToken = (token: string, isAdmin = false) => {
+  if (typeof window === "undefined") return;
+
+  const cookieName = isAdmin ? ADMIN_TOKEN_KEY : TOKEN_KEY;
+  const cleanToken = token.replace(/^"|"$/g, "");
+
+  document.cookie = serialize(cookieName, cleanToken, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    sameSite: "lax",
+    secure: window.location.protocol === "https:",
+  });
+};
+
+export const removeAuthToken = (isAdmin = false) => {
+  if (typeof window === "undefined") return;
+  const cookieName = isAdmin ? ADMIN_TOKEN_KEY : TOKEN_KEY;
+  document.cookie = serialize(cookieName, "", {
+    path: "/",
+    maxAge: -1,
+  });
+};
+
+/**
+ * AUTH GUARDS & UTILITIES
+ * These are used in route definitions (beforeLoad).
+ */
+
+export const clearAllAuthTokens = () => {
+  removeAuthToken(true);
+  removeAuthToken(false);
+};
+
+export const logout = () => {
+  clearAllAuthTokens();
   queryClient.removeQueries({ queryKey: ["auth"] });
-  queryClient.clear();
-
-  // Explicitly clear specific raw keys just in case of any legacy residuals
+  // Reset portal gate so it re-appears on next visit
+  queryClient.setQueryData(portalUnlockedOptions().queryKey, false);
   if (typeof window !== "undefined") {
-    localStorage.removeItem("PUBLIC_GOLD_QUERY_CACHE");
-    localStorage.removeItem("token");
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("portal_lock_expiry");
+    localStorage.removeItem("pg_portal_unlocked");
+    try {
+      const raw = localStorage.getItem("PUBLIC_GOLD_QUERY_CACHE");
+      if (raw) {
+        const cache = JSON.parse(raw);
+        if (cache?.clientState?.queries) {
+          cache.clientState.queries = cache.clientState.queries.filter(
+            (q: { queryKey: unknown[] }) =>
+              q.queryKey[0] !== "auth" && q.queryKey[0] !== "portal"
+          );
+          localStorage.setItem("PUBLIC_GOLD_QUERY_CACHE", JSON.stringify(cache));
+        }
+      }
+    } catch {}
+  }
+};
+
+export const purgeAllSessions = () => {
+  logout();
+  throw redirect({ to: "/" });
+};
+
+export const clearAuthAndRedirect = () => purgeAllSessions();
+
+export const requireAuth = (isAdmin = false, cookieStr?: string) => {
+  const token = getAuthToken(isAdmin, cookieStr);
+  if (!token) {
+    throw redirect({ to: "/" });
+  }
+};
+
+export const requireAdminAuth = (cookieStr?: string) => {
+  const token = getAuthToken(true, cookieStr);
+  if (!token) {
+    throw redirect({ to: "/admin/login" });
+  }
+};
+
+export const requireGuest = (cookieStr?: string) => {
+  const token = getAuthToken(false, cookieStr);
+  if (token) {
+    throw redirect({ to: "/overview" });
+  }
+};
+
+export const requireAdminGuest = (cookieStr?: string) => {
+  const token = getAuthToken(true, cookieStr);
+  if (token) {
+    throw redirect({ to: "/admin" });
   }
 };
 
 /**
- * Clears session data and redirects to login.
+ * REUSABLE LOADER: Extracts cookies correctly and pre-fetches data.
+ * Throws redirect to "/" if auth fails (401).
  */
-export const clearAuthAndRedirect = () => {
-  purgeAllSessions();
-  throw redirect({ to: "/", replace: true });
-};
+export async function createProtectedLoader({
+  queryClient,
+  extraQueries = [],
+  isAdmin = false,
+}: ProtectedLoaderOptions) {
+  let cookieStr: string | undefined;
 
-/**
- * Guard for routes that require an authenticated PGBO agent.
- */
-export async function requireAuth() {
+  // Extract cookie securely in SSR environment
+  if (typeof window === "undefined") {
+    try {
+      const { getRequest } = await import("@tanstack/react-start/server");
+      cookieStr = getRequest()?.headers.get("cookie") || undefined;
+    } catch {}
+  }
+
   try {
-    // Ensure we have the latest user data (hydrated from cache or fetched)
-    const authData = await queryClient.ensureQueryData(
-      authDealerQueryOptions(),
-    );
+    // 1. Always ensure base auth data is present in cache
+    const authOptions = isAdmin ? authAdminQueryOptions(cookieStr) : authDealerQueryOptions(cookieStr);
+    await queryClient.ensureQueryData(authOptions);
 
-    if (!authData || !authData.token || !authData.user) {
-      clearAuthAndRedirect();
-      return;
+    // 2. Fetch any extra page-specific queries
+    if (extraQueries.length > 0) {
+      await Promise.all(
+        extraQueries.map((creator) =>
+          queryClient.ensureQueryData(creator(cookieStr))
+        )
+      );
     }
-
-    const { user } = authData;
-    // Check role and activation status
-    const isPGBO = user.role === "pgbo";
-    const isActive = user.is_active === 1 || user.is_active === true;
-
-    if (!isPGBO || !isActive) {
-      clearAuthAndRedirect();
-      return;
+  } catch (e: any) {
+    if (e.status === 401) {
+      throw redirect({ to: "/" });
     }
-
-    return authData;
-  } catch (err) {
-    console.error("Auth Guard Error:", err);
-    clearAuthAndRedirect();
-  }
-}
-
-/**
- * Guard for routes that should only be accessible by guests.
- */
-export function requireGuest() {
-  const authData = queryClient.getQueryData<any>(["auth", "dealer"]);
-
-  // If data exists in cache (hydrated from persistence), redirect to dashboard
-  if (authData?.token && authData?.user) {
-    throw redirect({ to: "/overview", replace: true });
-  }
-}
-
-/**
- * --- ADMIN AUTH HELPERS ---
- */
-
-export const clearAdminAndRedirect = () => {
-  purgeAllSessions();
-  throw redirect({ to: "/admin/login", replace: true });
-};
-
-export async function requireAdminAuth() {
-  try {
-    // Ensure we have the latest admin data
-    const authData = await queryClient.ensureQueryData(authAdminQueryOptions());
-
-    if (!authData || !authData.token || !authData.user) {
-      clearAdminAndRedirect();
-      return;
-    }
-
-    if (authData.user.role !== "admin") {
-      clearAdminAndRedirect();
-      return;
-    }
-    return authData;
-  } catch (err) {
-    console.error("Admin Auth Guard Error:", err);
-    clearAdminAndRedirect();
-  }
-}
-
-export function requireAdminGuest() {
-  const authData = queryClient.getQueryData<any>(["auth", "admin"]);
-
-  if (authData?.token && authData?.user) {
-    throw redirect({ to: "/admin", replace: true });
+    throw e;
   }
 }

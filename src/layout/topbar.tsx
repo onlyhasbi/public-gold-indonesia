@@ -14,30 +14,35 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { agentQueryOptions } from "@/lib/queryOptions";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
+  const isMounted = useIsMounted();
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
 
-  const { data: pageid } = useQuery({
+  // Only fetch if we have a pgcode and no props were passed from the root
+  const { data: agentData } = useQuery({
     ...agentQueryOptions(pgcode || ""),
     enabled: !!pgcode && !propsPgbo,
-    select: (data) => data?.pageid,
   });
 
-  const pgbo = propsPgbo || { pageid };
+  const pgbo = propsPgbo || agentData;
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    if (!isMounted) return;
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMounted]);
 
   const lang = i18n.language;
+
+  if (!isMounted) return null;
 
   const languages = [
     { id: "id", label: "Indonesia", emoji: "🇮🇩", code: "ID" },

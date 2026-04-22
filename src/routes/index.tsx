@@ -8,8 +8,7 @@ import {
 import { AppLink as Link } from "../lib/router-wrappers";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState, lazy, Suspense } from "react";
-import { Spinner } from "../components/ui/spinner";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { requireGuest } from "../lib/auth";
@@ -20,25 +19,16 @@ import {
 } from "../lib/portalOptions";
 import { OptimizedImage } from "../components/ui/optimized-image";
 import { authDealerQueryOptions } from "../lib/queryOptions";
+  
+import SignInForm from "../components/auth/SignInForm";
+import SignUpForm from "../components/auth/SignUpForm";
 
-const SignInForm = lazy(() => import("../components/auth/SignInForm"));
-const SignUpForm = lazy(() => import("../components/auth/SignUpForm"));
+import { useIsMounted } from "../hooks/useIsMounted";
 
 const MotionCard = motion.create(Card);
 
-export const Route = createFileRoute("/")({
-  beforeLoad: () => requireGuest(),
-  validateSearch: (
-    search: Record<string, unknown>,
-  ): { mode?: "signin" | "signup" } => {
-    return {
-      mode: (search.mode as "signin" | "signup") || undefined,
-    };
-  },
-  component: LandingAuthPage,
-});
-
 function LandingAuthPage() {
+  const isMounted = useIsMounted();
   const { mode } = useSearch({ from: "/" });
   const navigate = useNavigate();
 
@@ -57,16 +47,24 @@ function LandingAuthPage() {
   );
 
   useEffect(() => {
-    if (token && user) {
+    if (isMounted && token && user) {
       navigate({ to: "/overview", replace: true });
     }
-  }, [token, user, navigate]);
+  }, [isMounted, token, user, navigate]);
 
   useEffect(() => {
     if (mode) setAuthMode(mode);
   }, [mode]);
 
-  // Prevent UI flickering by not rendering anything if we're about to redirect
+  // Prevent UI flickering by not rendering anything during SSR or if we're about to redirect
+  if (!isMounted) {
+    return (
+      <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 overflow-hidden px-6 font-sans">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-rose-50/50 via-slate-50 to-slate-50 pointer-events-none" />
+      </div>
+    );
+  }
+
   if (token && user) {
     return null;
   }
@@ -152,30 +150,22 @@ function LandingAuthPage() {
                     </TabsList>
                   </div>
                   <div className="p-6 sm:px-10 pb-8 pt-0">
-                    <Suspense
-                      fallback={
-                        <div className="flex items-center justify-center p-12">
-                          <Spinner size={32} />
-                        </div>
-                      }
-                    >
-                      <AnimatePresence mode="wait">
-                        <TabsContent
-                          value="signin"
-                          className="mt-0 outline-none"
-                        >
-                          <SignInForm />
-                        </TabsContent>
-                        <TabsContent
-                          value="signup"
-                          className="mt-0 outline-none"
-                        >
-                          <SignUpForm
-                            onSignupSuccess={() => setAuthMode("signin")}
-                          />
-                        </TabsContent>
-                      </AnimatePresence>
-                    </Suspense>
+                    <AnimatePresence mode="wait">
+                      <TabsContent
+                        value="signin"
+                        className="mt-0 outline-none"
+                      >
+                        <SignInForm />
+                      </TabsContent>
+                      <TabsContent
+                        value="signup"
+                        className="mt-0 outline-none"
+                      >
+                        <SignUpForm
+                          onSignupSuccess={() => setAuthMode("signin")}
+                        />
+                      </TabsContent>
+                    </AnimatePresence>
                   </div>
                 </Tabs>
                 <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex flex-col items-center gap-3 bg-transparent">
@@ -251,5 +241,17 @@ function LandingAuthPage() {
     </div>
   );
 }
+
+export const Route = createFileRoute("/")({
+  beforeLoad: () => requireGuest(),
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { mode?: "signin" | "signup" } => {
+    return {
+      mode: (search.mode as "signin" | "signup") || undefined,
+    };
+  },
+  component: LandingAuthPage,
+});
 
 export default LandingAuthPage;

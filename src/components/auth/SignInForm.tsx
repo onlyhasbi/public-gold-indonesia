@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
@@ -7,7 +7,8 @@ import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { InputField, PasswordInput } from "../ui/form-elements";
 import { signinSchema } from "../../schemas/auth.schema";
-import { api } from "../../lib/api";
+import { loginFn } from "../../services/api.functions";
+import { setAuthToken } from "../../lib/auth";
 import { useToast } from "../toast";
 import { queryClient } from "../../lib/queryClient";
 import { authDealerQueryOptions } from "../../lib/queryOptions";
@@ -23,18 +24,20 @@ export function SignInForm() {
   const { showToast } = useToast();
 
   const signinForm = useForm({
-    resolver: yupResolver(signinSchema),
+    resolver: valibotResolver(signinSchema),
     mode: "onChange",
     defaultValues: { pgcode: "", katasandi: "" },
   });
 
   const loginMutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await api.post("/auth/login", {
-        identifier: data.pgcode,
-        katasandi: data.katasandi,
+      // MIGRATION: Using TanStack Server Function
+      return loginFn({
+        data: {
+          pgcode: data.pgcode,
+          katasandi: data.katasandi,
+        },
       });
-      return res.data;
     },
     onSuccess: (data) => {
       if (data.success) {
@@ -54,8 +57,10 @@ export function SignInForm() {
           return;
         }
 
-        // UNIFIED PERSISTENCE: Just set query data.
-        // persistQueryClient handles the localStorage automatically now.
+        // 1. SET COOKIE (For SSR Auth support)
+        setAuthToken(data.token);
+
+        // 2. SET QUERY DATA (For Client state)
         queryClient.setQueryData(authDealerQueryOptions().queryKey, {
           user: data.user,
           token: data.token,
@@ -68,7 +73,7 @@ export function SignInForm() {
     },
     onError: (error: any) => {
       showToast(
-        error.response?.data?.message || "Login gagal, periksa kredensial Anda",
+        error.message || "Login gagal, periksa kredensial Anda",
         "error",
       );
     },

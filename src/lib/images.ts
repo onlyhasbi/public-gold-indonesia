@@ -78,9 +78,19 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
     }
   }
 
-  // Case 3: Local Asset (Production only)
-  if (isLocal && !import.meta.env.DEV) {
-    const fullUrl = `${window.location.origin}${src}`;
+  // Case 3: Local Asset
+  if (isLocal) {
+    // In development or for SVGs, return local path directly.
+    // Cloudinary cannot fetch relative local paths from localhost.
+    if (import.meta.env.DEV || isSvg) {
+      return src;
+    }
+
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : import.meta.env.VITE_SITE_URL || "https://mypublicgold.id";
+    const fullUrl = `${origin}${src}`;
     return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/${transformations.join(",")}/${encodeURIComponent(fullUrl)}`;
   }
 

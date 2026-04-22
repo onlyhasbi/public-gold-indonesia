@@ -15,9 +15,6 @@ import { Spinner } from "./ui/spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "../lib/utils";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { agentQueryOptions } from "../lib/queryOptions";
 import BaseLayout from "../layout/base";
 import type { GoldPricesResult } from "../types";
 
@@ -206,16 +203,8 @@ export const goldbar = [
 
 const allProducts = [...dinar, ...goldbar];
 
-function PriceList({ price, pgbo: propsPgbo }: Props) {
+function PriceList({ price, pgbo }: Props) {
   const { t, i18n } = useTranslation();
-  const { pgcode } = useParams({ strict: false }) as { pgcode?: string };
-
-  const { data: qPgbo } = useQuery({
-    ...agentQueryOptions(pgcode || ""),
-    enabled: !!pgcode && !propsPgbo,
-  });
-
-  const pgbo = propsPgbo || qPgbo;
 
   const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
   const [priceMode, setPriceMode] = useState<"tabungan" | "tunai">("tabungan");
@@ -237,10 +226,11 @@ function PriceList({ price, pgbo: propsPgbo }: Props) {
     () => parsePriceToNumber(price?.poe?.[1]?.price),
     [price],
   );
-  const budgetAmount = 300_000;
-  const gramsFor300k = perGramPrice
-    ? (budgetAmount / perGramPrice).toFixed(4)
-    : null;
+
+  const savingsWeight = useMemo(() => {
+    if (!price?.poe?.[0]?.label) return null;
+    return getWeightNumber(price.poe[0].label);
+  }, [price]);
 
   // Embla Setup
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -503,7 +493,7 @@ function PriceList({ price, pgbo: propsPgbo }: Props) {
               <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
                 <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-wider leading-snug md:leading-none text-center">
                   {t("priceList.pricePerWeight", {
-                    weight: gramsFor300k ?? "...",
+                    weight: savingsWeight ?? "...",
                   })}
                 </span>
               </div>
