@@ -2,6 +2,7 @@ import {
   createStartHandler,
   defaultStreamHandler,
 } from "@tanstack/react-start/server";
+import { API_URL } from "./lib/config";
 
 const handler = createStartHandler(defaultStreamHandler);
 
@@ -9,20 +10,13 @@ export default async function ssrHandler(event: { req: Request }) {
   try {
     const response = await handler(event.req);
     
-    // Instead of returning the response directly, inspect it:
-    let bodyText = "";
-    try {
-      bodyText = await response.clone().text();
-    } catch (e) {
-      bodyText = "Could not read body";
-    }
-
+    // Evaluate the actual API_URL to debug why fetches might be failing
     const info = {
       isResponseObject: response instanceof Response,
       responseType: response?.constructor?.name,
       status: response?.status,
-      headers: response?.headers ? Array.from((response.headers as Headers).entries()) : [],
-      body: bodyText
+      API_URL: API_URL,
+      ENV_API_URL: process.env.API_URL,
     };
     
     return new Response(JSON.stringify(info, null, 2), {
