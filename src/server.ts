@@ -1,10 +1,8 @@
-import {
-  createStartHandler,
-  defaultStreamHandler,
-} from "@tanstack/react-start/server";
-
-const handler = createStartHandler(defaultStreamHandler);
-
-export default {
-  fetch: handler,
-};
+export default function handler(event: { req: Request }) {
+  return new Response(
+    "<!DOCTYPE html><html><body><h1>It works!</h1></body></html>",
+    {
+      headers: { "content-type": "text/html" },
+    },
+  );
+}
