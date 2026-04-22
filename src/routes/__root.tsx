@@ -50,6 +50,7 @@ export const Route = createRootRouteWithContext<{
     meta: [
       { charSet: "UTF-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1.0" },
+      { title: "5G Associates Public Gold Indonesia" },
       { name: "theme-color", content: "#dc2626" },
       {
         name: "description",
@@ -62,7 +63,7 @@ export const Route = createRootRouteWithContext<{
           "public gold, public gold indonesia, 5g associates, 5g associates indonesia, emas",
       },
       { name: "author", content: "5G Associates" },
-      { property: "og:title", content: "5G Public Gold Indonesia" },
+      { property: "og:title", content: "5G Associates Public Gold Indonesia" },
       {
         property: "og:description",
         content:
@@ -72,7 +73,7 @@ export const Route = createRootRouteWithContext<{
       { property: "og:url", content: "https://mypublicgold.id/" },
       { property: "og:image", content: "https://mypublicgold.id/me.webp" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "5G Public Gold Indonesia" },
+      { name: "twitter:title", content: "5G Associates Public Gold Indonesia" },
       {
         name: "twitter:description",
         content:
@@ -111,8 +112,6 @@ function RootDocument({
   return (
     <html lang={lang}>
       <head>
-        <title>Beli Emas 24K Asli | Dealer Resmi Public Gold Indonesia</title>
-
         <style>
           {`
             body {

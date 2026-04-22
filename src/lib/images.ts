@@ -8,13 +8,14 @@ export interface CloudinaryOptions {
   width?: number;
   blur?: boolean;
   priority?: boolean;
+  format?: string;
 }
 
 /**
  * Generates a Cloudinary URL with transformations based on the source and options.
  */
 export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
-  const { width, blur, priority } = options;
+  const { width, blur, priority, format } = options;
 
   if (!src) return "";
 
@@ -40,9 +41,9 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
     return src;
   }
 
-  // Force explicit AVIF format for extreme compression and speed
+  // Force explicit format (default to AVIF for extreme compression if not SEO)
   // SVGs are skipped to preserve vector elasticity
-  const transformations = isSvg ? [] : ["f_avif"];
+  const transformations = isSvg ? [] : [format ? `f_${format}` : "f_avif"];
 
   if (blur) {
     transformations.push("e_blur:2000", "w_20", "q_auto:low");

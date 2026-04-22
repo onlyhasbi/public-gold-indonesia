@@ -177,7 +177,8 @@ export const Route = createFileRoute("/$pgcode")({
     const displayName = pgbo.nama_panggilan || "Authorized Dealer";
     const title = `${displayName} - Konsultan Emas Public Gold Indonesia`;
     const description = `Amankan masa depan keluarga dengan tabungan emas bersama Public Gold Indonesia`;
-    const image = pgbo.foto_profil_url;
+    // Use JPG format explicitly for WhatsApp/SEO Compatibility
+    const image = getCloudinaryUrl(pgbo.foto_profil_url, { width: 800, format: "jpg" });
     const url = `https://mypublicgold.id/${pgbo.pageid}`;
 
     return {
