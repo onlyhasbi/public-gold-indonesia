@@ -19,5 +19,6 @@
       "destination": "https://mypublicgold.id/:path",
       "permanent": true
     }
-  ]
+  ],
+  "bunVersion": "1.x"
 }
