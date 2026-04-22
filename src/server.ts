@@ -1,29 +1,31 @@
 import {
   createStartHandler,
   defaultStreamHandler,
+  defineHandlerCallback,
 } from "@tanstack/react-start/server";
-import { API_URL } from "./lib/config";
+import { parse } from "cookie";
+import { initI18n } from "./i18n";
 
-const handler = createStartHandler(defaultStreamHandler);
+export default createStartHandler(
+  defineHandlerCallback(async (event) => {
+    // Ambil bahasa dari cookie atau header Accept-Language
+    const cookies = parse(event.request.headers.get("cookie") || "");
+    const acceptLanguage = event.request.headers.get("accept-language") || "";
 
-export default async function ssrHandler(event: { req: Request }) {
-  try {
-    const response = await handler(event.req);
-    
-    // Evaluate the actual API_URL to debug why fetches might be failing
-    const info = {
-      isResponseObject: response instanceof Response,
-      responseType: response?.constructor?.name,
-      status: response?.status,
-      API_URL: API_URL,
-      ENV_API_URL: process.env.API_URL,
-    };
-    
-    return new Response(JSON.stringify(info, null, 2), {
-      status: 200,
-      headers: { "content-type": "application/json" }
-    });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
-  }
-}
+    let lang = cookies.app_lang;
+    if (!lang && acceptLanguage) {
+      lang = acceptLanguage.split(",")[0].split("-")[0];
+    }
+
+    // Validasi ke bahasa yang didukung
+    const supported = ["id", "en", "ms", "zh", "ta", "ar"];
+    if (!supported.includes(lang || "")) {
+      lang = "id";
+    }
+
+    // Inisialisasi i18n di server dengan bahasa yang terdeteksi
+    await initI18n(lang);
+
+    return defaultStreamHandler(event);
+  }),
+);

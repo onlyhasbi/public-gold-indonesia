@@ -2,9 +2,6 @@ import { defineNitroConfig } from "nitro/config";
 
 export default defineNitroConfig({
   preset: "vercel",
-  renderer: {
-    entry: "./src/server.ts",
-  },
   routeRules: {
     "/sitemap.xml": {
       proxy:
