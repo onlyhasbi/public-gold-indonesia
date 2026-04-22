@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { parse } from "cookie";
-import { API_URL } from "../lib/config";
+import { API_URL } from "@/lib/config";
 
 /**
  * BASE FETCHER: Uses native fetch and handles auth headers from cookies.

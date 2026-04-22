@@ -9,12 +9,12 @@ import {
 import { api } from "@/lib/api";
 import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
-import { useToast } from "../../components/toast";
+import { useToast } from "@/components/toast";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import * as v from "valibot";
 import { createColumnHelper } from "@tanstack/react-table";
-import { DataTable } from "../../components/ui/data-table";
+import { DataTable } from "@/components/ui/data-table";
 import {
   Trash2,
   Plus,
@@ -32,7 +32,7 @@ import {
   Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDebounce } from "../../hooks/useDebounce";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
   Dialog,
   DialogContent,

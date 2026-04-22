@@ -2,27 +2,28 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useMatches, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
-import { Suspense, useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Benefit from "../components/benefit";
-import CallToAction from "../components/cta";
-import Excellence from "../components/excellence";
-import PaymentMethods from "../components/payment_methods";
-import PriceList from "../components/pricelist";
-import PublicGold from "../components/public_gold";
-import Questions from "../components/questions";
+const Benefit = lazy(() => import("@/components/benefit"));
+const CallToAction = lazy(() => import("@/components/cta"));
+const Excellence = lazy(() => import("@/components/excellence"));
+const PaymentMethods = lazy(() => import("@/components/payment_methods"));
+const PriceList = lazy(() => import("@/components/pricelist"));
+const PublicGold = lazy(() => import("@/components/public_gold"));
+const Questions = lazy(() => import("@/components/questions"));
 
-import Header from "../components/header";
-import NotFound from "../components/not_found";
-import GradientHighlight from "../components/ui/gradient_highlight";
-import { MovingCards } from "../components/ui/moving_card";
-import { trackEvent } from "../lib/analytics";
-import { agentQueryOptions, goldPricesQueryOptions } from "../lib/queryOptions";
-import { cn } from "../lib/utils";
+import Header from "@/components/header";
+import NotFound from "@/components/not_found";
+import GradientHighlight from "@/components/ui/gradient_highlight";
+import { MovingCards } from "@/components/ui/moving_card";
+import { trackEvent } from "@/lib/analytics";
+import { agentQueryOptions, goldPricesQueryOptions } from "@/lib/queryOptions";
+import { cn } from "@/lib/utils";
 
-import { getCloudinaryUrl, getCloudinarySrcSet } from "../lib/images";
-import { useLazyInteraction } from "../hooks/useLazyInteraction";
+import { getCloudinaryUrl, getCloudinarySrcSet } from "@/lib/images";
+import { useLazyInteraction } from "@/hooks/useLazyInteraction";
+import { LazySection } from "@/components/ui/lazy-section";
 
 function App() {
   const matches = useMatches();
@@ -82,23 +83,31 @@ function App() {
       </section>
 
       <section id="advantage" className="scroll-mt-20">
-        <Benefit />
+        <LazySection minHeight="400px">
+          <Benefit />
+        </LazySection>
       </section>
 
       <section id="public-gold" className="scroll-mt-20">
-        <PublicGold />
+        <LazySection minHeight="500px">
+          <PublicGold />
+        </LazySection>
       </section>
 
       <section id="products" className="scroll-mt-20">
-        <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
+        <LazySection minHeight="600px">
+          <PriceList price={goldPrices ?? undefined} pgbo={pgbo} />
+        </LazySection>
       </section>
 
       <section id="excellence" className="scroll-mt-20">
-        <PaymentMethods pgbo={pgbo} />
-        <Excellence />
+        <LazySection minHeight="600px">
+          <PaymentMethods pgbo={pgbo} />
+          <Excellence />
+        </LazySection>
       </section>
 
-      <Suspense fallback={<div className="h-64" />}>
+      <LazySection minHeight="400px">
         <section id="testimonials" className="scroll-mt-20">
           <div className="w-11/12 max-w-7xl mx-auto py-16">
             <div className="text-center mb-10">
@@ -126,12 +135,16 @@ function App() {
             />
           </div>
         </section>
-      </Suspense>
+      </LazySection>
 
-      <Questions />
+      <LazySection minHeight="400px">
+        <Questions />
+      </LazySection>
 
       <section id="contact" className="scroll-mt-20">
-        <CallToAction pgbo={pgbo} />
+        <LazySection minHeight="400px">
+          <CallToAction pgbo={pgbo} />
+        </LazySection>
       </section>
 
       {/* Scroll To Top - Hanya Mobile */}

@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import BaseLayout from "../layout/base";
+import BaseLayout from "@/layout/base";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { agentQueryOptions } from "../lib/queryOptions";
-import { trackEvent } from "../lib/analytics";
+import { agentQueryOptions } from "@/lib/queryOptions";
+import { trackEvent } from "@/lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
-import { getWhatsAppLink } from "../lib/contact";
+import { getWhatsAppLink } from "@/lib/contact";
 import { Card, CardContent } from "@/components/ui/card";
 import { OptimizedImage } from "./ui/optimized-image";
 

@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { createProtectedLoader } from "../lib/auth";
+import { createProtectedLoader } from "@/lib/auth";
 import {
   authDealerQueryOptions,
   overviewQueryOptions,
-} from "../lib/queryOptions";
+} from "@/lib/queryOptions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState, Suspense } from "react";
 import {
@@ -15,14 +15,14 @@ import {
   Loader2,
   Users,
 } from "lucide-react";
-import { OptimizedImage } from "../components/ui/optimized-image";
-import { Card } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { useSEO } from "../hooks/useSEO";
-import { StatsGrid } from "../components/overview/StatsGrid";
-import { LeadsDataTable } from "../components/overview/LeadsDataTable";
-import { useDebounce } from "../hooks/useDebounce";
-import { logout } from "../lib/auth";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useSEO } from "@/hooks/useSEO";
+import { StatsGrid } from "@/components/overview/StatsGrid";
+import { LeadsDataTable } from "@/components/overview/LeadsDataTable";
+import { useDebounce } from "@/hooks/useDebounce";
+import { logout } from "@/lib/auth";
 
 export const Route = createFileRoute("/overview")({
   loader: async ({ context: { queryClient } }) => {

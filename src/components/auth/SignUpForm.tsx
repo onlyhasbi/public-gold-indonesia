@@ -5,16 +5,16 @@ import { useNavigate } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Spinner } from "../ui/spinner";
-import { PasswordInput } from "../ui/form-elements";
-import { signupSchema } from "../../schemas/auth.schema";
-import { signupFn, loginFn, checkPageIdFn } from "../../services/api.functions";
-import { setAuthToken } from "../../lib/auth";
-import { useToast } from "../toast";
-import { queryClient } from "../../lib/queryClient";
-import { authDealerQueryOptions } from "../../lib/queryOptions";
-import { cn } from "../../lib/utils";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { PasswordInput } from "@/components/ui/form-elements";
+import { signupSchema } from "@/schemas/auth.schema";
+import { signupFn, loginFn, checkPageIdFn } from "@/services/api.functions";
+import { setAuthToken } from "@/lib/auth";
+import { useToast } from "@/components/toast";
+import { queryClient } from "@/lib/queryClient";
+import { authDealerQueryOptions } from "@/lib/queryOptions";
+import { cn } from "@/lib/utils";
 
 const formVariants = {
   initial: { opacity: 0, x: 20 },

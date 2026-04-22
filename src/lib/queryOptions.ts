@@ -5,7 +5,7 @@ import {
   getGoldPricesFn,
   getOverviewFn,
   getSettingsFn,
-} from "../services/api.functions";
+} from "@/services/api.functions";
 
 /**
  * Query Options for Agent Data (PGBO)

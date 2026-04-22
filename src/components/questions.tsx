@@ -1,5 +1,5 @@
 import React from "react";
-import BaseLayout from "../layout/base";
+import BaseLayout from "@/layout/base";
 import SectionHeader from "./ui/section_header";
 import { HelpCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";

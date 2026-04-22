@@ -1,5 +1,5 @@
 import { createLazyFileRoute, useSearch } from "@tanstack/react-router";
-import { useAppNavigate as useNavigate } from "../lib/router-wrappers";
+import { useAppNavigate as useNavigate } from "@/lib/router-wrappers";
 import { useState, useEffect } from "react";
 import {
   ArrowLeft,
@@ -12,12 +12,12 @@ import {
   ChevronRight,
   MessageCircle,
 } from "lucide-react";
-import { PhoneMockup } from "../components/ui/PhoneMockup";
+import { PhoneMockup } from "@/components/ui/PhoneMockup";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../lib/api";
-import { getWhatsAppLink } from "../lib/contact";
-import NotFound from "../components/not_found";
+import { api } from "@/lib/api";
+import { getWhatsAppLink } from "@/lib/contact";
+import NotFound from "@/components/not_found";
 import type { PetunjukSearch } from "./petunjuk";
 
 export const Route = createLazyFileRoute("/petunjuk")({

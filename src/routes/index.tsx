@@ -5,25 +5,25 @@ import {
   useSearch,
   useNavigate,
 } from "@tanstack/react-router";
-import { AppLink as Link } from "../lib/router-wrappers";
+import { AppLink as Link } from "@/lib/router-wrappers";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { requireGuest } from "../lib/auth";
-import { PortalGate } from "../components/auth/PortalGate";
+import { requireGuest } from "@/lib/auth";
+import { PortalGate } from "@/components/auth/PortalGate";
 import {
   portalUnlockedOptions,
   portalLockoutOptions,
-} from "../lib/portalOptions";
-import { OptimizedImage } from "../components/ui/optimized-image";
-import { authDealerQueryOptions } from "../lib/queryOptions";
+} from "@/lib/portalOptions";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { authDealerQueryOptions } from "@/lib/queryOptions";
 
-import SignInForm from "../components/auth/SignInForm";
-import SignUpForm from "../components/auth/SignUpForm";
+import SignInForm from "@/components/auth/SignInForm";
+import SignUpForm from "@/components/auth/SignUpForm";
 
-import { useIsMounted } from "../hooks/useIsMounted";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 const MotionCard = motion.create(Card);
 

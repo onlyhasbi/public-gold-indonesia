@@ -1,6 +1,6 @@
 import { MessageCircle, UserPlus, Users, type LucideIcon } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { Card, CardContent } from "../ui/card";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface StatItem {
   label: string;

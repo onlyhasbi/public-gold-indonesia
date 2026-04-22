@@ -1,5 +1,5 @@
 import { OptimizedImage } from "./ui/optimized-image";
-import { AppLink as Link } from "../lib/router-wrappers";
+import { AppLink as Link } from "@/lib/router-wrappers";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { AlertCircle, Info } from "lucide-react";
@@ -13,10 +13,10 @@ import GradientHighlight from "./ui/gradient_highlight";
 import { Spinner } from "./ui/spinner";
 
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import BaseLayout from "../layout/base";
-import type { GoldPricesResult } from "../types";
+import BaseLayout from "@/layout/base";
+import type { GoldPricesResult } from "@/types";
 
 // Embla Tween Logic Constants
 const TWEEN_FACTOR_BASE = 0.8;

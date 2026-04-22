@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { getAgentData } from "../services/api.functions";
+import { getAgentData } from "@/services/api.functions";
 
 export type RegisterSearch = {
   type?: "dewasa" | "anak";

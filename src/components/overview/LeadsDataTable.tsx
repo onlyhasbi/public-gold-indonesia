@@ -3,11 +3,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { Check, Download, Loader2, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { api } from "../../lib/api";
-import { cn } from "../../lib/utils";
-import { useToast } from "../toast";
-import { Button } from "../ui/button";
-import { DataTable } from "../ui/data-table";
+import { api } from "@/lib/api";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/components/toast";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 
 const columnHelper = createColumnHelper<any>();
 

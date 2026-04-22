@@ -1,5 +1,5 @@
 import { UserPlus, ShieldCheck, PiggyBank, ArrowRight } from "lucide-react";
-import BaseLayout from "../layout/base";
+import BaseLayout from "@/layout/base";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 

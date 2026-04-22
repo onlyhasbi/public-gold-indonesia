@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
 
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import { ChevronDownIcon, CheckIcon, Search } from "lucide-react";
 
 const Combobox = ComboboxPrimitive.Root;

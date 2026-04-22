@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { dialCodeOptions } from "../constant/countries";
-import { branchLabelOptions } from "../constant/branches";
-import { extractDataFromNIK, calculateAge } from "../lib/utils";
-import { formatPhoneForAPI } from "../lib/phone";
-import { getValidationSchema, type RegisterFormData } from "../lib/validations";
-import { registerTrackFn } from "../services/api.functions";
+import { dialCodeOptions } from "@/constant/countries";
+import { branchLabelOptions } from "@/constant/branches";
+import { extractDataFromNIK, calculateAge } from "@/lib/utils";
+import { formatPhoneForAPI } from "@/lib/phone";
+import { getValidationSchema, type RegisterFormData } from "@/lib/validations";
+import { registerTrackFn } from "@/services/api.functions";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 

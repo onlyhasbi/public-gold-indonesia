@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { cn } from "../lib/utils";
-import BaseLayout from "../layout/base";
+import { cn } from "@/lib/utils";
+import BaseLayout from "@/layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";

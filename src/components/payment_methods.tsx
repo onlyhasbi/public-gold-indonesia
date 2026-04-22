@@ -1,11 +1,11 @@
 import { CreditCard, Clock, Wallet, Check, X } from "lucide-react";
-import { AppLink as Link } from "../lib/router-wrappers";
-import BaseLayout from "../layout/base";
+import { AppLink as Link } from "@/lib/router-wrappers";
+import BaseLayout from "@/layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { agentQueryOptions } from "../lib/queryOptions";
+import { agentQueryOptions } from "@/lib/queryOptions";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";

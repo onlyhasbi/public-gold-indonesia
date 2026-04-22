@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { Camera, User } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-import { ImageCropper } from "../ui/image-cropper";
-import { OptimizedImage } from "../ui/optimized-image";
+import { Card, CardContent } from "@/components/ui/card";
+import { ImageCropper } from "@/components/ui/image-cropper";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface ProfilePhotoCardProps {
   fotoProfilUrl?: string;

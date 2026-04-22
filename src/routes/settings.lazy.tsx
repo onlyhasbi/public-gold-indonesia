@@ -17,17 +17,17 @@ import {
 } from "lucide-react";
 import { Suspense, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { PasswordCard } from "../components/settings/PasswordCard";
-import { ProfilePhotoCard } from "../components/settings/ProfilePhotoCard";
-import { SocialMediaCard } from "../components/settings/SocialMediaCard";
-import { useToast } from "../components/toast";
-import { Button } from "../components/ui/button";
+import { PasswordCard } from "@/components/settings/PasswordCard";
+import { ProfilePhotoCard } from "@/components/settings/ProfilePhotoCard";
+import { SocialMediaCard } from "@/components/settings/SocialMediaCard";
+import { useToast } from "@/components/toast";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "@/components/ui/card";
 import {
   Combobox,
   ComboboxContent,
@@ -36,25 +36,25 @@ import {
   ComboboxItem,
   ComboboxTrigger,
   ComboboxValue,
-} from "../components/ui/combobox";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Spinner } from "../components/ui/spinner";
+} from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../components/ui/tabs";
-import { dialCodeOptions } from "../constant/countries";
-import { useSEO } from "../hooks/useSEO";
-import { api } from "../lib/api";
-import { formatPhoneForAPI } from "../lib/phone";
+} from "@/components/ui/tabs";
+import { dialCodeOptions } from "@/constant/countries";
+import { useSEO } from "@/hooks/useSEO";
+import { api } from "@/lib/api";
+import { formatPhoneForAPI } from "@/lib/phone";
 import {
   authDealerQueryOptions,
   settingsQueryOptions,
-} from "../lib/queryOptions";
-import { cn } from "../lib/utils";
+} from "@/lib/queryOptions";
+import { cn } from "@/lib/utils";
 
 export interface SettingsFormValues {
   nama_lengkap: string;

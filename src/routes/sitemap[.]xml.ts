@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAgentsFn } from "../services/api.functions";
-import { SITE_URL } from "../lib/config";
+import { getAgentsFn } from "@/services/api.functions";
+import { SITE_URL } from "@/lib/config";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {

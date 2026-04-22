@@ -7,7 +7,7 @@ import {
   Users,
   Earth,
 } from "lucide-react";
-import BaseLayout from "../layout/base";
+import BaseLayout from "@/layout/base";
 import SectionHeader from "./ui/section_header";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";

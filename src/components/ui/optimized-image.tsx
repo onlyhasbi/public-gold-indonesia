@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type ImgHTMLAttributes } from "react";
-import { getCloudinaryUrl, getCloudinarySrcSet } from "../../lib/images";
+import { getCloudinaryUrl, getCloudinarySrcSet } from "@/lib/images";
 
 export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   src: string;

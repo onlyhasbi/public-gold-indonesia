@@ -16,6 +16,15 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
   ],
+  build: {
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
   ssr: {
     noExternal: ["@tanstack/react-start-server", "@tanstack/react-start"],
     resolve: {
@@ -26,6 +35,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "components": path.resolve(__dirname, "./src/components"),
+      "ui": path.resolve(__dirname, "./src/components/ui"),
+      "lib": path.resolve(__dirname, "./src/lib"),
+      "hooks": path.resolve(__dirname, "./src/hooks"),
     },
     conditions: ["import", "module", "browser", "default"],
   },

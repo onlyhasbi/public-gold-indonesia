@@ -9,14 +9,14 @@ import {
 } from "@tanstack/react-router";
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import Topbar from "../layout/topbar";
-import { ToastProvider } from "../components/toast";
+import Topbar from "@/layout/topbar";
+import { ToastProvider } from "@/components/toast";
 
-import NotFound from "../components/not_found";
-import { ScrollUnlocker } from "../components/ScrollUnlocker";
-import { agentQueryOptions } from "../lib/queryOptions";
+import NotFound from "@/components/not_found";
+import { ScrollUnlocker } from "@/components/ScrollUnlocker";
+import { agentQueryOptions } from "@/lib/queryOptions";
 import i18n from "i18next";
-import appCss from "../styles.css?url";
+import appCss from "@/styles.css?url";
 
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null
@@ -26,9 +26,9 @@ const TanStackRouterDevtools = import.meta.env.PROD
       })),
     );
 
-import { getAuthToken } from "../lib/auth";
+import { getAuthToken } from "@/lib/auth";
 
-import { RootError } from "../components/root_error";
+import { RootError } from "@/components/root_error";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;

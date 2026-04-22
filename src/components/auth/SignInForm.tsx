@@ -3,15 +3,15 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { Button } from "../ui/button";
-import { Spinner } from "../ui/spinner";
-import { InputField, PasswordInput } from "../ui/form-elements";
-import { signinSchema } from "../../schemas/auth.schema";
-import { loginFn } from "../../services/api.functions";
-import { setAuthToken } from "../../lib/auth";
-import { useToast } from "../toast";
-import { queryClient } from "../../lib/queryClient";
-import { authDealerQueryOptions } from "../../lib/queryOptions";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { InputField, PasswordInput } from "@/components/ui/form-elements";
+import { signinSchema } from "@/schemas/auth.schema";
+import { loginFn } from "@/services/api.functions";
+import { setAuthToken } from "@/lib/auth";
+import { useToast } from "@/components/toast";
+import { queryClient } from "@/lib/queryClient";
+import { authDealerQueryOptions } from "@/lib/queryOptions";
 
 const formVariants = {
   initial: { opacity: 0, x: 20 },

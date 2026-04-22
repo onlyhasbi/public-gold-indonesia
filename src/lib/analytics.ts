@@ -1,4 +1,4 @@
-import { trackEventFn } from "../services/api.functions";
+import { trackEventFn } from "@/services/api.functions";
 
 /**
  * Tracks a public analytic event for a specific agent page.

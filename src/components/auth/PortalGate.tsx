@@ -2,13 +2,13 @@ import { motion } from "motion/react";
 import { ArrowRight, ShieldAlert } from "lucide-react";
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Spinner } from "../ui/spinner";
-import { verifyPortalFn } from "../../services/api.functions";
+import { Spinner } from "@/components/ui/spinner";
+import { verifyPortalFn } from "@/services/api.functions";
 import {
   portalUnlockedOptions,
   portalLockoutOptions,
   portalAttemptsOptions,
-} from "../../lib/portalOptions";
+} from "@/lib/portalOptions";
 
 export function PortalGate() {
   const queryClient = useQueryClient();

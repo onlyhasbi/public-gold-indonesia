@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { api } from "../../lib/api";
-import { useToast } from "../../components/toast";
+import { api } from "@/lib/api";
+import { useToast } from "@/components/toast";
 import { useForm } from "react-hook-form";
 import { requireAdminGuest } from "@/lib/auth";
-import { queryClient } from "../../lib/queryClient";
-import { authAdminQueryOptions } from "../../lib/queryOptions";
+import { queryClient } from "@/lib/queryClient";
+import { authAdminQueryOptions } from "@/lib/queryOptions";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import * as v from "valibot";
 

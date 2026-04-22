@@ -1,5 +1,5 @@
 import { AlertTriangle } from "lucide-react";
-import type { FormSummaryItem } from "../hooks/useRegisterForm";
+import type { FormSummaryItem } from "@/hooks/useRegisterForm";
 import {
   Dialog,
   DialogContent,

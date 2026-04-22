@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
-import { getWhatsAppLink } from "../lib/contact";
+import { getWhatsAppLink } from "@/lib/contact";
 import { OptimizedImage } from "./ui/optimized-image";
 import {
   Popover,

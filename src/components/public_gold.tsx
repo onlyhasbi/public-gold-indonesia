@@ -1,6 +1,6 @@
 import React from "react";
-import { info } from "../constant/baseInfo";
-import BaseLayout from "../layout/base";
+import { info } from "@/constant/baseInfo";
+import BaseLayout from "@/layout/base";
 import GradientHighlight from "./ui/gradient_highlight";
 import { useTranslation } from "react-i18next";
 import { OptimizedImage } from "./ui/optimized-image";

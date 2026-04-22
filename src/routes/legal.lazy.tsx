@@ -2,8 +2,8 @@ import { createLazyFileRoute, useSearch } from "@tanstack/react-router";
 import {
   AppLink as Link,
   useAppNavigate as useNavigate,
-} from "../lib/router-wrappers";
-import { useSEO } from "../hooks/useSEO";
+} from "@/lib/router-wrappers";
+import { useSEO } from "@/hooks/useSEO";
 import type { LegalSearch } from "./legal";
 import {
   FileText,
@@ -23,7 +23,7 @@ import {
   CreditCard,
   Info,
 } from "lucide-react";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 
 export const Route = createLazyFileRoute("/legal")({
   component: LegalPage,

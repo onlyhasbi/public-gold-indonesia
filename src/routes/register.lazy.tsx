@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { AppLink as Link } from "../lib/router-wrappers";
+import { AppLink as Link } from "@/lib/router-wrappers";
 import {
   AlertCircle,
   ArrowLeft,
@@ -32,19 +32,19 @@ import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { NextStepModal } from "../components/NextStepModal";
-import { OptimizedImage } from "../components/ui/optimized-image";
-// import NotFound from "../components/not_found";
+import { NextStepModal } from "@/components/NextStepModal";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+// import NotFound from "@/components/not_found";
 import {
   AgeSwitchModal,
   ConfirmationModal,
-} from "../components/RegisterModals";
-import { Checkbox } from "../components/ui/checkbox";
-import { InputField, AlertMessage } from "../components/ui/form-elements";
-import { branchOptionsId, branchOptionsMy } from "../constant/branches";
-import { dialCodeOptions } from "../constant/countries";
-import { useRegisterForm } from "../hooks/useRegisterForm";
-import { getWhatsAppLink } from "../lib/contact";
+} from "@/components/RegisterModals";
+import { Checkbox } from "@/components/ui/checkbox";
+import { InputField, AlertMessage } from "@/components/ui/form-elements";
+import { branchOptionsId, branchOptionsMy } from "@/constant/branches";
+import { dialCodeOptions } from "@/constant/countries";
+import { useRegisterForm } from "@/hooks/useRegisterForm";
+import { getWhatsAppLink } from "@/lib/contact";
 
 export const Route = createLazyFileRoute("/register")({
   component: RegisterPage,
