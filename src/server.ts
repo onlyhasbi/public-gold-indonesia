@@ -6,7 +6,7 @@ import {
 import { parse } from "cookie";
 import { initI18n } from "./i18n";
 
-export default createStartHandler(
+const handler = createStartHandler(
   defineHandlerCallback(async (event) => {
     // Ambil bahasa dari cookie atau header Accept-Language
     const cookies = parse(event.request.headers.get("cookie") || "");
@@ -29,3 +29,7 @@ export default createStartHandler(
     return defaultStreamHandler(event);
   }),
 );
+
+export default {
+  fetch: handler,
+};
