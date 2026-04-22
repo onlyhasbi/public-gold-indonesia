@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -21,6 +21,7 @@ const formVariants = {
 
 export function SignInForm() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
 
   const signinForm = useForm({
@@ -39,7 +40,7 @@ export function SignInForm() {
         },
       });
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.success) {
         if (data.user?.role !== "pgbo") {
           showToast("Akses ditolak. Akun ini bukan Dealer PGBO.", "error");
@@ -66,6 +67,8 @@ export function SignInForm() {
           token: data.token,
         });
 
+        // 3. INVALIDATE AND NAVIGATE
+        await router.invalidate();
         navigate({ to: "/overview" });
       } else {
         showToast(data.message, "error");

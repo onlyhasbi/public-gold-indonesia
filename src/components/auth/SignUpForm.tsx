@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
@@ -28,6 +28,7 @@ export function SignUpForm({
   onSignupSuccess: () => void;
 }) {
   const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
 
   const [namaLengkap, setNamaLengkap] = useState<string | null>(null);
@@ -102,6 +103,8 @@ export function SignUpForm({
                 token: loginData.token,
               });
 
+              // 3. INVALIDATE AND NAVIGATE
+              await router.invalidate();
               showToast("Registrasi berhasil dan Anda telah masuk!", "success");
               navigate({ to: "/overview" });
             } else {
