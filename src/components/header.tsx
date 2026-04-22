@@ -108,27 +108,16 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
   );
 
   return (
-    <div className="relative flex flex-col md:flex-row min-h-[40rem] lg:min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 px-6 pt-28 pb-12 md:p-0 overflow-hidden">
+    <div className="pg-header-shell relative flex flex-col md:flex-row min-h-[40rem] lg:min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 px-6 pt-28 pb-12 md:p-0 overflow-hidden">
       {/* Background patterns */}
-      <div
-        className="absolute inset-0 opacity-40 pointer-events-none"
-        style={{
-          backgroundSize: "20px 20px",
-          backgroundImage: "radial-gradient(#9ca3af 1px, transparent 1px)",
-        }}
-      />
+      <div className="pg-hero-pattern absolute inset-0 opacity-40 pointer-events-none" />
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent)]" />
 
       {/* Hero Image Container */}
-      <div className="relative w-64 h-64 md:w-80 md:h-80 z-10 shrink-0">
+      <div className="pg-profile-skeleton relative w-64 h-64 md:w-80 md:h-80 z-10 shrink-0">
         {/* Pulse ripple rings */}
-        <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-40 animate-[ripple_2s_ease-out_infinite]" />
-        <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-30 animate-[ripple_2s_ease-out_0.8s_infinite]" />
-
-        <style>{`
-          @keyframes ripple { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.15); opacity: 0; } }
-          @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        `}</style>
+        <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-40 animate-[pg-ripple_2s_ease-out_infinite]" />
+        <span className="absolute inset-0 rounded-full border-2 border-red-400 opacity-30 animate-[pg-ripple_2s_ease-out_0.8s_infinite]" />
 
         {/* Profile Image with Card-like shadow */}
         <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl shadow-slate-200 border border-slate-100 bg-white">
@@ -152,7 +141,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
         </div>
 
         {/* Floating Badge (5G Team) */}
-        <span className="w-20 h-20 md:w-24 md:h-24 absolute bottom-0 right-0 z-20 animate-[float_4s_ease-in-out_infinite]">
+        <span className="w-20 h-20 md:w-24 md:h-24 absolute bottom-0 right-0 z-20 animate-[pg-float_4s_ease-in-out_infinite]">
           <OptimizedImage
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-xl"
             src="/5g.webp"
@@ -160,6 +149,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
             priority
             width={96}
             height={96}
+            sizes="96px"
           />
         </span>
       </div>

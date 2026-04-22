@@ -29,6 +29,8 @@ const TanStackRouterDevtools = import.meta.env.PROD
 import { getAuthToken } from "@/lib/auth";
 
 import { RootError } from "@/components/root_error";
+import { rootHeadConfig } from "@/constant/seo";
+import { CriticalCss } from "@/components/CriticalCss";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -46,60 +48,7 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
   notFoundComponent: NotFound,
   errorComponent: RootError,
-  head: () => ({
-    meta: [
-      { charSet: "UTF-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1.0" },
-      { title: "5G Associates Public Gold Indonesia" },
-      { name: "theme-color", content: "#dc2626" },
-      {
-        name: "description",
-        content:
-          "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia",
-      },
-      {
-        name: "keywords",
-        content:
-          "public gold, public gold indonesia, 5g associates, 5g associates indonesia, emas",
-      },
-      { name: "author", content: "5G Associates" },
-      { property: "og:title", content: "5G Associates Public Gold Indonesia" },
-      {
-        property: "og:description",
-        content:
-          "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://mypublicgold.id/" },
-      { property: "og:image", content: "https://mypublicgold.id/me.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "5G Associates Public Gold Indonesia" },
-      {
-        name: "twitter:description",
-        content:
-          "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia",
-      },
-      { name: "twitter:image", content: "https://mypublicgold.id/me.webp" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/webp", href: "/logo.webp" },
-      { rel: "apple-touch-icon", href: "/logo192.png" },
-      { rel: "manifest", href: "/manifest.json" },
-      {
-        rel: "preconnect",
-        href: "https://res.cloudinary.com",
-        crossOrigin: "anonymous" as const,
-      },
-      {
-        rel: "preconnect",
-        href: "https://be-public-gold-indonesia.vercel.app",
-        crossOrigin: "anonymous" as const,
-      },
-      { rel: "dns-prefetch", href: "https://res.cloudinary.com" },
-      { rel: "dns-prefetch", href: "https://my-cdn.publicgold.com.my" },
-    ],
-  }),
+  head: () => rootHeadConfig(appCss),
 });
 
 function RootDocument({
@@ -112,14 +61,7 @@ function RootDocument({
   return (
     <html lang={lang}>
       <head>
-        <style>
-          {`
-            body {
-              margin: 0;
-              background-color: #f8fafc;
-            }
-          `}
-        </style>
+        <CriticalCss />
         <HeadContent />
       </head>
       <body>
