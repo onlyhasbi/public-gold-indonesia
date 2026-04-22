@@ -80,12 +80,12 @@ export const getGoldPricesFn = createServerFn({ method: "GET" }).handler(
 );
 
 export const loginFn = createServerFn({ method: "POST" })
-  .inputValidator((d: { pgcode: string; katasandi: string }) => d)
+  .inputValidator((d: { identifier: string; katasandi: string }) => d)
   .handler(async ({ data }) => {
     return baseFetch("/auth/login", {
       method: "POST",
       body: JSON.stringify({
-        identifier: data.pgcode,
+        identifier: data.identifier,
         katasandi: data.katasandi,
       }),
     });
@@ -150,4 +150,12 @@ export const verifyPortalFn = createServerFn({ method: "POST" })
       method: "POST",
       body: JSON.stringify({ code }),
     });
+  });
+export const getAdminPgboFn = createServerFn({ method: "GET" })
+  .inputValidator((d: { search?: string; cookieStr?: string } = {}) => d)
+  .handler(async ({ data }) => {
+    const query = data.search
+      ? `?search=${encodeURIComponent(data.search)}`
+      : "";
+    return baseFetch(`/admin/pgbo${query}`, {}, true, data.cookieStr);
   });

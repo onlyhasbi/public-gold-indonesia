@@ -13,8 +13,8 @@ bun run dev:all
 
 Perintah `dev:all` akan menjalankan server secara paralel menggunakan _concurrently_:
 
-1. **Frontend (Vite)** akan berjalan di `http://localhost:5173`
-2. **Backend (Elysia)** akan berjalan di _port_ default backend (seperti `http://localhost:3000`)
+1. **Frontend (Vite)** akan berjalan di `http://localhost:3000`
+2. **Backend (Elysia)** akan berjalan di _port_ default backend (seperti `http://localhost:3001`)
 
 ### Menjalankan Secara Terpisah:
 

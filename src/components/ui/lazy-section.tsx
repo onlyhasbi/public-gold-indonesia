@@ -22,8 +22,8 @@ export const LazySection = React.memo(
     fallback,
     minHeight = "200px",
     className,
-    threshold = 0.01,
-    rootMargin = "300px",
+    threshold = 0,
+    rootMargin = "50px",
     once = true,
   }: LazySectionProps) => {
     const { ref, inView } = useInView({

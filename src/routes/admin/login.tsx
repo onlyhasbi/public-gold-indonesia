@@ -1,7 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
 import { useToast } from "@/components/toast";
 import { useForm } from "react-hook-form";
 import { requireAdminGuest } from "@/lib/auth";
@@ -10,9 +13,10 @@ import { queryClient } from "@/lib/queryClient";
 import { authAdminQueryOptions } from "@/lib/queryOptions";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import * as v from "valibot";
+import { loginFn } from "@/services/api.functions";
 
 export const Route = createFileRoute("/admin/login")({
-  beforeLoad: () => requireAdminGuest(),
+  beforeLoad: async () => await requireAdminGuest(),
   component: AdminLoginPage,
 });
 
@@ -27,6 +31,7 @@ const schema = v.object({
 
 function AdminLoginPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
 
   // Redirect if already logged in as admin
@@ -51,14 +56,15 @@ function AdminLoginPage() {
 
   const mutation = useMutation({
     mutationFn: async (data: any) => {
-      // Map email to identifier for unified auth
-      const res = await api.post("/auth/login", {
-        identifier: data.email,
-        katasandi: data.katasandi,
+      // UNIFIED: Using Server Function instead of client api call
+      return loginFn({
+        data: {
+          identifier: data.email,
+          katasandi: data.katasandi,
+        },
       });
-      return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.success && data.user?.role === "admin") {
         setAuthToken(data.token, true);
         queryClient.setQueryData(authAdminQueryOptions().queryKey, {
@@ -66,6 +72,8 @@ function AdminLoginPage() {
           token: data.token,
         });
 
+        // UNIFIED PERSISTENCE: Must invalidate router so guards can see the new cookie
+        await router.invalidate();
         navigate({ to: "/admin" });
       } else if (data.success && data.user?.role !== "admin") {
         showToast("Akses ditolak. Akun ini bukan admin.", "error");
@@ -74,6 +82,7 @@ function AdminLoginPage() {
       }
     },
     onError: (error: any) => {
+      console.error("Admin Login Error:", error);
       showToast(error.response?.data?.message || "Login gagal", "error");
     },
   });

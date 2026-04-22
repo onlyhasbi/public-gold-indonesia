@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { logout } from "@/lib/auth";
+import { getAdminPgboFn } from "@/services/api.functions";
 import {
   useQuery,
   useMutation,
@@ -232,10 +233,8 @@ function AdminDashboard() {
   } = useQuery({
     queryKey: ["admin_pgbo", debouncedSearch],
     queryFn: async () => {
-      const res = await api.get(
-        `/admin/pgbo${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ""}`,
-      );
-      return res.data?.data || [];
+      const res = await getAdminPgboFn({ data: { search: debouncedSearch } });
+      return res.data || [];
     },
     placeholderData: keepPreviousData,
     retry: 1,

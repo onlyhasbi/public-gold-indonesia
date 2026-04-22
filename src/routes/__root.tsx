@@ -36,8 +36,8 @@ export const Route = createRootRouteWithContext<{
 }>()({
   beforeLoad: async () => {
     // Determine auth status once at the root level.
-    const token = getAuthToken(false);
-    const adminToken = getAuthToken(true);
+    const token = await getAuthToken(false);
+    const adminToken = await getAuthToken(true);
 
     return {
       auth: { token, adminToken },

@@ -28,19 +28,20 @@ export const getAuthCookieString = createIsomorphicFn()
     }
     return "";
   })
-  .server((cookieStr?: string) => {
+  .server(async (cookieStr?: string) => {
     if (cookieStr) return cookieStr;
     try {
-      const { getRequest } = require("@tanstack/react-start/server");
-      return getRequest()?.headers.get("cookie") || "";
+      const { getRequest } = await import("@tanstack/react-start/server");
+      const request = getRequest();
+      return request?.headers.get("cookie") || "";
     } catch {
       return "";
     }
   });
 
-export function getAuthToken(isAdmin = false, cookieStr?: string) {
+export async function getAuthToken(isAdmin = false, cookieStr?: string) {
   const cookieName = isAdmin ? ADMIN_TOKEN_KEY : TOKEN_KEY;
-  const rawCookies = cookieStr ?? getAuthCookieString();
+  const rawCookies = cookieStr ?? (await getAuthCookieString());
   const cookies = parse(rawCookies);
   const token = cookies[cookieName] || null;
   return token ? token.replace(/^"|"$/g, "") : null;
@@ -112,29 +113,29 @@ export const purgeAllSessions = () => {
 
 export const clearAuthAndRedirect = () => purgeAllSessions();
 
-export const requireAuth = (isAdmin = false, cookieStr?: string) => {
-  const token = getAuthToken(isAdmin, cookieStr);
+export const requireAuth = async (isAdmin = false, cookieStr?: string) => {
+  const token = await getAuthToken(isAdmin, cookieStr);
   if (!token) {
     throw redirect({ to: "/" });
   }
 };
 
-export const requireAdminAuth = (cookieStr?: string) => {
-  const token = getAuthToken(true, cookieStr);
+export const requireAdminAuth = async (cookieStr?: string) => {
+  const token = await getAuthToken(true, cookieStr);
   if (!token) {
     throw redirect({ to: "/admin/login" });
   }
 };
 
-export const requireGuest = (cookieStr?: string) => {
-  const token = getAuthToken(false, cookieStr);
+export const requireGuest = async (cookieStr?: string) => {
+  const token = await getAuthToken(false, cookieStr);
   if (token) {
     throw redirect({ to: "/overview" });
   }
 };
 
-export const requireAdminGuest = (cookieStr?: string) => {
-  const token = getAuthToken(true, cookieStr);
+export const requireAdminGuest = async (cookieStr?: string) => {
+  const token = await getAuthToken(true, cookieStr);
   if (token) {
     throw redirect({ to: "/admin" });
   }
@@ -149,7 +150,7 @@ export async function createProtectedLoader({
   extraQueries = [],
   isAdmin = false,
 }: ProtectedLoaderOptions) {
-  let cookieStr = getAuthCookieString() || undefined;
+  let cookieStr = (await getAuthCookieString()) || undefined;
 
   try {
     // 1. Always ensure base auth data is present in cache

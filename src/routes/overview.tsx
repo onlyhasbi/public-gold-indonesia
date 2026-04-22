@@ -127,7 +127,7 @@ function OverviewPage() {
             <div className="flex items-center gap-2">
               <p className="text-xs sm:text-sm text-red-600 font-medium truncate">
                 {import.meta.env.DEV
-                  ? `localhost:5173/${user.pageid}`
+                  ? `localhost:3000/${user.pageid}`
                   : `mypublicgold.id/${user.pageid}`}
               </p>
               <div className="relative">
@@ -136,7 +136,7 @@ function OverviewPage() {
                   size="icon"
                   onClick={() => {
                     const url = import.meta.env.DEV
-                      ? `http://localhost:5173/${user.pageid}`
+                      ? `http://localhost:3000/${user.pageid}`
                       : `https://mypublicgold.id/${user.pageid}`;
                     navigator.clipboard.writeText(url);
                     setCopied(true);
@@ -162,7 +162,7 @@ function OverviewPage() {
           <Button
             onClick={() => {
               const url = import.meta.env.DEV
-                ? `http://localhost:5173/${user.pageid}`
+                ? `http://localhost:3000/${user.pageid}`
                 : `https://mypublicgold.id/${user.pageid}`;
               window.open(url, "_blank");
             }}

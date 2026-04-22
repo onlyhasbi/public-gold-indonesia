@@ -1,4 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -9,9 +13,10 @@ import { queryClient } from "@/lib/queryClient";
 import { authAdminQueryOptions } from "@/lib/queryOptions";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import * as v from "valibot";
+import { loginFn } from "@/services/api.functions";
 
 export const Route = createFileRoute("/admin/signup")({
-  beforeLoad: () => requireAdminGuest(),
+  beforeLoad: async () => await requireAdminGuest(),
   component: AdminSignupPage,
 });
 
@@ -34,6 +39,7 @@ const schema = v.object({
 
 function AdminSignupPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -73,11 +79,12 @@ function AdminSignupPage() {
          */
         const performAdminAutoLogin = async () => {
           try {
-            const loginRes = await api.post("/auth/login", {
-              identifier: getValues("email"),
-              katasandi: getValues("katasandi"),
+            const loginData = await loginFn({
+              data: {
+                identifier: getValues("email"),
+                katasandi: getValues("katasandi"),
+              },
             });
-            const loginData = loginRes.data;
 
             if (loginData.success && loginData.user?.role === "admin") {
               // UNIFIED PERSISTENCE: Just set query data.
@@ -87,6 +94,7 @@ function AdminSignupPage() {
               });
 
               showToast("Admin account created and logged in!", "success");
+              await router.invalidate();
               navigate({ to: "/admin" });
             } else {
               showToast("Account created, please login manually.", "info");

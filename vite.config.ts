@@ -24,6 +24,30 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "vendor-react";
+            }
+            if (id.includes("@tanstack")) {
+              return "vendor-tanstack";
+            }
+            if (
+              id.includes("lucide-react") ||
+              id.includes("motion") ||
+              id.includes("embla-carousel") ||
+              id.includes("@base-ui") ||
+              id.includes("@radix-ui")
+            ) {
+              return "vendor-ui";
+            }
+            return "vendor"; // all other node_modules
+          }
+        },
+      },
+    },
   },
   ssr: {
     noExternal: ["@tanstack/react-start-server", "@tanstack/react-start"],

@@ -6,7 +6,7 @@ function AdminLayout() {
 }
 
 export const Route = createFileRoute("/admin")({
-  beforeLoad: ({ location }) => {
+  beforeLoad: async ({ location }) => {
     // Escape hatch for login/signup to prevent redirect loops
     if (
       location.pathname === "/admin/login" ||
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin")({
     ) {
       return;
     }
-    return requireAdminAuth();
+    return await requireAdminAuth();
   },
   component: AdminLayout,
 });

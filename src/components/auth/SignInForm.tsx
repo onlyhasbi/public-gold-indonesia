@@ -35,7 +35,7 @@ export function SignInForm() {
       // MIGRATION: Using TanStack Server Function
       return loginFn({
         data: {
-          pgcode: data.pgcode,
+          identifier: data.pgcode,
           katasandi: data.katasandi,
         },
       });

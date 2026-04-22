@@ -88,7 +88,7 @@ export function SignUpForm({
           try {
             const loginData = await loginFn({
               data: {
-                pgcode: signupForm.getValues("pgcode"),
+                identifier: signupForm.getValues("pgcode"),
                 katasandi: signupForm.getValues("katasandi"),
               },
             });

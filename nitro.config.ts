@@ -16,6 +16,9 @@ export default defineNitroConfig({
       proxy:
         "https://be-public-gold-indonesia.vercel.app/api/public/sitemap.xml",
     },
+    "/api/**": {
+      proxy: "https://be-public-gold-indonesia.vercel.app/api/**",
+    },
     "/api-proxy/**": {
       proxy: "https://publicgold.co.id/**",
     },
