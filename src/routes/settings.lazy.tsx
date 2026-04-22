@@ -22,12 +22,7 @@ import { ProfilePhotoCard } from "@/components/settings/ProfilePhotoCard";
 import { SocialMediaCard } from "@/components/settings/SocialMediaCard";
 import { useToast } from "@/components/toast";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Combobox,
   ComboboxContent,
@@ -40,12 +35,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dialCodeOptions } from "@/constant/countries";
 import { useSEO } from "@/hooks/useSEO";
 import { api } from "@/lib/api";

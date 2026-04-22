@@ -35,10 +35,7 @@ import { useTranslation } from "react-i18next";
 import { NextStepModal } from "@/components/NextStepModal";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 // import NotFound from "@/components/not_found";
-import {
-  AgeSwitchModal,
-  ConfirmationModal,
-} from "@/components/RegisterModals";
+import { AgeSwitchModal, ConfirmationModal } from "@/components/RegisterModals";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InputField, AlertMessage } from "@/components/ui/form-elements";
 import { branchOptionsId, branchOptionsMy } from "@/constant/branches";

@@ -62,7 +62,11 @@ export function LazySection({
       className={cn("w-full", className)}
       style={{ minHeight: !isVisible ? minHeight : undefined }}
     >
-      {isVisible ? <Suspense fallback={fallback}>{children}</Suspense> : fallback}
+      {isVisible ? (
+        <Suspense fallback={fallback}>{children}</Suspense>
+      ) : (
+        fallback
+      )}
     </div>
   );
 }
