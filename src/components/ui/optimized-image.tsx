@@ -119,9 +119,7 @@ function LazyImage(props: OptimizedImageProps) {
       <img
         ref={imgRef}
         src={
-          useCloudinary
-            ? getCloudinaryUrl(src, { width: defaultWidth })
-            : src
+          useCloudinary ? getCloudinaryUrl(src, { width: defaultWidth }) : src
         }
         srcSet={useCloudinary ? srcset : undefined}
         sizes={rest.sizes || "(max-width: 768px) 100vw, 800px"}
