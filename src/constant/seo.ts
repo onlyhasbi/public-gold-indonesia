@@ -71,7 +71,10 @@ export const rootHeadConfig = (appCss: string) => {
         crossOrigin: "anonymous" as const,
       },
       { rel: "dns-prefetch" as const, href: "https://res.cloudinary.com" },
-      { rel: "dns-prefetch" as const, href: "https://my-cdn.publicgold.com.my" },
+      {
+        rel: "dns-prefetch" as const,
+        href: "https://my-cdn.publicgold.com.my",
+      },
       { rel: "dns-prefetch" as const, href: "https://wa.me" },
       { rel: "dns-prefetch" as const, href: "https://api.whatsapp.com" },
     ],
