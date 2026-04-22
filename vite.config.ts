@@ -8,8 +8,10 @@ import path from "path";
 export default defineConfig({
   plugins: [
     tanstackStart({
+      // Pertimbangkan untuk mengaktifkan ini jika ada halaman statis
+      // untuk mempercepat LCP secara drastis
       prerender: {
-        enabled: false,
+        enabled: false, 
       },
     }),
     nitro(),
@@ -26,36 +28,45 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            // Core React Core (Minimal boot dependencies)
-            if (
-              id.includes("node_modules/react/") ||
-              id.includes("node_modules/react-dom/") ||
-              id.includes("node_modules/scheduler/")
-            ) {
-              return "vendor-react-core";
-            }
-
-            // TanStack Framework
-            if (id.includes("@tanstack")) {
-              return "vendor-tanstack";
-            }
-
-            // UI & Icons (Heavy libs)
-            if (
-              id.includes("lucide-react") ||
-              id.includes("motion") ||
-              id.includes("embla-carousel") ||
-              id.includes("@base-ui") ||
-              id.includes("@radix-ui")
-            ) {
-              return "vendor-ui";
-            }
-
-            // Everything else
-            return "vendor";
-          }
+        // PERBAIKAN: Menggunakan manualChunks untuk Rollup/Vite
+        codeSplitting: {
+          groups: [
+            {
+              name: "vendor-tanstack-table",
+              test: (id) => id.includes("tanstack") && id.includes("table"),
+            },
+            {
+              name: "vendor-tanstack-query",
+              test: (id) => id.includes("tanstack") && id.includes("query"),
+            },
+            {
+              name: "vendor-tanstack-router",
+              test: (id) =>
+                id.includes("tanstack") &&
+                (id.includes("router") ||
+                  id.includes("start") ||
+                  id.includes("history") ||
+                  id.includes("router-plugin")),
+            },
+            {
+              name: "vendor-react-core",
+              test: (id) =>
+                id.includes("node_modules") &&
+                (id.includes("react/") ||
+                  id.includes("react-dom/") ||
+                  id.includes("scheduler/")),
+            },
+            {
+              name: "vendor-ui",
+              test: (id) =>
+                id.includes("node_modules") &&
+                (id.includes("lucide-react") ||
+                  id.includes("motion") ||
+                  id.includes("embla-carousel") ||
+                  id.includes("@base-ui") ||
+                  id.includes("@radix-ui")),
+            },
+          ],
         },
       },
     },
