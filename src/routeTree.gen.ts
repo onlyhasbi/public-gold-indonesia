@@ -8,281 +8,281 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as PetunjukRouteImport } from './routes/petunjuk'
-import { Route as OverviewRouteImport } from './routes/overview'
-import { Route as LegalRouteImport } from './routes/legal'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as PgcodeRouteImport } from './routes/$pgcode'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as AdminSignupRouteImport } from './routes/admin/signup'
-import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as SitemapDotxmlRouteImport } from "./routes/sitemap[.]xml";
+import { Route as SettingsRouteImport } from "./routes/settings";
+import { Route as RegisterRouteImport } from "./routes/register";
+import { Route as PetunjukRouteImport } from "./routes/petunjuk";
+import { Route as OverviewRouteImport } from "./routes/overview";
+import { Route as LegalRouteImport } from "./routes/legal";
+import { Route as AdminRouteImport } from "./routes/admin";
+import { Route as PgcodeRouteImport } from "./routes/$pgcode";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as AdminIndexRouteImport } from "./routes/admin/index";
+import { Route as AdminSignupRouteImport } from "./routes/admin/signup";
+import { Route as AdminLoginRouteImport } from "./routes/admin/login";
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+  id: "/sitemap.xml",
+  path: "/sitemap.xml",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+  id: "/settings",
+  path: "/settings",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/settings.lazy").then((d) => d.Route));
 const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
+  id: "/register",
+  path: "/register",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/register.lazy").then((d) => d.Route));
 const PetunjukRoute = PetunjukRouteImport.update({
-  id: '/petunjuk',
-  path: '/petunjuk',
+  id: "/petunjuk",
+  path: "/petunjuk",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/petunjuk.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/petunjuk.lazy").then((d) => d.Route));
 const OverviewRoute = OverviewRouteImport.update({
-  id: '/overview',
-  path: '/overview',
+  id: "/overview",
+  path: "/overview",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LegalRoute = LegalRouteImport.update({
-  id: '/legal',
-  path: '/legal',
+  id: "/legal",
+  path: "/legal",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/legal.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/legal.lazy").then((d) => d.Route));
 const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+  id: "/admin",
+  path: "/admin",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PgcodeRoute = PgcodeRouteImport.update({
-  id: '/$pgcode',
-  path: '/$pgcode',
+  id: "/$pgcode",
+  path: "/$pgcode",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => AdminRoute,
-} as any)
+} as any);
 const AdminSignupRoute = AdminSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+  id: "/signup",
+  path: "/signup",
   getParentRoute: () => AdminRoute,
-} as any)
+} as any);
 const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => AdminRoute,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/$pgcode': typeof PgcodeRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/legal': typeof LegalRoute
-  '/overview': typeof OverviewRoute
-  '/petunjuk': typeof PetunjukRoute
-  '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/admin/signup': typeof AdminSignupRoute
-  '/admin/': typeof AdminIndexRoute
+  "/": typeof IndexRoute;
+  "/$pgcode": typeof PgcodeRoute;
+  "/admin": typeof AdminRouteWithChildren;
+  "/legal": typeof LegalRoute;
+  "/overview": typeof OverviewRoute;
+  "/petunjuk": typeof PetunjukRoute;
+  "/register": typeof RegisterRoute;
+  "/settings": typeof SettingsRoute;
+  "/sitemap.xml": typeof SitemapDotxmlRoute;
+  "/admin/login": typeof AdminLoginRoute;
+  "/admin/signup": typeof AdminSignupRoute;
+  "/admin/": typeof AdminIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/$pgcode': typeof PgcodeRoute
-  '/legal': typeof LegalRoute
-  '/overview': typeof OverviewRoute
-  '/petunjuk': typeof PetunjukRoute
-  '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/admin/signup': typeof AdminSignupRoute
-  '/admin': typeof AdminIndexRoute
+  "/": typeof IndexRoute;
+  "/$pgcode": typeof PgcodeRoute;
+  "/legal": typeof LegalRoute;
+  "/overview": typeof OverviewRoute;
+  "/petunjuk": typeof PetunjukRoute;
+  "/register": typeof RegisterRoute;
+  "/settings": typeof SettingsRoute;
+  "/sitemap.xml": typeof SitemapDotxmlRoute;
+  "/admin/login": typeof AdminLoginRoute;
+  "/admin/signup": typeof AdminSignupRoute;
+  "/admin": typeof AdminIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/$pgcode': typeof PgcodeRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/legal': typeof LegalRoute
-  '/overview': typeof OverviewRoute
-  '/petunjuk': typeof PetunjukRoute
-  '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/admin/signup': typeof AdminSignupRoute
-  '/admin/': typeof AdminIndexRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/$pgcode": typeof PgcodeRoute;
+  "/admin": typeof AdminRouteWithChildren;
+  "/legal": typeof LegalRoute;
+  "/overview": typeof OverviewRoute;
+  "/petunjuk": typeof PetunjukRoute;
+  "/register": typeof RegisterRoute;
+  "/settings": typeof SettingsRoute;
+  "/sitemap.xml": typeof SitemapDotxmlRoute;
+  "/admin/login": typeof AdminLoginRoute;
+  "/admin/signup": typeof AdminSignupRoute;
+  "/admin/": typeof AdminIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/$pgcode'
-    | '/admin'
-    | '/legal'
-    | '/overview'
-    | '/petunjuk'
-    | '/register'
-    | '/settings'
-    | '/sitemap.xml'
-    | '/admin/login'
-    | '/admin/signup'
-    | '/admin/'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/$pgcode"
+    | "/admin"
+    | "/legal"
+    | "/overview"
+    | "/petunjuk"
+    | "/register"
+    | "/settings"
+    | "/sitemap.xml"
+    | "/admin/login"
+    | "/admin/signup"
+    | "/admin/";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/$pgcode'
-    | '/legal'
-    | '/overview'
-    | '/petunjuk'
-    | '/register'
-    | '/settings'
-    | '/sitemap.xml'
-    | '/admin/login'
-    | '/admin/signup'
-    | '/admin'
+    | "/"
+    | "/$pgcode"
+    | "/legal"
+    | "/overview"
+    | "/petunjuk"
+    | "/register"
+    | "/settings"
+    | "/sitemap.xml"
+    | "/admin/login"
+    | "/admin/signup"
+    | "/admin";
   id:
-    | '__root__'
-    | '/'
-    | '/$pgcode'
-    | '/admin'
-    | '/legal'
-    | '/overview'
-    | '/petunjuk'
-    | '/register'
-    | '/settings'
-    | '/sitemap.xml'
-    | '/admin/login'
-    | '/admin/signup'
-    | '/admin/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/$pgcode"
+    | "/admin"
+    | "/legal"
+    | "/overview"
+    | "/petunjuk"
+    | "/register"
+    | "/settings"
+    | "/sitemap.xml"
+    | "/admin/login"
+    | "/admin/signup"
+    | "/admin/";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  PgcodeRoute: typeof PgcodeRoute
-  AdminRoute: typeof AdminRouteWithChildren
-  LegalRoute: typeof LegalRoute
-  OverviewRoute: typeof OverviewRoute
-  PetunjukRoute: typeof PetunjukRoute
-  RegisterRoute: typeof RegisterRoute
-  SettingsRoute: typeof SettingsRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  IndexRoute: typeof IndexRoute;
+  PgcodeRoute: typeof PgcodeRoute;
+  AdminRoute: typeof AdminRouteWithChildren;
+  LegalRoute: typeof LegalRoute;
+  OverviewRoute: typeof OverviewRoute;
+  PetunjukRoute: typeof PetunjukRoute;
+  RegisterRoute: typeof RegisterRoute;
+  SettingsRoute: typeof SettingsRoute;
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/petunjuk': {
-      id: '/petunjuk'
-      path: '/petunjuk'
-      fullPath: '/petunjuk'
-      preLoaderRoute: typeof PetunjukRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/overview': {
-      id: '/overview'
-      path: '/overview'
-      fullPath: '/overview'
-      preLoaderRoute: typeof OverviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legal': {
-      id: '/legal'
-      path: '/legal'
-      fullPath: '/legal'
-      preLoaderRoute: typeof LegalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$pgcode': {
-      id: '/$pgcode'
-      path: '/$pgcode'
-      fullPath: '/$pgcode'
-      preLoaderRoute: typeof PgcodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/signup': {
-      id: '/admin/signup'
-      path: '/signup'
-      fullPath: '/admin/signup'
-      preLoaderRoute: typeof AdminSignupRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof AdminRoute
-    }
+    "/sitemap.xml": {
+      id: "/sitemap.xml";
+      path: "/sitemap.xml";
+      fullPath: "/sitemap.xml";
+      preLoaderRoute: typeof SitemapDotxmlRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/settings": {
+      id: "/settings";
+      path: "/settings";
+      fullPath: "/settings";
+      preLoaderRoute: typeof SettingsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/register": {
+      id: "/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof RegisterRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/petunjuk": {
+      id: "/petunjuk";
+      path: "/petunjuk";
+      fullPath: "/petunjuk";
+      preLoaderRoute: typeof PetunjukRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/overview": {
+      id: "/overview";
+      path: "/overview";
+      fullPath: "/overview";
+      preLoaderRoute: typeof OverviewRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/legal": {
+      id: "/legal";
+      path: "/legal";
+      fullPath: "/legal";
+      preLoaderRoute: typeof LegalRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/admin": {
+      id: "/admin";
+      path: "/admin";
+      fullPath: "/admin";
+      preLoaderRoute: typeof AdminRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/$pgcode": {
+      id: "/$pgcode";
+      path: "/$pgcode";
+      fullPath: "/$pgcode";
+      preLoaderRoute: typeof PgcodeRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/admin/": {
+      id: "/admin/";
+      path: "/";
+      fullPath: "/admin/";
+      preLoaderRoute: typeof AdminIndexRouteImport;
+      parentRoute: typeof AdminRoute;
+    };
+    "/admin/signup": {
+      id: "/admin/signup";
+      path: "/signup";
+      fullPath: "/admin/signup";
+      preLoaderRoute: typeof AdminSignupRouteImport;
+      parentRoute: typeof AdminRoute;
+    };
+    "/admin/login": {
+      id: "/admin/login";
+      path: "/login";
+      fullPath: "/admin/login";
+      preLoaderRoute: typeof AdminLoginRouteImport;
+      parentRoute: typeof AdminRoute;
+    };
   }
 }
 
 interface AdminRouteChildren {
-  AdminLoginRoute: typeof AdminLoginRoute
-  AdminSignupRoute: typeof AdminSignupRoute
-  AdminIndexRoute: typeof AdminIndexRoute
+  AdminLoginRoute: typeof AdminLoginRoute;
+  AdminSignupRoute: typeof AdminSignupRoute;
+  AdminIndexRoute: typeof AdminIndexRoute;
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminSignupRoute: AdminSignupRoute,
   AdminIndexRoute: AdminIndexRoute,
-}
+};
 
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -294,16 +294,16 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }

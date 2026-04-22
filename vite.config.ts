@@ -11,7 +11,7 @@ export default defineConfig({
       // Pertimbangkan untuk mengaktifkan ini jika ada halaman statis
       // untuk mempercepat LCP secara drastis
       prerender: {
-        enabled: false, 
+        enabled: false,
       },
     }),
     nitro(),
