@@ -12,7 +12,13 @@ export default defineConfig({
         enabled: false,
       },
     }),
-    nitro(),
+    nitro({
+      services: {
+        ssr: {
+          entry: path.resolve(__dirname, "src/server.ts"),
+        },
+      },
+    }),
     viteReact(),
     tailwindcss(),
   ],

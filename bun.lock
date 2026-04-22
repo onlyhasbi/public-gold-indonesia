@@ -32,7 +32,7 @@
         "i18next-resources-to-backend": "^1.2.1",
         "lucide-react": "^0.481.0",
         "motion": "^12.5.0",
-        "nitro": "^3.0.0",
+        "nitro": "3.0.1-alpha.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-hook-form": "^7.72.1",
@@ -983,7 +983,7 @@
 
     "nf3": ["nf3@0.1.12", "", {}, "sha512-qbMXT7RTGh74MYWPeqTIED8nDW70NXOULVHpdWcdZ7IVHVnAsMV9fNugSNnvooipDc1FMOzpis7T9nXJEbJhvQ=="],
 
-    "nitro": ["nitro@3.0.0", "", { "dependencies": { "consola": "^3.4.2", "cookie-es": "^2.0.0", "crossws": "^0.4.1", "db0": "^0.3.4", "esbuild": "^0.25.10", "fetchdts": "^0.1.7", "h3": "2.0.1-rc.2", "jiti": "^2.6.1", "nf3": "^0.1.1", "ofetch": "^1.4.1", "ohash": "^2.0.11", "rendu": "^0.0.6", "rollup": "^4.52.4", "srvx": "^0.8.15", "undici": "^7.16.0", "unenv": "2.0.0-rc.21", "unstorage": "2.0.0-alpha.3" }, "peerDependencies": { "rolldown": "*", "vite": "^7", "xml2js": "^0.6.2" }, "optionalPeers": ["rolldown", "vite", "xml2js"], "bin": { "nitro": "dist/cli/index.mjs", "nitropack": "dist/cli/index.mjs" } }, "sha512-pPrH77/oiYz3q1xGgOYQPEkXERsCi4PkErL2DpHhg4raag3EX7Zh41KFJ0ploSmflmDOPRPeAtC1/19fVrOqoQ=="],
+    "nitro": ["nitro@3.0.1-alpha.0", "", { "dependencies": { "consola": "^3.4.2", "cookie-es": "^2.0.0", "crossws": "^0.4.1", "db0": "^0.3.4", "esbuild": "^0.25.10", "fetchdts": "^0.1.7", "h3": "2.0.1-rc.2", "jiti": "^2.6.1", "nf3": "^0.1.1", "ofetch": "^1.4.1", "ohash": "^2.0.11", "rendu": "^0.0.6", "rollup": "^4.52.4", "srvx": "^0.8.15", "undici": "^7.16.0", "unenv": "2.0.0-rc.21", "unstorage": "2.0.0-alpha.3" }, "peerDependencies": { "rolldown": "*", "vite": "^7", "xml2js": "^0.6.2" }, "optionalPeers": ["rolldown", "vite", "xml2js"], "bin": { "nitro": "dist/cli/index.mjs", "nitropack": "dist/cli/index.mjs" } }, "sha512-lR3RplfXBOZXNlFQf9AJkqFVFhg5/CNbpBijM0dSYhGymb+FthJSdL6crmXVg518h2NVOd40rehhGZaf9ijW9w=="],
 
     "node-domexception": ["node-domexception@1.0.0", "", {}, "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ=="],
 
@@ -1384,6 +1384,8 @@
     "cliui/wrap-ansi": ["wrap-ansi@7.0.0", "", { "dependencies": { "ansi-styles": "^4.0.0", "string-width": "^4.1.0", "strip-ansi": "^6.0.0" } }, "sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q=="],
 
     "cross-spawn/which": ["which@2.0.2", "", { "dependencies": { "isexe": "^2.0.0" }, "bin": { "node-which": "./bin/node-which" } }, "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA=="],
+
+    "crossws/srvx": ["srvx@0.11.15", "", { "bin": { "srvx": "bin/srvx.mjs" } }, "sha512-iXsux0UcOjdvs0LCMa2Ws3WwcDUozA3JN3BquNXkaFPP7TpRqgunKdEgoZ/uwb1J6xaYHfxtz9Twlh6yzwM6Tg=="],
 
     "encoding-sniffer/iconv-lite": ["iconv-lite@0.6.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw=="],
 
