@@ -1,28 +1,22 @@
-import {
-  createStartHandler,
-  defaultStreamHandler,
-} from "@tanstack/react-start/server";
-
-const handler = createStartHandler(defaultStreamHandler);
-
-export default async function ssrHandler(event: { req: Request }) {
+export default function ssrHandler(event: any) {
   try {
-    const response = await handler(event.req);
-    return response;
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : String(error);
-    const stack = error instanceof Error ? error.stack : "";
-    console.error("SSR Error:", message, stack);
-    return new Response(
-      JSON.stringify({
-        ssrError: message,
-        stack: stack?.split("\n").slice(0, 8),
-      }),
-      {
-        status: 500,
-        headers: { "content-type": "application/json" },
-      },
-    );
+    const info = {
+      eventKeys: Object.keys(event),
+      hasReq: !!event.req,
+      hasNode: !!event.node,
+      hasWeb: !!event.web,
+      hasRequest: !!event.request,
+      reqType: event.req?.constructor?.name,
+      requestType: event.request?.constructor?.name,
+      nodeReqType: event.node?.req?.constructor?.name,
+      path: event.path,
+      method: event.method,
+    };
+    return new Response(JSON.stringify(info, null, 2), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  } catch (err: any) {
+    return new Response(String(err), { status: 500 });
   }
 }
