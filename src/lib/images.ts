@@ -105,9 +105,17 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
  */
 export function getCloudinarySrcSet(
   src: string,
-  options: Pick<CloudinaryOptions, "priority"> = {},
+  options: Pick<CloudinaryOptions, "priority"> & { maxWidth?: number } = {},
 ) {
-  return [400, 800, 1200, 1600]
-    .map((w) => `${getCloudinaryUrl(src, { ...options, width: w })} ${w}w`)
+  const { maxWidth, ...rest } = options;
+
+  // If we know the target width (e.g. for a logo), generate 1x, 2x, 3x versions
+  // to avoid downloading massive 1600px versions for a 200px image.
+  const widths = maxWidth
+    ? [maxWidth, maxWidth * 2, maxWidth * 3].filter((w) => w <= 2000)
+    : [400, 800, 1200, 1600];
+
+  return widths
+    .map((w) => `${getCloudinaryUrl(src, { ...rest, width: w })} ${w}w`)
     .join(", ");
 }

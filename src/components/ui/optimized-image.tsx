@@ -29,7 +29,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
     !isBlockedDomain && !isSvg && (!isLocal || canOptimizeLocal);
 
   const srcset = canUseCloudinary
-    ? getCloudinarySrcSet(src, { priority })
+    ? getCloudinarySrcSet(src, { priority, maxWidth: width })
     : undefined;
 
   // FAST PATH: Priority images render a bare <img> with no wrapper, no blur, no hydration delay.
@@ -43,7 +43,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
             : src
         }
         srcSet={canUseCloudinary ? srcset : undefined}
-        sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
+        sizes={props.sizes || (width ? `${width}px` : "(max-width: 768px) 100vw, 800px")}
         className={className}
         loading="eager"
         fetchPriority="high"
@@ -90,7 +90,9 @@ function LazyImage(props: OptimizedImageProps) {
   const useCloudinary =
     !hasError && !isBlockedDomain && !isSvg && (!isLocal || canOptimizeLocal);
 
-  const srcset = useCloudinary ? getCloudinarySrcSet(src) : undefined;
+  const srcset = useCloudinary
+    ? getCloudinarySrcSet(src, { maxWidth: width })
+    : undefined;
   const placeholderUrl = useCloudinary
     ? getCloudinaryUrl(src, { blur: true })
     : undefined;
@@ -122,7 +124,7 @@ function LazyImage(props: OptimizedImageProps) {
           useCloudinary ? getCloudinaryUrl(src, { width: defaultWidth }) : src
         }
         srcSet={useCloudinary ? srcset : undefined}
-        sizes={rest.sizes || "(max-width: 768px) 100vw, 800px"}
+        sizes={rest.sizes || (width ? `${width}px` : "(max-width: 768px) 100vw, 800px")}
         className={`w-full h-full ${
           objectClasses.length > 0
             ? objectClasses.join(" ")
