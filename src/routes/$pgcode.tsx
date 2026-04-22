@@ -215,23 +215,23 @@ export const Route = createFileRoute("/$pgcode")({
         ...(pgbo.foto_profil_url
           ? [
               {
-                rel: "preload",
-                as: "image",
+                rel: "preload" as const,
+                as: "image" as const,
                 href: getCloudinaryUrl(pgbo.foto_profil_url, {
                   width: 400,
                   priority: true,
                 }),
-                imageSrcset: getCloudinarySrcSet(pgbo.foto_profil_url, {
+                imageSrcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
                   priority: true,
                   maxWidth: 400,
                 }),
                 imageSizes: "(max-width: 768px) 100vw, 400px",
-                fetchpriority: "high",
+                fetchPriority: "high" as const,
               },
             ]
           : []),
         {
-          rel: "canonical",
+          rel: "canonical" as const,
           href: url,
         },
       ],

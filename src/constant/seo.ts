@@ -43,37 +43,37 @@ export const rootHeadConfig = (appCss: string) => {
       { name: "twitter:image", content: `${siteUrl}/me.webp` },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet" as const, href: appCss },
       {
-        rel: "icon",
+        rel: "icon" as const,
         type: "image/png",
         href: getCloudinaryUrl("/logo.webp", { width: 32, format: "png" }),
       },
       {
-        rel: "apple-touch-icon",
+        rel: "apple-touch-icon" as const,
         href: getCloudinaryUrl("/logo.webp", { width: 180, format: "png" }),
       },
       {
-        rel: "preconnect",
+        rel: "preconnect" as const,
         href: "https://res.cloudinary.com",
         crossOrigin: "anonymous" as const,
       },
       {
-        rel: "preconnect",
+        rel: "preconnect" as const,
         href: "https://be-public-gold-indonesia.vercel.app",
         crossOrigin: "anonymous" as const,
       },
       {
-        rel: "preload",
+        rel: "preload" as const,
         href: "/fonts/geist-variable.woff2",
-        as: "font",
+        as: "font" as const,
         type: "font/woff2",
         crossOrigin: "anonymous" as const,
       },
-      { rel: "dns-prefetch", href: "https://res.cloudinary.com" },
-      { rel: "dns-prefetch", href: "https://my-cdn.publicgold.com.my" },
-      { rel: "dns-prefetch", href: "https://wa.me" },
-      { rel: "dns-prefetch", href: "https://api.whatsapp.com" },
+      { rel: "dns-prefetch" as const, href: "https://res.cloudinary.com" },
+      { rel: "dns-prefetch" as const, href: "https://my-cdn.publicgold.com.my" },
+      { rel: "dns-prefetch" as const, href: "https://wa.me" },
+      { rel: "dns-prefetch" as const, href: "https://api.whatsapp.com" },
     ],
   };
 };
