@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     tanstackStart({
       prerender: {
-        autoStaticPathsDiscovery: false,
+        enabled: false,
       },
     }),
     nitro(),
