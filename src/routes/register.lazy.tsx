@@ -61,7 +61,7 @@ const RightBanner = React.memo(({ referralData }: { referralData: any }) => {
       />
       <div className="absolute top-[15%] inset-x-0 z-[15] flex justify-center pointer-events-none">
         <img
-          src="/logo.svg"
+          src="/logo.webp"
           alt="Public Gold Logo"
           className="w-64 sm:w-80 md:w-96 h-auto drop-shadow-2xl transition-transform duration-1000 group-hover:scale-105"
         />

@@ -12,6 +12,59 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 export function OptimizedImage(props: OptimizedImageProps) {
   const { src, className, priority, width, height, aspectRatio, ...rest } =
     props;
+
+  if (!src) return null;
+
+  const isSvg = src.toLowerCase().endsWith(".svg");
+  const isLocal = src.startsWith("/") && !src.startsWith("//");
+
+  const BLOCKED_DOMAINS = ["chinapress.com.my"];
+  const isBlockedDomain =
+    (src.startsWith("http") || src.startsWith("//")) &&
+    BLOCKED_DOMAINS.some((domain) => src.includes(domain));
+
+  const defaultWidth = width || 800;
+  const canOptimizeLocal = isLocal && !isSvg && !import.meta.env.DEV;
+  const canUseCloudinary =
+    !isBlockedDomain && !isSvg && (!isLocal || canOptimizeLocal);
+
+  const srcset = canUseCloudinary
+    ? getCloudinarySrcSet(src, { priority })
+    : undefined;
+
+  // FAST PATH: Priority images render a bare <img> with no wrapper, no blur, no hydration delay.
+  // This is critical for LCP — the browser can paint immediately without extra layout or JS.
+  if (priority) {
+    return (
+      <img
+        src={
+          canUseCloudinary
+            ? getCloudinaryUrl(src, { width: defaultWidth, priority: true })
+            : src
+        }
+        srcSet={canUseCloudinary ? srcset : undefined}
+        sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
+        className={className}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        width={width}
+        height={height}
+        style={{
+          aspectRatio:
+            aspectRatio || (width && height ? width / height : undefined),
+        }}
+        {...rest}
+      />
+    );
+  }
+
+  // LAZY PATH: Non-priority images get the full treatment (wrapper, blur placeholder, fade-in)
+  return <LazyImage {...props} />;
+}
+
+function LazyImage(props: OptimizedImageProps) {
+  const { src, className, width, height, aspectRatio, ...rest } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -24,33 +77,24 @@ export function OptimizedImage(props: OptimizedImageProps) {
     }
   }, [src]);
 
-  if (!src) return null;
-
   const isSvg = src.toLowerCase().endsWith(".svg");
   const isLocal = src.startsWith("/") && !src.startsWith("//");
 
-  // Domains known to block Cloudinary fetch
   const BLOCKED_DOMAINS = ["chinapress.com.my"];
   const isBlockedDomain =
     (src.startsWith("http") || src.startsWith("//")) &&
     BLOCKED_DOMAINS.some((domain) => src.includes(domain));
 
   const defaultWidth = width || 800;
-  // Optimize local assets via Cloudinary ONLY in production and if not an SVG
   const canOptimizeLocal = isLocal && !isSvg && !import.meta.env.DEV;
-  // Disable Cloudinary if error occurred, domain is blocked, or it's an SVG
   const useCloudinary =
     !hasError && !isBlockedDomain && !isSvg && (!isLocal || canOptimizeLocal);
 
-  const srcset = useCloudinary
-    ? getCloudinarySrcSet(src, { priority })
-    : undefined;
-
+  const srcset = useCloudinary ? getCloudinarySrcSet(src) : undefined;
   const placeholderUrl = useCloudinary
     ? getCloudinaryUrl(src, { blur: true })
     : undefined;
 
-  // IMPORTANT FIX: Extract object-* classes to apply to the img tag, not the wrapper
   const classNames = (className || "").split(" ");
   const objectClasses = classNames.filter((c) => c.startsWith("object-"));
   const wrapperClasses = classNames.filter((c) => !c.startsWith("object-"));
@@ -63,8 +107,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
           aspectRatio || (width && height ? width / height : undefined),
       }}
     >
-      {/* 1. Blurred Placeholder Layer - Skipped for priority images to optimize LCP */}
-      {useCloudinary && !isLoaded && !priority && isClient && (
+      {useCloudinary && !isLoaded && isClient && (
         <img
           src={placeholderUrl}
           className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 transition-opacity duration-500"
@@ -73,29 +116,28 @@ export function OptimizedImage(props: OptimizedImageProps) {
         />
       )}
 
-      {/* 2. Main High-Res Image */}
       <img
         ref={imgRef}
         src={
           useCloudinary
-            ? getCloudinaryUrl(src, { width: defaultWidth, priority })
+            ? getCloudinaryUrl(src, { width: defaultWidth })
             : src
         }
         srcSet={useCloudinary ? srcset : undefined}
-        sizes={props.sizes || "(max-width: 768px) 100vw, 800px"}
+        sizes={rest.sizes || "(max-width: 768px) 100vw, 800px"}
         className={`w-full h-full ${
           objectClasses.length > 0
             ? objectClasses.join(" ")
             : "object-cover object-center"
-        } ${!priority && isClient ? "transition-opacity duration-700 ease-in-out" : ""} ${
+        } ${isClient ? "transition-opacity duration-700 ease-in-out" : ""} ${
           useCloudinary
-            ? isLoaded || priority || !isClient
+            ? isLoaded || !isClient
               ? "opacity-100"
               : "opacity-0"
             : "opacity-100"
         }`}
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "auto"}
+        loading="lazy"
+        fetchPriority="auto"
         decoding="async"
         width={width}
         height={height}

@@ -230,10 +230,8 @@ export const Route = createFileRoute("/$pgcode")({
             ]
           : []),
         {
-          rel: "preload",
-          as: "image",
-          href: getCloudinaryUrl("/5g.webp", { width: 96, priority: true }),
-          fetchpriority: "high",
+          rel: "canonical",
+          href: url,
         },
       ],
       scripts: [

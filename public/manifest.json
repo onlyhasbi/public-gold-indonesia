@@ -3,9 +3,9 @@
   "name": "Public Gold Indonesia — Dealer Resmi Emas Murni 24K",
   "icons": [
     {
-      "src": "logo.svg",
+      "src": "logo.webp",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/webp"
     }
   ],
   "start_url": ".",

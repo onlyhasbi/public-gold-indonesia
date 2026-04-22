@@ -85,7 +85,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
             className="group flex items-center gap-2 cursor-pointer"
           >
             <OptimizedImage
-              src="/logo.svg"
+              src="/logo.webp"
               alt="Public Gold"
               priority
               className="h-10 md:h-12 w-auto group-hover:scale-105 transition-transform object-contain shrink-0"
@@ -230,7 +230,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
           <div className="flex items-center gap-2">
             <Link to="/" onClick={() => setIsOpen(false)}>
               <OptimizedImage
-                src="/logo.svg"
+                src="/logo.webp"
                 alt="Public Gold"
                 className="h-8 w-auto"
                 width={120}
