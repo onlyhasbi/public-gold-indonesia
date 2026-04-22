@@ -53,7 +53,6 @@ export const rootHeadConfig = (appCss: string) => {
         rel: "apple-touch-icon",
         href: getCloudinaryUrl("/logo.webp", { width: 180, format: "png" }),
       },
-      { rel: "manifest", href: "/manifest.json" },
       {
         rel: "preconnect",
         href: "https://res.cloudinary.com",
@@ -73,6 +72,8 @@ export const rootHeadConfig = (appCss: string) => {
       },
       { rel: "dns-prefetch", href: "https://res.cloudinary.com" },
       { rel: "dns-prefetch", href: "https://my-cdn.publicgold.com.my" },
+      { rel: "dns-prefetch", href: "https://wa.me" },
+      { rel: "dns-prefetch", href: "https://api.whatsapp.com" },
     ],
   };
 };

@@ -223,6 +223,7 @@ export const Route = createFileRoute("/$pgcode")({
                 }),
                 imageSrcset: getCloudinarySrcSet(pgbo.foto_profil_url, {
                   priority: true,
+                  maxWidth: 400,
                 }),
                 imageSizes: "(max-width: 768px) 100vw, 400px",
                 fetchpriority: "high",
