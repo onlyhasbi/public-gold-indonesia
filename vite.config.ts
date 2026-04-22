@@ -8,7 +8,11 @@ import path from "path";
 
 export default defineConfig({
   plugins: [
-    tanstackStart(),
+    tanstackStart({
+      prerender: {
+        autoStaticPathsDiscovery: false,
+      },
+    }),
     nitro(),
     viteReact(),
     tailwindcss(),
