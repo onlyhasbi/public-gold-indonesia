@@ -5,16 +5,20 @@ import {
 
 const handler = createStartHandler(defaultStreamHandler);
 
-export default function ssrHandler(event: { req: Request }) {
+export default async function ssrHandler(event: { req: Request }) {
   try {
-    return handler(event.req);
+    const response = await handler(event.req);
+    return response;
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Unknown SSR error";
+      error instanceof Error ? error.message : String(error);
     const stack = error instanceof Error ? error.stack : "";
     console.error("SSR Error:", message, stack);
     return new Response(
-      JSON.stringify({ error: message, stack: stack?.split("\n").slice(0, 5) }),
+      JSON.stringify({
+        ssrError: message,
+        stack: stack?.split("\n").slice(0, 8),
+      }),
       {
         status: 500,
         headers: { "content-type": "application/json" },
