@@ -18,18 +18,25 @@ const ADMIN_TOKEN_KEY = "pg_admin_token";
  * Client-side only. SSR awareness is handled in .server files.
  */
 
-export function getAuthCookieString(cookieStr?: string) {
-  if (cookieStr) return cookieStr;
-  if (typeof document !== "undefined") {
-    return document.cookie;
-  }
-  try {
-    const { getRequest } = require("@tanstack/react-start/server");
-    return getRequest()?.headers.get("cookie") || "";
-  } catch {
+import { createIsomorphicFn } from "@tanstack/react-start";
+
+export const getAuthCookieString = createIsomorphicFn()
+  .client((cookieStr?: string) => {
+    if (cookieStr) return cookieStr;
+    if (typeof document !== "undefined") {
+      return document.cookie;
+    }
     return "";
-  }
-}
+  })
+  .server((cookieStr?: string) => {
+    if (cookieStr) return cookieStr;
+    try {
+      const { getRequest } = require("@tanstack/react-start/server");
+      return getRequest()?.headers.get("cookie") || "";
+    } catch {
+      return "";
+    }
+  });
 
 export function getAuthToken(isAdmin = false, cookieStr?: string) {
   const cookieName = isAdmin ? ADMIN_TOKEN_KEY : TOKEN_KEY;
@@ -142,15 +149,7 @@ export async function createProtectedLoader({
   extraQueries = [],
   isAdmin = false,
 }: ProtectedLoaderOptions) {
-  let cookieStr: string | undefined;
-
-  // Extract cookie securely in SSR environment
-  if (typeof window === "undefined") {
-    try {
-      const { getRequest } = await import("@tanstack/react-start/server");
-      cookieStr = getRequest()?.headers.get("cookie") || undefined;
-    } catch {}
-  }
+  let cookieStr = getAuthCookieString() || undefined;
 
   try {
     // 1. Always ensure base auth data is present in cache

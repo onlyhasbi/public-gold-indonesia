@@ -3,6 +3,7 @@ node_modules
 dist
 dist-ssr
 .output
+.nitro
 *.local
 
 # Environment secrets — NEVER commit these
