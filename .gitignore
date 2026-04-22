@@ -2,6 +2,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+.output
 *.local
 
 # Environment secrets — NEVER commit these
@@ -31,7 +32,6 @@ local.db.backup
 .vercel
 
 # Misc
-.npmrc
 .netrc
 **/*.log
 **/*.zip

@@ -38,14 +38,6 @@
     {
       "source": "/api-proxy-my/:match*",
       "destination": "https://publicgold.com.my/:match*"
-    },
-    {
-      "source": "/:pageid",
-      "destination": "https://be-public-gold-indonesia.vercel.app/api/public/render/:pageid"
-    },
-    {
-      "source": "/((?!api-proxy|assets|.*\\\\..*).*)",
-      "destination": "/index.html"
     }
   ]
 }
