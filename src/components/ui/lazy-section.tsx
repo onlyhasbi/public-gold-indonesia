@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useMemo } from "react";
+import { useInView } from "react-intersection-observer";
 import { cn } from "@/lib/utils";
 
 interface LazySectionProps {
@@ -13,60 +14,59 @@ interface LazySectionProps {
 
 /**
  * A wrapper component that only renders its children when it enters the viewport.
- * Useful for optimizing performance on long pages with heavy components.
+ * Memoized to prevent unnecessary re-renders of heavy components.
  */
-export function LazySection({
+export const LazySection = React.memo(({
   children,
   fallback,
   minHeight = "200px",
   className,
-  threshold = 0.1,
-  rootMargin = "200px",
+  threshold = 0.01,
+  rootMargin = "300px",
   once = true,
-}: LazySectionProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
+}: LazySectionProps) => {
+  const { ref, inView } = useInView({
+    threshold,
+    rootMargin,
+    triggerOnce: once,
+  });
+
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (once && sectionRef.current) {
-            observer.unobserve(sectionRef.current);
-          }
-        } else if (!once) {
-          setIsVisible(false);
-        }
-      },
-      {
-        threshold,
-        rootMargin,
-      },
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+    if (inView && !shouldRender) {
+      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+        const handle = window.requestIdleCallback(() => setShouldRender(true), {
+          timeout: 200,
+        });
+        return () => window.cancelIdleCallback(handle);
+      } else {
+        const timer = setTimeout(() => setShouldRender(true), 50);
+        return () => clearTimeout(timer);
       }
-    };
-  }, [threshold, rootMargin, once]);
+    }
+  }, [inView, shouldRender]);
+
+  const content = useMemo(() => {
+    return shouldRender ? (
+      <Suspense fallback={fallback}>{children}</Suspense>
+    ) : (
+      fallback
+    );
+  }, [shouldRender, children, fallback]);
 
   return (
     <div
-      ref={sectionRef}
-      className={cn("w-full", className)}
-      style={{ minHeight: !isVisible ? minHeight : undefined }}
+      ref={ref}
+      className={cn("w-full transition-opacity duration-500", className)}
+      style={{
+        minHeight: !shouldRender ? minHeight : undefined,
+        opacity: shouldRender ? 1 : 0.6,
+      }}
     >
-      {isVisible ? (
-        <Suspense fallback={fallback}>{children}</Suspense>
-      ) : (
-        fallback
-      )}
+      {content}
     </div>
   );
-}
+});
+
+LazySection.displayName = "LazySection";
