@@ -28,12 +28,21 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom")) {
-              return "vendor-react";
+            // Core React Core (Minimal boot dependencies)
+            if (
+              id.includes("node_modules/react/") ||
+              id.includes("node_modules/react-dom/") ||
+              id.includes("node_modules/scheduler/")
+            ) {
+              return "vendor-react-core";
             }
+
+            // TanStack Framework
             if (id.includes("@tanstack")) {
               return "vendor-tanstack";
             }
+
+            // UI & Icons (Heavy libs)
             if (
               id.includes("lucide-react") ||
               id.includes("motion") ||
@@ -43,7 +52,9 @@ export default defineConfig({
             ) {
               return "vendor-ui";
             }
-            return "vendor"; // all other node_modules
+
+            // Everything else
+            return "vendor";
           }
         },
       },
