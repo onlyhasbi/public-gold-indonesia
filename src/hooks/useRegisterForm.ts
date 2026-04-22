@@ -248,7 +248,7 @@ export function useRegisterForm(
             ] ||
             values.upreferredbranch ||
             "-";
-          
+
           // MIGRATION: Using TanStack Server Function
           registerTrackFn({
             data: {
@@ -256,7 +256,7 @@ export function useRegisterForm(
               nama: values["label-name"],
               branch: resolvedBranchLabel,
               no_telpon: `+${fullPhone}`,
-            }
+            },
           }).catch((err: any) => console.warn("Track failed:", err));
         }
         return {
@@ -294,7 +294,7 @@ export function useRegisterForm(
           ] ||
           values.upreferredbranch ||
           "-";
-        
+
         // MIGRATION: Using TanStack Server Function
         registerTrackFn({
           data: {
@@ -302,7 +302,7 @@ export function useRegisterForm(
             nama: values["label-name"],
             branch: resolvedBranchLabel,
             no_telpon: `+${fullPhone}`,
-          }
+          },
         }).catch((err: any) => console.warn("Track failed:", err));
       }
 

@@ -26,7 +26,10 @@ const schema = v.object({
     v.minLength(6, "Password minimal 6 karakter"),
     v.nonEmpty("Password wajib diisi"),
   ),
-  secretCode: v.pipe(v.string(), v.nonEmpty("Secret code wajib diisi untuk keamanan")),
+  secretCode: v.pipe(
+    v.string(),
+    v.nonEmpty("Secret code wajib diisi untuk keamanan"),
+  ),
 });
 
 function AdminSignupPage() {

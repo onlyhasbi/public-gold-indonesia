@@ -513,17 +513,21 @@ export const id: TranslationKeys = {
     termsLink: "kebijakan kerahasiaan data",
     confirmTitle: "Konfirmasi Data",
     confirmDesc: "Pastikan data di bawah ini sudah benar",
-    confirmDescAnak: "Pastikan data anak dan orang tua di bawah ini sudah benar",
+    confirmDescAnak:
+      "Pastikan data anak dan orang tua di bawah ini sudah benar",
     backBtn: "Kembali",
     confirmBtn: "Konfirmasi",
     ageValidationTitle: "Perhatian: Validasi Usia",
-    ageValidationToDewasa: "Berdasarkan tanggal lahir yang dimasukkan, usia Anda sudah mencapai 18 tahun atau lebih. Form ini dikhususkan untuk akun Anak.",
-    ageValidationToAnak: "Berdasarkan tanggal lahir yang dimasukkan, usia masih di bawah 18 tahun. Form ini dikhususkan untuk akun Dewasa.",
+    ageValidationToDewasa:
+      "Berdasarkan tanggal lahir yang dimasukkan, usia Anda sudah mencapai 18 tahun atau lebih. Form ini dikhususkan untuk akun Anak.",
+    ageValidationToAnak:
+      "Berdasarkan tanggal lahir yang dimasukkan, usia masih di bawah 18 tahun. Form ini dikhususkan untuk akun Dewasa.",
     ageValidationQuestion: "Apakah Anda ingin kami alihkan ke form pendaftaran",
     ageValidationSwitchBtn: "Ya, Beralih",
     ageValidationCancelBtn: "Batal",
     successTitle: "Pendaftaran Berhasil!",
-    successDesc: "Akun Anda sedang diproses. Ikuti langkah berikut agar Anda bisa mulai bertransaksi emas.",
+    successDesc:
+      "Akun Anda sedang diproses. Ikuti langkah berikut agar Anda bisa mulai bertransaksi emas.",
     successCta: "Lihat Petunjuk Selanjutnya",
     successSkip: "Lewati untuk sekarang",
     validation: {

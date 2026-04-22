@@ -519,17 +519,21 @@ export const ms: TranslationKeys = {
     termsLink: "Dasar Privasi",
     confirmTitle: "Sahkan Maklumat",
     confirmDesc: "Sila pastikan maklumat di bawah adalah betul",
-    confirmDescAnak: "Sila pastikan maklumat anak dan ibu bapa di bawah adalah betul",
+    confirmDescAnak:
+      "Sila pastikan maklumat anak dan ibu bapa di bawah adalah betul",
     backBtn: "Kembali",
     confirmBtn: "Sahkan",
     ageValidationTitle: "Perhatian: Pengesahan Umur",
-    ageValidationToDewasa: "Berdasarkan tarikh lahir yang dimasukkan, umur anda adalah 18 tahun atau lebih. Borang ini bertujuan untuk akaun Junior.",
-    ageValidationToAnak: "Berdasarkan tarikh lahir yang dimasukkan, anda berumur di bawah 18 tahun. Borang ini bertujuan untuk akaun Dewasa.",
+    ageValidationToDewasa:
+      "Berdasarkan tarikh lahir yang dimasukkan, umur anda adalah 18 tahun atau lebih. Borang ini bertujuan untuk akaun Junior.",
+    ageValidationToAnak:
+      "Berdasarkan tarikh lahir yang dimasukkan, anda berumur di bawah 18 tahun. Borang ini bertujuan untuk akaun Dewasa.",
     ageValidationQuestion: "Adakah anda ingin menukar ke borang pendaftaran",
     ageValidationSwitchBtn: "Ya, Tukar",
     ageValidationCancelBtn: "Batal",
     successTitle: "Pendaftaran Berjaya!",
-    successDesc: "Akaun anda sedang diproses. Ikuti langkah-langkah ini untuk memulakan transaksi emas anda.",
+    successDesc:
+      "Akaun anda sedang diproses. Ikuti langkah-langkah ini untuk memulakan transaksi emas anda.",
     successCta: "Lihat Langkah Seterusnya",
     successSkip: "Langkau buat masa ini",
     validation: {

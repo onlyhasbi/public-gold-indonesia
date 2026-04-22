@@ -86,9 +86,12 @@ export const logout = () => {
         if (cache?.clientState?.queries) {
           cache.clientState.queries = cache.clientState.queries.filter(
             (q: { queryKey: unknown[] }) =>
-              q.queryKey[0] !== "auth" && q.queryKey[0] !== "portal"
+              q.queryKey[0] !== "auth" && q.queryKey[0] !== "portal",
           );
-          localStorage.setItem("PUBLIC_GOLD_QUERY_CACHE", JSON.stringify(cache));
+          localStorage.setItem(
+            "PUBLIC_GOLD_QUERY_CACHE",
+            JSON.stringify(cache),
+          );
         }
       }
     } catch {}
@@ -151,15 +154,17 @@ export async function createProtectedLoader({
 
   try {
     // 1. Always ensure base auth data is present in cache
-    const authOptions = isAdmin ? authAdminQueryOptions(cookieStr) : authDealerQueryOptions(cookieStr);
+    const authOptions = isAdmin
+      ? authAdminQueryOptions(cookieStr)
+      : authDealerQueryOptions(cookieStr);
     await queryClient.ensureQueryData(authOptions);
 
     // 2. Fetch any extra page-specific queries
     if (extraQueries.length > 0) {
       await Promise.all(
         extraQueries.map((creator) =>
-          queryClient.ensureQueryData(creator(cookieStr))
-        )
+          queryClient.ensureQueryData(creator(cookieStr)),
+        ),
       );
     }
   } catch (e: any) {

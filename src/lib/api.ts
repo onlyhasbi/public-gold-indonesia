@@ -22,7 +22,7 @@ async function request<T = any>(
   method: string,
   endpoint: string,
   data?: any,
-  config: RequestConfig = {}
+  config: RequestConfig = {},
 ): Promise<ApiResponse<T>> {
   const url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
 
@@ -58,7 +58,9 @@ async function request<T = any>(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    const error: any = new Error(errorData.message || `API Error: ${response.status}`);
+    const error: any = new Error(
+      errorData.message || `API Error: ${response.status}`,
+    );
     error.response = { data: errorData, status: response.status };
     throw error;
   }

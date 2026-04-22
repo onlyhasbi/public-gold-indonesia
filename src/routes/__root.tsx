@@ -38,9 +38,9 @@ export const Route = createRootRouteWithContext<{
     // Determine auth status once at the root level.
     const token = getAuthToken(false);
     const adminToken = getAuthToken(true);
-    
+
     return {
-      auth: { token, adminToken }
+      auth: { token, adminToken },
     };
   },
   component: RootComponent,
@@ -51,17 +51,33 @@ export const Route = createRootRouteWithContext<{
       { charSet: "UTF-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1.0" },
       { name: "theme-color", content: "#dc2626" },
-      { name: "description", content: "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia" },
-      { name: "keywords", content: "public gold, public gold indonesia, 5g associates, 5g associates indonesia, emas" },
+      {
+        name: "description",
+        content:
+          "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia",
+      },
+      {
+        name: "keywords",
+        content:
+          "public gold, public gold indonesia, 5g associates, 5g associates indonesia, emas",
+      },
       { name: "author", content: "5G Associates" },
       { property: "og:title", content: "5G Public Gold Indonesia" },
-      { property: "og:description", content: "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia" },
+      {
+        property: "og:description",
+        content:
+          "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mypublicgold.id/" },
       { property: "og:image", content: "https://mypublicgold.id/me.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "5G Public Gold Indonesia" },
-      { name: "twitter:description", content: "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia" },
+      {
+        name: "twitter:description",
+        content:
+          "5G x G100 adalah Network bisnis yang terbesar di Public Gold Indonesia",
+      },
       { name: "twitter:image", content: "https://mypublicgold.id/me.webp" },
     ],
     links: [
@@ -69,16 +85,29 @@ export const Route = createRootRouteWithContext<{
       { rel: "icon", type: "image/svg+xml", href: "/logo.svg" },
       { rel: "apple-touch-icon", href: "/logo192.png" },
       { rel: "manifest", href: "/manifest.json" },
-      { rel: "preconnect", href: "https://res.cloudinary.com", crossOrigin: "anonymous" as const },
-      { rel: "preconnect", href: "https://be-public-gold-indonesia.vercel.app", crossOrigin: "anonymous" as const },
+      {
+        rel: "preconnect",
+        href: "https://res.cloudinary.com",
+        crossOrigin: "anonymous" as const,
+      },
+      {
+        rel: "preconnect",
+        href: "https://be-public-gold-indonesia.vercel.app",
+        crossOrigin: "anonymous" as const,
+      },
       { rel: "dns-prefetch", href: "https://res.cloudinary.com" },
       { rel: "dns-prefetch", href: "https://my-cdn.publicgold.com.my" },
     ],
   }),
 });
 
-function RootDocument({ children, lang }: { children: React.ReactNode; lang: string }) {
-
+function RootDocument({
+  children,
+  lang,
+}: {
+  children: React.ReactNode;
+  lang: string;
+}) {
   return (
     <html lang={lang}>
       <head>
@@ -95,9 +124,7 @@ function RootDocument({ children, lang }: { children: React.ReactNode; lang: str
         <HeadContent />
       </head>
       <body>
-        <div id="app">
-          {children}
-        </div>
+        <div id="app">{children}</div>
         <Scripts />
       </body>
     </html>
@@ -109,7 +136,7 @@ function RootComponent() {
   const location = useLocation();
   const matches = useMatches();
   const routerState = useRouterState();
-  
+
   const lang = i18n.language || "id";
 
   const dashboardPaths = [

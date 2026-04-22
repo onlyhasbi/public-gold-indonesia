@@ -1,6 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createProtectedLoader } from "../lib/auth";
-import { authDealerQueryOptions, overviewQueryOptions } from "../lib/queryOptions";
+import {
+  authDealerQueryOptions,
+  overviewQueryOptions,
+} from "../lib/queryOptions";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState, Suspense } from "react";
 import {
@@ -42,7 +45,9 @@ function OverviewPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const { data: overview } = useSuspenseQuery(overviewQueryOptions(debouncedSearch));
+  const { data: overview } = useSuspenseQuery(
+    overviewQueryOptions(debouncedSearch),
+  );
 
   useSEO({
     title: "Dashboard PGBO | Public Gold Indonesia",

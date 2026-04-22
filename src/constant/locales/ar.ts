@@ -519,13 +519,16 @@ export const ar: TranslationKeys = {
     backBtn: "رجوع",
     confirmBtn: "تأكيد",
     ageValidationTitle: "تحقق من العمر",
-    ageValidationToDewasa: "بناءً على تاريخ الميلاد، يجب أن يكون هذا الحساب للبالغين.",
-    ageValidationToAnak: "بناءً على تاريخ الميلاد، يجب أن يكون هذا الحساب للأطفال.",
+    ageValidationToDewasa:
+      "بناءً على تاريخ الميلاد، يجب أن يكون هذا الحساب للبالغين.",
+    ageValidationToAnak:
+      "بناءً على تاريخ الميلاد، يجب أن يكون هذا الحساب للأطفال.",
     ageValidationQuestion: "هل تريد التغيير إلى",
     ageValidationSwitchBtn: "تغيير الحساب",
     ageValidationCancelBtn: "إلغاء",
     successTitle: "تم التسجيل بنجاح!",
-    successDesc: "لقد تم تسجيل حسابك بنجاح. يرجى مراجعة بريدك الإلكتروني لمزيد من التعليمات.",
+    successDesc:
+      "لقد تم تسجيل حسابك بنجاح. يرجى مراجعة بريدك الإلكتروني لمزيد من التعليمات.",
     successCta: "الذهاب إلى لوحة التحكم",
   },
 };

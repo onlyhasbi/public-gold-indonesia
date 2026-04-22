@@ -17,10 +17,11 @@ export const trackEvent = async (
   // Primary: sendBeacon — reliable even during page navigation/backgrounding
   if (typeof navigator !== "undefined" && navigator.sendBeacon) {
     try {
-      // NOTE: Using the hardcoded Vercel API URL directly for Beacon as we can't easily 
-      // get the dynamic VITE_API_URL in a compiled client-side file without imports 
+      // NOTE: Using the hardcoded Vercel API URL directly for Beacon as we can't easily
+      // get the dynamic VITE_API_URL in a compiled client-side file without imports
       // that might trigger unwanted bundles.
-      const url = "https://be-public-gold-indonesia.vercel.app/api/public/analytics";
+      const url =
+        "https://be-public-gold-indonesia.vercel.app/api/public/analytics";
       const blob = new Blob([JSON.stringify(payload)], { type: "text/plain" });
       const queued = navigator.sendBeacon(url, blob);
       if (queued) return { success: true };

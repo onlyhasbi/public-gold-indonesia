@@ -36,9 +36,13 @@ if (typeof window !== "undefined") {
     const raw = localStorage.getItem("PUBLIC_GOLD_QUERY_CACHE");
     if (raw) {
       const cache = JSON.parse(raw);
-      if (cache?.clientState?.queries?.some((q: { queryKey: unknown[] }) => q.queryKey[0] === "portal")) {
+      if (
+        cache?.clientState?.queries?.some(
+          (q: { queryKey: unknown[] }) => q.queryKey[0] === "portal",
+        )
+      ) {
         cache.clientState.queries = cache.clientState.queries.filter(
-          (q: { queryKey: unknown[] }) => q.queryKey[0] !== "portal"
+          (q: { queryKey: unknown[] }) => q.queryKey[0] !== "portal",
         );
         localStorage.setItem("PUBLIC_GOLD_QUERY_CACHE", JSON.stringify(cache));
       }
@@ -56,7 +60,6 @@ if (typeof window !== "undefined") {
     },
     maxAge: 1000 * 60 * 60 * 24,
   });
-
 }
 
 // Helper to initialize persistence on a specific client instance (if needed)

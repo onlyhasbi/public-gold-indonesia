@@ -514,17 +514,21 @@ export const en: TranslationKeys = {
     termsLink: "Privacy Policy",
     confirmTitle: "Confirm Information",
     confirmDesc: "Please ensure the information below is correct",
-    confirmDescAnak: "Please ensure the child and parent information below is correct",
+    confirmDescAnak:
+      "Please ensure the child and parent information below is correct",
     backBtn: "Back",
     confirmBtn: "Confirm",
     ageValidationTitle: "Attention: Age Validation",
-    ageValidationToDewasa: "Based on the date of birth entered, you are 18 years or older. This form is intended for Junior accounts.",
-    ageValidationToAnak: "Based on the date of birth entered, you are under 18 years old. This form is intended for Adult accounts.",
+    ageValidationToDewasa:
+      "Based on the date of birth entered, you are 18 years or older. This form is intended for Junior accounts.",
+    ageValidationToAnak:
+      "Based on the date of birth entered, you are under 18 years old. This form is intended for Adult accounts.",
     ageValidationQuestion: "Would you like to switch to the",
     ageValidationSwitchBtn: "Yes, Switch",
     ageValidationCancelBtn: "Cancel",
     successTitle: "Registration Successful!",
-    successDesc: "Your account is being processed. Follow these steps to start your gold transactions.",
+    successDesc:
+      "Your account is being processed. Follow these steps to start your gold transactions.",
     successCta: "View Next Steps",
     successSkip: "Skip for now",
     validation: {

@@ -1,9 +1,5 @@
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import {
-  createFileRoute,
-  useMatches,
-  notFound,
-} from "@tanstack/react-router";
+import { createFileRoute, useMatches, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
 import { Suspense, useEffect, useState } from "react";
@@ -30,8 +26,9 @@ import { useLazyInteraction } from "../hooks/useLazyInteraction";
 
 function App() {
   const matches = useMatches();
-  const pgcode = (matches.find((m: any) => m.routeId === "/$pgcode")?.params as any)
-    ?.pgcode;
+  const pgcode = (
+    matches.find((m: any) => m.routeId === "/$pgcode")?.params as any
+  )?.pgcode;
 
   // If we're transitioning out, pgcode might be undefined
   if (!pgcode) return null;
@@ -199,21 +196,28 @@ export const Route = createFileRoute("/$pgcode")({
       ],
       links: [
         ...(pgbo.foto_profil_url
-          ? [{
-              rel: "preload",
-              as: "image",
-              href: getCloudinaryUrl(pgbo.foto_profil_url, { width: 400, priority: true }),
-              imageSrcset: getCloudinarySrcSet(pgbo.foto_profil_url, { priority: true }),
-              imageSizes: "(max-width: 768px) 100vw, 400px",
-              fetchpriority: "high",
-            }]
+          ? [
+              {
+                rel: "preload",
+                as: "image",
+                href: getCloudinaryUrl(pgbo.foto_profil_url, {
+                  width: 400,
+                  priority: true,
+                }),
+                imageSrcset: getCloudinarySrcSet(pgbo.foto_profil_url, {
+                  priority: true,
+                }),
+                imageSizes: "(max-width: 768px) 100vw, 400px",
+                fetchpriority: "high",
+              },
+            ]
           : []),
         {
           rel: "preload",
           as: "image",
           href: getCloudinaryUrl("/5g.webp", { width: 96, priority: true }),
           fetchpriority: "high",
-        }
+        },
       ],
       scripts: [
         {
@@ -236,16 +240,14 @@ export const Route = createFileRoute("/$pgcode")({
               ].filter(Boolean),
             },
           }),
-        }
-      ]
+        },
+      ],
     };
   },
   errorComponent: ({ error }) => {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center p-10 text-center gap-4">
-        <h2 className="text-2xl font-bold text-slate-800">
-          Terjadi Kesalahan
-        </h2>
+        <h2 className="text-2xl font-bold text-slate-800">Terjadi Kesalahan</h2>
         <p className="text-slate-500 max-w-md">
           {error.message || "Gagal memuat profil konsultan."}
         </p>

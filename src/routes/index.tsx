@@ -19,7 +19,7 @@ import {
 } from "../lib/portalOptions";
 import { OptimizedImage } from "../components/ui/optimized-image";
 import { authDealerQueryOptions } from "../lib/queryOptions";
-  
+
 import SignInForm from "../components/auth/SignInForm";
 import SignUpForm from "../components/auth/SignUpForm";
 
@@ -151,16 +151,10 @@ function LandingAuthPage() {
                   </div>
                   <div className="p-6 sm:px-10 pb-8 pt-0">
                     <AnimatePresence mode="wait">
-                      <TabsContent
-                        value="signin"
-                        className="mt-0 outline-none"
-                      >
+                      <TabsContent value="signin" className="mt-0 outline-none">
                         <SignInForm />
                       </TabsContent>
-                      <TabsContent
-                        value="signup"
-                        className="mt-0 outline-none"
-                      >
+                      <TabsContent value="signup" className="mt-0 outline-none">
                         <SignUpForm
                           onSignupSuccess={() => setAuthMode("signin")}
                         />

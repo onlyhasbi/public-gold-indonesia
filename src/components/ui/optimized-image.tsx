@@ -10,7 +10,8 @@ export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 };
 
 export function OptimizedImage(props: OptimizedImageProps) {
-  const { src, className, priority, width, height, aspectRatio, ...rest } = props;
+  const { src, className, priority, width, height, aspectRatio, ...rest } =
+    props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isClient, setIsClient] = useState(false);

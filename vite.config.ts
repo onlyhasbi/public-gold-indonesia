@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import viteCompression from 'vite-plugin-compression'
-import path from 'path'
+import { defineConfig } from "vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import viteCompression from "vite-plugin-compression";
+import path from "path";
 
 export default defineConfig({
   plugins: [
@@ -11,13 +11,13 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
     viteCompression({
-      algorithm: 'gzip',
-      ext: '.gz',
+      algorithm: "gzip",
+      ext: ".gz",
     }),
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
@@ -38,4 +38,4 @@ export default defineConfig({
       },
     },
   },
-})
+});

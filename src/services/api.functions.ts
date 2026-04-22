@@ -10,10 +10,10 @@ async function baseFetch(
   endpoint: string,
   options: RequestInit = {},
   isAdmin = false,
-  cookieStr?: string
+  cookieStr?: string,
 ) {
   let finalCookieStr = cookieStr || "";
-  
+
   if (!finalCookieStr) {
     try {
       const { getRequest } = await import("@tanstack/react-start/server");
@@ -32,13 +32,13 @@ async function baseFetch(
     const cleanToken = token.replace(/^"|"$/g, "");
     headers.set("Authorization", `Bearer ${cleanToken}`);
   }
-  
+
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
 
   const url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
-  
+
   const response = await fetch(url, {
     ...options,
     headers,
@@ -46,7 +46,9 @@ async function baseFetch(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    const error = new Error(errorData.message || `API Error: ${response.status}`);
+    const error = new Error(
+      errorData.message || `API Error: ${response.status}`,
+    );
     (error as any).status = response.status;
     (error as any).response = { data: errorData, status: response.status };
     throw error;
@@ -59,10 +61,11 @@ async function baseFetch(
  * SERVER FUNCTIONS
  */
 
-export const getAgentsFn = createServerFn({ method: "GET" })
-  .handler(async () => {
+export const getAgentsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
     return baseFetch("/public/agents");
-  });
+  },
+);
 
 export const getAgentData = createServerFn({ method: "GET" })
   .inputValidator((d: string) => d)
@@ -70,10 +73,11 @@ export const getAgentData = createServerFn({ method: "GET" })
     return baseFetch(`/public/pgbo/${pgcode}`);
   });
 
-export const getGoldPricesFn = createServerFn({ method: "GET" })
-  .handler(async () => {
+export const getGoldPricesFn = createServerFn({ method: "GET" }).handler(
+  async () => {
     return baseFetch("/public/gold-prices");
-  });
+  },
+);
 
 export const loginFn = createServerFn({ method: "POST" })
   .inputValidator((d: { pgcode: string; katasandi: string }) => d)

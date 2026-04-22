@@ -36,7 +36,10 @@ export const getValidationSchema = (
       v.nonEmpty(t("registerForm.validation.required")),
       v.maxLength(20, t("registerForm.validation.max20")),
     ),
-    "label-dob": v.pipe(v.string(), v.nonEmpty(t("registerForm.validation.dob"))),
+    "label-dob": v.pipe(
+      v.string(),
+      v.nonEmpty(t("registerForm.validation.dob")),
+    ),
     "label-email": v.pipe(
       v.string(),
       v.email(t("registerForm.validation.email")),
