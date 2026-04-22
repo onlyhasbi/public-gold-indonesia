@@ -2,6 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import resourcesToBackend from "i18next-resources-to-backend";
+import { id } from "./constant/locales/id"; // Synchronously load default language
 
 const isServer = typeof window === "undefined";
 
@@ -26,7 +27,8 @@ i18nInstance.use(
       case "ar":
         return import("./constant/locales/ar").then((m) => m.ar);
       default:
-        return import("./constant/locales/id").then((m) => m.id);
+        // Default to Indonesian if language is missing, though we bundle it synchronously below
+        return Promise.resolve(id);
     }
   }),
 );
@@ -35,6 +37,11 @@ export const initI18n = (lng?: string) => {
   return i18nInstance.init({
     fallbackLng: "id",
     lng: lng,
+    resources: {
+      id: {
+        translation: id,
+      },
+    },
     load: "languageOnly",
     debug: false,
     interpolation: {

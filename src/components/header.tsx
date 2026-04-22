@@ -140,6 +140,7 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               priority
               width={400}
               height={400}
+              sizes="(max-width: 768px) 100vw, 400px"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
