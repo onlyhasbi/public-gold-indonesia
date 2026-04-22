@@ -10,11 +10,19 @@ export default async function ssrHandler(event: { req: Request }) {
     const response = await handler(event.req);
     
     // Instead of returning the response directly, inspect it:
+    let bodyText = "";
+    try {
+      bodyText = await response.clone().text();
+    } catch (e) {
+      bodyText = "Could not read body";
+    }
+
     const info = {
       isResponseObject: response instanceof Response,
       responseType: response?.constructor?.name,
       status: response?.status,
       headers: response?.headers ? Array.from((response.headers as Headers).entries()) : [],
+      body: bodyText
     };
     
     return new Response(JSON.stringify(info, null, 2), {
