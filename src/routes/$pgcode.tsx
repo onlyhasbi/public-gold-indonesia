@@ -2,7 +2,7 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
-import { lazy, useEffect, useRef } from "react";
+import { lazy, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const Benefit = lazy(() => import("@/components/benefit"));
@@ -20,6 +20,7 @@ const MovingCards = lazy(() =>
 
 import Header from "@/components/header";
 import NotFound from "@/components/not_found";
+import { RootError } from "@/components/root_error";
 import GradientHighlight from "@/components/ui/gradient_highlight";
 import { trackEvent } from "@/lib/analytics";
 import { agentQueryOptions, goldPricesQueryOptions } from "@/lib/queryOptions";
@@ -50,6 +51,12 @@ function App() {
   const { t } = useTranslation();
   const scrollBtnRef = useRef<HTMLButtonElement>(null);
 
+  // Memoize heavy arrays to prevent <MovingCards> from unnecessary re-renders
+  const testimonialItems = useMemo(
+    () => t("testimonials.items", { returnObjects: true }) as any,
+    [t],
+  );
+
   useEffect(() => {
     // Save referral info for registration flow (PageID only)
     if (pgbo) {
@@ -59,8 +66,25 @@ function App() {
     // Send visitor analytic only once per session
     const hasVisited = sessionStorage.getItem(`visited_${pgbo?.pageid}`);
     if (pgbo && !hasVisited) {
-      trackEvent(pgbo.pageid, "visitor").then(() => {
-        sessionStorage.setItem(`visited_${pgbo.pageid}`, "true");
+      // ANTI RACE-CONDITION: Tandai secara sinkron bahwa tracking sedang/sudah diproses
+      // Ini mencegah duplikasi jika React Strict Mode atau re-render memanggil efek ini dua kali berturut-turut.
+      sessionStorage.setItem(`visited_${pgbo.pageid}`, "true");
+
+      // 1. Buat Promise yang resolve setelah seluruh halaman & gambar selesai di-load
+      const waitForFullyLoaded = new Promise<void>((resolve) => {
+        if (document.readyState === "complete") {
+          resolve();
+        } else {
+          window.addEventListener("load", () => resolve(), { once: true });
+        }
+      });
+
+      // 2. Eksekusi dinamis saat benar-benar selesai load & CPU sedang nganggur (idle)
+      waitForFullyLoaded.then(() => {
+        const runIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 100));
+        runIdle(() => {
+          trackEvent(pgbo.pageid, "visitor");
+        });
       });
     }
   }, [pgbo]);
@@ -151,7 +175,7 @@ function App() {
               </p>
             </div>
             <MovingCards
-              items={t("testimonials.items", { returnObjects: true }) as any}
+              items={testimonialItems}
               direction="left"
               speed="slow"
             />
@@ -283,21 +307,6 @@ export const Route = createFileRoute("/$pgcode")({
       ],
     };
   },
-  errorComponent: ({ error }) => {
-    return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center p-10 text-center gap-4">
-        <h2 className="text-2xl font-bold text-slate-800">Terjadi Kesalahan</h2>
-        <p className="text-slate-500 max-w-md">
-          {error.message || "Gagal memuat profil konsultan."}
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-red-600 text-white rounded-xl font-semibold shadow-lg hover:bg-red-700 transition-all"
-        >
-          Coba Lagi
-        </button>
-      </div>
-    );
-  },
+  errorComponent: RootError,
   notFoundComponent: () => <NotFound />,
 });
