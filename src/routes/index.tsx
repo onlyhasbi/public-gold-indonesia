@@ -56,15 +56,6 @@ function LandingAuthPage() {
     if (mode) setAuthMode(mode);
   }, [mode]);
 
-  // Prevent UI flickering by not rendering anything during SSR or if we're about to redirect
-  if (!isMounted) {
-    return (
-      <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 overflow-hidden px-6 font-sans">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-rose-50/50 via-slate-50 to-slate-50 pointer-events-none" />
-      </div>
-    );
-  }
-
   if (token && user) {
     return null;
   }

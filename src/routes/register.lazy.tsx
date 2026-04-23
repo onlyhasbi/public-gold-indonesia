@@ -401,14 +401,8 @@ function RegisterPage() {
     }
   }, [status, setShowNextStepModal]);
 
-  // Prevent hydration mismatch by waiting for mount
-  if (!isMounted) {
-    return (
-      <div className="min-h-[100dvh] w-full bg-slate-50 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-red-600" />
-      </div>
-    );
-  }
+  // Note: We used to wait for isMounted here to prevent hydration mismatch,
+  // but with stable form defaults and SSR-friendly components, we can render immediately.
 
   return (
     <div
