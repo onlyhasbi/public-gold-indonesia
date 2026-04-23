@@ -75,9 +75,21 @@ export const rootHeadConfig = (appCss: string) => {
         type: "font/woff2",
         crossOrigin: "anonymous" as const,
       },
-      { rel: "dns-prefetch" as const, href: "https://publicgold.co.id" },
-      { rel: "dns-prefetch" as const, href: "https://wa.me" },
-      { rel: "dns-prefetch" as const, href: "https://api.whatsapp.com" },
+      {
+        rel: "preload" as const,
+        href: "/fonts/caveat-regular.woff2",
+        as: "font" as const,
+        type: "font/woff2",
+        crossOrigin: "anonymous" as const,
+      },
+      {
+        rel: "preload" as const,
+        href: "/fonts/caveat-bold.woff2",
+        as: "font" as const,
+        type: "font/woff2",
+        crossOrigin: "anonymous" as const,
+      },
+      { rel: "dns-prefetch" as const, href: "https://res.cloudinary.com" },
     ],
   };
 };
