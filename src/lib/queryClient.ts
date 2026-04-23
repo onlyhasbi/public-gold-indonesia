@@ -15,10 +15,7 @@ export const createQueryClient = () =>
     },
   });
 
-/**
- * SINGLETON INSTANCE: Shared instance for browser-side utilities.
- * Restored to fix broken imports in api.ts, auth.ts, and UI components.
- */
+/** Shared browser singleton for client-side query usage. */
 export const queryClient = createQueryClient();
 
 /**
@@ -61,25 +58,3 @@ if (typeof window !== "undefined") {
     maxAge: 1000 * 60 * 60 * 24,
   });
 }
-
-// Helper to initialize persistence on a specific client instance (if needed)
-export const setupPersistence = (targetClient: QueryClient) => {
-  if (typeof window === "undefined" || targetClient === queryClient) return;
-
-  const persister = createSyncStoragePersister({
-    storage: window.localStorage,
-    key: "PUBLIC_GOLD_QUERY_CACHE",
-  });
-
-  persistQueryClient({
-    queryClient: targetClient,
-    persister,
-    dehydrateOptions: {
-      shouldDehydrateQuery: (query) => {
-        const key = query.queryKey[0];
-        return key === "auth" || key === "agent";
-      },
-    },
-    maxAge: 1000 * 60 * 60 * 24,
-  });
-};

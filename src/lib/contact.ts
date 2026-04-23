@@ -3,7 +3,7 @@ export interface ContactData {
   link_group_whatsapp?: string | null;
 }
 
-export const SUPPORT_WHATSAPP = "628979901844";
+const SUPPORT_WHATSAPP = "628979901844";
 
 /**
  * Derives the best WhatsApp link for a dealer based on their settings in the backend.

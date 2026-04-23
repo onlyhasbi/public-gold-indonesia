@@ -3,13 +3,9 @@ import { StartClient } from "@tanstack/react-start/client";
 
 import React from "react";
 
-import reportWebVitals from "./reportWebVitals";
-
 hydrateRoot(
   document,
   <React.StrictMode>
     <StartClient />
   </React.StrictMode>,
 );
-
-reportWebVitals();

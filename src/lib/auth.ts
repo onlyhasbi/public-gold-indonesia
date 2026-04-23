@@ -20,7 +20,7 @@ const ADMIN_TOKEN_KEY = "pg_admin_token";
 
 import { createIsomorphicFn } from "@tanstack/react-start";
 
-export const getAuthCookieString = createIsomorphicFn()
+const getAuthCookieString = createIsomorphicFn()
   .client((cookieStr?: string) => {
     if (cookieStr) return cookieStr;
     if (typeof document !== "undefined") {
@@ -61,7 +61,7 @@ export const setAuthToken = (token: string, isAdmin = false) => {
   });
 };
 
-export const removeAuthToken = (isAdmin = false) => {
+const removeAuthToken = (isAdmin = false) => {
   if (typeof window === "undefined") return;
   const cookieName = isAdmin ? ADMIN_TOKEN_KEY : TOKEN_KEY;
   document.cookie = serialize(cookieName, "", {
@@ -103,20 +103,6 @@ export const logout = () => {
         }
       }
     } catch {}
-  }
-};
-
-export const purgeAllSessions = () => {
-  logout();
-  throw redirect({ to: "/" });
-};
-
-export const clearAuthAndRedirect = () => purgeAllSessions();
-
-export const requireAuth = async (isAdmin = false, cookieStr?: string) => {
-  const token = await getAuthToken(isAdmin, cookieStr);
-  if (!token) {
-    throw redirect({ to: "/" });
   }
 };
 
