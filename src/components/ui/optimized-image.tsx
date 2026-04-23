@@ -102,9 +102,6 @@ function LazyImage(props: OptimizedImageProps) {
   const srcset = useCloudinary
     ? getCloudinarySrcSet(src, { maxWidth: width })
     : undefined;
-  const placeholderUrl = useCloudinary
-    ? getCloudinaryUrl(src, { blur: true })
-    : undefined;
 
   const { wrapperClass, imgClass } = useMemo(() => {
     const classes = (className || "").split(" ");
@@ -124,11 +121,9 @@ function LazyImage(props: OptimizedImageProps) {
           aspectRatio || (width && height ? width / height : undefined),
       }}
     >
-      {useCloudinary && !isLoaded && isClient && (
-        <img
-          src={placeholderUrl}
-          className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 transition-opacity duration-500"
-          alt=""
+      {!isLoaded && (
+        <div
+          className="absolute inset-0 w-full h-full bg-slate-200/60 animate-pulse"
           aria-hidden="true"
         />
       )}

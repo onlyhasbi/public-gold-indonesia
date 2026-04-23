@@ -6,7 +6,6 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
 export interface CloudinaryOptions {
   width?: number;
-  blur?: boolean;
   priority?: boolean;
   format?: string;
 }
@@ -15,7 +14,7 @@ export interface CloudinaryOptions {
  * Generates a Cloudinary URL with transformations based on the source and options.
  */
 export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
-  const { width, blur, priority, format } = options;
+  const { width, priority, format } = options;
 
   if (!src) return "";
 
@@ -45,20 +44,16 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
   // SVGs are skipped to preserve vector elasticity
   const transformations = isSvg ? [] : [format ? `f_${format}` : "f_avif"];
 
-  if (blur) {
-    transformations.push("e_blur:2000", "w_20", "q_auto:low");
-  } else {
-    transformations.push(priority ? "q_auto" : "q_auto:eco");
-    if (!priority) {
-      transformations.push("dpr_auto");
+  transformations.push(priority ? "q_auto" : "q_auto:eco");
+  if (!priority) {
+    transformations.push("dpr_auto");
+  }
+  // Only apply width and limit to non-SVG images to preserve vector proportions
+  if (!isSvg) {
+    if (width) {
+      transformations.push(`w_${width}`);
     }
-    // Only apply width and limit to non-SVG images to preserve vector proportions
-    if (!isSvg) {
-      if (width) {
-        transformations.push(`w_${width}`);
-      }
-      transformations.push("c_limit");
-    }
+    transformations.push("c_limit");
   }
 
   // Case 1: YouTube
