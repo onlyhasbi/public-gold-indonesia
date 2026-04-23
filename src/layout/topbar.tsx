@@ -40,9 +40,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMounted]);
 
-  const lang = i18n.language;
-
-  if (!isMounted) return null;
+  const lang = i18n.language || "id";
 
   const languages = [
     { id: "id", label: "Indonesia", emoji: "🇮🇩", code: "ID" },
