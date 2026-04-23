@@ -281,6 +281,7 @@ function PriceList({ price, pgbo }: Props) {
         const slidesInSnap = slideRegistry[snapIndex];
 
         slidesInSnap.forEach((slideIndex: number) => {
+          // OPTIMIZATION: Only process slides near the viewport to reduce Main Thread work
           if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
 
           if (engine.options.loop) {
@@ -302,7 +303,7 @@ function PriceList({ price, pgbo }: Props) {
           const opacity = numberWithinRange(tweenValue, 0.4, 1).toString();
           const tweenNode = tweenNodes.current[slideIndex];
 
-          if (tweenNode) {
+          if (tweenNode && tweenNode.style.transform !== `scale(${scale})`) {
             tweenNode.style.transform = `scale(${scale})`;
             tweenNode.style.opacity = opacity;
           }
@@ -394,44 +395,25 @@ function PriceList({ price, pgbo }: Props) {
     }
   };
 
+  const productsWithPrices = useMemo(() => {
+    return allProducts.map((item) => {
+      const weightNum = getWeightNumber(item.weight);
+      const isPortraitBar =
+        item.category === "goldbar" &&
+        weightNum >= 5 &&
+        !item.title.match(/Batik|Raya|Merdeka|Sultan|Cenderawasih/i);
+
+      return {
+        ...item,
+        calculatedPrice: getCalculatedPrice(item),
+        weightNum,
+        isPortraitBar,
+      };
+    });
+  }, [allProducts, price, priceMode, t]);
+
   return (
     <BaseLayout className="flex-col bg-white overflow-hidden relative">
-      <style>{`
-        .embla {
-          overflow: hidden;
-          width: 100%;
-          padding-top: 1rem;
-          padding-bottom: 3.5rem;
-        }
-        .embla__viewport {
-          overflow: visible;
-          cursor: grab;
-        }
-        .embla__viewport:active {
-          cursor: grabbing;
-        }
-        .embla__container {
-          display: flex;
-          align-items: center;
-          touch-action: pan-y pinch-zoom;
-          margin-left: -1rem;
-        }
-        .embla__slide {
-          flex: 0 0 85%;
-          min-width: 0;
-          padding-left: 1rem;
-        }
-        @media (min-width: 768px) {
-          .embla__slide {
-            flex: 0 0 60%;
-          }
-        }
-        @media (min-width: 1024px) {
-          .embla__slide {
-            flex: 0 0 42%;
-          }
-        }
-      `}</style>
 
       {/* Decorative Orbs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 -z-1" />
@@ -611,22 +593,12 @@ function PriceList({ price, pgbo }: Props) {
           )}
         />
 
-        <div className="embla">
-          <div className="embla__viewport" ref={emblaRef}>
-            <div className="embla__container">
-              {allProducts.map((item, index) => {
-                const calculatedPrice = getCalculatedPrice(item);
-                const weightNum = getWeightNumber(item.weight);
-
-                // Logic to detect actual portrait gold bars (5g-100g standard series)
-                // Cards (Batik, Raya, etc.) are always landscape regardless of weight
-                const isPortraitBar =
-                  item.category === "goldbar" &&
-                  weightNum >= 5 &&
-                  !item.title.match(/Batik|Raya|Merdeka|Sultan|Cenderawasih/i);
-
+        <div className="overflow-hidden w-full pt-4 pb-14">
+          <div className="overflow-visible cursor-grab active:cursor-grabbing" ref={emblaRef}>
+            <div className="flex items-center touch-pan-y touch-pinch-zoom -ml-4">
+              {productsWithPrices.map((item, index) => {
                 return (
-                  <div className="embla__slide" key={`${item.title}-${index}`}>
+                  <div className="flex-[0_0_85%] min-w-0 pl-4 md:flex-[0_0_60%] lg:flex-[0_0_42%]" key={`${item.title}-${index}`}>
                     <div className="embla__tween__node w-full">
                       <Link
                         to="/register"
@@ -657,7 +629,7 @@ function PriceList({ price, pgbo }: Props) {
                         <div
                           className={cn(
                             "relative z-10 flex flex-1 w-full items-center justify-center py-2 h-[160px] sm:h-[200px] md:h-[240px] shrink-0",
-                            isPortraitBar
+                            item.isPortraitBar
                               ? "px-10 sm:px-12 md:px-14"
                               : "px-8 sm:px-10 md:px-12",
                           )}
@@ -666,7 +638,7 @@ function PriceList({ price, pgbo }: Props) {
                             className="max-h-full w-auto object-contain transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2"
                             src={item.url}
                             alt={item.title}
-                            width={isPortraitBar ? 400 : 540}
+                            width={item.isPortraitBar ? 400 : 540}
                             priority={index < 2}
                           />
                         </div>
@@ -674,7 +646,7 @@ function PriceList({ price, pgbo }: Props) {
                         {/* Price Section */}
                         <div className="relative z-10 w-full flex-shrink-0 mt-auto pt-4 flex flex-col items-center">
                           <div className="text-xl md:text-2xl font-black tracking-tight leading-none text-slate-900">
-                            {formatPrice(calculatedPrice)}
+                            {formatPrice(item.calculatedPrice)}
                           </div>
                           <div className="w-8 md:w-10 h-1.5 bg-red-600 rounded-full mt-3"></div>
                         </div>
