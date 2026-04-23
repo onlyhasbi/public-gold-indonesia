@@ -4,6 +4,7 @@ import { trackEvent } from "@/lib/analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { getWhatsAppLink } from "@/lib/contact";
 import { OptimizedImage } from "./ui/optimized-image";
+import { HERO_IMAGE_CONFIG } from "@/lib/images";
 import {
   Popover,
   PopoverContent,
@@ -127,9 +128,9 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
               src={pgbo?.foto_profil_url || ""}
               alt={`${displayName} - Authorized Public Gold Dealer`}
               priority
-              width={400}
-              height={400}
-              sizes="(max-width: 768px) 100vw, 400px"
+              width={HERO_IMAGE_CONFIG.width}
+              height={HERO_IMAGE_CONFIG.width}
+              sizes={HERO_IMAGE_CONFIG.sizes}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">

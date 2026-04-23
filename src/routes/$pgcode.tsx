@@ -24,7 +24,11 @@ import GradientHighlight from "@/components/ui/gradient_highlight";
 import { trackEvent } from "@/lib/analytics";
 import { agentQueryOptions, goldPricesQueryOptions } from "@/lib/queryOptions";
 
-import { getCloudinaryUrl, getCloudinarySrcSet } from "@/lib/images";
+import {
+  getCloudinaryUrl,
+  getCloudinarySrcSet,
+  HERO_IMAGE_CONFIG,
+} from "@/lib/images";
 import { useLazyInteraction } from "@/hooks/useLazyInteraction";
 import { LazySection } from "@/components/ui/lazy-section";
 
@@ -237,14 +241,14 @@ export const Route = createFileRoute("/$pgcode")({
                 rel: "preload" as const,
                 as: "image" as const,
                 href: getCloudinaryUrl(pgbo.foto_profil_url, {
-                  width: 400,
+                  width: HERO_IMAGE_CONFIG.width,
                   priority: true,
                 }),
                 imageSrcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
                   priority: true,
-                  maxWidth: 320,
+                  maxWidth: HERO_IMAGE_CONFIG.width,
                 }),
-                imageSizes: "(max-width: 768px) 256px, 320px",
+                imageSizes: HERO_IMAGE_CONFIG.sizes,
                 fetchPriority: "high" as const,
               },
             ]

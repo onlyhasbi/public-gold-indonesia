@@ -10,6 +10,11 @@ export interface CloudinaryOptions {
   format?: string;
 }
 
+export const HERO_IMAGE_CONFIG = {
+  width: 400,
+  sizes: "(max-width: 768px) 100vw, 400px",
+};
+
 /**
  * Generates a Cloudinary URL with transformations based on the source and options.
  */
