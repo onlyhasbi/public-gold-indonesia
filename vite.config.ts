@@ -26,6 +26,7 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    modulePreload: false, // Mematikan preload agar tidak mencekik gambar LCP di 3G
     rolldownOptions: {
       output: {
         codeSplitting: {
@@ -55,10 +56,9 @@ export default defineConfig({
             {
               name: "vendor-react-core",
               test: (id: string) =>
-                id.includes("node_modules") &&
-                (id.includes("react/") ||
-                  id.includes("react-dom/") ||
-                  id.includes("scheduler/")),
+                id.includes("node_modules/react/") ||
+                id.includes("node_modules/react-dom/") ||
+                id.includes("node_modules/scheduler/"),
               priority: 10,
             },
             {
