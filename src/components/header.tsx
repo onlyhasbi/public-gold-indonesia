@@ -84,15 +84,15 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
           title: plainTitle,
           url: url,
         });
-      } catch (err) {
-        console.error("Error sharing", err);
+      } catch (_) {
+        // Share dialog was cancelled or unavailable
       }
     } else {
       try {
         await navigator.clipboard.writeText(url);
         alert(t("common.copySuccess"));
-      } catch (err) {
-        console.error("Failed to copy link", err);
+      } catch (_) {
+        // Clipboard API unavailable
       }
     }
   };
@@ -146,7 +146,6 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
             className="rounded-full overflow-hidden w-full h-full border-4 border-white shadow-xl"
             src="/5g.webp"
             alt="Public Gold 5G Associates Team - Success Together"
-            priority
             width={96}
             height={96}
             sizes="96px"
