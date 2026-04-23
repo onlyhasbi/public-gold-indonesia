@@ -12,7 +12,11 @@ const PaymentMethods = lazy(() => import("@/components/payment_methods"));
 const PriceList = lazy(() => import("@/components/pricelist"));
 const PublicGold = lazy(() => import("@/components/public_gold"));
 const Questions = lazy(() => import("@/components/questions"));
-const MovingCards = lazy(() => import("@/components/ui/moving_card").then(m => ({ default: m.MovingCards })));
+const MovingCards = lazy(() =>
+  import("@/components/ui/moving_card").then((m) => ({
+    default: m.MovingCards,
+  })),
+);
 
 import Header from "@/components/header";
 import NotFound from "@/components/not_found";

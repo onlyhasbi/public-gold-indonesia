@@ -414,7 +414,6 @@ function PriceList({ price, pgbo }: Props) {
 
   return (
     <BaseLayout className="flex-col bg-white overflow-hidden relative">
-
       {/* Decorative Orbs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 -z-1" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/2 -z-1" />
@@ -594,11 +593,17 @@ function PriceList({ price, pgbo }: Props) {
         />
 
         <div className="overflow-hidden w-full pt-4 pb-14">
-          <div className="overflow-visible cursor-grab active:cursor-grabbing" ref={emblaRef}>
+          <div
+            className="overflow-visible cursor-grab active:cursor-grabbing"
+            ref={emblaRef}
+          >
             <div className="flex items-center touch-pan-y touch-pinch-zoom -ml-4">
               {productsWithPrices.map((item, index) => {
                 return (
-                  <div className="flex-[0_0_85%] min-w-0 pl-4 md:flex-[0_0_60%] lg:flex-[0_0_42%]" key={`${item.title}-${index}`}>
+                  <div
+                    className="flex-[0_0_85%] min-w-0 pl-4 md:flex-[0_0_60%] lg:flex-[0_0_42%]"
+                    key={`${item.title}-${index}`}
+                  >
                     <div className="embla__tween__node w-full">
                       <Link
                         to="/register"
