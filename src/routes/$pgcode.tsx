@@ -81,7 +81,8 @@ function App() {
 
       // 2. Eksekusi dinamis saat benar-benar selesai load & CPU sedang nganggur (idle)
       waitForFullyLoaded.then(() => {
-        const runIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 100));
+        const runIdle =
+          window.requestIdleCallback || ((cb) => setTimeout(cb, 100));
         runIdle(() => {
           trackEvent(pgbo.pageid, "visitor");
         });
