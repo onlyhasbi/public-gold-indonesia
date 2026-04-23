@@ -56,7 +56,6 @@ export function OptimizedImage(props: OptimizedImageProps) {
         className={className}
         loading="eager"
         fetchPriority="high"
-        decoding="async"
         width={width}
         height={height}
         style={{
