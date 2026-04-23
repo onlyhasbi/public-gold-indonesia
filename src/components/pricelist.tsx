@@ -3,7 +3,15 @@ import { AppLink as Link } from "@/lib/router-wrappers";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { AlertCircle, Info } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import {
   NextButton,
   PrevButton,
@@ -206,7 +214,9 @@ const allProducts = [...dinar, ...goldbar];
 function PriceList({ price, pgbo }: Props) {
   const { t, i18n } = useTranslation();
 
-  const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
+  const hoverSideRef = useRef<"left" | "right" | null>(null);
+  const prevBtnRef = useRef<HTMLButtonElement>(null);
+  const nextBtnRef = useRef<HTMLButtonElement>(null);
   const [priceMode, setPriceMode] = useState<"tabungan" | "tunai">("tabungan");
 
   const getWeightNumber = (weightStr: string): number => {
@@ -255,9 +265,11 @@ function PriceList({ price, pgbo }: Props) {
 
   const setTweenNodes = useCallback((emblaApi: any) => {
     tweenNodes.current = emblaApi.slideNodes().map((slideNode: HTMLElement) => {
-      return slideNode.querySelector(
+      const node = slideNode.querySelector(
         ".embla__tween__node",
       ) as HTMLElement | null;
+      if (node) node.style.willChange = "transform, opacity";
+      return node;
     });
   }, []);
 
@@ -325,30 +337,37 @@ function PriceList({ price, pgbo }: Props) {
       .on("scroll", tweenScale);
   }, [emblaApi, tweenScale, setTweenNodes, setTweenFactor]);
 
-  const formatPrice = (priceValue: string | number | null | undefined) => {
-    if (priceValue === null || priceValue === undefined)
-      return (
-        <span className="flex items-center gap-2 text-slate-400">
-          <Spinner size={12} className="text-slate-400 opacity-100" />
-          {t("priceList.loading")}
-        </span>
-      );
+  const currencyFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }),
+    [],
+  );
 
-    const val =
-      typeof priceValue === "string"
-        ? parsePriceToNumber(priceValue)
-        : priceValue;
-    if (val === null) return "Rp ...";
+  const formatPrice = useCallback(
+    (priceValue: string | number | null | undefined) => {
+      if (priceValue === null || priceValue === undefined)
+        return (
+          <span className="flex items-center gap-2 text-slate-400">
+            <Spinner size={12} className="text-slate-400 opacity-100" />
+            {t("priceList.loading")}
+          </span>
+        );
 
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })
-      .format(val)
-      .replace("Rp", "Rp ");
-  };
+      const val =
+        typeof priceValue === "string"
+          ? parsePriceToNumber(priceValue)
+          : priceValue;
+      if (val === null) return "Rp ...";
+
+      return currencyFormatter.format(val).replace("Rp", "Rp ");
+    },
+    [currencyFormatter, t],
+  );
 
   const getCalculatedPrice = (item: (typeof allProducts)[0]) => {
     const weight = getWeightNumber(item.weight);
@@ -410,13 +429,13 @@ function PriceList({ price, pgbo }: Props) {
         isPortraitBar,
       };
     });
-  }, [allProducts, price, priceMode, t]);
+  }, [price, priceMode]);
 
   return (
     <BaseLayout className="flex-col bg-white overflow-hidden relative">
       {/* Decorative Orbs */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 -z-1" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/2 -z-1" />
+      <div className="hidden md:block absolute top-0 right-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 -z-1" />
+      <div className="hidden md:block absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/2 -z-1" />
 
       {/* Section Header */}
       <div className="text-center mb-12 relative z-10 flex flex-col items-center">
@@ -563,33 +582,50 @@ function PriceList({ price, pgbo }: Props) {
       {/* Slider Section (Full Width Focused) */}
       <div
         className="w-full relative z-10 mb-16"
-        onMouseMove={(e) => {
+        onMouseMove={(e: ReactMouseEvent<HTMLDivElement>) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = e.clientX - rect.left;
-          setHoverSide(x < rect.width / 2 ? "left" : "right");
+          const nextSide = x < rect.width / 2 ? "left" : "right";
+          if (hoverSideRef.current !== nextSide) {
+            hoverSideRef.current = nextSide;
+            if (prevBtnRef.current) {
+              prevBtnRef.current.style.opacity =
+                nextSide === "left" ? "1" : "0";
+              prevBtnRef.current.style.pointerEvents =
+                nextSide === "left" ? "auto" : "none";
+            }
+            if (nextBtnRef.current) {
+              nextBtnRef.current.style.opacity =
+                nextSide === "right" ? "1" : "0";
+              nextBtnRef.current.style.pointerEvents =
+                nextSide === "right" ? "auto" : "none";
+            }
+          }
         }}
-        onMouseLeave={() => setHoverSide(null)}
+        onMouseLeave={() => {
+          hoverSideRef.current = null;
+          if (prevBtnRef.current) {
+            prevBtnRef.current.style.opacity = "0";
+            prevBtnRef.current.style.pointerEvents = "none";
+          }
+          if (nextBtnRef.current) {
+            nextBtnRef.current.style.opacity = "0";
+            nextBtnRef.current.style.pointerEvents = "none";
+          }
+        }}
       >
         {/* Navigation Arrows */}
         <PrevButton
+          ref={prevBtnRef}
           onClick={onPrevButtonClick}
           disabled={prevBtnDisabled}
-          className={cn(
-            "absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
-            hoverSide === "left"
-              ? "opacity-100"
-              : "opacity-0 pointer-events-none",
-          )}
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 md:backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300 opacity-0 pointer-events-none"
         />
         <NextButton
+          ref={nextBtnRef}
           onClick={onNextButtonClick}
           disabled={nextBtnDisabled}
-          className={cn(
-            "absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300",
-            hoverSide === "right"
-              ? "opacity-100"
-              : "opacity-0 pointer-events-none",
-          )}
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-10 md:h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white/90 md:backdrop-blur-sm text-slate-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-lg duration-300 opacity-0 pointer-events-none"
         />
 
         <div className="overflow-hidden w-full pt-4 pb-14">
@@ -613,6 +649,7 @@ function PriceList({ price, pgbo }: Props) {
                         preload="intent"
                         className={cn(
                           "group relative flex w-full flex-col items-center overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-xl p-5 md:py-8 md:px-8 text-center shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)] transition-all duration-500 no-underline border border-white/40",
+                          "backdrop-blur-none md:backdrop-blur-xl",
                           "h-[380px] sm:h-[420px] md:h-[500px]",
                         )}
                       >

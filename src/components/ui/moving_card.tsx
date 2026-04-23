@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useInView } from "react-intersection-observer";
 
 export const MovingCards = ({
   items,
@@ -23,6 +24,10 @@ export const MovingCards = ({
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
+  const { ref: inViewRef, inView } = useInView({
+    threshold: 0,
+    rootMargin: "150px 0px",
+  });
 
   useEffect(() => {
     addAnimation();
@@ -72,7 +77,10 @@ export const MovingCards = ({
   }, [speed]);
   return (
     <div
-      ref={containerRef}
+      ref={(node) => {
+        containerRef.current = node;
+        inViewRef(node);
+      }}
       className={cn(
         "scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
         className,
@@ -83,6 +91,7 @@ export const MovingCards = ({
         className={cn(
           "flex w-max min-w-full shrink-0 flex-nowrap gap-4 py-4",
           start && "animate-scroll",
+          !inView && "[animation-play-state:paused]",
           pauseOnHover && "hover:[animation-play-state:paused]",
         )}
       >

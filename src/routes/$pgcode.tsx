@@ -2,7 +2,7 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
-import { lazy, useEffect, useState } from "react";
+import { lazy, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 const Benefit = lazy(() => import("@/components/benefit"));
@@ -23,7 +23,6 @@ import NotFound from "@/components/not_found";
 import GradientHighlight from "@/components/ui/gradient_highlight";
 import { trackEvent } from "@/lib/analytics";
 import { agentQueryOptions, goldPricesQueryOptions } from "@/lib/queryOptions";
-import { cn } from "@/lib/utils";
 
 import { getCloudinaryUrl, getCloudinarySrcSet } from "@/lib/images";
 import { useLazyInteraction } from "@/hooks/useLazyInteraction";
@@ -45,16 +44,14 @@ function App() {
   });
 
   const { t } = useTranslation();
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const scrollBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // Save referral info for registration flow (PageID only)
     if (pgbo) {
       localStorage.setItem("ref_pageid", pgbo.pageid);
     }
-  }, [pgbo]);
 
-  useEffect(() => {
     // Send visitor analytic only once per session
     const hasVisited = sessionStorage.getItem(`visited_${pgbo?.pageid}`);
     if (pgbo && !hasVisited) {
@@ -62,20 +59,40 @@ function App() {
         sessionStorage.setItem(`visited_${pgbo.pageid}`, "true");
       });
     }
+  }, [pgbo]);
 
-    const handleScroll = () => {
-      if (typeof window !== "undefined" && window.scrollY > 1000) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let ticking = false;
+    let isVisible = false;
+
+    const updateScrollTopVisibility = () => {
+      const next = window.scrollY > 1000;
+      if (next !== isVisible) {
+        isVisible = next;
+        const btn = scrollBtnRef.current;
+        if (btn) {
+          btn.style.opacity = next ? "1" : "0";
+          btn.style.transform = next ? "translateY(0)" : "translateY(1rem)";
+          btn.style.pointerEvents = next ? "auto" : "none";
+        }
       }
+      ticking = false;
     };
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-  }, [pgbo]);
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateScrollTopVisibility);
+    };
+
+    // Set initial state without waiting for first scroll event
+    updateScrollTopVisibility();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="relative">
@@ -150,17 +167,18 @@ function App() {
 
       {/* Scroll To Top - Hanya Mobile */}
       <button
+        ref={scrollBtnRef}
         onClick={() => {
           if (typeof window !== "undefined") {
             window.scrollTo({ top: 0, behavior: "smooth" });
           }
         }}
-        className={cn(
-          "md:hidden fixed right-6 bottom-8 w-12 h-12 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-50 transition-all duration-500 border border-slate-200/50 active:scale-95",
-          showScrollTop
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-4 pointer-events-none",
-        )}
+        className="md:hidden fixed right-6 bottom-8 w-12 h-12 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-50 transition-all duration-500 border border-slate-200/50 active:scale-95"
+        style={{
+          opacity: 0,
+          transform: "translateY(1rem)",
+          pointerEvents: "none",
+        }}
         aria-label="Scroll to top"
       >
         <ArrowUp className="w-5 h-5 stroke-[2.5]" />

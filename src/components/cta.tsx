@@ -58,10 +58,9 @@ export default function CallToAction({ pgbo: propsPgbo }: { pgbo?: PgboData }) {
               {/* Photo Section */}
               <div className="lg:w-1/3 flex justify-center">
                 <div className="relative w-40 h-40 md:w-48 md:h-48">
-                  {/* Pulse ripple rings */}
-                  <span className="absolute inset-0 rounded-full border-[3px] border-white/60 opacity-40 animate-[ripple_2s_ease-out_infinite]" />
-                  <span className="absolute inset-0 rounded-full border-[3px] border-white/40 opacity-30 animate-[ripple_2s_ease-out_0.8s_infinite]" />
-                  <style>{`@keyframes ripple { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.25); opacity: 0; } }`}</style>
+                  {/* Pulse ripple rings — reuse pg-ripple from CriticalCss */}
+                  <span className="absolute inset-0 rounded-full border-[3px] border-white/60 opacity-40 animate-[pg-ripple_2s_ease-out_infinite]" />
+                  <span className="absolute inset-0 rounded-full border-[3px] border-white/40 opacity-30 animate-[pg-ripple_2s_ease-out_0.8s_infinite]" />
 
                   {/* Photo */}
                   {hasPhoto ? (

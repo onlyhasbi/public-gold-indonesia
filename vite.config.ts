@@ -26,45 +26,58 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        // PERBAIKAN: Menggunakan manualChunks untuk Rollup/Vite
         codeSplitting: {
           groups: [
             {
               name: "vendor-tanstack-table",
-              test: (id) => id.includes("tanstack") && id.includes("table"),
+              test: (id: string) =>
+                id.includes("tanstack") && id.includes("table"),
+              priority: 20,
             },
             {
               name: "vendor-tanstack-query",
-              test: (id) => id.includes("tanstack") && id.includes("query"),
+              test: (id: string) =>
+                id.includes("tanstack") && id.includes("query"),
+              priority: 15,
             },
             {
               name: "vendor-tanstack-router",
-              test: (id) =>
+              test: (id: string) =>
                 id.includes("tanstack") &&
                 (id.includes("router") ||
                   id.includes("start") ||
                   id.includes("history") ||
                   id.includes("router-plugin")),
+              priority: 15,
             },
             {
               name: "vendor-react-core",
-              test: (id) =>
+              test: (id: string) =>
                 id.includes("node_modules") &&
                 (id.includes("react/") ||
                   id.includes("react-dom/") ||
                   id.includes("scheduler/")),
+              priority: 10,
             },
             {
               name: "vendor-ui",
-              test: (id) =>
+              test: (id: string) =>
                 id.includes("node_modules") &&
                 (id.includes("lucide-react") ||
                   id.includes("motion") ||
                   id.includes("embla-carousel") ||
                   id.includes("@base-ui") ||
                   id.includes("@radix-ui")),
+              priority: 10,
+            },
+            {
+              name: "vendor-i18n",
+              test: (id: string) =>
+                id.includes("node_modules") &&
+                (id.includes("i18next") || id.includes("react-i18next")),
+              priority: 10,
             },
           ],
         },

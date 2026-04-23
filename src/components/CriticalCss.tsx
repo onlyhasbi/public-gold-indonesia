@@ -59,10 +59,19 @@ export const CriticalCss = () => {
           .pg-profile-skeleton { width: 20rem; height: 20rem; }
         }
 
-        /* 3. Animation Keyframes */
+        /* 3. Content Visibility — skip rendering cost for off-screen sections */
+        /* This is the single biggest FCP/LCP optimization: the browser skips
+           layout/paint for sections below the fold until scrolled into view */
+        #advantage, #public-gold, #products, #excellence, 
+        #testimonials, #contact {
+          content-visibility: auto;
+          contain-intrinsic-size: auto 600px;
+        }
+
+        /* 4. Animation Keyframes */
         @keyframes pg-ripple { 
-          0% { transform: scale(1); opacity: 0.4; } 
-          100% { transform: scale(1.15); opacity: 0; } 
+          0% { transform: scale(1); opacity: 0.5; } 
+          100% { transform: scale(1.25); opacity: 0; } 
         }
         @keyframes pg-float { 
           0%, 100% { transform: translateY(0); } 

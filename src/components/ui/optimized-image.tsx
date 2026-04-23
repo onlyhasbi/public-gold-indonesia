@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, type ImgHTMLAttributes } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  type ImgHTMLAttributes,
+} from "react";
 import { getCloudinaryUrl, getCloudinarySrcSet } from "@/lib/images";
 
 export type OptimizedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
@@ -100,13 +106,19 @@ function LazyImage(props: OptimizedImageProps) {
     ? getCloudinaryUrl(src, { blur: true })
     : undefined;
 
-  const classNames = (className || "").split(" ");
-  const objectClasses = classNames.filter((c) => c.startsWith("object-"));
-  const wrapperClasses = classNames.filter((c) => !c.startsWith("object-"));
+  const { wrapperClass, imgClass } = useMemo(() => {
+    const classes = (className || "").split(" ");
+    const objectCls = classes.filter((c) => c.startsWith("object-"));
+    const wrapperCls = classes.filter((c) => !c.startsWith("object-"));
+    return {
+      wrapperClass: `relative overflow-hidden ${wrapperCls.join(" ")}`,
+      imgClass: `w-full h-full ${objectCls.length > 0 ? objectCls.join(" ") : "object-cover object-center"}`,
+    };
+  }, [className]);
 
   return (
     <div
-      className={`relative overflow-hidden ${wrapperClasses.join(" ")}`}
+      className={wrapperClass}
       style={{
         aspectRatio:
           aspectRatio || (width && height ? width / height : undefined),
@@ -131,11 +143,7 @@ function LazyImage(props: OptimizedImageProps) {
           rest.sizes ||
           (width ? `${width}px` : "(max-width: 768px) 100vw, 800px")
         }
-        className={`w-full h-full ${
-          objectClasses.length > 0
-            ? objectClasses.join(" ")
-            : "object-cover object-center"
-        } ${isClient ? "transition-opacity duration-700 ease-in-out" : ""} ${
+        className={`${imgClass} ${isClient ? "transition-opacity duration-700 ease-in-out" : ""} ${
           useCloudinary
             ? isLoaded || !isClient
               ? "opacity-100"

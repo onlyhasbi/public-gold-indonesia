@@ -33,10 +33,22 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
 
   useEffect(() => {
     if (!isMounted) return;
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    let ticking = false;
+
+    const updateScrolledState = () => {
+      const next = window.scrollY > 20;
+      setScrolled((prev) => (prev === next ? prev : next));
+      ticking = false;
     };
-    window.addEventListener("scroll", handleScroll);
+
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateScrolledState);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMounted]);
 
@@ -64,10 +76,10 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
     <>
       <header
         className={cn(
-          "fixed top-0 z-50 w-full transition-all duration-300",
+          "fixed top-0 z-50 w-full h-20 transition-[background-color,box-shadow,border-color,backdrop-filter] duration-300",
           scrolled
-            ? "h-16 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 shadow-sm"
-            : "h-20 bg-transparent",
+            ? "bg-white/95 md:bg-white/80 md:backdrop-blur-lg border-b border-slate-200/50 shadow-sm"
+            : "bg-transparent border-b border-transparent shadow-none",
         )}
       >
         <div className="flex items-center justify-between w-11/12 max-w-7xl mx-auto h-full">

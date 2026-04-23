@@ -14,7 +14,7 @@ interface LazySectionProps {
 
 /**
  * A wrapper component that only renders its children when it enters the viewport.
- * Memoized to prevent unnecessary re-renders of heavy components.
+ * Uses a microtask instead of requestIdleCallback to reduce visible delay.
  */
 export const LazySection = React.memo(
   ({
@@ -23,7 +23,7 @@ export const LazySection = React.memo(
     minHeight = "200px",
     className,
     threshold = 0,
-    rootMargin = "50px",
+    rootMargin = "200px",
     once = true,
   }: LazySectionProps) => {
     const { ref, inView } = useInView({
@@ -36,18 +36,9 @@ export const LazySection = React.memo(
 
     useEffect(() => {
       if (inView && !shouldRender) {
-        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-          const handle = window.requestIdleCallback(
-            () => setShouldRender(true),
-            {
-              timeout: 200,
-            },
-          );
-          return () => window.cancelIdleCallback(handle);
-        } else {
-          const timer = setTimeout(() => setShouldRender(true), 50);
-          return () => clearTimeout(timer);
-        }
+        // Use microtask for near-instant rendering once in view
+        // This eliminates the perceptible delay from requestIdleCallback
+        queueMicrotask(() => setShouldRender(true));
       }
     }, [inView, shouldRender]);
 
@@ -62,10 +53,10 @@ export const LazySection = React.memo(
     return (
       <div
         ref={ref}
-        className={cn("w-full transition-opacity duration-500", className)}
+        className={cn("w-full transition-opacity duration-300", className)}
         style={{
           minHeight: !shouldRender ? minHeight : undefined,
-          opacity: shouldRender ? 1 : 0.6,
+          opacity: shouldRender ? 1 : 0.8,
         }}
       >
         {content}

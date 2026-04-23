@@ -4,8 +4,6 @@ import path from "path";
 export default defineNitroConfig({
   preset: "vercel",
   compressPublicAssets: true,
-  // Ensure Nitro doesn't add trailing slashes that might conflict with Vercel Edge
-  // Handle at top level if supported, otherwise vercel.json takes priority
   // @ts-ignore
   trailingSlash: false,
   alias: {
@@ -16,8 +14,6 @@ export default defineNitroConfig({
     hooks: path.resolve(__dirname, "./src/hooks"),
   },
   routeRules: {
-    // Security headers are now handled at the Vercel Edge level via vercel.json
-    // but we keep them here as a fallback for local/non-Vercel environments.
     "/**": {
       headers: {
         "Strict-Transport-Security":
@@ -26,6 +22,23 @@ export default defineNitroConfig({
         "X-Frame-Options": "SAMEORIGIN",
         "X-XSS-Protection": "1; mode=block",
         "Referrer-Policy": "strict-origin-when-cross-origin",
+      },
+    },
+    // Static assets — immutable forever (hashed filenames)
+    "/fonts/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
+    "/_build/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    },
+    "/assets/**": {
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable",
       },
     },
     "/sitemap.xml": {

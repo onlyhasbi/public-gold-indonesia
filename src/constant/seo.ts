@@ -60,6 +60,11 @@ export const rootHeadConfig = (appCss: string) => {
       },
       {
         rel: "preconnect" as const,
+        href: "https://my-cdn.publicgold.com.my",
+        crossOrigin: "anonymous" as const,
+      },
+      {
+        rel: "preconnect" as const,
         href: "https://be-public-gold-indonesia.vercel.app",
         crossOrigin: "anonymous" as const,
       },
@@ -70,11 +75,7 @@ export const rootHeadConfig = (appCss: string) => {
         type: "font/woff2",
         crossOrigin: "anonymous" as const,
       },
-      { rel: "dns-prefetch" as const, href: "https://res.cloudinary.com" },
-      {
-        rel: "dns-prefetch" as const,
-        href: "https://my-cdn.publicgold.com.my",
-      },
+      { rel: "dns-prefetch" as const, href: "https://publicgold.co.id" },
       { rel: "dns-prefetch" as const, href: "https://wa.me" },
       { rel: "dns-prefetch" as const, href: "https://api.whatsapp.com" },
     ],
