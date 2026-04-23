@@ -1,5 +1,5 @@
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { createFileRoute, useMatches, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 
 import { lazy, useEffect, useState } from "react";
@@ -26,10 +26,7 @@ import { useLazyInteraction } from "@/hooks/useLazyInteraction";
 import { LazySection } from "@/components/ui/lazy-section";
 
 function App() {
-  const matches = useMatches();
-  const pgcode = (
-    matches.find((m: any) => m.routeId === "/$pgcode")?.params as any
-  )?.pgcode;
+  const { pgcode } = Route.useParams();
 
   // If we're transitioning out, pgcode might be undefined
   if (!pgcode) return null;
@@ -223,9 +220,9 @@ export const Route = createFileRoute("/$pgcode")({
                 }),
                 imageSrcSet: getCloudinarySrcSet(pgbo.foto_profil_url, {
                   priority: true,
-                  maxWidth: 400,
+                  maxWidth: 320,
                 }),
-                imageSizes: "(max-width: 768px) 100vw, 400px",
+                imageSizes: "(max-width: 768px) 256px, 320px",
                 fetchPriority: "high" as const,
               },
             ]
