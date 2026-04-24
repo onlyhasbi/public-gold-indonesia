@@ -82,7 +82,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
             : "bg-transparent border-b border-transparent shadow-none",
         )}
       >
-        <div className="flex items-center justify-between w-11/12 max-w-7xl mx-auto h-full">
+        <div className="flex h-full w-full max-w-7xl items-center justify-between mx-auto px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link
             to="/$pgcode"
@@ -98,7 +98,7 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
               src="/logo.webp"
               alt="Public Gold"
               priority
-              className="h-10 md:h-12 w-auto group-hover:scale-105 transition-transform object-contain shrink-0"
+              className="h-11 w-auto shrink-0 object-contain object-left transition-transform group-hover:scale-105 md:h-12 ml-3 lg:ml-0"
               width={200}
               height={56}
             />
@@ -236,18 +236,21 @@ function Topbar({ pgbo: propsPgbo }: { pgbo?: any }) {
             : "opacity-0 pointer-events-none translate-y-4",
         )}
       >
-        <div className="flex items-center justify-between h-20 px-6 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <Link to="/" onClick={() => setIsOpen(false)}>
-              <OptimizedImage
-                src="/logo.webp"
-                alt="Public Gold"
-                className="h-8 w-auto"
-                width={120}
-                height={32}
-              />
-            </Link>
-          </div>
+        <div className="flex h-20 items-center justify-between border-b border-slate-100 px-6">
+          <Link
+            to="/"
+            onClick={() => setIsOpen(false)}
+            className="inline-flex shrink-0 items-center"
+          >
+            <OptimizedImage
+              src="/logo.webp"
+              alt="Public Gold"
+              priority
+              className="h-10 w-auto shrink-0 object-contain object-left sm:h-11"
+              width={200}
+              height={56}
+            />
+          </Link>
           <button
             onClick={() => setIsOpen(false)}
             className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
