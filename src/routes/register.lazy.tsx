@@ -18,7 +18,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { AppLink as Link, useAppNavigate as useNavigate } from "@/lib/router-wrappers";
+import {
+  AppLink as Link,
+  useAppNavigate as useNavigate,
+} from "@/lib/router-wrappers";
 import {
   AlertCircle,
   ArrowLeft,
@@ -384,7 +387,9 @@ function RegisterPage() {
   } = useRegisterForm(isAnak, countryMode, referralData);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
-  const petunjukNavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const petunjukNavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const clearPetunjukNavTimer = () => {
     if (petunjukNavTimerRef.current !== null) {
