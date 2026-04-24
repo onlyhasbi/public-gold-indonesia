@@ -112,7 +112,6 @@ function Header({ pgbo }: { pgbo?: PgboData }) {
     <div className="pg-header-shell relative flex flex-col md:flex-row min-h-[40rem] lg:min-h-[50rem] w-full items-center justify-center bg-white gap-8 md:gap-16 px-6 pt-28 pb-12 md:p-0 overflow-hidden">
       {/* Background patterns */}
       <div className="pg-hero-pattern absolute inset-0 opacity-40 pointer-events-none" />
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent)]" />
 
       {/* Hero Image Container */}
       <div className="pg-profile-skeleton relative w-64 h-64 md:w-80 md:h-80 z-10 shrink-0">

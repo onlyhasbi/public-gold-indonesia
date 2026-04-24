@@ -44,8 +44,8 @@ export const CriticalCss = () => {
           pointer-events: none;
           background-size: 20px 20px;
           background-image: radial-gradient(#9ca3af 1px, transparent 1px);
-          -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent);
-          mask-image: radial-gradient(ellipse at center, black 20%, transparent);
+          -webkit-mask-image: radial-gradient(ellipse at center, transparent 20%, black);
+          mask-image: radial-gradient(ellipse at center, transparent 20%, black);
         }
 
         .pg-profile-skeleton {
