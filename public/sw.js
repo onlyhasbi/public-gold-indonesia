@@ -4,19 +4,14 @@
  */
 
 const CACHE_NAME = "public-gold-cache-v1";
-const STATIC_ASSETS = [
-  "/",
-  "/logo.webp",
-  "/logo.svg",
-  "/whatsapp.png",
-];
+const STATIC_ASSETS = ["/", "/logo.webp", "/logo.svg", "/whatsapp.png"];
 
 // 1. INSTALL: Cache initial static assets
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
-    })
+    }),
   );
   self.skipWaiting();
 });
@@ -29,7 +24,7 @@ self.addEventListener("activate", (event) => {
         // Enable navigation preload!
         await self.registration.navigationPreload.enable();
       }
-    })()
+    })(),
   );
   self.clients.claim();
 });
@@ -58,15 +53,15 @@ self.addEventListener("fetch", (event) => {
           const cachedResponse = await caches.match("/");
           return cachedResponse || new Response("Offline", { status: 503 });
         }
-      })()
+      })(),
     );
     return;
   }
 
   // For other requests (images, fonts, scripts)
   // Cache-first strategy for static assets
-  const isStatic = 
-    event.request.destination === "image" || 
+  const isStatic =
+    event.request.destination === "image" ||
     event.request.destination === "font" ||
     event.request.url.includes("/assets/") ||
     event.request.url.includes("/fonts/");
@@ -79,11 +74,13 @@ self.addEventListener("fetch", (event) => {
           // Put into cache if valid response
           if (response.ok && response.status === 200) {
             const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, copy));
           }
           return response;
         });
-      })
+      }),
     );
   }
 });
