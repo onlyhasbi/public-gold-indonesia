@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { AppLink as Link } from "@/lib/router-wrappers";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { AppLink as Link, useAppNavigate as useNavigate } from "@/lib/router-wrappers";
 import {
   AlertCircle,
   ArrowLeft,
@@ -384,22 +384,44 @@ function RegisterPage() {
   } = useRegisterForm(isAnak, countryMode, referralData);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
+  const petunjukNavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearPetunjukNavTimer = () => {
+    if (petunjukNavTimerRef.current !== null) {
+      clearTimeout(petunjukNavTimerRef.current);
+      petunjukNavTimerRef.current = null;
+    }
+  };
 
   useEffect(() => {
-    if (status === "success") {
-      formContainerRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
+    if (status !== "success") return;
+
+    formContainerRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const modalTimer = setTimeout(() => {
+      setShowNextStepModal(true);
+    }, 1200);
+
+    const refForPetunjuk = ref ?? referralData?.pageid ?? undefined;
+
+    petunjukNavTimerRef.current = setTimeout(() => {
+      petunjukNavTimerRef.current = null;
+      setShowNextStepModal(false);
+      navigate({
+        to: "/petunjuk",
+        search: refForPetunjuk ? { ref: refForPetunjuk } : {},
       });
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 5500);
 
-      const timer = setTimeout(() => {
-        setShowNextStepModal(true);
-      }, 1200);
-
-      return () => clearTimeout(timer);
-    }
-  }, [status, setShowNextStepModal]);
+    return () => {
+      clearTimeout(modalTimer);
+      clearPetunjukNavTimer();
+    };
+  }, [status, setShowNextStepModal, navigate, ref, referralData]);
 
   // Note: We used to wait for isMounted here to prevent hydration mismatch,
   // but with stable form defaults and SSR-friendly components, we can render immediately.
@@ -986,8 +1008,11 @@ function RegisterPage() {
 
       {showNextStepModal && (
         <NextStepModal
-          refId={ref || undefined}
-          onClose={() => setShowNextStepModal(false)}
+          refId={ref ?? referralData?.pageid ?? undefined}
+          onClose={() => {
+            clearPetunjukNavTimer();
+            setShowNextStepModal(false);
+          }}
         />
       )}
     </div>

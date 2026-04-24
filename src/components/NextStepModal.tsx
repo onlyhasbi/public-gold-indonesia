@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useAppNavigate } from "@/lib/router-wrappers";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { Spinner } from "./ui/spinner";
 import {
@@ -17,7 +17,7 @@ export function NextStepModal({
   refId?: string;
   onClose: () => void;
 }) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { t } = useTranslation();
 
   return (
@@ -72,7 +72,10 @@ export function NextStepModal({
             rounded="xl"
             onClick={() => {
               onClose();
-              navigate({ to: "/petunjuk", search: { ref: refId } });
+              navigate({
+                to: "/petunjuk",
+                search: refId ? { ref: refId } : {},
+              });
             }}
             className="group w-full gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold h-16 shadow-xl shadow-emerald-200/50 hover:shadow-emerald-300/60 border-none"
           >
