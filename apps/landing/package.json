@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && mkdir -p dist && (cp -r .output/public/. dist 2>/dev/null || true)",
-    "start": "vite start",
+    "dev": "bun --bun vite",
+    "build": "bun --bun vite build",
+    "start": "bun --bun vite preview",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
