@@ -52,7 +52,8 @@ if (typeof window !== "undefined") {
     dehydrateOptions: {
       shouldDehydrateQuery: (query) => {
         const key = query.queryKey[0];
-        return key === "auth" || key === "agent";
+        // We only persist auth data. Agent profile data should be fresh from server.
+        return key === "auth";
       },
     },
     maxAge: 1000 * 60 * 60 * 24,

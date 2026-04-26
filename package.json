@@ -57,12 +57,12 @@
     "@types/node": "^25.5.2",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "husky": "^9.1.7",
     "terser": "^5.46.1",
     "turbo": "^2.0.0",
     "typescript": "^5.7.2",
-    "vite": "^8.0.8"
+    "vite": "^6.0.1"
   },
   "overrides": {
     "@tanstack/query-core": "5.99.1",

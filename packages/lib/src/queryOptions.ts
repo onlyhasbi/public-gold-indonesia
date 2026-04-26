@@ -19,8 +19,7 @@ export const agentQueryOptions = (pgcode: string) =>
       const res = await getAgentData({ data: pgcode });
       return res.data;
     },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
+    staleTime: 0,
   });
 
 export const agentsListQueryOptions = () =>
@@ -34,8 +33,6 @@ export const agentsListQueryOptions = () =>
         foto_profil_url: string | null;
       }>;
     },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
   });
 
 /**
@@ -82,7 +79,6 @@ export const settingsQueryOptions = (cookieStr?: string) =>
       const res = await getSettingsFn({ data: { cookieStr } });
       return res.data;
     },
-    staleTime: 5 * 60 * 1000,
   });
 
 /**

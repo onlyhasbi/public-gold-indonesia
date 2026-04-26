@@ -143,7 +143,11 @@ function SettingsPage() {
 
       Object.keys(profileData).forEach((key) => {
         const value = profileData[key as keyof typeof profileData];
-        if (value !== undefined) data.append(key, value);
+        if (value !== undefined && value !== null) {
+          data.append(key, value);
+        } else if (value === null) {
+          data.append(key, "");
+        }
       });
 
       const res = await api.put("/settings", data);
