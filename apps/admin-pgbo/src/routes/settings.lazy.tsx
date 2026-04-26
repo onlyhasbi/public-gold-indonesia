@@ -250,13 +250,13 @@ function SettingsPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-600 via-red-600 to-rose-600">
+      <div className="bg-linear-to-r from-red-600 via-red-600 to-rose-600">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-7 sm:py-10">
           <div className="flex items-center gap-3 sm:gap-4">
             <button
               type="button"
               onClick={() => navigate({ to: "/overview" })}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-sm flex items-center justify-center transition-all duration-200 border border-white/20 flex-shrink-0 cursor-pointer"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-sm flex items-center justify-center transition-all duration-200 border border-white/20 shrink-0 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
@@ -296,21 +296,21 @@ function SettingsPage() {
               >
                 <TabsTrigger
                   value="informasi"
-                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:bg-red-600! flex items-center gap-2"
                 >
                   <User className="w-4 h-4" />
                   Informasi Dasar
                 </TabsTrigger>
                 <TabsTrigger
                   value="password"
-                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:bg-red-600! flex items-center gap-2"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   Ubah Kata Sandi
                 </TabsTrigger>
                 <TabsTrigger
                   value="sosmed"
-                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:!bg-red-600 flex items-center gap-2"
+                  className="font-bold rounded-none border-none py-2 text-xs transition-all px-4 sm:px-1 text-slate-400 shrink-0 data-[state=active]:text-red-600 data-[state=active]:after:bg-red-600! flex items-center gap-2"
                 >
                   <Share2 className="w-4 h-4" />
                   Sosial Media
@@ -487,7 +487,7 @@ function SettingsPage() {
         </form>
       </div>
       {/* Sticky Save Button */}
-      <div className="sticky bottom-0 z-40 bg-gradient-to-t from-white via-white/95 to-white/0 pt-6 pb-4 sm:pb-5 pointer-events-none">
+      <div className="sticky bottom-0 z-40 bg-linear-to-t from-white via-white/95 to-white/0 pt-6 pb-4 sm:pb-5 pointer-events-none">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 flex justify-center pointer-events-auto">
           <Button
             type="submit"

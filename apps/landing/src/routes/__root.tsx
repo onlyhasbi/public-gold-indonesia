@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import Topbar from "@repo/ui/header";
+import Topbar from "@repo/ui/layout/topbar";
 import { ToastProvider } from "@repo/ui/toast";
 
 import NotFound from "@repo/ui/not_found";
@@ -83,9 +83,6 @@ function RootComponent() {
   const dashboardPaths = [
     "/register",
     "/petunjuk",
-    "/overview",
-    "/settings",
-    "/admin",
     "/legal",
   ];
   const isStandalone =

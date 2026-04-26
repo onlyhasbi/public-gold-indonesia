@@ -69,7 +69,7 @@ export function SignInForm() {
 
         // 3. INVALIDATE AND NAVIGATE
         await router.invalidate();
-        navigate({ to: "/overview" });
+        (navigate as any)({ to: "/overview" });
       } else {
         showToast(data.message, "error");
       }

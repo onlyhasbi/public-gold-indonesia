@@ -24,7 +24,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@repo/lib/utils";
 import { useTranslation } from "react-i18next";
 import BaseLayout from "@repo/ui/layout/base";
-import type { GoldPricesResult } from "@repo/types";
+interface GoldPrice {
+  label: string;
+  price: string | null;
+}
+
+interface GoldPricesResult {
+  poe: GoldPrice[];
+  dinar: GoldPrice[];
+  goldbar: GoldPrice[];
+}
 
 // Embla Tween Logic Constants
 const TWEEN_FACTOR_BASE = 0.8;
@@ -381,7 +390,7 @@ function PriceList({ price, pgbo }: Props) {
       // mode tunai: prices from unit endpoint with specific adjustments
       const apiArray =
         item.category === "dinar" ? price?.dinar : price?.goldbar;
-      const apiItem = apiArray?.find((p) => item.title.startsWith(p.label));
+      const apiItem = apiArray?.find((p: GoldPrice) => item.title.startsWith(p.label));
       const apiPrice = parsePriceToNumber(apiItem?.price);
 
       if (!apiPrice) return null;

@@ -105,6 +105,8 @@ export default defineConfig({
     conditions: ["import", "module", "browser", "default"],
   },
   server: {
+    port: 3002,
+    strictPort: true,
     proxy: {
       "/api-proxy": {
         target: "https://publicgold.co.id",

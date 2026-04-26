@@ -4,6 +4,7 @@ dist
 dist-ssr
 .output
 .nitro
+.turbo
 *.local
 
 # Environment secrets — NEVER commit these

@@ -2,6 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import {
   getAdminProfileFn,
   getAgentData,
+  getAgentsFn,
   getGoldPricesFn,
   getOverviewFn,
   getSettingsFn,
@@ -18,9 +19,19 @@ export const agentQueryOptions = (pgcode: string) =>
       const res = await getAgentData({ data: pgcode });
       return res.data;
     },
-    // Standardized: Agent profile data rarely changes, 5m is optimal.
     staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000, // Keep in memory for 30m
+    gcTime: 30 * 60 * 1000,
+  });
+
+export const agentsListQueryOptions = () =>
+  queryOptions({
+    queryKey: ["agents"],
+    queryFn: async () => {
+      const res = await getAgentsFn();
+      return res.data as Array<{ pageid: string; nama_panggilan: string | null; foto_profil_url: string | null }>;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
 /**

@@ -46,8 +46,8 @@ export const rootHeadConfig = (appCss: string) => {
       { rel: "stylesheet" as const, href: appCss },
       {
         rel: "icon" as const,
-        type: "image/png",
-        href: getCloudinaryUrl("/logo.webp", { width: 32, format: "png" }),
+        type: "image/svg+xml",
+        href: "/logo.svg",
       },
       {
         rel: "apple-touch-icon" as const,

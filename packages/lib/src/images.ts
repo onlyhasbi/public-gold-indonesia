@@ -39,6 +39,7 @@ export function getCloudinaryUrl(src: string, options: CloudinaryOptions = {}) {
   );
 
   if (
+    !CLOUD_NAME ||
     isBlockedDomain ||
     (!isExternal && !isCloudinary && !isLocal && !isPublicId)
   ) {

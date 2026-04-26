@@ -63,11 +63,11 @@ function OverviewPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-600 via-red-600 to-rose-600">
+      <div className="bg-linear-to-r from-red-600 via-red-600 to-rose-600">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-7 sm:py-10">
           <div className="flex flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center ring-2 ring-white/30 shrink-0">
                 {user.foto_profil_url ? (
                   <OptimizedImage
                     src={user.foto_profil_url}
@@ -89,7 +89,7 @@ function OverviewPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <Button
                 variant="outline"
                 onClick={() => navigate({ to: "/settings" })}
@@ -119,7 +119,7 @@ function OverviewPage() {
         />
 
         {/* Quick Link Card */}
-        <Card className="bg-gradient-to-r from-red-50 to-rose-50 rounded-2xl border-red-100 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 overflow-hidden">
+        <Card className="bg-linear-to-r from-red-50 to-rose-50 rounded-2xl border-red-100 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 overflow-hidden">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-slate-700 mb-0.5">
               Link Landing Page Anda
@@ -166,7 +166,7 @@ function OverviewPage() {
                 : `https://mypublicgold.id/${user.pageid}`;
               window.open(url, "_blank");
             }}
-            className="w-full sm:w-auto h-auto py-2.5 rounded-xl transition-all duration-200 shadow-sm flex-shrink-0"
+            className="w-full sm:w-auto h-auto py-2.5 rounded-xl transition-all duration-200 shadow-sm shrink-0"
           >
             <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
             Lihat Halaman

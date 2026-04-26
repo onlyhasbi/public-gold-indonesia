@@ -109,21 +109,21 @@ export const logout = () => {
 export const requireAdminAuth = async (cookieStr?: string) => {
   const token = await getAuthToken(true, cookieStr);
   if (!token) {
-    throw redirect({ to: "/admin/login" });
+    throw redirect({ to: "/signin" as string });
   }
 };
 
-export const requireGuest = async (cookieStr?: string) => {
+export const requireGuest = async (redirectTo = "/overview", cookieStr?: string) => {
   const token = await getAuthToken(false, cookieStr);
   if (token) {
-    throw redirect({ to: "/overview" });
+    throw redirect({ to: redirectTo as string });
   }
 };
 
 export const requireAdminGuest = async (cookieStr?: string) => {
   const token = await getAuthToken(true, cookieStr);
   if (token) {
-    throw redirect({ to: "/admin" });
+    throw redirect({ to: "/" });
   }
 };
 

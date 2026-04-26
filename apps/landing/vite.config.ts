@@ -91,20 +91,9 @@ export default defineConfig({
       externalConditions: ["import", "module", "node", "default"],
     },
   },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@/components": path.resolve(__dirname, "../../packages/ui/src"),
-      "@/lib": path.resolve(__dirname, "../../packages/lib/src"),
-      "@/hooks": path.resolve(__dirname, "../../packages/hooks/src"),
-      "@/schemas": path.resolve(__dirname, "../../packages/schemas/src"),
-      "@/constant": path.resolve(__dirname, "../../packages/constant/src"),
-      "@/services": path.resolve(__dirname, "../../packages/services/src"),
-      "@/types": path.resolve(__dirname, "../../packages/types/src/index.ts")
-    },
-    conditions: ["import", "module", "browser", "default"],
-  },
   server: {
+    port: 3000,
+    strictPort: true,
     proxy: {
       "/api-proxy": {
         target: "https://publicgold.co.id",
@@ -121,5 +110,18 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@/components": path.resolve(__dirname, "../../packages/ui/src"),
+      "@/lib": path.resolve(__dirname, "../../packages/lib/src"),
+      "@/hooks": path.resolve(__dirname, "../../packages/hooks/src"),
+      "@/schemas": path.resolve(__dirname, "../../packages/schemas/src"),
+      "@/constant": path.resolve(__dirname, "../../packages/constant/src"),
+      "@/services": path.resolve(__dirname, "../../packages/services/src"),
+      "@/types": path.resolve(__dirname, "../../packages/types/src/index.ts")
+    },
+    conditions: ["import", "module", "browser", "default"],
   },
 });

@@ -159,3 +159,22 @@ export const getAdminPgboFn = createServerFn({ method: "GET" })
       : "";
     return baseFetch(`/admin/pgbo${query}`, {}, true, data.cookieStr);
   });
+
+export const getAdminSecretFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    return baseFetch("/admin/settings/secret-code", {}, true);
+  },
+);
+
+export const updateAdminSecretFn = createServerFn({ method: "POST" })
+  .inputValidator((d: { code: string; auto_rotate: boolean }) => d)
+  .handler(async ({ data }) => {
+    return baseFetch(
+      "/admin/settings/secret-code",
+      {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      },
+      true,
+    );
+  });
