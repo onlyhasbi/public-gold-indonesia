@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "NITRO_PRESET=vercel vite build",
+    "build": "NITRO_PRESET=vercel vite build && rm -rf dist && cp -r .vercel/output/static dist",
     "start": "vite start",
     "type-check": "tsc --noEmit"
   },
