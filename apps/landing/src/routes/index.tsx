@@ -1,310 +1,242 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AppLink as Link } from "@repo/lib/router-wrappers";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  createFileRoute,
+  useSearch,
+  useNavigate,
+} from "@tanstack/react-router";
+import { AppLink as Link } from "@/lib/router-wrappers";
+import { MessageCircle, ShieldCheck } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { agentsListQueryOptions } from "@repo/lib/queryOptions";
-import { OptimizedImage } from "@repo/ui/ui/optimized-image";
-import { useEffect, useRef, useState, useMemo } from "react";
 
-const ADMIN_PGBO_URL = import.meta.env.DEV
-  ? "http://localhost:3003/signin"
-  : "https://admin.mypublicgold.id/signin";
+import { requireGuest } from "@/lib/auth";
+import { PortalGate } from "@/components/auth/PortalGate";
+import {
+  portalUnlockedOptions,
+  portalLockoutOptions,
+} from "@/lib/portalOptions";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { authDealerQueryOptions } from "@/lib/queryOptions";
+
+import SignInForm from "@/components/auth/SignInForm";
+import SignUpForm from "@/components/auth/SignUpForm";
+
+import { useIsMounted } from "@/hooks/useIsMounted";
+
+const MotionCard = motion.create(Card);
+
+function LandingAuthPage() {
+  const isMounted = useIsMounted();
+  const { mode } = useSearch({ from: "/" });
+  const navigate = useNavigate();
+
+  // Use React Query for session detection (Unified Persistence)
+  const { data: authData } = useQuery(authDealerQueryOptions());
+  const user = authData?.user;
+  const token = authData?.token;
+
+  const { data: isUnlocked } = useQuery(portalUnlockedOptions());
+  const { data: lockoutExpiry } = useQuery(portalLockoutOptions());
+  const lockoutTime =
+    lockoutExpiry && lockoutExpiry > Date.now() ? lockoutExpiry : 0;
+
+  const [authMode, setAuthMode] = useState<"signin" | "signup">(
+    mode || "signin",
+  );
+
+  useEffect(() => {
+    if (isMounted && token && user) {
+      navigate({ to: "/overview", replace: true });
+    }
+  }, [isMounted, token, user, navigate]);
+
+  useEffect(() => {
+    if (mode) setAuthMode(mode);
+  }, [mode]);
+
+  if (token && user) {
+    return null;
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
+  return (
+    <div className="relative min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 overflow-hidden px-6 font-sans">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-rose-50/50 via-slate-50 to-slate-50 pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-rose-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="relative z-10 w-full max-w-5xl flex flex-col items-center gap-8 md:gap-10"
+      >
+        <AnimatePresence>
+          {!lockoutTime && !isUnlocked && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex flex-col items-center text-center gap-4 lg:gap-6 w-full max-w-lg mb-4"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="p-3 bg-[#000856] rounded-2xl shadow-sm border border-slate-100"
+              >
+                <OptimizedImage
+                  src="https://mypublicgold.com/5g/logo/logo_gold.png"
+                  alt="Logo"
+                  width={48}
+                  height={48}
+                  priority
+                  className="w-12 h-12 object-contain"
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          {!isUnlocked ? (
+            <PortalGate key="secret-gate" />
+          ) : (
+            <MotionCard
+              key="auth-content"
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              className="bg-white rounded-[1.5rem] overflow-hidden shadow-2xl shadow-slate-200/40 border-none ring-0 max-w-lg mx-auto w-full"
+            >
+              <CardContent className="p-0 flex flex-col h-full">
+                <Tabs
+                  value={authMode}
+                  onValueChange={(v) => setAuthMode(v as "signin" | "signup")}
+                  className="w-full"
+                >
+                  <div className="flex justify-center mb-4 pt-4">
+                    <TabsList
+                      variant="line"
+                      className="flex bg-transparent border-none h-auto p-0 gap-8"
+                    >
+                      <TabsTrigger
+                        value="signin"
+                        className="font-bold rounded-none border-none py-3 text-xs transition-all px-2 text-slate-400 data-[state=active]:text-slate-900 data-[state=active]:after:!bg-slate-900"
+                      >
+                        Masuk
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="signup"
+                        className="font-bold rounded-none border-none py-3 text-xs transition-all px-2 text-slate-400 data-[state=active]:text-slate-900 data-[state=active]:after:!bg-slate-900"
+                      >
+                        Daftar
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
+                  <div className="p-6 sm:px-10 pb-8 pt-0">
+                    <AnimatePresence mode="wait">
+                      <TabsContent value="signin" className="mt-0 outline-none">
+                        <SignInForm />
+                      </TabsContent>
+                      <TabsContent value="signup" className="mt-0 outline-none">
+                        <SignUpForm
+                          onSignupSuccess={() => setAuthMode("signin")}
+                        />
+                      </TabsContent>
+                    </AnimatePresence>
+                  </div>
+                </Tabs>
+                <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex flex-col items-center gap-3 bg-transparent">
+                  <a
+                    href="https://wa.me/628979901844"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <div className="p-1.5 bg-emerald-50 rounded-full">
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    </div>
+                    <span className="text-[9px] text-slate-400 tracking-wider">
+                      Butuh Bantuan? Hubungi Admin
+                    </span>
+                  </a>
+                  <div className="flex items-center gap-3 text-[9px] text-slate-300">
+                    <Link
+                      to="/legal"
+                      search={{ tab: "terms" }}
+                      className="hover:text-slate-500 transition-colors no-underline"
+                    >
+                      Syarat & Ketentuan
+                    </Link>
+                    <span>•</span>
+                    <Link
+                      to="/legal"
+                      search={{ tab: "privacy" }}
+                      className="hover:text-slate-500 transition-colors no-underline"
+                    >
+                      Privasi
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </MotionCard>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {!lockoutTime && !isUnlocked && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center gap-3 mt-4"
+            >
+              <div className="flex items-center justify-center gap-2 opacity-30 text-[9px] text-slate-500">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Portal
+                Keamanan Terpusat Public Gold
+              </div>
+              <div className="flex items-center gap-3 text-[9px] text-slate-300 opacity-40">
+                <Link
+                  to="/legal"
+                  search={{ tab: "terms" }}
+                  className="hover:text-slate-500 transition-colors no-underline"
+                >
+                  Syarat & Ketentuan
+                </Link>
+                <span>•</span>
+                <Link
+                  to="/legal"
+                  search={{ tab: "privacy" }}
+                  className="hover:text-slate-500 transition-colors no-underline"
+                >
+                  Privasi
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
-  component: LandingHomePage,
+  beforeLoad: () => requireGuest(),
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { mode?: "signin" | "signup" } => {
+    return {
+      mode: (search.mode as "signin" | "signup") || undefined,
+    };
+  },
+  component: LandingAuthPage,
 });
 
-function LandingHomePage() {
-  const { data: agents } = useQuery(agentsListQueryOptions());
-
-  return (
-    <div className="relative min-h-dvh flex flex-col items-center justify-center bg-slate-950 overflow-hidden px-6">
-      {/* Ambient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none" />
-
-      {/* Floating 3D Network Orbs (behind logo) */}
-      {agents && agents.length > 0 && <FloatingOrbs agents={agents} />}
-
-      {/* Center Content */}
-      <div className="relative z-10 flex flex-col items-center">
-        {/* 5G Logo — Click to go to Admin PGBO */}
-        <a
-          href={ADMIN_PGBO_URL}
-          className="group relative flex items-center justify-center cursor-pointer"
-        >
-          <div className="absolute inset-0 bg-red-600/20 rounded-3xl blur-2xl scale-110 group-hover:bg-red-600/30 group-hover:scale-125 transition-all duration-700" />
-          <div className="relative p-4 bg-[#000856] rounded-3xl shadow-[0_0_30px_rgba(220,38,38,0.15)] border border-white/10 group-hover:border-red-500/30 group-hover:scale-105 transition-all duration-500">
-            <OptimizedImage
-              src="https://mypublicgold.com/5g/logo/logo_gold.png"
-              alt="5G Associates"
-              width={72}
-              height={72}
-              priority
-              className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
-            />
-          </div>
-        </a>
-      </div>
-    </div>
-  );
-}
-
-interface Agent {
-  pageid: string;
-  nama_panggilan: string | null;
-  foto_profil_url: string | null;
-}
-
-function FloatingOrbs({ agents }: { agents: Agent[] }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [displayAgents, setDisplayAgents] = useState<Agent[]>([]);
-
-  // Randomize and pick max 10 agents on mount
-  useEffect(() => {
-    // Filter out any invalid empty agents first
-    const validAgents = agents.filter(
-      (a) => a.pageid && a.pageid.trim() !== "",
-    );
-    const shuffled = [...validAgents].sort(() => Math.random() - 0.5);
-    setDisplayAgents(shuffled.slice(0, 15));
-  }, [agents]);
-
-  // Generate 3D sphere points using Fibonacci sphere algorithm
-  const sphereData = useMemo(() => {
-    const n = displayAgents.length;
-    if (n === 0) return { points: [], lines: [] };
-
-    const points = [];
-    for (let i = 0; i < n; i++) {
-      const phi = Math.acos(1 - (2 * i + 1) / n);
-      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-      points.push({
-        x: Math.cos(theta) * Math.sin(phi),
-        y: Math.sin(theta) * Math.sin(phi),
-        z: Math.cos(phi),
-      });
-    }
-
-    const lines: [number, number][] = [];
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        const p1 = points[i];
-        const p2 = points[j];
-        // Connect points that are relatively close in 3D space
-        const dist3d = Math.sqrt(
-          Math.pow(p1.x - p2.x, 2) +
-            Math.pow(p1.y - p2.y, 2) +
-            Math.pow(p1.z - p2.z, 2),
-        );
-        if (dist3d < 1.6) {
-          lines.push([i, j]);
-        }
-      }
-    }
-    return { points, lines };
-  }, [displayAgents]);
-
-  const rotationRef = useRef({ y: 0, x: 0 });
-  const isDraggingRef = useRef(false);
-  const previousMouseRef = useRef({ x: 0, y: 0 });
-  const dragDistanceRef = useRef(0);
-  const velocityRef = useRef({ y: 0.003, x: 0.001 });
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    isDraggingRef.current = true;
-    dragDistanceRef.current = 0;
-    previousMouseRef.current = { x: e.clientX, y: e.clientY };
-    velocityRef.current = { x: 0, y: 0 };
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
-    const deltaX = e.clientX - previousMouseRef.current.x;
-    const deltaY = e.clientY - previousMouseRef.current.y;
-
-    dragDistanceRef.current += Math.abs(deltaX) + Math.abs(deltaY);
-
-    const rotSpeed = 0.005;
-    rotationRef.current.y += deltaX * rotSpeed;
-    rotationRef.current.x -= deltaY * rotSpeed; // Invert Y for natural drag
-
-    velocityRef.current = { y: deltaX * rotSpeed, x: -deltaY * rotSpeed };
-    previousMouseRef.current = { x: e.clientX, y: e.clientY };
-  };
-
-  const handlePointerUp = () => {
-    isDraggingRef.current = false;
-  };
-
-  useEffect(() => {
-    if (displayAgents.length === 0) return;
-
-    let animationFrameId: number;
-
-    const updatePositions = () => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const orbs = container.querySelectorAll(".orb-node");
-      const lines = container.querySelectorAll(".network-line");
-
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const radius = Math.min(w, 800) * 0.35;
-      const centerX = w / 2;
-      const centerY = h / 2;
-
-      // Handle inertia and default rotation speed
-      if (!isDraggingRef.current) {
-        // Ease back to default automatic spin (0.003 y, 0.001 x)
-        velocityRef.current.y += (0.003 - velocityRef.current.y) * 0.02;
-        velocityRef.current.x += (0.001 - velocityRef.current.x) * 0.02;
-      }
-
-      rotationRef.current.y += velocityRef.current.y;
-      rotationRef.current.x += velocityRef.current.x;
-
-      const cosY = Math.cos(rotationRef.current.y);
-      const sinY = Math.sin(rotationRef.current.y);
-      const cosX = Math.cos(rotationRef.current.x);
-      const sinX = Math.sin(rotationRef.current.x);
-
-      // Project 3D points to 2D
-      const projected = sphereData.points.map((p) => {
-        // Rotate Y
-        const x1 = p.x * cosY - p.z * sinY;
-        const z1 = p.z * cosY + p.x * sinY;
-        // Rotate X
-        const y2 = p.y * cosX - z1 * sinX;
-        const z2 = z1 * cosX + p.y * sinX;
-
-        const scale = (z2 + 2) / 2.5; // Scale mapping based on depth
-        const opacity = Math.max(0.2, (z2 + 1.5) / 2.5);
-
-        return {
-          x: centerX + x1 * radius,
-          y: centerY + y2 * radius,
-          z: z2,
-          scale: Math.max(0.4, scale),
-          opacity,
-          blur: z2 < -0.2 ? Math.abs(z2) * 3 : 0,
-        };
-      });
-
-      // Update DOM Nodes
-      orbs.forEach((el, i) => {
-        const pt = projected[i];
-        if (!pt) return;
-        const domEl = el as HTMLElement;
-        domEl.style.transform = `translate3d(-50%, -50%, 0) scale(${pt.scale})`;
-        domEl.style.left = `${pt.x}px`;
-        domEl.style.top = `${pt.y}px`;
-        domEl.style.zIndex = Math.floor(pt.z * 100).toString();
-        domEl.style.filter = pt.blur > 0 ? `blur(${pt.blur}px)` : "none";
-        domEl.style.opacity = pt.opacity.toString();
-      });
-
-      // Update SVG Lines
-      sphereData.lines.forEach((pair, idx) => {
-        const p1 = projected[pair[0]];
-        const p2 = projected[pair[1]];
-        const lineEl = lines[idx] as SVGLineElement;
-        if (p1 && p2 && lineEl) {
-          lineEl.setAttribute("x1", p1.x.toString());
-          lineEl.setAttribute("y1", p1.y.toString());
-          lineEl.setAttribute("x2", p2.x.toString());
-          lineEl.setAttribute("y2", p2.y.toString());
-          // Average z depth for line opacity
-          const avgZ = (p1.z + p2.z) / 2;
-          lineEl.style.opacity = Math.max(0.05, (avgZ + 1.5) / 4).toString();
-        }
-      });
-
-      animationFrameId = requestAnimationFrame(updatePositions);
-    };
-
-    updatePositions();
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [displayAgents, sphereData]);
-
-  if (displayAgents.length === 0) return null;
-
-  return (
-    <div
-      ref={containerRef}
-      className="absolute inset-0 z-0 overflow-hidden pointer-events-auto cursor-grab active:cursor-grabbing touch-none"
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
-    >
-      {/* 3D Network Connection Lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none">
-        {sphereData.lines.map((_, idx) => (
-          <line
-            key={idx}
-            className="network-line transition-opacity duration-75"
-            stroke="url(#lineGradient)"
-            strokeWidth={1.5}
-            style={{ opacity: 0 }}
-          />
-        ))}
-        <defs>
-          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#ef4444" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.2" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      {/* Floating Orbs */}
-      {displayAgents.map((agent) => (
-        <div
-          key={agent.pageid}
-          className="orb-node pointer-events-auto absolute transition-opacity duration-75 group"
-          title={agent.nama_panggilan || agent.pageid}
-          style={{ opacity: 0, width: "64px", height: "64px" }}
-        >
-          <Link
-            to="/$pgcode"
-            params={{ pgcode: agent.pageid }}
-            className="block w-full h-full relative"
-            onClick={(e) => {
-              if (dragDistanceRef.current > 10) {
-                e.preventDefault();
-              }
-            }}
-          >
-            <div className="relative w-full h-full rounded-full overflow-hidden ring-2 ring-white/10 group-hover:ring-red-500/80 transition-all duration-300 shadow-xl shadow-black/50 group-hover:shadow-red-500/30 group-hover:scale-110">
-              {agent.foto_profil_url ? (
-                <OptimizedImage
-                  src={agent.foto_profil_url}
-                  alt={agent.nama_panggilan || agent.pageid}
-                  width={80}
-                  height={80}
-                  priority
-                  className="w-full h-full object-cover pointer-events-none"
-                />
-              ) : (
-                <div className="w-full h-full bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white/60 text-sm font-bold pointer-events-none">
-                  {(agent.nama_panggilan || agent.pageid)
-                    .charAt(0)
-                    .toUpperCase()}
-                </div>
-              )}
-              {/* Glow overlay */}
-              <div className="absolute inset-0 bg-red-600/0 group-hover:bg-red-600/20 transition-colors duration-300 rounded-full pointer-events-none" />
-            </div>
-            {/* Tooltip */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-              <span className="px-3 py-1 bg-slate-900/90 text-slate-100 text-[11px] font-medium rounded-lg border border-slate-700 backdrop-blur-sm shadow-xl">
-                {agent.nama_panggilan || agent.pageid}
-              </span>
-            </div>
-          </Link>
-        </div>
-      ))}
-    </div>
-  );
-}
+export default LandingAuthPage;

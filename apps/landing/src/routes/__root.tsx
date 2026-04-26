@@ -9,12 +9,12 @@ import {
 } from "@tanstack/react-router";
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import Topbar from "@repo/ui/layout/topbar";
-import { ToastProvider } from "@repo/ui/toast";
+import Topbar from "@/layout/topbar";
+import { ToastProvider } from "@/components/toast";
 
-import NotFound from "@repo/ui/not_found";
-import { ScrollUnlocker } from "@repo/ui/ScrollUnlocker";
-import { agentQueryOptions } from "@repo/lib/queryOptions";
+import NotFound from "@/components/not_found";
+import { ScrollUnlocker } from "@/components/ScrollUnlocker";
+import { agentQueryOptions } from "@/lib/queryOptions";
 import i18n from "i18next";
 import appCss from "@/styles.css?url";
 
@@ -26,11 +26,11 @@ const TanStackRouterDevtools = import.meta.env.PROD
       })),
     );
 
-import { getAuthToken } from "@repo/lib/auth";
+import { getAuthToken } from "@/lib/auth";
 
-import { RootError } from "@repo/ui/root_error";
-import { rootHeadConfig } from "@repo/constant/seo";
-import { CriticalCss } from "@repo/ui/CriticalCss";
+import { RootError } from "@/components/root_error";
+import { rootHeadConfig } from "@/constant/seo";
+import { CriticalCss } from "@/components/CriticalCss";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -80,7 +80,14 @@ function RootComponent() {
 
   const lang = i18n.language || "id";
 
-  const dashboardPaths = ["/register", "/petunjuk", "/legal"];
+  const dashboardPaths = [
+    "/register",
+    "/petunjuk",
+    "/overview",
+    "/settings",
+    "/admin",
+    "/legal",
+  ];
   const isStandalone =
     dashboardPaths.some((p) => location.pathname.startsWith(p)) ||
     location.pathname === "/";
