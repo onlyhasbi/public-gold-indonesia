@@ -1,9 +1,5 @@
 import { Card, CardContent } from "@repo/ui/ui/card";
-import {
-  createFileRoute,
-  useNavigate,
-  Link,
-} from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
@@ -108,18 +104,25 @@ function LoginPage() {
             >
               <CardContent className="p-0 flex flex-col h-full">
                 <div className="p-6 sm:px-10 pb-8 pt-10">
-                   <h1 className="text-2xl font-bold text-slate-900 mb-2 text-center">Selamat Datang</h1>
-                   <p className="text-slate-500 text-sm text-center mb-8">Masuk ke portal agen Anda</p>
-                   <SignInForm />
-                   
-                   <div className="mt-6 text-center text-sm text-slate-500">
-                     Belum punya akun?{" "}
-                     <Link to="/signup" className="text-red-600 font-bold hover:underline">
-                       Daftar Sekarang
-                     </Link>
-                   </div>
+                  <h1 className="text-2xl font-bold text-slate-900 mb-2 text-center">
+                    Selamat Datang
+                  </h1>
+                  <p className="text-slate-500 text-sm text-center mb-8">
+                    Masuk ke portal agen Anda
+                  </p>
+                  <SignInForm />
+
+                  <div className="mt-6 text-center text-sm text-slate-500">
+                    Belum punya akun?{" "}
+                    <Link
+                      to="/signup"
+                      className="text-red-600 font-bold hover:underline"
+                    >
+                      Daftar Sekarang
+                    </Link>
+                  </div>
                 </div>
-                
+
                 <AuthFooter />
               </CardContent>
             </MotionCard>
@@ -169,7 +172,13 @@ function AuthFooter() {
   );
 }
 
-function AuthSecurityNote({ lockoutTime, isUnlocked }: { lockoutTime: number, isUnlocked: boolean | undefined }) {
+function AuthSecurityNote({
+  lockoutTime,
+  isUnlocked,
+}: {
+  lockoutTime: number;
+  isUnlocked: boolean | undefined;
+}) {
   return (
     <AnimatePresence>
       {!lockoutTime && !isUnlocked && (

@@ -9,4 +9,3 @@ hydrateRoot(
     <StartClient />
   </React.StrictMode>,
 );
-

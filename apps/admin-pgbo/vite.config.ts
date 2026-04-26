@@ -100,7 +100,7 @@ export default defineConfig({
       "@/schemas": path.resolve(__dirname, "../../packages/schemas/src"),
       "@/constant": path.resolve(__dirname, "../../packages/constant/src"),
       "@/services": path.resolve(__dirname, "../../packages/services/src"),
-      "@/types": path.resolve(__dirname, "../../packages/types/src/index.ts")
+      "@/types": path.resolve(__dirname, "../../packages/types/src/index.ts"),
     },
     conditions: ["import", "module", "browser", "default"],
   },

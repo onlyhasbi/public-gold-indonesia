@@ -28,7 +28,11 @@ export const agentsListQueryOptions = () =>
     queryKey: ["agents"],
     queryFn: async () => {
       const res = await getAgentsFn();
-      return res.data as Array<{ pageid: string; nama_panggilan: string | null; foto_profil_url: string | null }>;
+      return res.data as Array<{
+        pageid: string;
+        nama_panggilan: string | null;
+        foto_profil_url: string | null;
+      }>;
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

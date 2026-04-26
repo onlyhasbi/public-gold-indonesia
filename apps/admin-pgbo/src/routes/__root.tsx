@@ -4,7 +4,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-  createRootRouteWithContext
+  createRootRouteWithContext,
 } from "@tanstack/react-router";
 import React from "react";
 
@@ -71,7 +71,6 @@ function RootDocument({
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const lang = i18n.language || "id";
-
 
   return (
     <QueryClientProvider client={queryClient}>

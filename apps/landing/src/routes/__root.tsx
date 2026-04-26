@@ -80,11 +80,7 @@ function RootComponent() {
 
   const lang = i18n.language || "id";
 
-  const dashboardPaths = [
-    "/register",
-    "/petunjuk",
-    "/legal",
-  ];
+  const dashboardPaths = ["/register", "/petunjuk", "/legal"];
   const isStandalone =
     dashboardPaths.some((p) => location.pathname.startsWith(p)) ||
     location.pathname === "/";

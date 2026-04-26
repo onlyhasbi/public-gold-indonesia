@@ -390,7 +390,9 @@ function PriceList({ price, pgbo }: Props) {
       // mode tunai: prices from unit endpoint with specific adjustments
       const apiArray =
         item.category === "dinar" ? price?.dinar : price?.goldbar;
-      const apiItem = apiArray?.find((p: GoldPrice) => item.title.startsWith(p.label));
+      const apiItem = apiArray?.find((p: GoldPrice) =>
+        item.title.startsWith(p.label),
+      );
       const apiPrice = parsePriceToNumber(apiItem?.price);
 
       if (!apiPrice) return null;

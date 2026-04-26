@@ -5,11 +5,7 @@ import { buttonVariants } from "@repo/ui/ui/button";
 import { getWhatsAppLink } from "@repo/lib/contact";
 import { OptimizedImage } from "./ui/optimized-image";
 import { HERO_IMAGE_CONFIG } from "@repo/lib/images";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@repo/ui/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/ui/popover";
 import {
   MoreVertical,
   Facebook,

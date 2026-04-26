@@ -113,7 +113,10 @@ export const requireAdminAuth = async (cookieStr?: string) => {
   }
 };
 
-export const requireGuest = async (redirectTo = "/overview", cookieStr?: string) => {
+export const requireGuest = async (
+  redirectTo = "/overview",
+  cookieStr?: string,
+) => {
   const token = await getAuthToken(false, cookieStr);
   if (token) {
     throw redirect({ to: redirectTo as string });

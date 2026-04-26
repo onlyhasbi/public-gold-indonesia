@@ -1,9 +1,5 @@
 import { Card, CardContent } from "@repo/ui/ui/card";
-import {
-  createFileRoute,
-  useNavigate,
-  Link,
-} from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
@@ -108,18 +104,27 @@ function SignupPage() {
             >
               <CardContent className="p-0 flex flex-col h-full">
                 <div className="p-6 sm:px-10 pb-8 pt-10">
-                   <h1 className="text-2xl font-bold text-slate-900 mb-2 text-center">Daftar Akun</h1>
-                   <p className="text-slate-500 text-sm text-center mb-8">Buat akun portal agen baru Anda</p>
-                   <SignUpForm onSignupSuccess={() => navigate({ to: "/signin" })} />
-                   
-                   <div className="mt-6 text-center text-sm text-slate-500">
-                     Sudah punya akun?{" "}
-                     <Link to="/signin" className="text-red-600 font-bold hover:underline">
-                       Masuk Sekarang
-                     </Link>
-                   </div>
+                  <h1 className="text-2xl font-bold text-slate-900 mb-2 text-center">
+                    Daftar Akun
+                  </h1>
+                  <p className="text-slate-500 text-sm text-center mb-8">
+                    Buat akun portal agen baru Anda
+                  </p>
+                  <SignUpForm
+                    onSignupSuccess={() => navigate({ to: "/signin" })}
+                  />
+
+                  <div className="mt-6 text-center text-sm text-slate-500">
+                    Sudah punya akun?{" "}
+                    <Link
+                      to="/signin"
+                      className="text-red-600 font-bold hover:underline"
+                    >
+                      Masuk Sekarang
+                    </Link>
+                  </div>
                 </div>
-                
+
                 <AuthFooter />
               </CardContent>
             </MotionCard>
@@ -169,7 +174,13 @@ function AuthFooter() {
   );
 }
 
-function AuthSecurityNote({ lockoutTime, isUnlocked }: { lockoutTime: number, isUnlocked: boolean | undefined }) {
+function AuthSecurityNote({
+  lockoutTime,
+  isUnlocked,
+}: {
+  lockoutTime: number;
+  isUnlocked: boolean | undefined;
+}) {
   return (
     <AnimatePresence>
       {!lockoutTime && !isUnlocked && (

@@ -5,7 +5,10 @@ import { dialCodeOptions } from "@repo/constant/countries";
 import { branchLabelOptions } from "@repo/constant/branches";
 import { extractDataFromNIK, calculateAge } from "@repo/lib/utils";
 import { formatPhoneForAPI } from "@repo/lib/phone";
-import { getValidationSchema, type RegisterFormData } from "@repo/lib/validations";
+import {
+  getValidationSchema,
+  type RegisterFormData,
+} from "@repo/lib/validations";
 import { registerTrackFn } from "@repo/services/api.functions";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";

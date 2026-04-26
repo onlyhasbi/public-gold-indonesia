@@ -9,7 +9,7 @@ const ADMIN_PGBO_URL = import.meta.env.DEV
   ? "http://localhost:3003/signin"
   : "https://admin.mypublicgold.id/signin";
 
-export const Route = createFileRoute("/")(  {
+export const Route = createFileRoute("/")({
   component: LandingHomePage,
 });
 
@@ -62,7 +62,9 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
   // Randomize and pick max 10 agents on mount
   useEffect(() => {
     // Filter out any invalid empty agents first
-    const validAgents = agents.filter(a => a.pageid && a.pageid.trim() !== "");
+    const validAgents = agents.filter(
+      (a) => a.pageid && a.pageid.trim() !== "",
+    );
     const shuffled = [...validAgents].sort(() => Math.random() - 0.5);
     setDisplayAgents(shuffled.slice(0, 15));
   }, [agents]);
@@ -90,7 +92,9 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
         const p2 = points[j];
         // Connect points that are relatively close in 3D space
         const dist3d = Math.sqrt(
-          Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2)
+          Math.pow(p1.x - p2.x, 2) +
+            Math.pow(p1.y - p2.y, 2) +
+            Math.pow(p1.z - p2.z, 2),
         );
         if (dist3d < 1.6) {
           lines.push([i, j]);
@@ -117,7 +121,7 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
     if (!isDraggingRef.current) return;
     const deltaX = e.clientX - previousMouseRef.current.x;
     const deltaY = e.clientY - previousMouseRef.current.y;
-    
+
     dragDistanceRef.current += Math.abs(deltaX) + Math.abs(deltaY);
 
     const rotSpeed = 0.005;
@@ -141,9 +145,9 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
       const container = containerRef.current;
       if (!container) return;
 
-      const orbs = container.querySelectorAll('.orb-node');
-      const lines = container.querySelectorAll('.network-line');
-      
+      const orbs = container.querySelectorAll(".orb-node");
+      const lines = container.querySelectorAll(".network-line");
+
       const w = window.innerWidth;
       const h = window.innerHeight;
       const radius = Math.min(w, 800) * 0.35;
@@ -156,7 +160,7 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
         velocityRef.current.y += (0.003 - velocityRef.current.y) * 0.02;
         velocityRef.current.x += (0.001 - velocityRef.current.x) * 0.02;
       }
-      
+
       rotationRef.current.y += velocityRef.current.y;
       rotationRef.current.x += velocityRef.current.x;
 
@@ -176,14 +180,14 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
 
         const scale = (z2 + 2) / 2.5; // Scale mapping based on depth
         const opacity = Math.max(0.2, (z2 + 1.5) / 2.5);
-        
+
         return {
           x: centerX + x1 * radius,
           y: centerY + y2 * radius,
           z: z2,
           scale: Math.max(0.4, scale),
           opacity,
-          blur: z2 < -0.2 ? Math.abs(z2) * 3 : 0
+          blur: z2 < -0.2 ? Math.abs(z2) * 3 : 0,
         };
       });
 
@@ -196,7 +200,7 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
         domEl.style.left = `${pt.x}px`;
         domEl.style.top = `${pt.y}px`;
         domEl.style.zIndex = Math.floor(pt.z * 100).toString();
-        domEl.style.filter = pt.blur > 0 ? `blur(${pt.blur}px)` : 'none';
+        domEl.style.filter = pt.blur > 0 ? `blur(${pt.blur}px)` : "none";
         domEl.style.opacity = pt.opacity.toString();
       });
 
@@ -206,10 +210,10 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
         const p2 = projected[pair[1]];
         const lineEl = lines[idx] as SVGLineElement;
         if (p1 && p2 && lineEl) {
-          lineEl.setAttribute('x1', p1.x.toString());
-          lineEl.setAttribute('y1', p1.y.toString());
-          lineEl.setAttribute('x2', p2.x.toString());
-          lineEl.setAttribute('y2', p2.y.toString());
+          lineEl.setAttribute("x1", p1.x.toString());
+          lineEl.setAttribute("y1", p1.y.toString());
+          lineEl.setAttribute("x2", p2.x.toString());
+          lineEl.setAttribute("y2", p2.y.toString());
           // Average z depth for line opacity
           const avgZ = (p1.z + p2.z) / 2;
           lineEl.style.opacity = Math.max(0.05, (avgZ + 1.5) / 4).toString();
@@ -227,8 +231,8 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
   if (displayAgents.length === 0) return null;
 
   return (
-    <div 
-      ref={containerRef} 
+    <div
+      ref={containerRef}
       className="absolute inset-0 z-0 overflow-hidden pointer-events-auto cursor-grab active:cursor-grabbing touch-none"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -260,7 +264,7 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
           key={agent.pageid}
           className="orb-node pointer-events-auto absolute transition-opacity duration-75 group"
           title={agent.nama_panggilan || agent.pageid}
-          style={{ opacity: 0, width: '64px', height: '64px' }}
+          style={{ opacity: 0, width: "64px", height: "64px" }}
         >
           <Link
             to="/$pgcode"
@@ -284,7 +288,9 @@ function FloatingOrbs({ agents }: { agents: Agent[] }) {
                 />
               ) : (
                 <div className="w-full h-full bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white/60 text-sm font-bold pointer-events-none">
-                  {(agent.nama_panggilan || agent.pageid).charAt(0).toUpperCase()}
+                  {(agent.nama_panggilan || agent.pageid)
+                    .charAt(0)
+                    .toUpperCase()}
                 </div>
               )}
               {/* Glow overlay */}

@@ -1,6 +1,5 @@
 import {
   Outlet,
-
   HeadContent,
   Scripts,
   createRootRouteWithContext,

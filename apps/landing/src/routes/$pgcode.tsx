@@ -23,7 +23,10 @@ import NotFound from "@repo/ui/not_found";
 import { RootError } from "@repo/ui/root_error";
 import GradientHighlight from "@repo/ui/ui/gradient_highlight";
 import { trackEvent } from "@repo/lib/analytics";
-import { agentQueryOptions, goldPricesQueryOptions } from "@repo/lib/queryOptions";
+import {
+  agentQueryOptions,
+  goldPricesQueryOptions,
+} from "@repo/lib/queryOptions";
 
 import {
   getCloudinaryUrl,
