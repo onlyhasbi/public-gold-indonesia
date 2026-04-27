@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "cd ../.. && turbo run build --filter=landing",
-  "outputDirectory": ".output",
+  "outputDirectory": "dist",
   "installCommand": "bun install",
   "trailingSlash": false,
   "cleanUrls": true,
