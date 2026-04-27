@@ -15,7 +15,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     minify: "terser",
     terserOptions: {
       compress: {

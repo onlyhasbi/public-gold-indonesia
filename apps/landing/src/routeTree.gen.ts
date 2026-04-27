@@ -8,144 +8,144 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as PetunjukRouteImport } from './routes/petunjuk'
-import { Route as LegalRouteImport } from './routes/legal'
-import { Route as PgcodeRouteImport } from './routes/$pgcode'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as SitemapDotxmlRouteImport } from "./routes/sitemap[.]xml";
+import { Route as RegisterRouteImport } from "./routes/register";
+import { Route as PetunjukRouteImport } from "./routes/petunjuk";
+import { Route as LegalRouteImport } from "./routes/legal";
+import { Route as PgcodeRouteImport } from "./routes/$pgcode";
+import { Route as IndexRouteImport } from "./routes/index";
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+  id: "/sitemap.xml",
+  path: "/sitemap.xml",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
+  id: "/register",
+  path: "/register",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/register.lazy").then((d) => d.Route));
 const PetunjukRoute = PetunjukRouteImport.update({
-  id: '/petunjuk',
-  path: '/petunjuk',
+  id: "/petunjuk",
+  path: "/petunjuk",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/petunjuk.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/petunjuk.lazy").then((d) => d.Route));
 const LegalRoute = LegalRouteImport.update({
-  id: '/legal',
-  path: '/legal',
+  id: "/legal",
+  path: "/legal",
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/legal.lazy').then((d) => d.Route))
+} as any).lazy(() => import("./routes/legal.lazy").then((d) => d.Route));
 const PgcodeRoute = PgcodeRouteImport.update({
-  id: '/$pgcode',
-  path: '/$pgcode',
+  id: "/$pgcode",
+  path: "/$pgcode",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/$pgcode': typeof PgcodeRoute
-  '/legal': typeof LegalRoute
-  '/petunjuk': typeof PetunjukRoute
-  '/register': typeof RegisterRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
+  "/": typeof IndexRoute;
+  "/$pgcode": typeof PgcodeRoute;
+  "/legal": typeof LegalRoute;
+  "/petunjuk": typeof PetunjukRoute;
+  "/register": typeof RegisterRoute;
+  "/sitemap.xml": typeof SitemapDotxmlRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/$pgcode': typeof PgcodeRoute
-  '/legal': typeof LegalRoute
-  '/petunjuk': typeof PetunjukRoute
-  '/register': typeof RegisterRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
+  "/": typeof IndexRoute;
+  "/$pgcode": typeof PgcodeRoute;
+  "/legal": typeof LegalRoute;
+  "/petunjuk": typeof PetunjukRoute;
+  "/register": typeof RegisterRoute;
+  "/sitemap.xml": typeof SitemapDotxmlRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/$pgcode': typeof PgcodeRoute
-  '/legal': typeof LegalRoute
-  '/petunjuk': typeof PetunjukRoute
-  '/register': typeof RegisterRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/$pgcode": typeof PgcodeRoute;
+  "/legal": typeof LegalRoute;
+  "/petunjuk": typeof PetunjukRoute;
+  "/register": typeof RegisterRoute;
+  "/sitemap.xml": typeof SitemapDotxmlRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/$pgcode'
-    | '/legal'
-    | '/petunjuk'
-    | '/register'
-    | '/sitemap.xml'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$pgcode' | '/legal' | '/petunjuk' | '/register' | '/sitemap.xml'
+    | "/"
+    | "/$pgcode"
+    | "/legal"
+    | "/petunjuk"
+    | "/register"
+    | "/sitemap.xml";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/$pgcode" | "/legal" | "/petunjuk" | "/register" | "/sitemap.xml";
   id:
-    | '__root__'
-    | '/'
-    | '/$pgcode'
-    | '/legal'
-    | '/petunjuk'
-    | '/register'
-    | '/sitemap.xml'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/$pgcode"
+    | "/legal"
+    | "/petunjuk"
+    | "/register"
+    | "/sitemap.xml";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  PgcodeRoute: typeof PgcodeRoute
-  LegalRoute: typeof LegalRoute
-  PetunjukRoute: typeof PetunjukRoute
-  RegisterRoute: typeof RegisterRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  IndexRoute: typeof IndexRoute;
+  PgcodeRoute: typeof PgcodeRoute;
+  LegalRoute: typeof LegalRoute;
+  PetunjukRoute: typeof PetunjukRoute;
+  RegisterRoute: typeof RegisterRoute;
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/petunjuk': {
-      id: '/petunjuk'
-      path: '/petunjuk'
-      fullPath: '/petunjuk'
-      preLoaderRoute: typeof PetunjukRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legal': {
-      id: '/legal'
-      path: '/legal'
-      fullPath: '/legal'
-      preLoaderRoute: typeof LegalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$pgcode': {
-      id: '/$pgcode'
-      path: '/$pgcode'
-      fullPath: '/$pgcode'
-      preLoaderRoute: typeof PgcodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/sitemap.xml": {
+      id: "/sitemap.xml";
+      path: "/sitemap.xml";
+      fullPath: "/sitemap.xml";
+      preLoaderRoute: typeof SitemapDotxmlRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/register": {
+      id: "/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof RegisterRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/petunjuk": {
+      id: "/petunjuk";
+      path: "/petunjuk";
+      fullPath: "/petunjuk";
+      preLoaderRoute: typeof PetunjukRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/legal": {
+      id: "/legal";
+      path: "/legal";
+      fullPath: "/legal";
+      preLoaderRoute: typeof LegalRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/$pgcode": {
+      id: "/$pgcode";
+      path: "/$pgcode";
+      fullPath: "/$pgcode";
+      preLoaderRoute: typeof PgcodeRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -156,16 +156,16 @@ const rootRouteChildren: RootRouteChildren = {
   PetunjukRoute: PetunjukRoute,
   RegisterRoute: RegisterRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }
