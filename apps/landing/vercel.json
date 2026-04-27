@@ -1,7 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "bun run build",
-  "outputDirectory": ".output",
+  "buildCommand": "cd ../.. && turbo run build --filter=landing",
+  "outputDirectory": "dist",
+  "installCommand": "bun install",
   "trailingSlash": false,
   "cleanUrls": true,
   "regions": ["sin1"],

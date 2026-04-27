@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "bun run build",
-  "outputDirectory": ".output",
-  "trailingSlash": false,
+  "buildCommand": "cd ../.. && turbo run build --filter=super-admin",
+  "outputDirectory": "dist",
+  "installCommand": "bun install",
   "cleanUrls": true,
   "regions": ["sin1"],
   "headers": [
