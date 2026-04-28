@@ -12,7 +12,7 @@ export default defineConfig({
         enabled: false,
       },
     }),
-    nitro(),
+    nitro({ preset: "vercel" }),
     viteReact(),
     tailwindcss(),
   ],
