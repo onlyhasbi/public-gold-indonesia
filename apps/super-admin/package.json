@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun --bun vite",
-    "build": "bun --bun vite build",
-    "start": "bun --bun vite preview",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -63,6 +63,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "terser": "^5.46.1",
     "typescript": "^5.7.2",
-    "vite": "^6.0.1"
+    "vite": "^7.0.0"
   }
 }

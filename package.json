@@ -62,7 +62,7 @@
     "terser": "^5.46.1",
     "turbo": "^2.0.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.1"
+    "vite": "^7.0.0"
   },
   "overrides": {
     "@tanstack/query-core": "5.99.1",

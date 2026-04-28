@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { nitro } from "nitro/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
@@ -11,6 +12,7 @@ export default defineConfig({
         enabled: false,
       },
     }),
+    nitro(),
     viteReact(),
     tailwindcss(),
   ],
@@ -24,13 +26,7 @@ export default defineConfig({
     },
     modulePreload: false,
   },
-  ssr: {
-    noExternal: ["@tanstack/react-start-server", "@tanstack/react-start"],
-    resolve: {
-      conditions: ["import", "module", "node", "default"],
-      externalConditions: ["import", "module", "node", "default"],
-    },
-  },
+
   server: {
     port: 3000,
     strictPort: true,
