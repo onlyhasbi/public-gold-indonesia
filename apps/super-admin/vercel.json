@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd ../.. && turbo run build --filter=super-admin",
+  "buildCommand": "cd ../.. && NITRO_PRESET=vercel turbo run build --filter=super-admin",
   "installCommand": "cd ../.. && bun install",
   "framework": null,
   "cleanUrls": true,
